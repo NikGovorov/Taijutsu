@@ -1,4 +1,4 @@
-Taijutsu is intended to help developers design domain model layer.
+Taijutsu is intended to help developers to design domain model layer.
 =======
 
 # LICENSE
