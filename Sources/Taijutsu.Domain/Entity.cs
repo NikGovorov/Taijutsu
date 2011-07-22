@@ -69,5 +69,10 @@ namespace Taijutsu.Domain
         {
             return !(left == right);
         }
+
+        public override string ToString()
+        {
+            return entityKey.Equals(default(TKey)) ? string.Empty : entityKey.ToString();
+        }
     }
 }
