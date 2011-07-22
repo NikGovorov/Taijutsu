@@ -53,6 +53,10 @@
     <Compile Include="DomainException.cs" />
     <Compile Include="DomainObjectEx.cs" />
     <Compile Include="Entity.cs" />
+    <Compile Include="EntityConversionRegistry.cs">
+      <DependentUpon>IEntityConversion.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EntityEx.cs" />
     <Compile Include="EntityException.cs" />
     <Compile Include="EntityNotFoundException.cs">
       <DependentUpon>EntityException.cs</DependentUpon>
@@ -74,6 +78,7 @@
     <Compile Include="IdentifiedObject.cs" />
     <Compile Include="IDomainObject.cs" />
     <Compile Include="IEntity.cs" />
+    <Compile Include="IEntityConversion.cs" />
     <Compile Include="IHideObjectMembers.cs" />
     <Compile Include="ILogicalContext.cs" />
     <Compile Include="IQueryableEntity.cs" />
@@ -88,6 +93,9 @@
     <Compile Include="IVersionableEntity.cs" />
     <Compile Include="LogicalContext.cs" />
     <Compile Include="Maybe.cs" />
+    <Compile Include="NativeEntityConversion.cs">
+      <DependentUpon>IEntityConversion.cs</DependentUpon>
+    </Compile>
     <Compile Include="NotSpecification.cs">
       <DependentUpon>Specification.cs</DependentUpon>
     </Compile>
