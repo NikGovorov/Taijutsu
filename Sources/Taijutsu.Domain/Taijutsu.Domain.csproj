@@ -44,6 +44,46 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AndSpecification.cs">
+      <DependentUpon>Specification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CompositeSpecification.cs">
+      <DependentUpon>Specification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DomainException.cs" />
+    <Compile Include="DomainObjectEx.cs" />
+    <Compile Include="Entity.cs" />
+    <Compile Include="EntityException.cs" />
+    <Compile Include="EntityNotFoundException.cs">
+      <DependentUpon>EntityException.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EntityNotUniqueException.cs">
+      <DependentUpon>EntityException.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IAggregateRoot.cs" />
+    <Compile Include="IdentifiedObject.cs" />
+    <Compile Include="IDomainObject.cs" />
+    <Compile Include="IEntity.cs" />
+    <Compile Include="IHideObjectMembers.cs" />
+    <Compile Include="ILogicalContext.cs" />
+    <Compile Include="IQueryableEntity.cs" />
+    <Compile Include="IRemovableEntity.cs" />
+    <Compile Include="IRepository.cs" />
+    <Compile Include="ISoftRemovable.cs" />
+    <Compile Include="ISpecification.cs" />
+    <Compile Include="IValueObject.cs" />
+    <Compile Include="IVersionableEntity.cs" />
+    <Compile Include="LogicalContext.cs" />
+    <Compile Include="Maybe.cs" />
+    <Compile Include="NotSpecification.cs">
+      <DependentUpon>Specification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OrSpecification.cs">
+      <DependentUpon>Specification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SeqGuid.cs" />
+    <Compile Include="Specification.cs" />
+    <Compile Include="ValueObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
