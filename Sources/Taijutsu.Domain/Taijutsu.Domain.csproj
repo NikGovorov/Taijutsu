@@ -60,6 +60,16 @@
     <Compile Include="EntityNotUniqueException.cs">
       <DependentUpon>EntityException.cs</DependentUpon>
     </Compile>
+    <Compile Include="Event\EventAggregator.cs" />
+    <Compile Include="Event\EventAggregatorFactory.cs" />
+    <Compile Include="Event\EventHandler.cs" />
+    <Compile Include="Event\IEventAggregator.cs" />
+    <Compile Include="Event\ISubscriber.cs" />
+    <Compile Include="Event\ISubscriptionFeature.cs" />
+    <Compile Include="Event\ISubscriptionScope.cs" />
+    <Compile Include="Event\LocalEventAggregator.cs" />
+    <Compile Include="Event\SubscriptionBuilder.cs" />
+    <Compile Include="Event\SystemEventAggregator.cs" />
     <Compile Include="IAggregateRoot.cs" />
     <Compile Include="IdentifiedObject.cs" />
     <Compile Include="IDomainObject.cs" />
@@ -69,8 +79,11 @@
     <Compile Include="IQueryableEntity.cs" />
     <Compile Include="IRemovableEntity.cs" />
     <Compile Include="IRepository.cs" />
+    <Compile Include="IScopeSupervisor.cs" />
     <Compile Include="ISoftRemovable.cs" />
     <Compile Include="ISpecification.cs" />
+    <Compile Include="IUnitOfQuery.cs" />
+    <Compile Include="IUnitOfWork.cs" />
     <Compile Include="IValueObject.cs" />
     <Compile Include="IVersionableEntity.cs" />
     <Compile Include="LogicalContext.cs" />
@@ -81,8 +94,30 @@
     <Compile Include="OrSpecification.cs">
       <DependentUpon>Specification.cs</DependentUpon>
     </Compile>
+    <Compile Include="Query\IDerivedQueryOf.cs" />
+    <Compile Include="Query\IDerivedQueryOfEntities.cs" />
+    <Compile Include="Query\IDerivedQueryOfEntity.cs" />
+    <Compile Include="Query\IQuery.cs" />
+    <Compile Include="Query\IQueryOf.cs" />
+    <Compile Include="Query\IQueryOfEntities.cs" />
+    <Compile Include="Query\IQueryOfEntity.cs" />
+    <Compile Include="Query\IQueryOfEntityByKey.cs" />
+    <Compile Include="Query\IQueryOfNotUniqueEntity.cs" />
+    <Compile Include="Query\IQueryOver.cs" />
+    <Compile Include="Query\IQueryOverBuilder.cs" />
+    <Compile Include="Query\Narrowing\IAnyNarrowing.cs" />
+    <Compile Include="Query\Narrowing\ICountNarrowing.cs" />
+    <Compile Include="Query\Narrowing\INotStrictNarrowing.cs" />
+    <Compile Include="Query\Narrowing\INotUniqueNarrowing.cs" />
+    <Compile Include="Query\Narrowing\IStrictNarrowing.cs" />
+    <Compile Include="Query\Narrowing\IUniqueNarrowing.cs" />
+    <Compile Include="Query\Option\IKeyIncludingQuery.cs" />
+    <Compile Include="Query\Option\ILimitQuery.cs" />
+    <Compile Include="Query\Option\IOffsetQuery.cs" />
+    <Compile Include="Query\Option\ITypeExcludingQuery.cs" />
     <Compile Include="SeqGuid.cs" />
     <Compile Include="Specification.cs" />
+    <Compile Include="SystemTime.cs" />
     <Compile Include="ValueObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
