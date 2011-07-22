@@ -1,0 +1,16 @@
+**/*.suo
+**/*.user
+**/*.sln*
+bin
+obj
+_ReSharper*
+
+*.csproj.user
+*.resharper.user
+*.resharper
+*.ReSharper
+*.cache
+*~
+*.swp
+*.bak
+*.orig
