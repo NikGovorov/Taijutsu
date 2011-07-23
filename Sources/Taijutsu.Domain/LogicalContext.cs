@@ -15,7 +15,7 @@ using System.Runtime.Remoting.Messaging;
 
 namespace Taijutsu.Domain
 {
-    internal static class LogicalContext
+    public static class LogicalContext
     {
         private static ILogicalContext defaultContext = new DefaultLogicalContext();
 

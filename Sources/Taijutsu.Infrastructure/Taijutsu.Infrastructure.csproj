@@ -43,6 +43,45 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="Config\SubUnitOfWorkConfig.cs" />
+    <Compile Include="Config\UnitOfQueryConfig.cs" />
+    <Compile Include="Config\UnitOfWorkConfig.cs" />
+    <Compile Include="Internal\DataContext.cs" />
+    <Compile Include="Internal\DataContextLifeCycle.cs" />
+    <Compile Include="Internal\DataContextSupervisor.cs" />
+    <Compile Include="Internal\DataProvider.cs" />
+    <Compile Include="Internal\DataProviderPlanningPolicy.cs" />
+    <Compile Include="Internal\IAdvancedUnitOfWork.cs" />
+    <Compile Include="Internal\IBaseReadOnlyDataContext.cs" />
+    <Compile Include="Internal\IConceitedUnitOfWork.cs" />
+    <Compile Include="Internal\IDataContext.cs" />
+    <Compile Include="Internal\IDataProvider.cs" />
+    <Compile Include="Internal\IDataProviderFactory.cs" />
+    <Compile Include="Internal\IDataProviderPlanningPolicy.cs" />
+    <Compile Include="Internal\INativeUnitOf.cs" />
+    <Compile Include="Internal\Infrastructure.cs" />
+    <Compile Include="Internal\IReadOnlyDataProvider.cs" />
+    <Compile Include="Internal\IReadOnlyDataProviderFactory.cs" />
+    <Compile Include="Internal\IUnitOfWorkCompletion.cs" />
+    <Compile Include="Internal\IUnitOfWorkLifeCycle.cs" />
+    <Compile Include="Internal\MarkingStep.cs" />
+    <Compile Include="Internal\OfflineDataProvider.cs" />
+    <Compile Include="Internal\OfflineReadOnlyDataProvider.cs" />
+    <Compile Include="Internal\ReadOnlyDataContext.cs" />
+    <Compile Include="Internal\ReadOnlyDataContextSupervisor.cs" />
+    <Compile Include="Internal\ReadOnlyDataProvider.cs" />
+    <Compile Include="Internal\SupervisorContext.cs" />
+    <Compile Include="LifeTime.cs" />
+    <Compile Include="SubUnitOfWork.cs" />
+    <Compile Include="UnitOfQuery.cs" />
+    <Compile Include="UnitOfWork.cs" />
+    <Compile Include="UnitOfWorkEx.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Taijutsu.Domain\Taijutsu.Domain.csproj">
+      <Project>{BFFB4ED9-8A84-4AB0-8328-C733399C445B}</Project>
+      <Name>Taijutsu.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
