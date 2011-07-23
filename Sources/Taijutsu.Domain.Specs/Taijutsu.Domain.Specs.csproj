@@ -8,8 +8,8 @@
     <ProjectGuid>{964C8BBD-782B-4DEA-B59D-2657DB06FD20}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Taijutsu.Domain.Tests</RootNamespace>
-    <AssemblyName>Taijutsu.Domain.Tests</AssemblyName>
+    <RootNamespace>Taijutsu.Domain.Specs</RootNamespace>
+    <AssemblyName>Taijutsu.Domain.Specs</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
