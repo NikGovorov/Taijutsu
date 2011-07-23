@@ -28,7 +28,7 @@ namespace Taijutsu.Infrastructure
         {
         }
 
-        public LifeTimeScope(IDataProviderPlanningPolicy dataContextSharing)
+        protected internal LifeTimeScope(IDataProviderPlanningPolicy dataContextSharing)
         {
             SupervisorContext.RegisterUnitScopeWith(dataContextSharing);
             this.dataContextSharing = dataContextSharing;

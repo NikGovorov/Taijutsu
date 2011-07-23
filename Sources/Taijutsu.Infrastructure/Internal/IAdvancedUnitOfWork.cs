@@ -23,8 +23,5 @@ namespace Taijutsu.Infrastructure.Internal
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
         IDictionary<string, IDisposable> Extension { get; }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        IUnitOfWorkLifeCycle Advanced { get; }
     }
 }

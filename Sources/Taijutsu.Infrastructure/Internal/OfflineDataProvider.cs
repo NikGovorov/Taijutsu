@@ -45,7 +45,7 @@ namespace Taijutsu.Infrastructure.Internal
 
         protected virtual Exception GenerateException()
         {
-            return new Exception("It's impossible to use offline data provider.");
+            return new Exception("Data provider is offline.");
         }
 
         public override object MarkAsCreated<TEntity>(TEntity entity)

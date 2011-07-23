@@ -49,14 +49,14 @@ namespace Taijutsu.Infrastructure.Internal
             }
 
             var context = (from query in unitsOfQuery
-                           where query.QueryConfig.SourceName == unitOfQueryConfig.SourceName
+                           where query.UnitOfQueryConfig.SourceName == unitOfQueryConfig.SourceName
                            select query).LastOrDefault();
 
             if (context != null)
             {
-                if (!context.QueryConfig.IsolationLevel.IsCompatible(unitOfQueryConfig.IsolationLevel))
+                if (!context.UnitOfQueryConfig.IsolationLevel.IsCompatible(unitOfQueryConfig.IsolationLevel))
                 {
-                    throw new Exception(string.Format("Isolation level '{0}' is not compatible with '{1}'.", context.QueryConfig.IsolationLevel, unitOfQueryConfig.IsolationLevel));
+                    throw new Exception(string.Format("Isolation level '{0}' is not compatible with '{1}'.", context.UnitOfQueryConfig.IsolationLevel, unitOfQueryConfig.IsolationLevel));
                 }
                 return new ReadOnlyDataContextDecorator(context);
             }
@@ -72,9 +72,9 @@ namespace Taijutsu.Infrastructure.Internal
         public virtual bool HasTopLevel(UnitOfQueryConfig unitOfQueryConfig)
         {
             var context = (from query in unitsOfQuery
-             where query.QueryConfig.SourceName == unitOfQueryConfig.SourceName
+             where query.UnitOfQueryConfig.SourceName == unitOfQueryConfig.SourceName
              select query).LastOrDefault();
-            return context != null && context.QueryConfig.IsolationLevel.IsCompatible(unitOfQueryConfig.IsolationLevel);
+            return context != null && context.UnitOfQueryConfig.IsolationLevel.IsCompatible(unitOfQueryConfig.IsolationLevel);
         }
 
         #endregion

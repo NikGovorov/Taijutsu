@@ -11,7 +11,6 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,21 +19,18 @@ namespace Taijutsu.Infrastructure.Internal
 {
     public class DataContext : IDataContext
     {
-        private readonly DateTime creationDate;
         private readonly DataContextSupervisor supervisor;
         private readonly UnitOfWorkConfig unitOfWorkConfig;
-        private DataContextLifeCycle advanced;
+        private bool closed;
         private bool commited;
         private DataProvider dataProvider;
         private IDictionary<string, IDisposable> extension;
-        private bool closed;
         private bool rolledback;
         private int slaveCount;
 
         public DataContext(UnitOfWorkConfig unitOfWorkConfig, DataContextSupervisor supervisor)
         {
             this.unitOfWorkConfig = unitOfWorkConfig;
-            creationDate = DateTime.Now;
             this.supervisor = supervisor;
             dataProvider = supervisor.CreateDataProvider(unitOfWorkConfig);
             dataProvider.BeginTransaction(unitOfWorkConfig.IsolationLevel);
@@ -74,12 +70,7 @@ namespace Taijutsu.Infrastructure.Internal
             get { return Provider; }
         }
 
-        public virtual DateTime CreationDate
-        {
-            get { return creationDate; }
-        }
-
-        public virtual bool Completed
+        public virtual bool Ready
         {
             get { return slaveCount == 0; }
         }
@@ -91,54 +82,33 @@ namespace Taijutsu.Infrastructure.Internal
 
         public virtual void Commit()
         {
-            if (!rolledback && !closed)
+            if (commited || closed || rolledback)
             {
-                commited = true;
-
-                if (advanced != null)
-                {
-                    advanced.RaiseBeforeSuccessed();
-                }
-                DataProvider.Commit();
-
-                if (advanced != null)
-                {
-                    advanced.RaiseAfterSuccessed();
-                }
+                throw new Exception(
+                    string.Format(
+                        "Data context can't commit data provider. State map: commited '{0}', rolledback '{1}', closed '{2}'.",
+                        commited, rolledback, closed));
             }
+            commited = true;
+            DataProvider.Commit();
         }
 
         public virtual void Rollback()
         {
-            if (!commited && !closed)
+            if (commited || closed || rolledback)
             {
-                rolledback = true;
-
-                if (advanced != null)
-                {
-                    advanced.RaiseBeforeFailed();
-                }
-
-                try
-                {
-                    DataProvider.Rollback();
-                }
-
-                finally
-                {
-                    if (advanced != null)
-                    {
-                        advanced.RaiseAfterFailed();
-                    }
-                }
+                throw new Exception(
+                    string.Format(
+                        "Data context can't rollback data provider. State map: commited '{0}', rolledback '{1}', closed '{2}'.",
+                        commited, rolledback, closed));
             }
+            rolledback = true;
+            DataProvider.Rollback();
         }
 
         public virtual void Close()
         {
-
             closed = true;
-
             if (extension != null)
             {
                 foreach (var disposable in extension.Values)
@@ -154,14 +124,7 @@ namespace Taijutsu.Infrastructure.Internal
                 }
             }
 
-            if (advanced != null)
-            {
-                advanced.Dispose();
-            }
-
             extension = null;
-            advanced = null;
-
             dataProvider = supervisor.RegisterForTerminate(this);
         }
 
@@ -176,11 +139,6 @@ namespace Taijutsu.Infrastructure.Internal
         public virtual IDictionary<string, IDisposable> Extension
         {
             get { return extension ?? (extension = new Dictionary<string, IDisposable>()); }
-        }
-
-        public virtual IUnitOfWorkLifeCycle Advanced
-        {
-            get { return advanced ?? (advanced = new DataContextLifeCycle()); }
         }
 
         #endregion
@@ -198,14 +156,12 @@ namespace Taijutsu.Infrastructure.Internal
 
     public class DataContextDecorator : IDataContext
     {
-        private readonly DateTime creationDate;
         private readonly DataContext dataContext;
         private bool? completed;
 
         public DataContextDecorator(DataContext dataContext)
         {
             this.dataContext = dataContext;
-            creationDate = DateTime.Now;
             dataContext.RegisterUncompletedSlave();
         }
 
@@ -221,10 +177,6 @@ namespace Taijutsu.Infrastructure.Internal
             get { return ((IReadOnlyDataContext) dataContext).ReadOnlyProvider; }
         }
 
-        public virtual DateTime CreationDate
-        {
-            get { return creationDate; }
-        }
 
         public virtual UnitOfWorkConfig UnitOfWorkConfig
         {
@@ -236,7 +188,7 @@ namespace Taijutsu.Infrastructure.Internal
             get { return dataContext.Provider; }
         }
 
-        public virtual bool Completed
+        public virtual bool Ready
         {
             get { return !completed.HasValue ? false : completed.Value; }
         }
@@ -273,11 +225,6 @@ namespace Taijutsu.Infrastructure.Internal
         public virtual IDictionary<string, IDisposable> Extension
         {
             get { return dataContext.Extension; }
-        }
-
-        public virtual IUnitOfWorkLifeCycle Advanced
-        {
-            get { return dataContext.Advanced; }
         }
 
         #endregion

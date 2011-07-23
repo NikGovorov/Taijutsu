@@ -30,7 +30,7 @@ namespace Taijutsu.Infrastructure.Internal
 
         protected virtual Exception GenerateException()
         {
-            return new Exception("It's impossible to use offline read only data provider.");
+            return new Exception("Read only data provider is offline.");
         }
 
 

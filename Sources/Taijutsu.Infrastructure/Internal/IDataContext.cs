@@ -18,7 +18,7 @@ namespace Taijutsu.Infrastructure.Internal
     {
         UnitOfWorkConfig UnitOfWorkConfig { get; }
         IDataProvider Provider { get; }
-        bool Completed { get; }
+        bool Ready { get; }
         void Commit();
         void Rollback();
     }

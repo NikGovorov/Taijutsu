@@ -14,17 +14,38 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using Taijutsu.Infrastructure.Internal;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Infrastructure
 {
-    public class UnitOfWork : IUnitOfWork, IConceitedUnitOfWork, IAdvancedUnitOfWork, INativeUnitOf, IDisposable
+    public class UnitOfWork : IUnitOfWork, IAdvancedUnitOfWork, INativeUnitOf, IDisposable
     {
         private readonly IDataContext dataContext;
+        private bool? completed;
 
-        private bool completed;
+        public UnitOfWork(string source = "", IsolationLevel isolation = IsolationLevel.Unspecified,
+                           Require require = Require.None) : this(new UnitOfWorkConfig(source, isolation, require))
+        {
+        }
+
+        public UnitOfWork(IsolationLevel isolation = IsolationLevel.Unspecified)
+            : this(new UnitOfWorkConfig("", isolation, Require.None))
+        {
+        }
+
+        public UnitOfWork(Require require)
+            : this(new UnitOfWorkConfig("", IsolationLevel.Unspecified, require))
+        {
+        }
+
+        public UnitOfWork(string source)
+            : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, Require.None))
+        {
+        }
+
 
         public UnitOfWork() : this(new UnitOfWorkConfig())
         {
@@ -37,24 +58,9 @@ namespace Taijutsu.Infrastructure
 
         #region IAdvancedUnitOfWork Members
 
-        public virtual IUnitOfWorkLifeCycle Advanced
-        {
-            get { return dataContext.Advanced; }
-        }
-
         IDictionary<string, IDisposable> IAdvancedUnitOfWork.Extension
         {
             get { return dataContext.Extension; }
-        }
-
-        #endregion
-
-        #region IConceitedUnitOfWork Members
-
-        IUnitOfWorkCompletion IConceitedUnitOfWork.AsCompleted()
-        {
-            completed = true;
-            return new UnitOfWorkCompletion();
         }
 
         #endregion
@@ -65,11 +71,7 @@ namespace Taijutsu.Infrastructure
         {
             try
             {
-                if (completed)
-                {
-                    dataContext.Commit();
-                }
-                else
+                if (!completed.HasValue)
                 {
                     dataContext.Rollback();
                 }
@@ -126,23 +128,50 @@ namespace Taijutsu.Infrastructure
 
         #endregion
 
-        public virtual IUnitOfWorkCompletion AsCompleted()
+        public virtual void Complete()
         {
-            if (!dataContext.Completed)
+            if (!dataContext.Ready)
             {
                 throw new Exception(
-                    "Current unit of work can not be successfully complete, because not all subordinate units of work successfully are completed.");
+                    "Unit of work can not be successfully completed, because of not all subordinate units of work are successfully completed.");
             }
+
+            if (completed.HasValue)
+            {
+                throw new Exception(string.Format("Unit of work has been already completed(with success - {0}).", completed));                
+            }
+
+            try
+            {
+                dataContext.Commit();
+            }
+            catch
+            {
+                completed = false;
+                throw;
+            }
+
             completed = true;
-            return new UnitOfWorkCompletion();
         }
 
-        #region Nested type: UnitOfWorkCompletion
-
-        private class UnitOfWorkCompletion : IUnitOfWorkCompletion
+        public virtual T Complete<T>(Func<UnitOfWork, T> forReturn)
         {
+            var result = forReturn(this);
+            Complete();
+            return result;
         }
 
-        #endregion
+        public virtual T Complete<T>(Func<T> forReturn)
+        {
+            var result = forReturn();
+            Complete();
+            return result;
+        }
+
+        public virtual T Complete<T>(T forReturn)
+        {
+            Complete();
+            return forReturn;
+        }
     }
 }

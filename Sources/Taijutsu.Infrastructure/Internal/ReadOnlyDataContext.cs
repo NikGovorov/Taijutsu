@@ -18,7 +18,6 @@ namespace Taijutsu.Infrastructure.Internal
 {
     public class ReadOnlyDataContext : IReadOnlyDataContext
     {
-        private DateTime creationDate;
         private ReadOnlyDataProvider dataProvider;
         private bool isClosed;
         private UnitOfQueryConfig queryConfig;
@@ -27,12 +26,11 @@ namespace Taijutsu.Infrastructure.Internal
         public ReadOnlyDataContext(UnitOfQueryConfig unitOfQueryConfig, ReadOnlyDataContextSupervisor supervisor)
         {
             queryConfig = unitOfQueryConfig;
-            creationDate = DateTime.Now;
             this.supervisor = supervisor;
             dataProvider = supervisor.CreateDataProvider(unitOfQueryConfig);
         }
 
-        public virtual UnitOfQueryConfig QueryConfig
+        public virtual UnitOfQueryConfig UnitOfQueryConfig
         {
             get { return queryConfig; }
         }
@@ -55,11 +53,6 @@ namespace Taijutsu.Infrastructure.Internal
         }
 
 
-        public virtual DateTime CreationDate
-        {
-            get { return creationDate; }
-        }
-
         public virtual void Close()
         {
             isClosed = true;
@@ -79,13 +72,11 @@ namespace Taijutsu.Infrastructure.Internal
 
     public class ReadOnlyDataContextDecorator : IReadOnlyDataContext
     {
-        private readonly DateTime creationDate;
         private readonly ReadOnlyDataContext readOnlyDataContext;
 
         public ReadOnlyDataContextDecorator(ReadOnlyDataContext readOnlyDataContext)
         {
             this.readOnlyDataContext = readOnlyDataContext;
-            creationDate = DateTime.Now;
         }
 
         #region IReadOnlyDataContext Members
@@ -98,11 +89,6 @@ namespace Taijutsu.Infrastructure.Internal
         public IReadOnlyDataProvider ReadOnlyProvider
         {
             get { return readOnlyDataContext.ReadOnlyProvider; }
-        }
-
-        public DateTime CreationDate
-        {
-            get { return creationDate; }
         }
 
         public void Close()

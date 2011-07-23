@@ -21,7 +21,6 @@ namespace Taijutsu.Infrastructure.Internal
     {
         bool Closed { get; }
         IReadOnlyDataProvider ReadOnlyProvider { get; }
-        DateTime CreationDate { get; }
         void Close();
     }
 }

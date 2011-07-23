@@ -13,6 +13,7 @@
 
 using System;
 using System.Data;
+using System.Transactions;
 
 namespace Taijutsu.Infrastructure.Specs
 {
@@ -20,20 +21,15 @@ namespace Taijutsu.Infrastructure.Specs
     {
         public static void Main(string[] args)
         {
-            new UnitOfQuery(Require.Existing);
+            using (var scope = new TransactionScope())
+            {
+                scope.Complete();
+            }
+
+            using (var uow= new UnitOfWork(""))
+            {
+                
+            }
         } 
     }
-
-    public class UnitOfWhatEver: IDisposable
-    {
-        public UnitOfWhatEver(Require source = Require.Existing)
-        {
-        }
-
-        public void Dispose()
-        {
-            
-        }
-    }
-
 }
