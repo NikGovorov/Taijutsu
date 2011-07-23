@@ -11,20 +11,20 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-
-using System;
+using System.Data;
 
 namespace Taijutsu.Infrastructure.Internal
 {
-    public interface IBaseReadOnlyDataContext : IDisposable
+    public class UnitOfQueryConfig : UnitOfWorkConfig
     {
-        bool Closed { get; }
-        IReadOnlyDataProvider ReadOnlyProvider { get; }
-        DateTime CreationDate { get; }
-        void Close();
-    }
+        protected internal UnitOfQueryConfig()
+        {
+        }
 
-    public interface IReadOnlyDataContext : IBaseReadOnlyDataContext
-    {
+        protected internal UnitOfQueryConfig(string sourceName, IsolationLevel isolationLevel, Require require) : base(sourceName, isolationLevel, require)
+        {
+        }
+
+        public virtual bool ActAsUnitOfWorkPart { get; set; }
     }
 }

@@ -15,21 +15,20 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Taijutsu.Infrastructure.Config;
 using Taijutsu.Infrastructure.Internal;
 
 namespace Taijutsu.Infrastructure
 {
-    public class LifeTime : IDisposable
+    public class LifeTimeScope : IDisposable
     {
         private readonly IDataProviderPlanningPolicy dataContextSharing;
 
-        public LifeTime()
+        public LifeTimeScope()
             : this(new DataProviderPlanningPolicy())
         {
         }
 
-        public LifeTime(IDataProviderPlanningPolicy dataContextSharing)
+        public LifeTimeScope(IDataProviderPlanningPolicy dataContextSharing)
         {
             SupervisorContext.RegisterUnitScopeWith(dataContextSharing);
             this.dataContextSharing = dataContextSharing;

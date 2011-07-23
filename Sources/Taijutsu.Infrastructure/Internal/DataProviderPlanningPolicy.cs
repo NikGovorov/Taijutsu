@@ -12,8 +12,6 @@
 // specific language governing permissions and limitations under the License.
 
 
-using Taijutsu.Infrastructure.Config;
-
 namespace Taijutsu.Infrastructure.Internal
 {
     public class DataProviderPlanningPolicy : IDataProviderPlanningPolicy

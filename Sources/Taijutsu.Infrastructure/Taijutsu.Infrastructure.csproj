@@ -43,16 +43,13 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Config\SubUnitOfWorkConfig.cs" />
-    <Compile Include="Config\UnitOfQueryConfig.cs" />
-    <Compile Include="Config\UnitOfWorkConfig.cs" />
     <Compile Include="Internal\DataContext.cs" />
     <Compile Include="Internal\DataContextLifeCycle.cs" />
     <Compile Include="Internal\DataContextSupervisor.cs" />
     <Compile Include="Internal\DataProvider.cs" />
     <Compile Include="Internal\DataProviderPlanningPolicy.cs" />
     <Compile Include="Internal\IAdvancedUnitOfWork.cs" />
-    <Compile Include="Internal\IBaseReadOnlyDataContext.cs" />
+    <Compile Include="Internal\IReadOnlyDataContext.cs" />
     <Compile Include="Internal\IConceitedUnitOfWork.cs" />
     <Compile Include="Internal\IDataContext.cs" />
     <Compile Include="Internal\IDataProvider.cs" />
@@ -62,6 +59,7 @@
     <Compile Include="Internal\Infrastructure.cs" />
     <Compile Include="Internal\IReadOnlyDataProvider.cs" />
     <Compile Include="Internal\IReadOnlyDataProviderFactory.cs" />
+    <Compile Include="Internal\IsolationLevelEx.cs" />
     <Compile Include="Internal\IUnitOfWorkCompletion.cs" />
     <Compile Include="Internal\IUnitOfWorkLifeCycle.cs" />
     <Compile Include="Internal\MarkingStep.cs" />
@@ -71,8 +69,10 @@
     <Compile Include="Internal\ReadOnlyDataContextSupervisor.cs" />
     <Compile Include="Internal\ReadOnlyDataProvider.cs" />
     <Compile Include="Internal\SupervisorContext.cs" />
-    <Compile Include="LifeTime.cs" />
-    <Compile Include="SubUnitOfWork.cs" />
+    <Compile Include="Internal\UnitOfQueryConfig.cs" />
+    <Compile Include="Internal\UnitOfWorkConfig.cs" />
+    <Compile Include="LifeTimeScope.cs" />
+    <Compile Include="Require.cs" />
     <Compile Include="UnitOfQuery.cs" />
     <Compile Include="UnitOfWork.cs" />
     <Compile Include="UnitOfWorkEx.cs" />

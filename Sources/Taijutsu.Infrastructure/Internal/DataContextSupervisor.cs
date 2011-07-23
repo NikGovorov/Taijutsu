@@ -11,18 +11,14 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Taijutsu.Domain;
-using Taijutsu.Infrastructure.Config;
-
 
 namespace Taijutsu.Infrastructure.Internal
 {
-
     public abstract class AbstractDataContextSupervisor
     {
         private readonly IDataProviderPlanningPolicy dataContextSharingPolicy;
@@ -46,8 +42,8 @@ namespace Taijutsu.Infrastructure.Internal
     public interface IDataContextSupervisor
     {
         Maybe<IDataContext> CurrentContext { get; }
+        bool HasTopLevel(UnitOfWorkConfig unitOfQueryConfig);
         IDataContext RegisterUnitOfWorkBasedOn(UnitOfWorkConfig unitOfWorkConfig);
-        IDataContext RegisterUnitOfWorkBasedOn(SubUnitOfWorkConfig unitOfWorkConfig);
     }
 
     public class DataContextSupervisor : AbstractDataContextSupervisor, IDataContextSupervisor
@@ -80,32 +76,49 @@ namespace Taijutsu.Infrastructure.Internal
             }
         }
 
+        public virtual bool HasTopLevel(UnitOfWorkConfig unitOfQueryConfig)
+        {
+            var context = (from query in unitsOfWork
+                           where query.UnitOfWorkConfig.SourceName == unitOfQueryConfig.SourceName
+                           select query).LastOrDefault();
+            return context != null && context.UnitOfWorkConfig.IsolationLevel.IsCompatible(unitOfQueryConfig.IsolationLevel);
+        }
+
         public virtual IDataContext RegisterUnitOfWorkBasedOn(UnitOfWorkConfig unitOfWorkConfig)
         {
-            var dataContext = new DataContext(unitOfWorkConfig, this);
-            unitsOfWork.Add(dataContext);
-            return dataContext;
-        }
-
-        public virtual IDataContext RegisterUnitOfWorkBasedOn(SubUnitOfWorkConfig unitOfWorkConfig)
-        {
-            DataContext dataContext = (from unit in unitsOfWork
-                                       where
-                                           unit.UnitOfWorkConfig.SourceName ==
-                                           unitOfWorkConfig.UnitOfWorkConfig.SourceName
-                                       select unit).LastOrDefault();
-
-            if (dataContext == null)
+            if (unitOfWorkConfig.Require == Require.New)
             {
-                if (unitOfWorkConfig.RunAsRoot)
-                {
-                    return SupervisorContext.DataContextSupervisor.RegisterUnitOfWorkBasedOn(unitOfWorkConfig.UnitOfWorkConfig);
-                }
-                throw new Exception("Creation of subunit of work is not allowed without having root unit of work.");
+                var newContext = new DataContext(unitOfWorkConfig, this);
+                unitsOfWork.Add(newContext);
+                return newContext;
             }
-            var subContext = new DataContextDecorator(dataContext);
-            return subContext;
+
+            var context = (from unit in unitsOfWork
+                           where unit.UnitOfWorkConfig.SourceName == unitOfWorkConfig.SourceName
+                           select unit).LastOrDefault();
+
+
+            if (context != null)
+            {
+                if (!context.UnitOfWorkConfig.IsolationLevel.IsCompatible(unitOfWorkConfig.IsolationLevel))
+                {
+                    throw new Exception(string.Format("Isolation level '{0}' is not compatible with '{1}'.",
+                                                      context.UnitOfWorkConfig.IsolationLevel,
+                                                      unitOfWorkConfig.IsolationLevel));
+                }
+                return new DataContextDecorator(context);
+            }
+
+            if (unitOfWorkConfig.Require == Require.Existing)
+                throw new Exception(
+                    "Unit of work requires existing of unit of work at top level, but nothing has not been found.");
+
+            context = new DataContext(unitOfWorkConfig, this);
+            unitsOfWork.Add(context);
+            return context;
         }
+
+        
 
         #endregion
 

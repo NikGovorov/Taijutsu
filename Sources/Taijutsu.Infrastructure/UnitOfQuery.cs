@@ -11,12 +11,11 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-
 using System;
-using Taijutsu.Infrastructure.Config;
-using Taijutsu.Infrastructure.Internal;
+using System.Data;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
+using Taijutsu.Infrastructure.Internal;
 
 namespace Taijutsu.Infrastructure
 {
@@ -24,12 +23,47 @@ namespace Taijutsu.Infrastructure
     {
         private readonly IReadOnlyDataContext dataContext;
 
-        public UnitOfQuery() : this(new UnitOfQueryConfig())
+        public UnitOfQuery(string source = "", IsolationLevel isolation = IsolationLevel.Unspecified,
+                           Require require = Require.None) : this(new UnitOfQueryConfig(source, isolation, require))
+        {
+        }
+
+        public UnitOfQuery(IsolationLevel isolation = IsolationLevel.Unspecified)
+            : this(new UnitOfQueryConfig("", isolation, Require.None))
+        {
+        }
+
+        public UnitOfQuery(Require require)
+            : this(new UnitOfQueryConfig("", IsolationLevel.Unspecified, require))
+        {
+        }
+
+        public UnitOfQuery(string source)
+            : this(new UnitOfQueryConfig(source, IsolationLevel.Unspecified, Require.None))
+        {
+        }
+
+        public UnitOfQuery(string source = "", bool actAsUnitOfWorkPart = false)
+            : this(
+                new UnitOfQueryConfig(source, IsolationLevel.Unspecified, Require.None)
+                    {ActAsUnitOfWorkPart = actAsUnitOfWorkPart})
+        {
+        }
+
+
+        public UnitOfQuery()
+            : this(new UnitOfQueryConfig())
         {
         }
 
         public UnitOfQuery(UnitOfQueryConfig unitOfQueryConfig)
         {
+            if (unitOfQueryConfig.ActAsUnitOfWorkPart 
+                && !SupervisorContext.ReadOnlyDataContextSupervisor.HasTopLevel(unitOfQueryConfig)
+                &&  SupervisorContext.DataContextSupervisor.HasTopLevel(unitOfQueryConfig))
+            {
+                dataContext = SupervisorContext.DataContextSupervisor.RegisterUnitOfWorkBasedOn(unitOfQueryConfig);    
+            }
             dataContext = SupervisorContext.ReadOnlyDataContextSupervisor.RegisterUnitOfQueryBasedOn(unitOfQueryConfig);
         }
 
@@ -37,6 +71,13 @@ namespace Taijutsu.Infrastructure
 
         void IDisposable.Dispose()
         {
+            var ctx = dataContext as IDataContext;
+            
+            if (ctx != null)
+            {
+                ctx.Commit();
+            }
+
             dataContext.Close();
         }
 
@@ -64,11 +105,11 @@ namespace Taijutsu.Infrastructure
             return dataContext.ReadOnlyProvider.UniqueOf<TEntity>(key);
         }
 
+        #endregion
+
         public virtual IQueryOverBuilder<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity
         {
             return dataContext.ReadOnlyProvider.QueryOver<TEntity>();
         }
-
-        #endregion
     }
 }

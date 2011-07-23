@@ -11,11 +11,29 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System;
+using System.Data;
 
-namespace Taijutsu.Infrastructure.Internal
+namespace Taijutsu.Infrastructure.Specs
 {
-    public interface IReadOnlyDataProviderFactory
+    public class Test
     {
-        ReadOnlyDataProvider Create(UnitOfQueryConfig config);
+        public static void Main(string[] args)
+        {
+            new UnitOfQuery(Require.Existing);
+        } 
     }
+
+    public class UnitOfWhatEver: IDisposable
+    {
+        public UnitOfWhatEver(Require source = Require.Existing)
+        {
+        }
+
+        public void Dispose()
+        {
+            
+        }
+    }
+
 }

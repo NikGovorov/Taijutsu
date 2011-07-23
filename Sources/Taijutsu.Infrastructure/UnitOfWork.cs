@@ -14,7 +14,6 @@
 
 using System;
 using System.Collections.Generic;
-using Taijutsu.Infrastructure.Config;
 using Taijutsu.Infrastructure.Internal;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;

@@ -12,11 +12,9 @@
 // specific language governing permissions and limitations under the License.
 
 
-using Taijutsu.Infrastructure.Config;
-
 namespace Taijutsu.Infrastructure.Internal
 {
-    public interface IDataContext : IBaseReadOnlyDataContext, IAdvancedUnitOfWork
+    public interface IDataContext : IReadOnlyDataContext, IAdvancedUnitOfWork
     {
         UnitOfWorkConfig UnitOfWorkConfig { get; }
         IDataProvider Provider { get; }

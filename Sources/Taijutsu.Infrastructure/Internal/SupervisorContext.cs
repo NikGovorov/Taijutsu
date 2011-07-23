@@ -22,6 +22,7 @@ namespace Taijutsu.Infrastructure.Internal
         private const string DefaultDataContextSupervisorKey = "DataContextSupervisor";
         private const string DefaultReadOnlyDataContextSupervisorKey = "ReadOnlyDataContextSupervisor";
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         internal static IDataContextSupervisor DataContextSupervisor
         {
             get

@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Taijutsu.Infrastructure.Config;
 
 namespace Taijutsu.Infrastructure.Internal
 {
@@ -70,7 +69,7 @@ namespace Taijutsu.Infrastructure.Internal
         }
 
 
-        IReadOnlyDataProvider IBaseReadOnlyDataContext.ReadOnlyProvider
+        IReadOnlyDataProvider IReadOnlyDataContext.ReadOnlyProvider
         {
             get { return Provider; }
         }
@@ -217,9 +216,9 @@ namespace Taijutsu.Infrastructure.Internal
             get { return dataContext.Closed; }
         }
 
-        IReadOnlyDataProvider IBaseReadOnlyDataContext.ReadOnlyProvider
+        IReadOnlyDataProvider IReadOnlyDataContext.ReadOnlyProvider
         {
-            get { return ((IBaseReadOnlyDataContext) dataContext).ReadOnlyProvider; }
+            get { return ((IReadOnlyDataContext) dataContext).ReadOnlyProvider; }
         }
 
         public virtual DateTime CreationDate
@@ -259,7 +258,7 @@ namespace Taijutsu.Infrastructure.Internal
             }
         }
 
-        void IBaseReadOnlyDataContext.Close()
+        void IReadOnlyDataContext.Close()
         {
         }
 
@@ -267,7 +266,7 @@ namespace Taijutsu.Infrastructure.Internal
         {
             if (!Closed)
             {
-                ((IBaseReadOnlyDataContext) this).Close();
+                ((IReadOnlyDataContext) this).Close();
             }
         }
 

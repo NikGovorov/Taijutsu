@@ -13,7 +13,6 @@
 
 
 using System;
-using Taijutsu.Infrastructure.Config;
 
 namespace Taijutsu.Infrastructure.Internal
 {

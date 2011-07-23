@@ -12,15 +12,16 @@
 // specific language governing permissions and limitations under the License.
 
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Taijutsu.Infrastructure.Config;
 
 namespace Taijutsu.Infrastructure.Internal
 {
     public interface IReadOnlyDataContextSupervisor
     {
         IReadOnlyDataContext RegisterUnitOfQueryBasedOn(UnitOfQueryConfig unitOfQueryConfig);
+        bool HasTopLevel(UnitOfQueryConfig unitOfQueryConfig);
     }
 
     public class ReadOnlyDataContextSupervisor : AbstractDataContextSupervisor, IReadOnlyDataContextSupervisor
@@ -40,17 +41,40 @@ namespace Taijutsu.Infrastructure.Internal
 
         public virtual IReadOnlyDataContext RegisterUnitOfQueryBasedOn(UnitOfQueryConfig unitOfQueryConfig)
         {
+            if (unitOfQueryConfig.Require == Require.New)
+            {
+                var newContext = new ReadOnlyDataContext(unitOfQueryConfig, this);
+                unitsOfQuery.Add(newContext);
+                return newContext;
+            }
+
             var context = (from query in unitsOfQuery
                            where query.QueryConfig.SourceName == unitOfQueryConfig.SourceName
                            select query).LastOrDefault();
 
             if (context != null)
             {
+                if (!context.QueryConfig.IsolationLevel.IsCompatible(unitOfQueryConfig.IsolationLevel))
+                {
+                    throw new Exception(string.Format("Isolation level '{0}' is not compatible with '{1}'.", context.QueryConfig.IsolationLevel, unitOfQueryConfig.IsolationLevel));
+                }
                 return new ReadOnlyDataContextDecorator(context);
             }
+
+            if(unitOfQueryConfig.Require == Require.Existing)
+                throw new Exception("Unit of query requires existing of unit of query at top level, but nothing has not been found.");
+
             context = new ReadOnlyDataContext(unitOfQueryConfig, this);
             unitsOfQuery.Add(context);
             return context;
+        }
+
+        public virtual bool HasTopLevel(UnitOfQueryConfig unitOfQueryConfig)
+        {
+            var context = (from query in unitsOfQuery
+             where query.QueryConfig.SourceName == unitOfQueryConfig.SourceName
+             select query).LastOrDefault();
+            return context != null && context.QueryConfig.IsolationLevel.IsCompatible(unitOfQueryConfig.IsolationLevel);
         }
 
         #endregion
