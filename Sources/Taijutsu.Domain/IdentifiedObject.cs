@@ -25,6 +25,7 @@ namespace Taijutsu.Domain
         public virtual bool Equals(IdentifiedObject<TIdentifier> other)
         {
             if (ReferenceEquals(other, null)) return false;
+
             if (Equals(BuildIdentity(), default(TIdentifier)) && Equals(other.BuildIdentity(), default(TIdentifier)))
             {
                 return ReferenceEquals(other, this);
@@ -57,6 +58,11 @@ namespace Taijutsu.Domain
 
             // ReSharper restore NonReadonlyFieldInGetHashCode
             return BuildIdentity().GetHashCode();
+        }
+
+        protected virtual object InternalGetType()
+        {
+            return GetType();
         }
 
         public static bool operator ==(

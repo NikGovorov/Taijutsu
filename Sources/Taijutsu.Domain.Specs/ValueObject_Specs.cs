@@ -25,15 +25,31 @@ namespace Taijutsu.Domain.Specs
         {
             var name1 = new FullName("Test", "MegaTest");
             var name2 = new FullName("Test", "MegaTest");
+            var name2x = (object) name2;
+
             var name3 = new FullName("Test2", "OmegaTest");
             var name4 = new ExFullName("Test2", "OmegaTest", "khsadf");
 
             Assert.IsTrue(name1 == name2);
+            Assert.IsTrue(name1.GetHashCode() == name2.GetHashCode());
+            Assert.IsTrue(name1.Equals(name2x));
+            
             Assert.IsTrue(name2 != name3);
             Assert.IsTrue(name1 != name3);
+            Assert.IsTrue(name1.GetHashCode() != name3.GetHashCode());
+
             Assert.IsFalse(name1.Equals(null));
             Assert.IsTrue(null != name3);
             Assert.IsTrue(name4 != name3);
+            Assert.IsTrue(name4.GetHashCode() != name3.GetHashCode());
+
+
+            var name5 = new FullNameMirror("Test", "MegaTest");
+            var name6 = new FullNameAbsoluteMirror("Test", "MegaTest");
+            
+            Assert.IsTrue(name5.Equals(name1));
+            Assert.IsTrue(name6.Equals(name1));
+
         }
 
         public class ExFullName: FullName
@@ -53,6 +69,26 @@ namespace Taijutsu.Domain.Specs
             protected override object BuildIdentity()
             {
                 return new {firstName, secondName, anotherName};
+            }
+        }
+
+        public class FullNameMirror : FullName
+        {
+            public FullNameMirror(string firstName, string secondName) : base(firstName, secondName)
+            {
+            }
+
+            protected override object BuildIdentity()
+            {
+                return new { firstName, secondName};
+            }
+        }
+
+        public class FullNameAbsoluteMirror : FullName
+        {
+            public FullNameAbsoluteMirror(string firstName, string secondName)
+                : base(firstName, secondName)
+            {
             }
         }
 

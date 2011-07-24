@@ -30,7 +30,6 @@ namespace Taijutsu.Domain
         public virtual TKey Key
         {
             get { return entityKey; }
-            protected set { entityKey = value; }
         }
 
         #endregion
@@ -39,14 +38,20 @@ namespace Taijutsu.Domain
 
         public virtual bool Equals(Entity<TKey> other)
         {
-            return Equals(other as IdentifiedObject<TKey>);
+            if (ReferenceEquals(other, null)) return false;
+
+            return InternalGetType() == other.InternalGetType() && Equals(other as IdentifiedObject<TKey>);
         }
 
         #endregion
 
         public override bool Equals(object other)
         {
-            return base.Equals(other as IdentifiedObject<TKey>);
+            var asEntity = (other as Entity<TKey>);
+
+            return  !ReferenceEquals(asEntity, null)
+                    && InternalGetType() == asEntity.InternalGetType() 
+                    && Equals(asEntity as IdentifiedObject<TKey>);
         }
 
         public override int GetHashCode()
@@ -58,7 +63,6 @@ namespace Taijutsu.Domain
         {
             return Key;
         }
-
 
         public static bool operator ==(Entity<TKey> left, Entity<TKey> right)
         {

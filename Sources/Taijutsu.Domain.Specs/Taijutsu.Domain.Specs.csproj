@@ -58,6 +58,11 @@
     <Compile Include="ContextSpecification.cs" />
     <Compile Include="Domain\Customer.cs" />
     <Compile Include="Domain\FullName.cs" />
+    <Compile Include="Domain\InternetOrder.cs" />
+    <Compile Include="Domain\IOrder.cs" />
+    <Compile Include="Domain\Order.cs" />
+    <Compile Include="Domain\Product.cs" />
+    <Compile Include="Entity_Specs.cs" />
     <Compile Include="Maybe_Spec.cs" />
     <Compile Include="SeqGuid_Spec.cs" />
     <Compile Include="SystemTime_Spec.cs" />

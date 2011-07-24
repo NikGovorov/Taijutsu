@@ -1,4 +1,4 @@
-// Copyright 2009-2011 Taijutsu.
+﻿// Copyright 2009-2011 Taijutsu.
 //   
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -11,39 +11,17 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System;
-
 namespace Taijutsu.Domain.Specs.Domain
 {
-    public class Customer : Entity<Guid>, IRemovableEntity
+    public class Product: Entity<int>
     {
-        protected DateTime creationDate;
-        protected FullName name;
-
-        protected Customer()
+        public Product(int key)
         {
-        }
-
-        public Customer(Guid key, FullName name)
-        {
-            creationDate = SystemTime.Now;
             entityKey = key;
-            this.name = name;
         }
 
-
-        public Customer(FullName name): this(SeqGuid.NewGuid(), name)
+        public Product()
         {
-        }
-
-        public virtual DateTime CreationDate
-        {
-            get { return creationDate; }
-        }
-
-        public virtual FullName Name
-        {
-            get { return name; }
         }
     }
 }
