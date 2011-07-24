@@ -172,6 +172,7 @@ namespace Taijutsu.Infrastructure.Internal
     {
         private readonly DataContext dataContext;
         private bool? completed;
+        private IDictionary<string, IDisposable> extension;
 
         public ChildDataContext(DataContext dataContext)
         {
@@ -226,6 +227,29 @@ namespace Taijutsu.Infrastructure.Internal
 
         void IReadOnlyDataContext.Close()
         {
+            Exception lastExException = null;
+            if (extension != null)
+            {
+                foreach (var disposable in extension.Values)
+                {
+                    try
+                    {
+                        disposable.Dispose();
+                    }
+                    catch (Exception exception)
+                    {
+                        lastExException = exception;
+                        Trace.TraceWarning(exception.ToString());
+                    }
+                }
+            }
+
+            extension = null;
+
+            if (lastExException != null)
+            {
+                throw lastExException;
+            }
         }
 
         void IDisposable.Dispose()
@@ -236,9 +260,10 @@ namespace Taijutsu.Infrastructure.Internal
             }
         }
 
+        
         public virtual IDictionary<string, IDisposable> Extension
         {
-            get { return dataContext.Extension; }
+            get { return extension ?? (extension = new Dictionary<string, IDisposable>()); }
         }
 
         #endregion
