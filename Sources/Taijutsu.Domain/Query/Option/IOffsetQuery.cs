@@ -15,6 +15,6 @@ namespace Taijutsu.Domain.Query.Option
 {
     public interface IOffsetQuery<out TQuery> : IQuery where TQuery : IQuery
     {
-        TQuery Skip(uint count);
+        TQuery Skip(int count);
     }
 }

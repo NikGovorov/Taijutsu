@@ -15,6 +15,6 @@ namespace Taijutsu.Domain.Query.Option
 {
     public interface ILimitQuery<out TQuery> : IQuery where TQuery : IQuery
     {
-        TQuery Take(uint count);
+        TQuery Take(int count);
     }
 }
