@@ -11,7 +11,6 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-
 using System;
 using System.ComponentModel;
 using Taijutsu.Domain;
@@ -21,12 +20,13 @@ namespace Taijutsu.Infrastructure.Internal
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class Infrastructure
     {
-        private static IDataProviderFactory dataProviderFactory;
-        public static string DefaultUnitSourceName = "main.";
-        private static IReadOnlyDataProviderFactory readOnlyDataProviderFactory;
+        public static string DefaultDataSourceName = "main";
+
+        private static Func<UnitOfWorkConfig, DataProvider> dataProviderFactory;
+        private static Func<UnitOfQueryConfig, ReadOnlyDataProvider> readOnlyDataProviderFactory;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IReadOnlyDataProviderFactory ReadOnlyDataProviderFactory
+        public static Func<UnitOfQueryConfig, ReadOnlyDataProvider> ReadOnlyDataProviderFactory
         {
             get
             {
@@ -49,7 +49,7 @@ namespace Taijutsu.Infrastructure.Internal
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IDataProviderFactory DataProviderFactory
+        public static Func<UnitOfWorkConfig, DataProvider> DataProviderFactory
         {
             get
             {

@@ -54,12 +54,12 @@ namespace Taijutsu.Infrastructure
 
             public DataProvider Register(UnitOfWorkConfig config)
             {
-                return Internal.Infrastructure.DataProviderFactory.Create(config);
+                return Internal.Infrastructure.DataProviderFactory(config);
             }
 
             public ReadOnlyDataProvider Register(UnitOfQueryConfig config)
             {
-                return Internal.Infrastructure.ReadOnlyDataProviderFactory.Create(config);
+                return Internal.Infrastructure.ReadOnlyDataProviderFactory(config);
             }
 
             public void Dispose()

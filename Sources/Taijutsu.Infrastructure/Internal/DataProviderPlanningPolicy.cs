@@ -20,7 +20,7 @@ namespace Taijutsu.Infrastructure.Internal
 
         public virtual DataProvider Register(UnitOfWorkConfig unitofWorkConfig)
         {
-            return Infrastructure.DataProviderFactory.Create(unitofWorkConfig);
+            return Infrastructure.DataProviderFactory(unitofWorkConfig);
         }
 
         public virtual void Terminate(ReadOnlyDataProvider readOnlyDataProvider)
@@ -30,7 +30,7 @@ namespace Taijutsu.Infrastructure.Internal
 
         public virtual ReadOnlyDataProvider Register(UnitOfQueryConfig config)
         {
-            return Infrastructure.ReadOnlyDataProviderFactory.Create(config);
+            return Infrastructure.ReadOnlyDataProviderFactory(config);
         }
 
         public virtual void Dispose()

@@ -17,7 +17,7 @@ namespace Taijutsu.Infrastructure.Internal
 {
     public class UnitOfWorkConfig
     {
-        protected string dataSourceName = Infrastructure.DefaultUnitSourceName;
+        protected string dataSourceName = Infrastructure.DefaultDataSourceName;
         protected IsolationLevel isolation = IsolationLevel.Unspecified;
         protected Require req = Require.None;
 
@@ -29,7 +29,7 @@ namespace Taijutsu.Infrastructure.Internal
         {
             if (string.IsNullOrEmpty(sourceName))
             {
-                sourceName = Infrastructure.DefaultUnitSourceName;
+                sourceName = Infrastructure.DefaultDataSourceName;
             }
             dataSourceName = sourceName;
             isolation = isolationLevel;

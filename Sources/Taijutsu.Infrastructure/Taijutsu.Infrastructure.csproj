@@ -51,12 +51,10 @@
     <Compile Include="Internal\IReadOnlyDataContext.cs" />
     <Compile Include="Internal\IDataContext.cs" />
     <Compile Include="Internal\IDataProvider.cs" />
-    <Compile Include="Internal\IDataProviderFactory.cs" />
     <Compile Include="Internal\IDataProviderPlanningPolicy.cs" />
     <Compile Include="Internal\INativeUnitOf.cs" />
     <Compile Include="Internal\Infrastructure.cs" />
     <Compile Include="Internal\IReadOnlyDataProvider.cs" />
-    <Compile Include="Internal\IReadOnlyDataProviderFactory.cs" />
     <Compile Include="Internal\IsolationLevelEx.cs" />
     <Compile Include="Internal\MarkingStep.cs" />
     <Compile Include="Internal\OfflineDataProvider.cs" />

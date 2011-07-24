@@ -40,6 +40,9 @@
     <Reference Include="pnunit.framework">
       <HintPath>..\..\Packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\..\Packages\RhinoMocks.3.6\lib\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -55,6 +58,16 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ContextSpecification.cs" />
+    <Compile Include="Domain\Cusomer.cs" />
+    <Compile Include="MaybeSpec.cs" />
+    <Compile Include="SystemTimeSpec.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Taijutsu.Domain\Taijutsu.Domain.csproj">
+      <Project>{BFFB4ED9-8A84-4AB0-8328-C733399C445B}</Project>
+      <Name>Taijutsu.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
