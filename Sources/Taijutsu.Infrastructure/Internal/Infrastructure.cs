@@ -20,6 +20,7 @@ namespace Taijutsu.Infrastructure.Internal
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class Infrastructure
     {
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static string DefaultDataSourceName = "main";
 
         private static Func<UnitOfWorkConfig, DataProvider> dataProviderFactory;
@@ -39,11 +40,6 @@ namespace Taijutsu.Infrastructure.Internal
             }
             set
             {
-                if (readOnlyDataProviderFactory != null)
-                {
-                    throw new Exception("ReadOnlyDataProviderFactory has been already initialized.");
-                }
-
                 readOnlyDataProviderFactory = value;
             }
         }
@@ -62,11 +58,6 @@ namespace Taijutsu.Infrastructure.Internal
             }
             set
             {
-                if (dataProviderFactory != null)
-                {
-                    throw new Exception("DataProviderFactory has been already initialized.");
-                }
-
                 dataProviderFactory = value;
             }
         }

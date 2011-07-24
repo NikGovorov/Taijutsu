@@ -56,6 +56,7 @@
     <Compile Include="Internal\Infrastructure.cs" />
     <Compile Include="Internal\IReadOnlyDataProvider.cs" />
     <Compile Include="Internal\IsolationLevelEx.cs" />
+    <Compile Include="Internal\IUnitOfWork.cs" />
     <Compile Include="Internal\MarkingStep.cs" />
     <Compile Include="Internal\OfflineDataProvider.cs" />
     <Compile Include="Internal\OfflineReadOnlyDataProvider.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="Internal\UnitOfQueryConfig.cs" />
     <Compile Include="Internal\UnitOfWorkConfig.cs" />
     <Compile Include="LifeTimeScope.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Require.cs" />
     <Compile Include="UnitOfQuery.cs" />
     <Compile Include="UnitOfWork.cs" />

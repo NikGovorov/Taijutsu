@@ -109,6 +109,7 @@ namespace Taijutsu.Infrastructure.Internal
         public virtual void Close()
         {
             closed = true;
+            Exception lastExException = null;
             if (extension != null)
             {
                 foreach (var disposable in extension.Values)
@@ -119,6 +120,7 @@ namespace Taijutsu.Infrastructure.Internal
                     }
                     catch (Exception exception)
                     {
+                        lastExException = exception;
                         Trace.TraceWarning(exception.ToString());
                     }
                 }
@@ -126,6 +128,12 @@ namespace Taijutsu.Infrastructure.Internal
 
             extension = null;
             dataProvider = supervisor.RegisterForTerminate(this);
+            
+            if (lastExException != null)
+            {
+                throw lastExException;
+            }
+
         }
 
         void IDisposable.Dispose()
@@ -190,7 +198,7 @@ namespace Taijutsu.Infrastructure.Internal
 
         public virtual bool Ready
         {
-            get { return !completed.HasValue ? false : completed.Value; }
+            get { return true; }
         }
 
         public virtual void Commit()

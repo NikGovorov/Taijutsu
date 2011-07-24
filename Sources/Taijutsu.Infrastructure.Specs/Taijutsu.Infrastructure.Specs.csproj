@@ -40,6 +40,9 @@
     <Reference Include="pnunit.framework">
       <HintPath>..\..\Packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.Mocks">
+      <HintPath>..\..\Packages\RhinoMocks.3.6\lib\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Transactions" />
@@ -50,15 +53,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\GlobalAssemblyInfo.cs">
-      <Link>Properties\GlobalAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Test.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Taijutsu.Domain.Specs\Taijutsu.Domain.Specs.csproj">
+      <Project>{964C8BBD-782B-4DEA-B59D-2657DB06FD20}</Project>
+      <Name>Taijutsu.Domain.Specs</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Taijutsu.Domain\Taijutsu.Domain.csproj">
       <Project>{BFFB4ED9-8A84-4AB0-8328-C733399C445B}</Project>
       <Name>Taijutsu.Domain</Name>
@@ -67,6 +68,14 @@
       <Project>{64693864-2D6F-4723-BD3A-A7C607BF129E}</Project>
       <Name>Taijutsu.Infrastructure</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="IsolationLevelEx_Spec.cs" />
+    <Compile Include="UnitOfWorkLevel_Spec.cs" />
+    <Compile Include="UnitOfWork_Spec.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

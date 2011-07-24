@@ -43,6 +43,7 @@ namespace Taijutsu.Infrastructure.Internal
     {
         Maybe<IDataContext> CurrentContext { get; }
         bool HasTopLevel(UnitOfWorkConfig unitOfQueryConfig);
+        IEnumerable<UnitOfWorkConfig> Roots { get; }
         IDataContext RegisterUnitOfWorkBasedOn(UnitOfWorkConfig unitOfWorkConfig);
     }
 
@@ -82,6 +83,11 @@ namespace Taijutsu.Infrastructure.Internal
                            where query.UnitOfWorkConfig.SourceName == unitOfQueryConfig.SourceName
                            select query).LastOrDefault();
             return context != null && context.UnitOfWorkConfig.IsolationLevel.IsCompatible(unitOfQueryConfig.IsolationLevel);
+        }
+
+        public virtual IEnumerable<UnitOfWorkConfig> Roots
+        {
+            get { return unitsOfWork.Select(u => u.UnitOfWorkConfig); }
         }
 
         public virtual IDataContext RegisterUnitOfWorkBasedOn(UnitOfWorkConfig unitOfWorkConfig)

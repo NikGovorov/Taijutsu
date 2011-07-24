@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2011 Taijutsu.
+// Copyright 2009-2011 Taijutsu.
 //   
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -12,24 +12,29 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
-using System.Data;
-using System.Transactions;
 
-namespace Taijutsu.Infrastructure.Specs
+namespace Taijutsu.Domain.Specs.Domain
 {
-    public class Test
+    public class Customer : Entity<Guid>, IRemovableEntity
     {
-        public static void Main(string[] args)
-        {
-            using (var scope = new TransactionScope())
-            {
-                scope.Complete();
-            }
+        protected DateTime creationDate;
+        protected string name;
 
-            using (var uow= new UnitOfWork(""))
-            {
-                
-            }
-        } 
+        public Customer()
+        {
+            entityKey = SeqGuid.NewGuid();
+            name = string.Empty;
+            creationDate = SystemTime.Now;
+        }
+
+        public virtual DateTime CreationDate
+        {
+            get { return creationDate; }
+        }
+
+        public virtual string Name
+        {
+            get { return name; }
+        }
     }
 }

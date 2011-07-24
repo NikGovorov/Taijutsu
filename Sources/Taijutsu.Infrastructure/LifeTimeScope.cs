@@ -74,7 +74,7 @@ namespace Taijutsu.Infrastructure
                         }
                         catch (Exception exception)
                         {
-                            Trace.TraceWarning(exception.ToString());
+                            Trace.TraceError(exception.ToString());
                         }
                     }
                     
@@ -86,7 +86,7 @@ namespace Taijutsu.Infrastructure
                         }
                         catch (Exception exception)
                         {
-                            Trace.TraceWarning(exception.ToString());
+                            Trace.TraceError(exception.ToString());
                         }
                     }
                 }

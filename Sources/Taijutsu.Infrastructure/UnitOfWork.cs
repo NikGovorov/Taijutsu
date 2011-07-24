@@ -18,6 +18,7 @@ using System.Data;
 using Taijutsu.Infrastructure.Internal;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
+using IUnitOfWork = Taijutsu.Infrastructure.Internal.IUnitOfWork;
 
 namespace Taijutsu.Infrastructure
 {
@@ -43,6 +44,16 @@ namespace Taijutsu.Infrastructure
 
         public UnitOfWork(string source)
             : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, Require.None))
+        {
+        }
+
+        public UnitOfWork(string source = "", Require require = Require.None)
+            : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, require))
+        {
+        }
+
+        public UnitOfWork(string source = "", IsolationLevel isolation = IsolationLevel.Unspecified)
+            : this(new UnitOfWorkConfig(source, isolation, Require.None))
         {
         }
 
@@ -154,7 +165,7 @@ namespace Taijutsu.Infrastructure
             completed = true;
         }
 
-        public virtual T Complete<T>(Func<UnitOfWork, T> forReturn)
+        public virtual T Complete<T>(Func<IUnitOfWork, T> forReturn)
         {
             var result = forReturn(this);
             Complete();

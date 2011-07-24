@@ -1,4 +1,4 @@
-// Copyright 2009-2011 Taijutsu.
+﻿// Copyright 2009-2011 Taijutsu.
 //   
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -11,30 +11,13 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System;
+using Taijutsu.Domain;
+using Taijutsu.Domain.Query;
 
-namespace Taijutsu.Domain.Specs.Domain
+namespace Taijutsu.Infrastructure.Internal
 {
-    public class Cusomer : Entity<Guid>
+    public interface IUnitOfWork : Domain.IUnitOfWork
     {
-        protected DateTime creationDate;
-        protected string name;
-
-        public Cusomer()
-        {
-            entityKey = SeqGuid.NewGuid();
-            name = string.Empty;
-            creationDate = SystemTime.Now;
-        }
-
-        public virtual DateTime CreationDate
-        {
-            get { return creationDate; }
-        }
-
-        public virtual string Name
-        {
-            get { return name; }
-        }
+        IQueryOverBuilder<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity;
     }
 }

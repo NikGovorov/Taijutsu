@@ -21,11 +21,11 @@ namespace Taijutsu.Domain.Specs
     [TestFixture]
     public class When_using_empty_maybe : ContextSpecification
     {
-        private Maybe<Cusomer> maybeCustomer;
+        private Maybe<Customer> maybeCustomer;
 
         protected override void When()
         {
-            maybeCustomer = Maybe<Cusomer>.Empty;
+            maybeCustomer = Maybe<Customer>.Empty;
         }
 
         protected override void Because()
@@ -56,7 +56,7 @@ namespace Taijutsu.Domain.Specs
         [ExpectedException(typeof(ArgumentException))]
         public virtual void value_should_not_be_accessible_through_cast_operator()
         {
-            Cusomer val = (Cusomer)maybeCustomer;
+            Customer val = (Customer)maybeCustomer;
         }
 
     }
@@ -65,13 +65,13 @@ namespace Taijutsu.Domain.Specs
     [TestFixture]
     public class When_using_not_empty_maybe : ContextSpecification
     {
-        private Maybe<Cusomer> maybeCustomer;
-        private Cusomer customer;
+        private Maybe<Customer> maybeCustomer;
+        private Customer customer;
 
         protected override void When()
         {
-            customer = new Cusomer();
-            maybeCustomer = new Maybe<Cusomer>(customer);
+            customer = new Customer();
+            maybeCustomer = new Maybe<Customer>(customer);
         }
 
         protected override void Because()
@@ -96,7 +96,7 @@ namespace Taijutsu.Domain.Specs
         public virtual void value_should_be_accessible()
         {
             Assert.AreSame(customer, maybeCustomer.Value);
-            Assert.AreSame(customer, (Cusomer)maybeCustomer); 
+            Assert.AreSame(customer, (Customer)maybeCustomer); 
         }
 
     }

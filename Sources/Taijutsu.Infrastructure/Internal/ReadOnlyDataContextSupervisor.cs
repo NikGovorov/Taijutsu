@@ -21,6 +21,7 @@ namespace Taijutsu.Infrastructure.Internal
     public interface IReadOnlyDataContextSupervisor
     {
         IReadOnlyDataContext RegisterUnitOfQueryBasedOn(UnitOfQueryConfig unitOfQueryConfig);
+        IEnumerable<UnitOfQueryConfig> Roots { get; }
         bool HasTopLevel(UnitOfQueryConfig unitOfQueryConfig);
     }
 
@@ -67,6 +68,11 @@ namespace Taijutsu.Infrastructure.Internal
             context = new ReadOnlyDataContext(unitOfQueryConfig, this);
             unitsOfQuery.Add(context);
             return context;
+        }
+
+        public virtual IEnumerable<UnitOfQueryConfig> Roots
+        {
+            get { return unitsOfQuery.Select(u => u.UnitOfQueryConfig); }
         }
 
         public virtual bool HasTopLevel(UnitOfQueryConfig unitOfQueryConfig)

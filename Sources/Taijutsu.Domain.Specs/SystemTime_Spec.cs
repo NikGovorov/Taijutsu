@@ -21,7 +21,7 @@ namespace Taijutsu.Domain.Specs
 // ReSharper disable InconsistentNaming    
 
     [TestFixture]
-    public class SystemTimeSpec
+    public class SystemTime_Spec
     {
         [SetUp]
         protected void OnSetUp()

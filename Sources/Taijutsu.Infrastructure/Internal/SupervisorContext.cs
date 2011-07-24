@@ -38,7 +38,7 @@ namespace Taijutsu.Infrastructure.Internal
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IReadOnlyDataContextSupervisor ReadOnlyDataContextSupervisor
+        internal static IReadOnlyDataContextSupervisor ReadOnlyDataContextSupervisor
         {
             get
             {
