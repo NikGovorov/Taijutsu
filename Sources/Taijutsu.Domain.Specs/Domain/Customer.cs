@@ -18,13 +18,13 @@ namespace Taijutsu.Domain.Specs.Domain
     public class Customer : Entity<Guid>, IRemovableEntity
     {
         protected DateTime creationDate;
-        protected string name;
+        protected FullName name;
 
-        public Customer()
+        public Customer(FullName name)
         {
             entityKey = SeqGuid.NewGuid();
-            name = string.Empty;
             creationDate = SystemTime.Now;
+            this.name = name;
         }
 
         public virtual DateTime CreationDate
@@ -32,7 +32,7 @@ namespace Taijutsu.Domain.Specs.Domain
             get { return creationDate; }
         }
 
-        public virtual string Name
+        public virtual FullName Name
         {
             get { return name; }
         }

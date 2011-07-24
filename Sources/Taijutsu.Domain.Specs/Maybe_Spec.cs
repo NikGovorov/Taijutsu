@@ -70,7 +70,7 @@ namespace Taijutsu.Domain.Specs
 
         protected override void When()
         {
-            customer = new Customer();
+            customer = new Customer(new FullName("Test","Test"));
             maybeCustomer = new Maybe<Customer>(customer);
         }
 

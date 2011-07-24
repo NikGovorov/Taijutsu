@@ -57,9 +57,11 @@
   <ItemGroup>
     <Compile Include="ContextSpecification.cs" />
     <Compile Include="Domain\Customer.cs" />
+    <Compile Include="Domain\FullName.cs" />
     <Compile Include="Maybe_Spec.cs" />
     <Compile Include="SeqGuid_Spec.cs" />
     <Compile Include="SystemTime_Spec.cs" />
+    <Compile Include="ValueObject_Specs.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Taijutsu.Domain\Taijutsu.Domain.csproj">
