@@ -30,12 +30,7 @@ namespace Taijutsu.Domain
 
         public Maybe(T value)
         {
-            if (value.Equals(default(T)))
-            {
-                throw new ArgumentNullException("value");
-            }
-
-            this.val = value;
+            val = value;
         }
 
         public virtual T Value
