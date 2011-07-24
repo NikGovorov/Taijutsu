@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace Taijutsu.Domain.Query
 {
-    public interface IDerivedQueryOfEntities<TEntity> : IQueryOfEntities<TEntity> where TEntity : IQueryableEntity
+    public interface IDerivedQueryOfEntities<TEntity> : IQueryOfEntities<TEntity> where TEntity : IEntity
     {
         IQueryable<TSubEntity> Query<TSubEntity>() where TSubEntity : TEntity;
     }

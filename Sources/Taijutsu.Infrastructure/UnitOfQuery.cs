@@ -46,7 +46,7 @@ namespace Taijutsu.Infrastructure
         public UnitOfQuery(string source = "", bool actAsUnitOfWorkPart = false)
             : this(
                 new UnitOfQueryConfig(source, IsolationLevel.Unspecified, Require.None)
-                    {ActAsUnitOfWorkPart = actAsUnitOfWorkPart})
+                    /*{ActAsUnitOfWorkPart = actAsUnitOfWorkPart}*/)
         {
         }
 
@@ -58,12 +58,6 @@ namespace Taijutsu.Infrastructure
 
         public UnitOfQuery(UnitOfQueryConfig unitOfQueryConfig)
         {
-            if (unitOfQueryConfig.ActAsUnitOfWorkPart 
-                && !SupervisorContext.ReadOnlyDataContextSupervisor.HasTopLevel(unitOfQueryConfig)
-                &&  SupervisorContext.DataContextSupervisor.HasTopLevel(unitOfQueryConfig))
-            {
-                dataContext = SupervisorContext.DataContextSupervisor.RegisterUnitOfWorkBasedOn(unitOfQueryConfig);    
-            }
             dataContext = SupervisorContext.ReadOnlyDataContextSupervisor.RegisterUnitOfQueryBasedOn(unitOfQueryConfig);
         }
 
@@ -71,14 +65,14 @@ namespace Taijutsu.Infrastructure
 
         void IDisposable.Dispose()
         {
-            var ctx = dataContext as IDataContext;
-            
-            if (ctx != null)
+            try
             {
-                ctx.Commit();
+                dataContext.Rollback();
             }
-
-            dataContext.Close();
+            finally
+            {
+                dataContext.Close();
+            }
         }
 
         #endregion
@@ -94,20 +88,20 @@ namespace Taijutsu.Infrastructure
 
         #region IUnitOfQuery Members
 
-        public virtual IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IQueryableEntity
+        public virtual IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IEntity
         {
             return dataContext.ReadOnlyProvider.AllOf<TEntity>();
         }
 
         public virtual IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key)
-            where TEntity : class, IQueryableEntity
+            where TEntity : class, IEntity
         {
             return dataContext.ReadOnlyProvider.UniqueOf<TEntity>(key);
         }
 
         #endregion
 
-        public virtual IQueryOverBuilder<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity
+        public virtual IQueryOverBuilder<TEntity> Over<TEntity>() where TEntity : class, IEntity
         {
             return dataContext.ReadOnlyProvider.QueryOver<TEntity>();
         }

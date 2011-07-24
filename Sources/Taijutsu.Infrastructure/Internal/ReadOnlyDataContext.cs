@@ -19,7 +19,8 @@ namespace Taijutsu.Infrastructure.Internal
     public class ReadOnlyDataContext : IReadOnlyDataContext
     {
         private ReadOnlyDataProvider dataProvider;
-        private bool isClosed;
+        private bool closed;
+        private bool rolledback;
         private UnitOfQueryConfig queryConfig;
         private ReadOnlyDataContextSupervisor supervisor;
 
@@ -28,23 +29,32 @@ namespace Taijutsu.Infrastructure.Internal
             queryConfig = unitOfQueryConfig;
             this.supervisor = supervisor;
             dataProvider = supervisor.CreateDataProvider(unitOfQueryConfig);
+            dataProvider.BeginTransaction(unitOfQueryConfig.IsolationLevel);
         }
+
 
         public virtual UnitOfQueryConfig UnitOfQueryConfig
         {
             get { return queryConfig; }
         }
 
+
         protected internal virtual ReadOnlyDataProvider DataProvider
         {
             get { return dataProvider; }
         }
 
+        public virtual bool Rolledback
+        {
+            get { return rolledback; }
+        }
+
+
         #region IReadOnlyDataContext Members
 
         public bool Closed
         {
-            get { return isClosed; }
+            get { return closed; }
         }
 
         public IReadOnlyDataProvider ReadOnlyProvider
@@ -55,8 +65,28 @@ namespace Taijutsu.Infrastructure.Internal
 
         public virtual void Close()
         {
-            isClosed = true;
+            if (closed)
+            {
+                throw new Exception(
+                    string.Format(
+                        "Read only data context can't close data provider, because it has been already closed."));
+            }
+            closed = true;
             dataProvider = supervisor.RegisterForTerminate(this);
+        }
+
+
+        public virtual void Rollback()
+        {
+            if (closed || rolledback)
+            {
+                throw new Exception(
+                    string.Format(
+                        "Read only data context can't rollback data provider. State map: rolledback '{0}', closed '{1}'.",
+                            rolledback, closed));
+            }
+            rolledback = true;
+            dataProvider.Rollback();
         }
 
         void IDisposable.Dispose()
@@ -70,11 +100,11 @@ namespace Taijutsu.Infrastructure.Internal
         #endregion
     }
 
-    public class ReadOnlyDataContextDecorator : IReadOnlyDataContext
+    public class ChildReadOnlyDataContext : IReadOnlyDataContext
     {
         private readonly ReadOnlyDataContext readOnlyDataContext;
 
-        public ReadOnlyDataContextDecorator(ReadOnlyDataContext readOnlyDataContext)
+        public ChildReadOnlyDataContext(ReadOnlyDataContext readOnlyDataContext)
         {
             this.readOnlyDataContext = readOnlyDataContext;
         }
@@ -93,6 +123,16 @@ namespace Taijutsu.Infrastructure.Internal
 
         public void Close()
         {
+        }
+
+        public void Commit()
+        {
+         
+        }
+
+        public void Rollback()
+        {
+            
         }
 
         void IDisposable.Dispose()

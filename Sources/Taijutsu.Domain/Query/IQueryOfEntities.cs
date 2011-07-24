@@ -25,7 +25,7 @@ namespace Taijutsu.Domain.Query
                                                      ITypeExcludingQuery<IQueryOfEntities<TEntity>>,
                                                      ICountNarrowing,
                                                      IAnyNarrowing
-        where TEntity : IQueryableEntity
+        where TEntity : IEntity
     {
     }
 }

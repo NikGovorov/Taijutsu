@@ -13,12 +13,27 @@
 
 
 using System;
+using System.Data;
 using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Infrastructure.Internal
 {
     public class OfflineReadOnlyDataProvider : ReadOnlyDataProvider
     {
+
+
+        public override void BeginTransaction(IsolationLevel level)
+        {
+        }
+
+        public override void Commit()
+        {
+        }
+
+        public override void Rollback()
+        {
+        }
+
         public override object NativeProvider
         {
             get { return new object(); }

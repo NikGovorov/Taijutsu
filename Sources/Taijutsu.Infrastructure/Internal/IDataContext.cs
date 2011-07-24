@@ -20,6 +20,5 @@ namespace Taijutsu.Infrastructure.Internal
         IDataProvider Provider { get; }
         bool Ready { get; }
         void Commit();
-        void Rollback();
     }
 }

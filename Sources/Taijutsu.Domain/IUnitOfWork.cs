@@ -11,15 +11,22 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using Taijutsu.Domain.Query;
+
 namespace Taijutsu.Domain
 {
-    public interface IUnitOfWork : IUnitOfQuery
+    public interface IUnitOfWork
     {
         object MarkAsCreated<TEntity>(TEntity entity) where TEntity : IAggregateRoot;
 
         void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IRemovableEntity;
 
+        IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IQueryableEntity;
+
+        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key) where TEntity : class, IQueryableEntity;
+
         IMarkingStep<TEntity> Mark<TEntity>(TEntity entity) where TEntity : IRemovableEntity, IAggregateRoot;
+
     }
 
     public interface IMarkingStep<out TEntity> where TEntity : IRemovableEntity, IAggregateRoot

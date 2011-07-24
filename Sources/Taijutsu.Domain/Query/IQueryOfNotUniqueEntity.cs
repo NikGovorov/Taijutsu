@@ -16,7 +16,7 @@ using System.Linq;
 namespace Taijutsu.Domain.Query
 {
     public interface IQueryOfNotUniqueEntity<out TEntity> : IQueryOf<TEntity>
-        where TEntity : IQueryableEntity
+        where TEntity : IEntity
     {
         IQueryOf<IQueryable<TEntity>> All { get; }
     }

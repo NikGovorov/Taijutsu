@@ -13,7 +13,7 @@
 
 namespace Taijutsu.Domain.Query
 {
-    public interface IQueryOverBuilder<TEntity> : IHideObjectMembers where TEntity : IQueryableEntity
+    public interface IQueryOverBuilder<TEntity> : IHideObjectMembers where TEntity : IEntity
     {
         TQuery By<TQuery>() where TQuery : IQueryOver<TEntity>;
         TQuery By<TQuery>(string queryName) where TQuery : IQueryOver<TEntity>;

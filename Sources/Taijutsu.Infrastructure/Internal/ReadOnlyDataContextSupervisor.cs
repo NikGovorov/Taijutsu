@@ -59,7 +59,7 @@ namespace Taijutsu.Infrastructure.Internal
                 {
                     throw new Exception(string.Format("Isolation level '{0}' is not compatible with '{1}'.", context.UnitOfQueryConfig.IsolationLevel, unitOfQueryConfig.IsolationLevel));
                 }
-                return new ReadOnlyDataContextDecorator(context);
+                return new ChildReadOnlyDataContext(context);
             }
 
             if(unitOfQueryConfig.Require == Require.Existing)

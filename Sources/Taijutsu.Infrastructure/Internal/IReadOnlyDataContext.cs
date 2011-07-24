@@ -22,5 +22,6 @@ namespace Taijutsu.Infrastructure.Internal
         bool Closed { get; }
         IReadOnlyDataProvider ReadOnlyProvider { get; }
         void Close();
+        void Rollback();
     }
 }

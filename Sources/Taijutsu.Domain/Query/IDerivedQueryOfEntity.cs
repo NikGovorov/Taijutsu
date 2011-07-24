@@ -14,7 +14,7 @@
 namespace Taijutsu.Domain.Query
 {
     public interface IDerivedQueryOfEntity<TEntity> : IQueryOfEntity<TEntity>, IDerivedQueryOf<TEntity>
-        where TEntity : IQueryableEntity
+        where TEntity : IEntity
     {
     }
 }

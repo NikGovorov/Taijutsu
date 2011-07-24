@@ -25,6 +25,6 @@ namespace Taijutsu.Infrastructure.Internal
         {
         }
 
-        public virtual bool ActAsUnitOfWorkPart { get; set; }
+        /*public virtual bool ActAsUnitOfWorkPart { get; set; }*/
     }
 }

@@ -17,7 +17,7 @@ namespace Taijutsu.Domain.Query
 {
     public interface IQueryOfEntityByKey<out TEntity> : IQueryOf<TEntity>, IQueryOver<TEntity>,
                                                         INotStrictNarrowing<TEntity>
-        where TEntity : IQueryableEntity
+        where TEntity : IEntity
     {
     }
 }

@@ -13,7 +13,7 @@
 
 namespace Taijutsu.Domain.Query.Narrowing
 {
-    public interface IStrictNarrowing<out TEntity> where TEntity : IQueryableEntity
+    public interface IStrictNarrowing<out TEntity> where TEntity : IEntity
     {
         IQueryOf<TEntity> Strictly { get; }
     }

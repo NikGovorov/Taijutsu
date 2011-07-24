@@ -108,6 +108,12 @@ namespace Taijutsu.Infrastructure.Internal
 
         public virtual void Close()
         {
+            if (closed)
+            {
+                throw new Exception(
+                    string.Format(
+                        "Data context can't close data provider, because it has been already closed."));
+            }
             closed = true;
             Exception lastExException = null;
             if (extension != null)
@@ -162,12 +168,12 @@ namespace Taijutsu.Infrastructure.Internal
         }
     }
 
-    public class DataContextDecorator : IDataContext
+    public class ChildDataContext : IDataContext
     {
         private readonly DataContext dataContext;
         private bool? completed;
 
-        public DataContextDecorator(DataContext dataContext)
+        public ChildDataContext(DataContext dataContext)
         {
             this.dataContext = dataContext;
             dataContext.RegisterUncompletedSlave();

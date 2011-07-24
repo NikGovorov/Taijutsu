@@ -112,7 +112,7 @@ namespace Taijutsu.Infrastructure.Internal
                                                       context.UnitOfWorkConfig.IsolationLevel,
                                                       unitOfWorkConfig.IsolationLevel));
                 }
-                return new DataContextDecorator(context);
+                return new ChildDataContext(context);
             }
 
             if (unitOfWorkConfig.Require == Require.Existing)

@@ -17,8 +17,7 @@ namespace Taijutsu.Domain
 {
     public interface IUnitOfQuery
     {
-        IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IQueryableEntity;
-        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key) where TEntity : class, IQueryableEntity;
-        //IQueryOverBuilder<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity;
+        IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IEntity;
+        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key) where TEntity : class, IEntity;
     }
 }

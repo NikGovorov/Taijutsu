@@ -24,12 +24,12 @@ namespace Taijutsu.Infrastructure.Internal
 
         public abstract object MarkAsCreated<TEntity>(TEntity entity) where TEntity : IAggregateRoot;
         public abstract void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IRemovableEntity;
-        public abstract IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IQueryableEntity;
+        public abstract IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IEntity;
 
         public abstract IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key)
-            where TEntity : class, IQueryableEntity;
+            where TEntity : class, IEntity;
 
-        public abstract IQueryOverBuilder<TEntity> QueryOver<TEntity>() where TEntity : class, IQueryableEntity;
+        public abstract IQueryOverBuilder<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity;
         public abstract object NativeProvider { get; }
 
         #endregion

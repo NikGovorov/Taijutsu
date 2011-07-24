@@ -12,6 +12,7 @@
 // specific language governing permissions and limitations under the License.
 
 
+using System.Data;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
@@ -21,17 +22,23 @@ namespace Taijutsu.Infrastructure.Internal
     {
         #region IReadOnlyDataProvider Members
 
-        public abstract IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IQueryableEntity;
+        public abstract IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IEntity;
 
         public abstract IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key)
-            where TEntity : class, IQueryableEntity;
+            where TEntity : class, IEntity;
 
 
-        public abstract IQueryOverBuilder<TEntity> QueryOver<TEntity>() where TEntity : class, IQueryableEntity;
+        public abstract IQueryOverBuilder<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity;
         public abstract object NativeProvider { get; }
 
         #endregion
 
         public abstract void Close();
+
+        public abstract void BeginTransaction(IsolationLevel level);
+
+        public abstract void Commit();
+
+        public abstract void Rollback();
     }
 }
