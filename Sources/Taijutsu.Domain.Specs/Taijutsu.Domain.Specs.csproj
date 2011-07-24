@@ -58,6 +58,7 @@
     <Compile Include="ContextSpecification.cs" />
     <Compile Include="Domain\Customer.cs" />
     <Compile Include="Maybe_Spec.cs" />
+    <Compile Include="SeqGuid_Spec.cs" />
     <Compile Include="SystemTime_Spec.cs" />
   </ItemGroup>
   <ItemGroup>
