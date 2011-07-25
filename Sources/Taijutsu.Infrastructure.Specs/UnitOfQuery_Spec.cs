@@ -67,7 +67,6 @@ namespace Taijutsu.Infrastructure.Specs
         [ExpectedException(typeof(QueryNotFoundException))]
         public virtual void All_delegating_methods_should_be_delegated()
         {
-            var customer = new Customer(new FullName("Test", "Test"));
             var provider = MockRepository.GenerateMock<ReadOnlyDataProvider>();
             try
             {
