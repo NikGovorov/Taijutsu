@@ -98,12 +98,12 @@ namespace Taijutsu.Infrastructure.Internal
 
             if (LogicalContext.FindData(DataContextSupervisorKey) != null)
             {
-                throw new Exception("Operation scope can not be defined is scope of unit of work.");
+                throw new Exception("Operation scope can not be included in the scope of unit of work.");
             }
 
             if (LogicalContext.FindData(ReadOnlyDataContextSupervisorKey) != null)
             {
-                throw new Exception("Operation scope can not be defined is scope of unit of query.");
+                throw new Exception("Operation scope can not be included in the scope of unit of query.");
             }
 
             LogicalContext.SetData(OperationScopeKey, new object());
