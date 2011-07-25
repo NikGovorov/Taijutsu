@@ -43,13 +43,10 @@ namespace Taijutsu.Infrastructure
         {
         }
 
-        public UnitOfQuery(string source = "", bool actAsUnitOfWorkPart = false)
-            : this(
-                new UnitOfQueryConfig(source, IsolationLevel.Unspecified, Require.None)
-                    /*{ActAsUnitOfWorkPart = actAsUnitOfWorkPart}*/)
+        public UnitOfQuery(string source = "", Require require = Require.None)
+            : this(new UnitOfQueryConfig(source, IsolationLevel.Unspecified, require))
         {
         }
-
 
         public UnitOfQuery()
             : this(new UnitOfQueryConfig())
