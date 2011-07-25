@@ -20,7 +20,7 @@ namespace Taijutsu.Domain.Specs
 {
     // ReSharper disable InconsistentNaming    
 
-    public class SeqGuid_Spec
+    public class SeqGuid_Specs
     {
         [Test]
         public virtual void When_guid_has_been_generated_it_should_be_correlated_with_generation_date()

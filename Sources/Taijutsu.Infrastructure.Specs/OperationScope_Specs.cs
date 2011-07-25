@@ -20,7 +20,7 @@ namespace Taijutsu.Infrastructure.Specs
 {
     // ReSharper disable InconsistentNaming
     [TestFixture]
-    public class OperationScope_Spec
+    public class OperationScope_Specs
     {
         #region Setup/Teardown
 
@@ -73,7 +73,9 @@ namespace Taijutsu.Infrastructure.Specs
             provider.Expect(p => p.Close()).Repeat.Never();
             readOnlyProvider.Expect(p => p.Close()).Repeat.Never();
 
+            // ReSharper disable UnusedVariable
             var scope = new OperationScope();
+            // ReSharper restore UnusedVariable
 
             using (new UnitOfWork())
             {
@@ -110,7 +112,7 @@ namespace Taijutsu.Infrastructure.Specs
                     }
                 }
             }
-            catch (DisposingException e)
+            catch (DisposingException)
             {
                 provider.VerifyAllExpectations();
                 readOnlyProvider.VerifyAllExpectations();

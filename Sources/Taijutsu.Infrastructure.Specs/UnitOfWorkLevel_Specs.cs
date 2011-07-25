@@ -21,7 +21,7 @@ namespace Taijutsu.Infrastructure.Specs
 {
     // ReSharper disable InconsistentNaming
     [TestFixture]
-    public class UnitOfWorkLevel_Spec
+    public class UnitOfWorkLevel_Specs
     {
         [Test]
         public virtual void Root_default_unit_of_work_should_include_all_default_sub_units_of_work()

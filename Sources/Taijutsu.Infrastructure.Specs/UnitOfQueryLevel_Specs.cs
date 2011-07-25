@@ -20,7 +20,7 @@ using Taijutsu.Infrastructure.Internal;
 namespace Taijutsu.Infrastructure.Specs
 {
     // ReSharper disable InconsistentNaming
-    public class UnitOfQueryLevel_Spec
+    public class UnitOfQueryLevel_Specs
     {
 
         [Test]

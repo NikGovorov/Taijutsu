@@ -21,7 +21,7 @@ using Taijutsu.Infrastructure.Internal;
 namespace Taijutsu.Infrastructure.Specs
 {
     // ReSharper disable InconsistentNaming
-    public class UnitOfWork_Spec
+    public class UnitOfWork_Specs
     {
         [Test]
         public virtual void When_complete_has_not_been_called_rollback_should_be_called()

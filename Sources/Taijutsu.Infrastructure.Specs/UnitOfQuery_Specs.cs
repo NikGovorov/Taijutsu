@@ -21,7 +21,7 @@ using Taijutsu.Infrastructure.Internal;
 namespace Taijutsu.Infrastructure.Specs
 {
     // ReSharper disable InconsistentNaming
-    public class UnitOfQuery_Spec
+    public class UnitOfQuery_Specs
     {
         [Test]
         public virtual void When_unit_of_query_scope_completed_close_and_rollback_should_be_called()

@@ -19,7 +19,7 @@ namespace Taijutsu.Infrastructure.Specs
 {
     // ReSharper disable InconsistentNaming
     [TestFixture]
-    public class IsolationLevelEx_Spec
+    public class IsolationLevelEx_Specs
     {
         [Test]
         public virtual void Isolation_level_compatibility_should_be_detected_in_right_way()

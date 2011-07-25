@@ -62,11 +62,12 @@
     <Compile Include="Domain\IOrder.cs" />
     <Compile Include="Domain\Order.cs" />
     <Compile Include="Domain\Product.cs" />
+    <Compile Include="EntityConversion_Specs.cs" />
     <Compile Include="Entity_Specs.cs" />
-    <Compile Include="LogicalContext_spec.cs" />
-    <Compile Include="Maybe_Spec.cs" />
-    <Compile Include="SeqGuid_Spec.cs" />
-    <Compile Include="SystemTime_Spec.cs" />
+    <Compile Include="LogicalContext_Specs.cs" />
+    <Compile Include="Maybe_Specs.cs" />
+    <Compile Include="SeqGuid_Specs.cs" />
+    <Compile Include="SystemTime_Specs.cs" />
     <Compile Include="ValueObject_Specs.cs" />
   </ItemGroup>
   <ItemGroup>

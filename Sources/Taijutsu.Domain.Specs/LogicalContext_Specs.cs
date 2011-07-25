@@ -19,7 +19,7 @@ namespace Taijutsu.Domain.Specs
 {
     // ReSharper disable InconsistentNaming
     [TestFixture]
-    public class LogicalContext_Spec
+    public class LogicalContext_Specs
     {
 
         [Test]
