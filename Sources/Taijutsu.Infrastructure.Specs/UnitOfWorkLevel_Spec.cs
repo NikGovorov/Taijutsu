@@ -26,7 +26,6 @@ namespace Taijutsu.Infrastructure.Specs
         [Test]
         public virtual void Root_default_unit_of_work_should_include_all_default_sub_units_of_work()
         {
-
             Internal.Infrastructure.DataProviderFactory = cfg => MockRepository.GenerateStub<DataProvider>();
 
             using (var uowL1I1 = new UnitOfWork())

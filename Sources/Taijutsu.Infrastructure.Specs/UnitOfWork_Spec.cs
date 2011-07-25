@@ -257,6 +257,9 @@ namespace Taijutsu.Infrastructure.Specs
                 ((IAdvancedUnitOfWork) uow).Extension.Add("ex3", ex3);
             }
             provider.VerifyAllExpectations();
+            ex1.VerifyAllExpectations();
+            ex2.VerifyAllExpectations();
+            ex3.VerifyAllExpectations();
         }
 
         [Test]
@@ -290,10 +293,66 @@ namespace Taijutsu.Infrastructure.Specs
             catch (UnitOfWorkExtensionException)
             {
                 provider.VerifyAllExpectations();
+                ex1.VerifyAllExpectations();
+                ex2.VerifyAllExpectations();
+                ex3.VerifyAllExpectations();
                 throw;
             }
         }
 
+
+        [Test]
+        public virtual void Extension_should_be_connected_to_concrete_unit_of_work()
+        {
+            Internal.Infrastructure.DataProviderFactory = cfg => MockRepository.GenerateStub<DataProvider>();
+
+            var ex11 = MockRepository.GenerateMock<IDisposable>();
+            var ex12 = MockRepository.GenerateMock<IDisposable>();
+            var ex13 = MockRepository.GenerateMock<IDisposable>();
+            var ex21 = MockRepository.GenerateMock<IDisposable>();
+            var ex31 = MockRepository.GenerateMock<IDisposable>();
+
+            ex11.Expect(e => e.Dispose()).Repeat.Once();
+            ex12.Expect(e => e.Dispose()).Repeat.Once();
+            ex13.Expect(e => e.Dispose()).Repeat.Once();
+            ex21.Expect(e => e.Dispose()).Repeat.Once();
+            ex31.Expect(e => e.Dispose()).Repeat.Once();
+
+
+            using (var uow = new UnitOfWork())
+            {
+
+
+                ((IAdvancedUnitOfWork)uow).Extension.Add("ex1", ex11);
+                ((IAdvancedUnitOfWork)uow).Extension.Add("ex2", ex12);
+                var uow2 = new UnitOfWork();
+                using (uow2)
+                {
+                    var uow3 = new UnitOfWork(Require.New);
+                    using (uow3)
+                    {
+                        ((IAdvancedUnitOfWork)uow).Extension.Add("ex3", ex13);
+                        ((IAdvancedUnitOfWork)uow2).Extension.Add("ex1", ex31);
+                        ((IAdvancedUnitOfWork)uow3).Extension.Add("ex1", ex21);
+                        Assert.AreEqual(3, ((IAdvancedUnitOfWork)uow).Extension.Count);
+                        Assert.AreEqual(1, ((IAdvancedUnitOfWork)uow3).Extension.Count);
+                    }
+                    Assert.AreEqual(0, ((IAdvancedUnitOfWork)uow3).Extension.Count);
+                    Assert.AreEqual(3, ((IAdvancedUnitOfWork)uow).Extension.Count);
+
+                    Assert.AreEqual(1, ((IAdvancedUnitOfWork)uow2).Extension.Count);
+                }
+                Assert.AreEqual(0, ((IAdvancedUnitOfWork)uow2).Extension.Count);
+                Assert.AreEqual(3, ((IAdvancedUnitOfWork)uow).Extension.Count);
+            }
+
+            ex11.VerifyAllExpectations();
+            ex12.VerifyAllExpectations();
+            ex13.VerifyAllExpectations();
+            ex21.VerifyAllExpectations();
+            ex31.VerifyAllExpectations();
+            
+        }
 
         [Test]
         public virtual void Native_data_provider_should_be_accessible()
