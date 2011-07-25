@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IsolationLevelEx_Spec.cs" />
+    <Compile Include="OperationScope_Spec.cs" />
     <Compile Include="UnitOfQueryLevel_Spec.cs" />
     <Compile Include="UnitOfQuery_Spec.cs" />
     <Compile Include="UnitOfWorkLevel_Spec.cs" />

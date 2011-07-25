@@ -67,6 +67,7 @@ namespace Taijutsu.Infrastructure
             {
                 try
                 {
+                    Exception lastEx = null;
                     foreach (var dataProvider in providers)
                     {
                         try
@@ -76,6 +77,7 @@ namespace Taijutsu.Infrastructure
                         catch (Exception exception)
                         {
                             Trace.TraceError(exception.ToString());
+                            lastEx = exception;
                         }
                     }
 
@@ -88,7 +90,13 @@ namespace Taijutsu.Infrastructure
                         catch (Exception exception)
                         {
                             Trace.TraceError(exception.ToString());
+                            lastEx = exception;
                         }
+                    }
+
+                    if (lastEx != null)
+                    {
+                        throw lastEx;
                     }
                 }
                 finally
@@ -160,8 +168,14 @@ namespace Taijutsu.Infrastructure
 
         public override void Dispose()
         {
-            base.Dispose();
-            transactionScope.Dispose();
+            try
+            {
+                base.Dispose();
+            }
+            finally
+            {
+                transactionScope.Dispose();    
+            }
         }
     }
 }
