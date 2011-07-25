@@ -64,19 +64,34 @@ namespace Taijutsu.Domain.Specs
         [Test]
         public virtual void Get_has_code_should_be_constant_during_entity_life_period()
         {
+            var key = Guid.NewGuid();
             var set = new HashSet<TestEntity>();
             var entity = new TestEntity();
+            var entity2 = new TestEntity(key);
             Assert.IsTrue(set.Add(entity));
+            Assert.IsTrue(set.Add(entity2));
             var hashCode = entity.GetHashCode();
-            entity.SetKey(Guid.NewGuid());
+            Assert.IsFalse(entity == entity2);
+            entity.SetKey(key);
             Assert.AreEqual(hashCode, entity.GetHashCode());
+            Assert.AreNotEqual(hashCode, entity2.GetHashCode());
             Assert.IsFalse(set.Add(entity));
+            Assert.IsTrue(entity == entity2);
         }
 
 
         class TestEntity: Entity<Guid>
         {
-             public virtual void SetKey(Guid guid)
+            public TestEntity()
+            {
+            }
+
+            public TestEntity(Guid key)
+            {
+                entityKey = key;
+            }
+
+            public virtual void SetKey(Guid guid)
              {
                  entityKey = guid;
              }
