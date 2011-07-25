@@ -61,10 +61,12 @@ namespace Taijutsu.Infrastructure.Specs
         {
             Internal.Infrastructure.DataProviderFactory = cfg => MockRepository.GenerateStub<DataProvider>();
             Assert.AreEqual(0, SupervisorContext.DataContextSupervisor.Roots.Count());
-            
+            var supervisor = SupervisorContext.DataContextSupervisor;
+
             using (var uowL1I1 = new UnitOfWork())
             {
                 Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreSame(supervisor, SupervisorContext.DataContextSupervisor);
 
                 using (var uowL2I1 = new UnitOfWork(Require.Existing))
                 {
@@ -76,9 +78,11 @@ namespace Taijutsu.Infrastructure.Specs
                     {
                     }
                 }
+                Assert.AreSame(supervisor, SupervisorContext.DataContextSupervisor);
             }
 
             Assert.AreEqual(0, SupervisorContext.DataContextSupervisor.Roots.Count());
+            Assert.AreNotSame(supervisor, SupervisorContext.DataContextSupervisor);
         }
 
         [Test]

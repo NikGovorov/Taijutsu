@@ -15,9 +15,9 @@ namespace Taijutsu.Domain
 {
     public interface ILogicalContext : IHideObjectMembers
     {
-        T FindData<T>(string name);
+        object FindData(string name);
 
-        void SetData<T>(string name, T value);
+        void SetData(string name, object value);
 
         void ReleaseData(string name);
     }

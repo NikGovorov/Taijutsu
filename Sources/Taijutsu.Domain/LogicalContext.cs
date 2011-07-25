@@ -25,12 +25,12 @@ namespace Taijutsu.Domain
             defaultContext = context;
         }
 
-        public static T FindData<T>(string name)
+        public static object FindData(string name)
         {
-            return defaultContext.FindData<T>(name);
+            return defaultContext.FindData(name);
         }
 
-        public static void SetData<T>(string name, T value)
+        public static void SetData(string name, object value)
         {
             defaultContext.SetData(name, value);
         }
@@ -46,12 +46,12 @@ namespace Taijutsu.Domain
         {
             #region ILogicalContext Members
 
-            T ILogicalContext.FindData<T>(string name)
+            object ILogicalContext.FindData(string name)
             {
-                return (T) CallContext.GetData(name);
+                return CallContext.GetData(name);
             }
 
-            void ILogicalContext.SetData<T>(string name, T value)
+            void ILogicalContext.SetData(string name, object value)
             {
                 CallContext.SetData(name, value);
             }

@@ -63,6 +63,7 @@
     <Compile Include="Domain\Order.cs" />
     <Compile Include="Domain\Product.cs" />
     <Compile Include="Entity_Specs.cs" />
+    <Compile Include="LogicalContext_spec.cs" />
     <Compile Include="Maybe_Spec.cs" />
     <Compile Include="SeqGuid_Spec.cs" />
     <Compile Include="SystemTime_Spec.cs" />

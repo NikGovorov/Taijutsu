@@ -19,6 +19,7 @@ namespace Taijutsu.Infrastructure.Internal
 
     public interface IReadOnlyDataContext : IDisposable
     {
+        bool IsRoot { get; }
         bool Closed { get; }
         IReadOnlyDataProvider ReadOnlyProvider { get; }
         void Close();

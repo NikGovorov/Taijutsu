@@ -26,7 +26,7 @@ namespace Taijutsu.Domain.Event
         public static Func<LocalEventAggregator> LocalEventAggregatorResolvingFunction =
             () =>
                 {
-                    var localAggregator = LogicalContext.FindData<LocalEventAggregator>(LocalEventAggregatorName);
+                    var localAggregator = (LocalEventAggregator)LogicalContext.FindData(LocalEventAggregatorName);
 
                     if (localAggregator == null)
                     {
@@ -44,8 +44,7 @@ namespace Taijutsu.Domain.Event
                                                                                {
                                                                                    object localAggregator =
                                                                                        LogicalContext.FindData
-                                                                                           <LocalEventAggregator>(
-                                                                                               LocalEventAggregatorName);
+                                                                                           (LocalEventAggregatorName);
 
                                                                                    if (localAggregator != null)
                                                                                    {

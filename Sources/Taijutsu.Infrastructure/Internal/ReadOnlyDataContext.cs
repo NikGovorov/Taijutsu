@@ -52,6 +52,11 @@ namespace Taijutsu.Infrastructure.Internal
 
         #region IReadOnlyDataContext Members
 
+        public virtual bool IsRoot
+        {
+            get { return true; }
+        }
+
         public bool Closed
         {
             get { return closed; }
@@ -110,6 +115,11 @@ namespace Taijutsu.Infrastructure.Internal
         }
 
         #region IReadOnlyDataContext Members
+
+        public bool IsRoot
+        {
+            get { return false; }
+        }
 
         public bool Closed
         {

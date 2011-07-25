@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,7 +67,7 @@
     <Compile Include="Internal\SupervisorContext.cs" />
     <Compile Include="Internal\UnitOfQueryConfig.cs" />
     <Compile Include="Internal\UnitOfWorkConfig.cs" />
-    <Compile Include="LifeTimeScope.cs" />
+    <Compile Include="OperationScope.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Require.cs" />
     <Compile Include="UnitOfQuery.cs" />

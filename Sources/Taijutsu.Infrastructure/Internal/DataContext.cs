@@ -75,6 +75,11 @@ namespace Taijutsu.Infrastructure.Internal
             get { return slaveCount == 0; }
         }
 
+        public virtual bool IsRoot
+        {
+            get { return true; }
+        }
+
         public virtual bool Closed
         {
             get { return closed; }
@@ -181,6 +186,11 @@ namespace Taijutsu.Infrastructure.Internal
         }
 
         #region IDataContext Members
+
+        public virtual bool IsRoot
+        {
+            get { return false; }
+        }
 
         public virtual bool Closed
         {

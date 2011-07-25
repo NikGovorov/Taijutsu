@@ -55,10 +55,12 @@ namespace Taijutsu.Infrastructure.Specs
         {
             Internal.Infrastructure.ReadOnlyDataProviderFactory = cfg => MockRepository.GenerateStub<ReadOnlyDataProvider>();
             Assert.AreEqual(0, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+            var supervisor = SupervisorContext.ReadOnlyDataContextSupervisor;
 
             using (var uoqL1I1 = new UnitOfQuery())
             {
                 Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreSame(supervisor, SupervisorContext.ReadOnlyDataContextSupervisor);
 
                 using (var uoqL2I1 = new UnitOfQuery(Require.Existing))
                 {
@@ -70,9 +72,11 @@ namespace Taijutsu.Infrastructure.Specs
                     {
                     }
                 }
+                Assert.AreSame(supervisor, SupervisorContext.ReadOnlyDataContextSupervisor);
             }
 
             Assert.AreEqual(0, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+            Assert.AreNotSame(supervisor, SupervisorContext.ReadOnlyDataContextSupervisor);
         }
 
 

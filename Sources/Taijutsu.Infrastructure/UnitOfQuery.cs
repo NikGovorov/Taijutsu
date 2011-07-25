@@ -68,7 +68,17 @@ namespace Taijutsu.Infrastructure
             }
             finally
             {
-                dataContext.Close();
+                try
+                {
+                    dataContext.Close();
+                }
+                finally
+                {
+                    if (dataContext.IsRoot)
+                    {
+                        SupervisorContext.CheckReadOnlyDataContextSupervisorForRelease();
+                    }
+                }
             }
         }
 
