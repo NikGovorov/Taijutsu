@@ -25,14 +25,10 @@ namespace Taijutsu.Infrastructure.Internal
         {
         }
 
-        protected internal UnitOfWorkConfig(string sourceName, IsolationLevel isolationLevel, Require require)
+        protected internal UnitOfWorkConfig(string sourceName, IsolationLevel? isolationLevel, Require require)
         {
-            if (string.IsNullOrEmpty(sourceName))
-            {
-                sourceName = Infrastructure.DefaultDataSourceName;
-            }
-            dataSourceName = sourceName;
-            isolation = isolationLevel;
+            dataSourceName = string.IsNullOrEmpty(sourceName) ? Infrastructure.DefaultDataSourceName : sourceName;
+            isolation = isolationLevel ?? Infrastructure.DefaultWorkIsolationLevel;
             req = require;
         }
 

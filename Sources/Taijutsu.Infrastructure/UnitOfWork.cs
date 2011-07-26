@@ -27,32 +27,32 @@ namespace Taijutsu.Infrastructure
         private readonly IDataContext dataContext;
         private bool? completed;
 
-        public UnitOfWork(string source = "", IsolationLevel isolation = IsolationLevel.Unspecified,
+        public UnitOfWork(string source = "", IsolationLevel? isolation = null,
                            Require require = Require.None) : this(new UnitOfWorkConfig(source, isolation, require))
         {
         }
 
-        public UnitOfWork(IsolationLevel isolation = IsolationLevel.Unspecified)
+        public UnitOfWork(IsolationLevel? isolation = null)
             : this(new UnitOfWorkConfig("", isolation, Require.None))
         {
         }
 
         public UnitOfWork(Require require)
-            : this(new UnitOfWorkConfig("", IsolationLevel.Unspecified, require))
+            : this(new UnitOfWorkConfig("", null, require))
         {
         }
 
         public UnitOfWork(string source)
-            : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, Require.None))
+            : this(new UnitOfWorkConfig(source, null, Require.None))
         {
         }
 
         public UnitOfWork(string source = "", Require require = Require.None)
-            : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, require))
+            : this(new UnitOfWorkConfig(source, null, require))
         {
         }
 
-        public UnitOfWork(string source = "", IsolationLevel isolation = IsolationLevel.Unspecified)
+        public UnitOfWork(string source = "", IsolationLevel? isolation = null)
             : this(new UnitOfWorkConfig(source, isolation, Require.None))
         {
         }

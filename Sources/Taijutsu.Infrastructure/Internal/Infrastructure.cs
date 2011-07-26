@@ -13,6 +13,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Data;
 using Taijutsu.Domain;
 
 namespace Taijutsu.Infrastructure.Internal
@@ -22,6 +23,12 @@ namespace Taijutsu.Infrastructure.Internal
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static string DefaultDataSourceName = "main";
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IsolationLevel DefaultWorkIsolationLevel = IsolationLevel.Unspecified;
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IsolationLevel DefaultQueryIsolationLevel = IsolationLevel.Unspecified;
 
         private static Func<UnitOfWorkConfig, DataProvider> dataProviderFactory;
         private static Func<UnitOfQueryConfig, ReadOnlyDataProvider> readOnlyDataProviderFactory;

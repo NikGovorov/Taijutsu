@@ -23,28 +23,28 @@ namespace Taijutsu.Infrastructure
     {
         private readonly IReadOnlyDataContext dataContext;
 
-        public UnitOfQuery(string source = "", IsolationLevel isolation = IsolationLevel.Unspecified,
+        public UnitOfQuery(string source = "", IsolationLevel? isolation = null,
                            Require require = Require.None) : this(new UnitOfQueryConfig(source, isolation, require))
         {
         }
 
-        public UnitOfQuery(IsolationLevel isolation = IsolationLevel.Unspecified)
+        public UnitOfQuery(IsolationLevel? isolation = null)
             : this(new UnitOfQueryConfig("", isolation, Require.None))
         {
         }
 
         public UnitOfQuery(Require require)
-            : this(new UnitOfQueryConfig("", IsolationLevel.Unspecified, require))
+            : this(new UnitOfQueryConfig("", null, require))
         {
         }
 
         public UnitOfQuery(string source)
-            : this(new UnitOfQueryConfig(source, IsolationLevel.Unspecified, Require.None))
+            : this(new UnitOfQueryConfig(source, null, Require.None))
         {
         }
 
         public UnitOfQuery(string source = "", Require require = Require.None)
-            : this(new UnitOfQueryConfig(source, IsolationLevel.Unspecified, require))
+            : this(new UnitOfQueryConfig(source, null, require))
         {
         }
 

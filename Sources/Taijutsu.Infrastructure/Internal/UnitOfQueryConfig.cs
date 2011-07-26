@@ -21,8 +21,9 @@ namespace Taijutsu.Infrastructure.Internal
         {
         }
 
-        protected internal UnitOfQueryConfig(string sourceName, IsolationLevel isolationLevel, Require require) : base(sourceName, isolationLevel, require)
+        protected internal UnitOfQueryConfig(string sourceName, IsolationLevel? isolationLevel, Require require) : base(sourceName, isolationLevel, require)
         {
+            isolation = isolationLevel ?? Infrastructure.DefaultQueryIsolationLevel;
         }
 
     }
