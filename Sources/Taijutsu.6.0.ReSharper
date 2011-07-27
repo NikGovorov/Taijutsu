@@ -56,6 +56,11 @@
         <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="aaBb" ElementKind="PrivateStaticReadonly" />
         <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="EnumMember" />
         <PredefinedRule Inspect="True" Prefix="" Suffix="" Style="AaBb" ElementKind="Other" />
+        <UserRule Inspect="True" Prefix="" Suffix="" Style="AaBb" StaticnessKind="Static" AccessRight="Public" Description="Static filed (public)">
+          <ElementKinds>
+            <Kind Name="FIELD" />
+          </ElementKinds>
+        </UserRule>
       </Naming2>
     </CSharp>
     <HTML>
