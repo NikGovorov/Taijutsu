@@ -52,6 +52,13 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="EntityProxyConversion.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Taijutsu.Domain\Taijutsu.Domain.csproj">
+      <Project>{BFFB4ED9-8A84-4AB0-8328-C733399C445B}</Project>
+      <Name>Taijutsu.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
