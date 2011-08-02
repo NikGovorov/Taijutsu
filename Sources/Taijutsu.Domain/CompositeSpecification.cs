@@ -18,8 +18,8 @@ namespace Taijutsu.Domain
     [Serializable]
     internal abstract class CompositeSpecification<TDomainObject> : Specification<TDomainObject> where TDomainObject : IDomainObject
     {
-        private ISpecification<TDomainObject> one;
-        private ISpecification<TDomainObject> other;
+        protected ISpecification<TDomainObject> one;
+        protected ISpecification<TDomainObject> other;
 
         protected CompositeSpecification(ISpecification<TDomainObject> one, ISpecification<TDomainObject> other)
         {
@@ -30,13 +30,11 @@ namespace Taijutsu.Domain
         public virtual ISpecification<TDomainObject> One
         {
             get { return one; }
-            protected set { one = value; }
         }
 
         public virtual ISpecification<TDomainObject> Other
         {
             get { return other; }
-            protected set { other = value; }
         }
     }
 }

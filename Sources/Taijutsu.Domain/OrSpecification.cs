@@ -26,6 +26,11 @@ namespace Taijutsu.Domain
         {
         }
 
+        public override bool IsSatisfiedBy(object candidate)
+        {
+            return One.IsSatisfiedBy(candidate) || Other.IsSatisfiedBy(candidate);
+        }
+
         public override IEnumerable<TDomainObject> SatisfyingElementsFrom(IEnumerable<TDomainObject> candidates)
         {
             // ReSharper disable PossibleMultipleEnumeration

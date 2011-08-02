@@ -36,36 +36,52 @@ namespace Taijutsu.Domain
 
         public abstract IEnumerable<TDomainObject> SatisfyingElementsFrom(IEnumerable<TDomainObject> candidates);
 
-        public virtual ISpecification<TDomainObject> And(ISpecification<TDomainObject> other)
+
+        ISpecification<TDomainObject> ISpecification<TDomainObject>.And(ISpecification<TDomainObject> other)
+        {
+            return And(other);
+        }
+
+        ISpecification<TDomainObject> ISpecification<TDomainObject>.Or(ISpecification<TDomainObject> other)
+        {
+            return Or(other);
+        }
+
+        ISpecification<TDomainObject> ISpecification<TDomainObject>.Not()
+        {
+            return Not();
+        }
+
+        public virtual Specification<TDomainObject> And(ISpecification<TDomainObject> other)
         {
             return new AndSpecification<TDomainObject>(this, other);
         }
 
-        public virtual ISpecification<TDomainObject> Or(ISpecification<TDomainObject> other)
+        public virtual Specification<TDomainObject> Or(ISpecification<TDomainObject> other)
         {
             return new OrSpecification<TDomainObject>(this, other);
         }
 
-        public virtual ISpecification<TDomainObject> Not()
+        public virtual Specification<TDomainObject> Not()
         {
             return new NotSpecification<TDomainObject>(this);
         }
 
         #endregion
 
-        public static ISpecification<TDomainObject> operator &(
-            Specification<TDomainObject> one, ISpecification<TDomainObject> other)
+        public static Specification<TDomainObject> operator &(
+            Specification<TDomainObject> one, Specification<TDomainObject> other)
         {
             return one.And(other);
         }
 
-        public static ISpecification<TDomainObject> operator |(
-            Specification<TDomainObject> one, ISpecification<TDomainObject> other)
+        public static Specification<TDomainObject> operator |(
+            Specification<TDomainObject> one, Specification<TDomainObject> other)
         {
             return one.Or(other);
         }
 
-        public static ISpecification<TDomainObject> operator !(Specification<TDomainObject> specification)
+        public static Specification<TDomainObject> operator !(Specification<TDomainObject> specification)
         {
             return specification.Not();
         }

@@ -67,6 +67,7 @@
     <Compile Include="LogicalContext_Specs.cs" />
     <Compile Include="Maybe_Specs.cs" />
     <Compile Include="SeqGuid_Specs.cs" />
+    <Compile Include="Specification_Specs.cs" />
     <Compile Include="SystemTime_Specs.cs" />
     <Compile Include="ValueObject_Specs.cs" />
   </ItemGroup>
