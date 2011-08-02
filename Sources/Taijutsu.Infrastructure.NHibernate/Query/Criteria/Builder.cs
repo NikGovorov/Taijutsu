@@ -11,13 +11,25 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-namespace Taijutsu.Domain.Query
+
+
+using NHibernate.Criterion;
+
+namespace Taijutsu.Infrastructure.NHibernate.Query.Criteria
 {
-    public interface IQueryOverBuilder<TEntity> : IHideObjectMembers where TEntity : class, IEntity
+    public class Builder<TEntity>
     {
-        TQuery By<TQuery>() where TQuery : IQueryOver<TEntity>;
-        TQuery By<TQuery>(string queryName) where TQuery : IQueryOver<TEntity>;
-        TRepository In<TRepository>() where TRepository : IRepository<TEntity>;
-        TRepository In<TRepository>(string repositoryName) where TRepository : IRepository<TEntity>;
+        private QueryOver<TEntity, TEntity> query;
+
+        public Builder(QueryOver<TEntity, TEntity> query)
+        {
+            this.query = query;
+        }
+
+        public virtual QueryOver<TEntity, TEntity> Query
+        {
+            get { return query; }
+            protected set { query = value; }
+        }
     }
 }

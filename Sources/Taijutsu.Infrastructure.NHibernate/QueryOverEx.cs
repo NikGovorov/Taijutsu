@@ -11,14 +11,17 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System.Collections.Generic;
-using System.Linq;
+using NHibernate;
+using NHibernate.Criterion;
 
-namespace Taijutsu.Domain.Query
+namespace Taijutsu.Infrastructure.NHibernate
 {
-    public interface IQueryOfNotUniqueEntity<out TEntity> : IQueryOf<TEntity>
-        where TEntity : IEntity
+    public static class QueryOverEx
     {
-        IQueryOf<IEnumerable<TEntity>> All { get; }
+        public static IQueryOver<TEntity, TEntity> GetExecutableQueryOver<TEntity>(this QueryOver<TEntity, TEntity> queryOver,
+                                                                            ISessionDecorator sessionDecorator)
+        {
+            return sessionDecorator.IsStataless ? queryOver.GetExecutableQueryOver((IStatelessSession) sessionDecorator.Session) : queryOver.GetExecutableQueryOver((ISession) sessionDecorator.Session);
+        }
     }
 }

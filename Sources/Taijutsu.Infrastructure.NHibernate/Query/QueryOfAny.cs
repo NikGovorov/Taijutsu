@@ -11,14 +11,33 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Taijutsu.Domain.Query
+using System;
+using Taijutsu.Domain.Query;
+
+namespace Taijutsu.Infrastructure.NHibernate.Query
 {
-    public interface IQueryOfNotUniqueEntity<out TEntity> : IQueryOf<TEntity>
-        where TEntity : IEntity
+    public class QueryOfAny : IQueryOf<bool>
     {
-        IQueryOf<IEnumerable<TEntity>> All { get; }
+        private readonly Func<bool> predicate;
+
+        public QueryOfAny(Func<bool> predicate)
+        {
+            this.predicate = predicate;
+        }
+
+        public virtual Func<bool> Predicate
+        {
+            get { return predicate; }
+        }
+
+        #region IQueryOf<bool> Members
+
+        public virtual bool Query()
+        {
+            return Predicate();
+        }
+
+        #endregion
     }
 }

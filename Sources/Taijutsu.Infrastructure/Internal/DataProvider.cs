@@ -36,8 +36,8 @@ namespace Taijutsu.Infrastructure.Internal
 
         public abstract void Close();
         public abstract void BeginTransaction(IsolationLevel level);
-        public abstract void Commit();
-        public abstract void Rollback();
+        public abstract void CommitTransaction();
+        public abstract void RollbackTransaction();
 
         public abstract IMarkingStep<TEntity> Mark<TEntity>(TEntity entity)
             where TEntity : IRemovableEntity, IAggregateRoot;

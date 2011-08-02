@@ -29,8 +29,8 @@ namespace Taijutsu.Infrastructure.Specs
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
 
-            provider.Expect(p => p.Commit()).Repeat.Never();
-            provider.Expect(p => p.Rollback()).Repeat.Once();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Never();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Once();
             provider.Expect(p => p.Close()).Repeat.Once();
 
             using (new UnitOfWork())
@@ -45,8 +45,8 @@ namespace Taijutsu.Infrastructure.Specs
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
 
-            provider.Expect(p => p.Commit()).Repeat.Once();
-            provider.Expect(p => p.Rollback()).Repeat.Never();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Once();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Never();
             provider.Expect(p => p.Close()).Repeat.Once();
 
             using (var uow = new UnitOfWork())
@@ -81,7 +81,7 @@ namespace Taijutsu.Infrastructure.Specs
         {
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
-            provider.Expect(p => p.Rollback()).Repeat.Once();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Once();
             provider.Expect(p => p.Close()).Repeat.Once();
 
             try
@@ -102,8 +102,8 @@ namespace Taijutsu.Infrastructure.Specs
         {
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
-            provider.Expect(p => p.Rollback()).Repeat.Never();
-            provider.Expect(p => p.Commit()).Repeat.Once();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Never();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Once();
             provider.Expect(p => p.Close()).Repeat.Once();
 
             try
@@ -139,9 +139,9 @@ namespace Taijutsu.Infrastructure.Specs
         {
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
-            provider.Expect(p => p.Rollback()).Repeat.Never();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Never();
             provider.Expect(p => p.Close()).Repeat.Once();
-            provider.Stub(p => p.Commit()).Throw(new Exception());
+            provider.Stub(p => p.CommitTransaction()).Throw(new Exception());
 
             try
             {
@@ -164,9 +164,9 @@ namespace Taijutsu.Infrastructure.Specs
         {
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
-            provider.Expect(p => p.Rollback()).Repeat.Never();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Never();
             provider.Expect(p => p.Close()).Repeat.Once();
-            provider.Expect(p => p.Commit()).Repeat.Once();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Once();
 
 
             using (var uow = new UnitOfWork())
@@ -181,9 +181,9 @@ namespace Taijutsu.Infrastructure.Specs
         {
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
-            provider.Expect(p => p.Rollback()).Repeat.Never();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Never();
             provider.Expect(p => p.Close()).Repeat.Once();
-            provider.Expect(p => p.Commit()).Repeat.Once();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Once();
 
 
             using (var uow = new UnitOfWork())
@@ -198,9 +198,9 @@ namespace Taijutsu.Infrastructure.Specs
         {
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
-            provider.Expect(p => p.Rollback()).Repeat.Never();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Never();
             provider.Expect(p => p.Close()).Repeat.Once();
-            provider.Expect(p => p.Commit()).Repeat.Once();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Once();
 
 
             using (var uow = new UnitOfWork())
@@ -215,9 +215,9 @@ namespace Taijutsu.Infrastructure.Specs
         {
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
-            provider.Expect(p => p.Rollback()).Repeat.Once();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Once();
             provider.Expect(p => p.Close()).Repeat.Once();
-            provider.Expect(p => p.Commit()).Repeat.Never();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Never();
 
 
             try
@@ -269,9 +269,9 @@ namespace Taijutsu.Infrastructure.Specs
             var provider = MockRepository.GenerateMock<DataProvider>();
             Internal.Infrastructure.DataProviderFactory = cfg => provider;
 
-            provider.Expect(p => p.Rollback()).Repeat.Once();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Once();
             provider.Expect(p => p.Close()).Repeat.Once();
-            provider.Expect(p => p.Commit()).Repeat.Never();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Never();
 
             var ex1 = MockRepository.GenerateMock<IDisposable>();
             var ex2 = MockRepository.GenerateMock<IDisposable>();

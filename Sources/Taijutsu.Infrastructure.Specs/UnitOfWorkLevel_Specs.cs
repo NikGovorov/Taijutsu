@@ -226,14 +226,14 @@ namespace Taijutsu.Infrastructure.Specs
         {
             var provider = MockRepository.GenerateMock<DataProvider>();
 
-            provider.Expect(p => p.Commit()).Repeat.Once();
-            provider.Expect(p => p.Rollback()).Repeat.Never();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Once();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Never();
             provider.Expect(p => p.Close()).Repeat.Once();
 
             var otherProvider = MockRepository.GenerateMock<DataProvider>();
 
-            otherProvider.Expect(p => p.Commit()).Repeat.Never();
-            otherProvider.Expect(p => p.Rollback()).Repeat.Twice();
+            otherProvider.Expect(p => p.CommitTransaction()).Repeat.Never();
+            otherProvider.Expect(p => p.RollbackTransaction()).Repeat.Twice();
             otherProvider.Expect(p => p.Close()).Repeat.Twice();
 
             bool follow = true;

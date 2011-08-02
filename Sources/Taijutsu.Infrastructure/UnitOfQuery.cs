@@ -13,6 +13,7 @@
 
 using System;
 using System.Data;
+using System.Linq;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 using Taijutsu.Infrastructure.Internal;

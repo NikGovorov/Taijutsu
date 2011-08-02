@@ -95,7 +95,7 @@ namespace Taijutsu.Infrastructure.Internal
                         commited, rolledback, closed));
             }
             commited = true;
-            DataProvider.Commit();
+            DataProvider.CommitTransaction();
         }
 
         public virtual void Rollback()
@@ -108,7 +108,7 @@ namespace Taijutsu.Infrastructure.Internal
                         commited, rolledback, closed));
             }
             rolledback = true;
-            DataProvider.Rollback();
+            DataProvider.RollbackTransaction();
         }
 
         public virtual void Close()

@@ -35,11 +35,11 @@ namespace Taijutsu.Infrastructure.Internal
         {
         }
 
-        public override void Commit()
+        public override void CommitTransaction()
         {
         }
 
-        public override void Rollback()
+        public override void RollbackTransaction()
         {
         }
 
