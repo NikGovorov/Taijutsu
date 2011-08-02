@@ -15,16 +15,16 @@ using System.Collections.Generic;
 
 namespace Taijutsu.Domain
 {
-    public interface IRepository<TEntity> : IHideObjectMembers where TEntity : IEntity
+    public interface IRepository<TEntity> : IHideObjectMembers where TEntity : class, IEntity
     {
         TEntity this[object key] { get; }
-        TDerivedEntity Retrieve<TDerivedEntity>(object key) where TDerivedEntity : TEntity;
+        TDerivedEntity Retrieve<TDerivedEntity>(object key) where TDerivedEntity : class, TEntity;
         TEntity Retrieve(object key);
-        Maybe<TDerivedEntity> FindBy<TDerivedEntity>(object key) where TDerivedEntity : TEntity;
+        Maybe<TDerivedEntity> FindBy<TDerivedEntity>(object key) where TDerivedEntity : class, TEntity;
         Maybe<TEntity> FindBy(object key);
-        bool TryFindBy<TDerivedEntity>(object key, out TDerivedEntity value) where TDerivedEntity : TEntity;
+        bool TryFindBy<TDerivedEntity>(object key, out TDerivedEntity value) where TDerivedEntity : class, TEntity;
         bool TryFindBy(object key, out TEntity value);
-        IEnumerable<TDerivedEntity> FindAll<TDerivedEntity>() where TDerivedEntity : TEntity;
+        IEnumerable<TDerivedEntity> FindAll<TDerivedEntity>() where TDerivedEntity : class, TEntity;
         IEnumerable<TEntity> FindAll();
         bool Exists(object key);
         bool Exists();
