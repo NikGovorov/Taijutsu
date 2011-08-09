@@ -14,6 +14,7 @@
 using System;
 using NUnit.Framework;
 using Taijutsu.Domain.Specs.Domain;
+using SharpTestsEx;
 
 namespace Taijutsu.Domain.Specs
 {
@@ -23,40 +24,63 @@ namespace Taijutsu.Domain.Specs
     {
         private Maybe<Customer> maybeCustomer;
 
+        protected override void Given()
+        {
+
+        }
+        
         protected override void When()
         {
             maybeCustomer = Maybe<Customer>.Empty;
         }
 
-        protected override void Because()
-        {
-        }
 
         [Test]
-        public virtual void has_value_should_return_false()
+        public virtual void then_has_value_should_return_false()
         {
-            Assert.IsFalse(maybeCustomer.HasValue);
+            maybeCustomer.HasValue.Should().Be.False();
             Assert.IsFalse(maybeCustomer);
         }
 
         [Test]
-        public virtual void to_string_should_return_string_for_empty_maybe()
+        public virtual void then_to_string_should_return_string_for_empty_maybe()
         {
-            Assert.IsNotNullOrEmpty(maybeCustomer.ToString());
+            maybeCustomer.ToString().Should().Not.Be.NullOrEmpty();
+            maybeCustomer.ToString().Should().Contain(typeof (Customer).ToString());
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public virtual void value_should_not_be_accessible()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public virtual void then_value_should_be_not_accessible()
         {
+            // ReSharper disable UnusedVariable
             var val = maybeCustomer.Value;
+            // ReSharper restore UnusedVariable
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public virtual void value_should_not_be_accessible_through_cast_operator()
+        [ExpectedException(typeof(InvalidOperationException))]
+        public virtual void then_value_should_not_be_accessible_through_cast_operator()
         {
-            Customer val = (Customer)maybeCustomer;
+            // ReSharper disable UnusedVariable
+            var val = (Customer)maybeCustomer;
+            // ReSharper restore UnusedVariable
+        }
+
+        [Test]
+        public virtual void then_handle_should_be_invoked()
+        {
+            var invoked = false;
+            maybeCustomer.Handle(() => invoked = true);
+            invoked.Should().Be.True();
+        }
+
+        [Test]
+        public virtual void then_apply_should_not_be_invoked()
+        {
+            var invoked = false;
+            maybeCustomer.Apply((_) => invoked = true);
+            invoked.Should().Be.False();
         }
 
     }
@@ -68,37 +92,60 @@ namespace Taijutsu.Domain.Specs
         private Maybe<Customer> maybeCustomer;
         private Customer customer;
 
-        protected override void When()
-        {
-            customer = new Customer(new FullName("Test","Test"));
-            maybeCustomer = new Maybe<Customer>(customer);
-        }
 
-        protected override void Because()
+        protected override void Given()
+        {
+            customer = new Customer(new FullName("Test", "Test"));
+        }
+        
+        protected override void When()
         {
             maybeCustomer = customer;
         }
 
         [Test]
-        public virtual void has_value_should_return_true()
+        public virtual void then_has_value_should_return_true()
         {
-            Assert.IsTrue(maybeCustomer.HasValue);
+            maybeCustomer.HasValue.Should().Be.True();
             Assert.IsTrue(maybeCustomer);
         }
 
         [Test]
-        public virtual void to_string_should_return_string_for_customer()
+        public virtual void then_to_string_should_return_string_for_customer()
         {
-            Assert.AreEqual(customer.ToString(), maybeCustomer.ToString());
+            maybeCustomer.ToString().Should().Be.EqualTo(customer.ToString());
         }
 
         [Test]
-        public virtual void value_should_be_accessible()
+        public virtual void then_value_should_be_accessible()
         {
-            Assert.AreSame(customer, maybeCustomer.Value);
-            Assert.AreSame(customer, (Customer)maybeCustomer); 
+            maybeCustomer.Value.Should().Be.SameInstanceAs(customer);
+            ((Customer)maybeCustomer).Should().Be.SameInstanceAs(customer);
         }
 
+
+        [Test]
+        public virtual void then_handle_should_not_be_invoked()
+        {
+            var invoked = false;
+            maybeCustomer.Handle(() => invoked = true);
+            invoked.Should().Be.False();
+        }
+
+        [Test]
+        public virtual void then_apply_should_be_invoked()
+        {
+            var invoked = false;
+            maybeCustomer.Apply((_) => invoked = true);
+            invoked.Should().Be.True();
+        }
+
+
+        [Test]
+        public virtual void then_maybe_ex_method_should_return_not_empty_maybe()
+        {
+            customer.Maybe().HasValue.Should().Be.True();
+        }
     }
 
     // ReSharper restore InconsistentNaming

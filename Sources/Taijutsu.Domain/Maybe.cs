@@ -15,8 +15,15 @@ using System;
 
 namespace Taijutsu.Domain
 {
+    
+    public interface IMaybe<out T> : IHideObjectMembers
+    {
+        T Value { get; }
+        bool HasValue { get; }
+    }
+
     [Serializable]
-    public class Maybe<T> : IHideObjectMembers
+    public class Maybe<T> : IMaybe<T>
     {
         // ReSharper disable StaticFieldInGenericType
         public static readonly Maybe<T> Empty = new Maybe<T>();
@@ -47,6 +54,33 @@ namespace Taijutsu.Domain
             get { return !Equals(val, default(T)); }
         }
 
+
+
+        public virtual Maybe<T> Apply(Action<T> action)
+        {
+            if (HasValue)
+            {
+                action(Value);
+            }
+            return this;
+        }
+
+        public virtual Maybe<T> Handle(Action action)
+        {
+            if (!HasValue)
+            {
+                action();
+            }
+
+            return this;
+        }
+
+        public override string ToString()
+        {
+            return HasValue ? val.ToString() : string.Format("Empty Maybe of {0}.", typeof (T));
+        }
+
+
         public static implicit operator Maybe<T>(T value)
         {
             return new Maybe<T>(value);
@@ -66,12 +100,15 @@ namespace Taijutsu.Domain
         protected virtual void AssertNotNullValue()
         {
             if (!HasValue)
-                throw new ArgumentException(string.Format("Maybe of {0} must have value.", typeof (T)));
+                throw new InvalidOperationException(string.Format("Maybe of {0} must have value.", typeof (T)));
         }
+    }
 
-        public override string ToString()
+    public static class MaybeEx
+    {
+        public static Maybe<T> Maybe<T>(this T value)
         {
-            return HasValue ? val.ToString() : string.Format("Empty Maybe of {0}.", typeof(T));
+            return new Maybe<T>(value);
         }
     }
 }

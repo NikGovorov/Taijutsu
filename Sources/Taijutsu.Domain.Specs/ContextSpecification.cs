@@ -22,8 +22,8 @@ namespace Taijutsu.Domain.Specs
         [TestFixtureSetUp]
         protected virtual void MainSetup()
         {
+            Given();
             When();
-            Because();
         }
 
         [TestFixtureTearDown]
@@ -35,7 +35,7 @@ namespace Taijutsu.Domain.Specs
 
         protected abstract void When();
 
-        protected abstract void Because();
+        protected abstract void Given();
 
         protected virtual void CleanUp()
         {
