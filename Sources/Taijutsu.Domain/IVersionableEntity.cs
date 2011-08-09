@@ -11,10 +11,15 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System.ComponentModel;
+
 namespace Taijutsu.Domain
 {
     public interface IVersionableEntity<out TVersion> : IEntity where TVersion : struct
     {
         TVersion Version { get; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        void Increment();
     }
 }
