@@ -15,6 +15,7 @@ using System;
 using System.Data;
 using NHibernate;
 using Taijutsu.Domain.Query;
+using Taijutsu.Infrastructure.Internal;
 using Taijutsu.Infrastructure.NHibernate.Query.Criteria;
 
 namespace Taijutsu.Infrastructure.NHibernate

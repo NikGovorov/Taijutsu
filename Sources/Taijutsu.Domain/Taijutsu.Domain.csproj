@@ -112,7 +112,6 @@
     <Compile Include="Query\IQueryOfEntityByKey.cs" />
     <Compile Include="Query\IQueryOfNotUniqueEntity.cs" />
     <Compile Include="Query\IQueryOver.cs" />
-    <Compile Include="Query\IQueryOverBuilder.cs" />
     <Compile Include="Query\Narrowing\IAnyNarrowing.cs" />
     <Compile Include="Query\Narrowing\ICountNarrowing.cs" />
     <Compile Include="Query\Narrowing\INotStrictNarrowing.cs" />

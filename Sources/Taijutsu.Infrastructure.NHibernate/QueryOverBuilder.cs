@@ -15,6 +15,7 @@
 using System;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
+using Taijutsu.Infrastructure.Internal;
 
 namespace Taijutsu.Infrastructure.NHibernate
 {
@@ -32,12 +33,12 @@ namespace Taijutsu.Infrastructure.NHibernate
             get { return session; }
         }
 
-        public virtual TQuery By<TQuery>() where TQuery : IQueryOver<TEntity>
+        public virtual TQuery Using<TQuery>() where TQuery : IQueryOver<TEntity>
         {
             throw new NotImplementedException();
         }
 
-        public virtual TQuery By<TQuery>(string queryName) where TQuery : IQueryOver<TEntity>
+        public virtual TQuery Using<TQuery>(string queryName) where TQuery : IQueryOver<TEntity>
         {
             throw new NotImplementedException();
         }

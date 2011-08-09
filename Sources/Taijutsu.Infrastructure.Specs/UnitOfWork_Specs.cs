@@ -394,7 +394,7 @@ namespace Taijutsu.Infrastructure.Specs
                     uow.Mark(customer).AsRemoved();
                     uow.MarkAsCreated(customer);
                     uow.MarkAsRemoved(customer);
-                    uow.Over<Customer>().By<GoldCustomerQuery>().Query();
+                    uow.Over<Customer>().Using<GoldCustomerQuery>().Query();
                     uow.Complete();
                 }
             }

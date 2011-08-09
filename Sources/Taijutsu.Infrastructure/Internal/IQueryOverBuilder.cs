@@ -11,12 +11,15 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-namespace Taijutsu.Domain.Query
+using Taijutsu.Domain;
+using Taijutsu.Domain.Query;
+
+namespace Taijutsu.Infrastructure.Internal
 {
     public interface IQueryOverBuilder<TEntity> : IHideObjectMembers where TEntity : class, IEntity
     {
-        TQuery By<TQuery>() where TQuery : IQueryOver<TEntity>;
-        TQuery By<TQuery>(string queryName) where TQuery : IQueryOver<TEntity>;
+        TQuery Using<TQuery>() where TQuery : IQueryOver<TEntity>;
+        TQuery Using<TQuery>(string queryName) where TQuery : IQueryOver<TEntity>;
         TRepository In<TRepository>() where TRepository : IRepository<TEntity>;
         TRepository In<TRepository>(string repositoryName) where TRepository : IRepository<TEntity>;
     }

@@ -82,7 +82,7 @@ namespace Taijutsu.Infrastructure.Specs
                 {
                     uoq.AllOf<Customer>().Query();
                     uoq.UniqueOf<Customer>(Guid.Empty).Query();
-                    uoq.Over<Customer>().By<GoldCustomerQuery>().Query();
+                    uoq.Over<Customer>().Using<GoldCustomerQuery>().Query();
                 }
             }
             catch (QueryNotFoundException)
