@@ -122,16 +122,17 @@ namespace Taijutsu.Infrastructure
         #endregion
     }
 
-    public class AtomicOperationScope : OperationScope
+
+    public class DistributedOperationScope : OperationScope
     {
         private readonly TransactionScope transactionScope;
 
-        public AtomicOperationScope(TransactionScopeOption transactionScopeOption, TimeSpan scopeTimeout)
+        public DistributedOperationScope(TransactionScopeOption transactionScopeOption, TimeSpan scopeTimeout)
             : this(new TransactionScope(transactionScopeOption, scopeTimeout), new DataProviderPlanningPolicy())
         {
         }
 
-        public AtomicOperationScope(TransactionScopeOption transactionScopeOption, TransactionOptions transactionOptions,
+        public DistributedOperationScope(TransactionScopeOption transactionScopeOption, TransactionOptions transactionOptions,
                                     EnterpriseServicesInteropOption enterpriseServicesInteropOption)
             : this(
                 new TransactionScope(transactionScopeOption, transactionOptions, enterpriseServicesInteropOption),
@@ -139,22 +140,22 @@ namespace Taijutsu.Infrastructure
         {
         }
 
-        public AtomicOperationScope(TransactionScopeOption transactionScopeOption, TransactionOptions transactionOptions)
+        public DistributedOperationScope(TransactionScopeOption transactionScopeOption, TransactionOptions transactionOptions)
             : this(new TransactionScope(transactionScopeOption, transactionOptions), new DataProviderPlanningPolicy())
         {
         }
 
-        public AtomicOperationScope(TransactionScopeOption transactionScopeOption)
+        public DistributedOperationScope(TransactionScopeOption transactionScopeOption)
             : this(new TransactionScope(transactionScopeOption), new DataProviderPlanningPolicy())
         {
         }
 
-        public AtomicOperationScope()
+        public DistributedOperationScope()
             : this(new TransactionScope(), new DataProviderPlanningPolicy())
         {
         }
 
-        protected internal AtomicOperationScope(TransactionScope transactionScope,
+        protected internal DistributedOperationScope(TransactionScope transactionScope,
                                                 IDataProviderPlanningPolicy dataContextSharing)
             : base(dataContextSharing)
         {
