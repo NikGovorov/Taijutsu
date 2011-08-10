@@ -12,12 +12,25 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Reflection;
+using Taijutsu.Domain.NewEvent;
 
 namespace Taijutsu.Domain
 {
     [Serializable]
     public abstract class Entity : IdentifiedObject<object>, IEntity
     {
+        protected void Publish<TFact>(TFact fact) where TFact : IFact
+        {
+            EventAggregator.Raise(EventFor(fact));
+        }
+
+        protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
+        {
+            return DomainEventActivators.ActivatorFor(InternalGetType(), typeof (TFact)).CreateInstance(this, fact);
+        }
     }
 
     [Serializable]
@@ -30,6 +43,25 @@ namespace Taijutsu.Domain
         public virtual TKey Key
         {
             get { return entityKey; }
+        }
+
+        public override bool Equals(object other)
+        {
+            var asEntity = (other as Entity<TKey>);
+
+            return !ReferenceEquals(asEntity, null)
+                   && InternalGetType() == asEntity.InternalGetType()
+                   && Equals(asEntity as IdentifiedObject<TKey>);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return entityKey.Equals(default(TKey)) ? string.Empty : entityKey.ToString();
         }
 
         #endregion
@@ -45,25 +77,21 @@ namespace Taijutsu.Domain
 
         #endregion
 
-        public override bool Equals(object other)
-        {
-            var asEntity = (other as Entity<TKey>);
-
-            return  !ReferenceEquals(asEntity, null)
-                    && InternalGetType() == asEntity.InternalGetType() 
-                    && Equals(asEntity as IdentifiedObject<TKey>);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
         protected override TKey BuildIdentity()
         {
             return Key;
         }
 
+        protected void Publish<TFact>(TFact fact) where TFact : IFact
+        {
+            EventAggregator.Raise(EventFor(fact));
+        }
+
+        protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
+        {
+            return DomainEventActivators.ActivatorFor(InternalGetType(), typeof(TFact)).CreateInstance(this, fact);
+        }
+        
         public static bool operator ==(Entity<TKey> left, Entity<TKey> right)
         {
             return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals(right);
@@ -72,11 +100,6 @@ namespace Taijutsu.Domain
         public static bool operator !=(Entity<TKey> left, Entity<TKey> right)
         {
             return !(left == right);
-        }
-
-        public override string ToString()
-        {
-            return entityKey.Equals(default(TKey)) ? string.Empty : entityKey.ToString();
         }
     }
 }

@@ -96,6 +96,15 @@
     <Compile Include="NativeEntityConversion.cs">
       <DependentUpon>IEntityConversion.cs</DependentUpon>
     </Compile>
+    <Compile Include="NewEvent\DomainEvent.cs" />
+    <Compile Include="NewEvent\DomainEventActivator.cs" />
+    <Compile Include="NewEvent\EventAggregator.cs" />
+    <Compile Include="NewEvent\IDomainEvent.cs" />
+    <Compile Include="NewEvent\IEvent.cs" />
+    <Compile Include="NewEvent\IEventAggregator.cs" />
+    <Compile Include="NewEvent\IFact.cs" />
+    <Compile Include="NewEvent\InternalEventAggregator.cs" />
+    <Compile Include="NewEvent\IObservable.cs" />
     <Compile Include="NotSpecification.cs">
       <DependentUpon>Specification.cs</DependentUpon>
     </Compile>

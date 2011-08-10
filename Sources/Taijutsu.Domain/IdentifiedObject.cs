@@ -60,7 +60,7 @@ namespace Taijutsu.Domain
             return BuildIdentity().GetHashCode();
         }
 
-        protected virtual object InternalGetType()
+        protected virtual Type InternalGetType()
         {
             return GetType();
         }

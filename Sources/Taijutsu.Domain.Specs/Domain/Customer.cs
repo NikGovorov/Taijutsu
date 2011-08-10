@@ -17,7 +17,7 @@ namespace Taijutsu.Domain.Specs.Domain
 {
     public class Customer : Entity<Guid>, IRemovableEntity
     {
-        protected DateTime creationDate;
+        protected DateTime dateOfCreation;
         protected FullName name;
 
         protected Customer()
@@ -26,7 +26,7 @@ namespace Taijutsu.Domain.Specs.Domain
 
         public Customer(Guid key, FullName name)
         {
-            creationDate = SystemTime.Now;
+            dateOfCreation = SystemTime.Now;
             entityKey = key;
             this.name = name;
         }
@@ -36,9 +36,9 @@ namespace Taijutsu.Domain.Specs.Domain
         {
         }
 
-        public virtual DateTime CreationDate
+        public virtual DateTime DateOfCreation
         {
-            get { return creationDate; }
+            get { return dateOfCreation; }
         }
 
         public virtual FullName Name
