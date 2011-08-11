@@ -99,12 +99,20 @@
     <Compile Include="NewEvent\DomainEvent.cs" />
     <Compile Include="NewEvent\DomainEventActivator.cs" />
     <Compile Include="NewEvent\EventAggregator.cs" />
+    <Compile Include="NewEvent\EventHandler.cs" />
     <Compile Include="NewEvent\IDomainEvent.cs" />
     <Compile Include="NewEvent\IEvent.cs" />
     <Compile Include="NewEvent\IEventAggregator.cs" />
     <Compile Include="NewEvent\IFact.cs" />
-    <Compile Include="NewEvent\InternalEventAggregator.cs" />
     <Compile Include="NewEvent\IObservable.cs" />
+    <Compile Include="NewEvent\Observable.cs" />
+    <Compile Include="NewEvent\Syntax\AddressedToSyntax.cs" />
+    <Compile Include="NewEvent\Syntax\DueToSyntax.cs" />
+    <Compile Include="NewEvent\Syntax\IEventStreamSyntax.cs" />
+    <Compile Include="NewEvent\Syntax\InitiatedBySyntax.cs" />
+    <Compile Include="NewEvent\Syntax\IObservableSyntax.cs" />
+    <Compile Include="NewEvent\Syntax\SubscriptionSyntax.cs" />
+    <Compile Include="NewEvent\Test.cs" />
     <Compile Include="NotSpecification.cs">
       <DependentUpon>Specification.cs</DependentUpon>
     </Compile>

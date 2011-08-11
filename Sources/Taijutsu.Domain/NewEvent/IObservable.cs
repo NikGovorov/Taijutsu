@@ -15,27 +15,8 @@ using Taijutsu.Domain.NewEvent.Syntax;
 
 namespace Taijutsu.Domain.NewEvent
 {
-
     public interface IObservable : IHideObjectMembers
     {
-        IObservableStream OnStream { get; }
-    }
-
-    public interface IObservableStream : IHideObjectMembers
-    {
-        IEventStream OfEvents { get; }
-        IEventStreamOf<TEvent> Of<TEvent>() where TEvent : IDomainEvent;
-    }
-
-    public interface IEventStream
-    {
-        DueToSyntax.All<TFact> DueTo<TFact>() where TFact : IFact;
-        InitiatedBySyntax.All<TEntity> InitiatedBy<TEntity>() where TEntity : IEntity;
-        AddressedToSyntax.All<TEntity> AddressedTo<TEntity>() where TEntity : IEntity;
-    }
-
-
-    public interface IEventStreamOf<out TEvent> : ISubscriptionSyntax<TEvent> where TEvent : IDomainEvent
-    {
+        IObservableSyntax OnStream { get; }
     }
 }
