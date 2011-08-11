@@ -24,10 +24,14 @@ namespace Taijutsu.Domain.Event
             dateOfOccurrence = SystemTime.Now;
         }
 
+        #region IDomainEvent Members
+
         public virtual DateTime DateOfOccurrence
         {
             get { return dateOfOccurrence; }
         }
+
+        #endregion
     }
 
 
@@ -50,10 +54,14 @@ namespace Taijutsu.Domain.Event
             this.initiatedBy = initiatedBy;
         }
 
+        #region IDomainEvent<TSubject> Members
+
         public virtual TSubject InitiatedBy
         {
             get { return initiatedBy; }
         }
+
+        #endregion
     }
 
 
@@ -61,7 +69,7 @@ namespace Taijutsu.Domain.Event
         where TSubject : IDomainObject
         where TFact : IFact
     {
-        private TFact fact;
+        protected TFact fact;
 
         protected DomainEvent()
         {
@@ -69,12 +77,20 @@ namespace Taijutsu.Domain.Event
 
         public DomainEvent(TSubject initiatedBy, TFact fact) : base(initiatedBy)
         {
+            if (Equals(fact, default(TFact)))
+            {
+                throw new ArgumentNullException("fact");
+            }
             this.fact = fact;
         }
+
+        #region IDomainEvent<TSubject,TFact> Members
 
         public virtual TFact Fact
         {
             get { return fact; }
         }
+
+        #endregion
     }
 }
