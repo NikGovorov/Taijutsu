@@ -94,7 +94,7 @@
     <Compile Include="Event\IEvent.cs" />
     <Compile Include="Event\IEventAggregator.cs" />
     <Compile Include="Event\IFact.cs" />
-    <Compile Include="Event\Internal\DomainEventActivator.cs" />
+    <Compile Include="Event\Internal\EventActivator.cs" />
     <Compile Include="Event\Internal\EventHandler.cs" />
     <Compile Include="Event\Internal\EventAggregator.cs" />
     <Compile Include="Event\IObservable.cs" />

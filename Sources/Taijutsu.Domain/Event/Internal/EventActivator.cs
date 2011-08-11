@@ -8,29 +8,29 @@ using System.Reflection;
 namespace Taijutsu.Domain.Event.Internal
 {
 
-    internal interface IDomainEventActivator
+    internal interface IEventActivator
     {
         DomainEvent CreateInstance(IEntity subject, IFact fact);
     }
 
-    internal class DomainEventActivator<T> : IDomainEventActivator where T : DomainEvent
+    internal class EventActivator<T> : IEventActivator where T : DomainEvent
     {
         private const BindingFlags ConstructorBindingFlags =
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         // ReSharper disable StaticFieldInGenericType
-        private static DomainEventActivator<T> current = new DomainEventActivator<T>();
+        private static EventActivator<T> current = new EventActivator<T>();
         // ReSharper restore StaticFieldInGenericType
 
         private readonly ConstructorInfo ñonstructor;
         private Func<object[], T> ctor;
 
-        private DomainEventActivator()
+        private EventActivator()
         {
             ñonstructor = typeof(T).GetConstructors(ConstructorBindingFlags).Where(c => c.GetParameters().Any()).Single();
         }
 
-        public static DomainEventActivator<T> Current
+        public static EventActivator<T> Current
         {
             get { return current; }
         }
@@ -73,9 +73,9 @@ namespace Taijutsu.Domain.Event.Internal
         private class Activator
         {
             private Type type;
-            private IDomainEventActivator activator;
+            private IEventActivator activator;
 
-            public Activator(Type type, IDomainEventActivator activator)
+            public Activator(Type type, IEventActivator activator)
             {
                 this.type = type;
                 this.activator = activator;
@@ -86,7 +86,7 @@ namespace Taijutsu.Domain.Event.Internal
                 get { return type; }
             }
 
-            public IDomainEventActivator EventActivator
+            public IEventActivator EventActivator
             {
                 get { return activator; }
             }
@@ -100,7 +100,7 @@ namespace Taijutsu.Domain.Event.Internal
             get { return activators ?? (activators = new Dictionary<object, Activator>()); }
         }
 
-        internal static IDomainEventActivator ActivatorFor(Type entityType, Type factType)
+        internal static IEventActivator ActivatorFor(Type entityType, Type factType)
         {
             var eventTypeDef = new { entityType, factType };
 
@@ -109,7 +109,7 @@ namespace Taijutsu.Domain.Event.Internal
             {
                 var eventType = typeof(DomainEvent<,>).MakeGenericType(new[] { entityType, factType });
                 const BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
-                var domainEventActivator = (IDomainEventActivator)typeof(DomainEventActivator<>).MakeGenericType(eventType)
+                var domainEventActivator = (IEventActivator)typeof(EventActivator<>).MakeGenericType(eventType)
                                                   .GetProperty("Current", flags)
                                                   .GetValue(null, flags, null, null, CultureInfo.InvariantCulture);
 
