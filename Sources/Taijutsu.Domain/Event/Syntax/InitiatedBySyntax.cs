@@ -14,8 +14,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Taijutsu.Domain.Event.Internal;
 
-namespace Taijutsu.Domain.NewEvent.Syntax
+namespace Taijutsu.Domain.Event.Syntax
 {
     public static class InitiatedBySyntax
     {
@@ -108,7 +109,7 @@ namespace Taijutsu.Domain.NewEvent.Syntax
             Action SubscriptionSyntax.All<IDomainEvent<TEntity>>.Subscribe(Action<IDomainEvent<TEntity>> subscriber, int priority)
             {
                 Predicate<IDomainEvent<TEntity>> filter = e => true;
-                return addHadlerAction(new EventHandler<IDomainEvent<TEntity>>(subscriber, filter, priority));
+                return addHadlerAction(new Internal.EventHandler<IDomainEvent<TEntity>>(subscriber, filter, priority));
             }
 
             #endregion

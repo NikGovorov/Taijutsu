@@ -15,7 +15,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using Taijutsu.Domain.NewEvent;
+using Taijutsu.Domain.Event;
+using Taijutsu.Domain.Event.Internal;
+using EventAggregator = Taijutsu.Domain.Event.EventAggregator;
 
 namespace Taijutsu.Domain
 {

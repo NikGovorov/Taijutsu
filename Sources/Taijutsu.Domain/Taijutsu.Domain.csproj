@@ -64,16 +64,8 @@
     <Compile Include="EntityNotUniqueException.cs">
       <DependentUpon>EntityException.cs</DependentUpon>
     </Compile>
-    <Compile Include="Event\EventAggregator.cs" />
-    <Compile Include="Event\EventAggregatorFactory.cs" />
-    <Compile Include="Event\EventHandler.cs" />
-    <Compile Include="Event\IEventAggregator.cs" />
-    <Compile Include="Event\ISubscriber.cs" />
-    <Compile Include="Event\ISubscriptionFeature.cs" />
-    <Compile Include="Event\ISubscriptionScope.cs" />
-    <Compile Include="Event\LocalEventAggregator.cs" />
-    <Compile Include="Event\SubscriptionBuilder.cs" />
-    <Compile Include="Event\SystemEventAggregator.cs" />
+    <Compile Include="Event\IEventDueToFact.cs" />
+    <Compile Include="Event\IExternalEvent.cs" />
     <Compile Include="IAggregateRoot.cs" />
     <Compile Include="IdentifiedObject.cs" />
     <Compile Include="IDomainObject.cs" />
@@ -96,23 +88,22 @@
     <Compile Include="NativeEntityConversion.cs">
       <DependentUpon>IEntityConversion.cs</DependentUpon>
     </Compile>
-    <Compile Include="NewEvent\DomainEvent.cs" />
-    <Compile Include="NewEvent\DomainEventActivator.cs" />
-    <Compile Include="NewEvent\EventAggregator.cs" />
-    <Compile Include="NewEvent\EventHandler.cs" />
-    <Compile Include="NewEvent\IDomainEvent.cs" />
-    <Compile Include="NewEvent\IEvent.cs" />
-    <Compile Include="NewEvent\IEventAggregator.cs" />
-    <Compile Include="NewEvent\IFact.cs" />
-    <Compile Include="NewEvent\IObservable.cs" />
-    <Compile Include="NewEvent\Observable.cs" />
-    <Compile Include="NewEvent\Syntax\AddressedToSyntax.cs" />
-    <Compile Include="NewEvent\Syntax\DueToSyntax.cs" />
-    <Compile Include="NewEvent\Syntax\IEventStreamSyntax.cs" />
-    <Compile Include="NewEvent\Syntax\InitiatedBySyntax.cs" />
-    <Compile Include="NewEvent\Syntax\IObservableSyntax.cs" />
-    <Compile Include="NewEvent\Syntax\SubscriptionSyntax.cs" />
-    <Compile Include="NewEvent\Test.cs" />
+    <Compile Include="Event\DomainEvent.cs" />
+    <Compile Include="Event\EventAggregator.cs" />
+    <Compile Include="Event\IDomainEvent.cs" />
+    <Compile Include="Event\IEvent.cs" />
+    <Compile Include="Event\IEventAggregator.cs" />
+    <Compile Include="Event\IFact.cs" />
+    <Compile Include="Event\Internal\DomainEventActivator.cs" />
+    <Compile Include="Event\Internal\EventHandler.cs" />
+    <Compile Include="Event\Internal\EventAggregator.cs" />
+    <Compile Include="Event\IObservable.cs" />
+    <Compile Include="Event\Syntax\AddressedToSyntax.cs" />
+    <Compile Include="Event\Syntax\DueToSyntax.cs" />
+    <Compile Include="Event\Syntax\IEventStreamSyntax.cs" />
+    <Compile Include="Event\Syntax\InitiatedBySyntax.cs" />
+    <Compile Include="Event\Syntax\IObservableSyntax.cs" />
+    <Compile Include="Event\Syntax\SubscriptionSyntax.cs" />
     <Compile Include="NotSpecification.cs">
       <DependentUpon>Specification.cs</DependentUpon>
     </Compile>

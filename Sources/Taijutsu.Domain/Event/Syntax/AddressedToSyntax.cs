@@ -14,8 +14,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Taijutsu.Domain.Event.Internal;
 
-namespace Taijutsu.Domain.NewEvent.Syntax
+namespace Taijutsu.Domain.Event.Syntax
 {
     public static class AddressedToSyntax
     {
@@ -125,7 +126,7 @@ namespace Taijutsu.Domain.NewEvent.Syntax
                                                                              int priority)
             {
                 Predicate<IExternalEvent<TEntity>> filter = e => true;
-                return addHadlerAction(new EventHandler<IExternalEvent<TEntity>>(subscriber, filter, priority));
+                return addHadlerAction(new Internal.EventHandler<IExternalEvent<TEntity>>(subscriber, filter, priority));
             }
 
             #endregion

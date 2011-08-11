@@ -11,14 +11,10 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-
-namespace Taijutsu.Domain.NewEvent
+namespace Taijutsu.Domain.Event
 {
-    public static class EventAggregator
+    public interface IFact : IValueObject
     {
-        public static void Raise<TEvent>(TEvent ev) where TEvent : IEvent
-        {
-           
-        }
+         
     }
 }

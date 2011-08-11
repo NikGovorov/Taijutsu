@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Taijutsu.Domain.NewEvent
+namespace Taijutsu.Domain.Event.Internal
 {
 
     internal interface IDomainEventActivator

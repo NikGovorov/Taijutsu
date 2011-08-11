@@ -14,8 +14,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Taijutsu.Domain.Event.Internal;
 
-namespace Taijutsu.Domain.NewEvent.Syntax
+namespace Taijutsu.Domain.Event.Syntax
 {
     public static class DueToSyntax
     {
@@ -128,7 +129,7 @@ namespace Taijutsu.Domain.NewEvent.Syntax
             Action SubscriptionSyntax.All<IEventDueToFact<TFact>>.Subscribe(Action<IEventDueToFact<TFact>> subscriber, int priority)
             {
                 Predicate<IEventDueToFact<TFact>> filter = e => true;
-                return addHadlerAction(new EventHandler<IEventDueToFact<TFact>>(subscriber, filter, priority));
+                return addHadlerAction(new Internal.EventHandler<IEventDueToFact<TFact>>(subscriber, filter, priority));
             }
 
             #endregion

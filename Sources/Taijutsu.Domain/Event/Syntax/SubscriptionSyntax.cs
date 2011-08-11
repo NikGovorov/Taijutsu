@@ -1,13 +1,29 @@
+// Copyright 2009-2011 Taijutsu.
+//   
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+//  
+//      http://www.apache.org/licenses/LICENSE-2.0 
+//  
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Taijutsu.Domain.Event.Internal;
 
-namespace Taijutsu.Domain.NewEvent.Syntax
+namespace Taijutsu.Domain.Event.Syntax
 {
-
     public static class SubscriptionSyntax
     {
         // ReSharper disable InconsistentNaming
+
+        #region Nested type: All
+
         public interface All<out TSource> : IHideObjectMembers
         {
             All<TSource> Where(Func<TSource, bool> filter);
@@ -15,29 +31,24 @@ namespace Taijutsu.Domain.NewEvent.Syntax
             Action Subscribe(Action<TSource> subscriber, int priority = 0);
         }
 
-        public interface Projection<out TSource, out TProjection> : IHideObjectMembers
-        {
-            Projection<TSource, TProjection> Where(Func<TProjection, bool> filter);
-            Action Subscribe(Action<TProjection> subscriber, int priority = 0);
-        }
-        // ReSharper restore InconsistentNaming        
+        #endregion
 
+        #region Nested type: AllImpl
 
-        internal class AllImpl<TEvent> : SubscriptionSyntax.All<TEvent>
-           where TEvent : class
+        internal class AllImpl<TEvent> : All<TEvent>
+            where TEvent : class
         {
             private readonly Func<IEventHandler, Action> addHadlerAction;
             private readonly List<Func<TEvent, bool>> eventFilters = new List<Func<TEvent, bool>>();
 
             internal AllImpl(Func<IEventHandler, Action> addHadlerAction,
-                                        IEnumerable<Func<TEvent, bool>> eventFilters = null)
+                             IEnumerable<Func<TEvent, bool>> eventFilters = null)
             {
                 this.addHadlerAction = addHadlerAction;
                 if (eventFilters != null)
                 {
                     this.eventFilters.AddRange(eventFilters);
                 }
-
             }
 
             public Func<IEventHandler, Action> AddHadlerAction
@@ -45,20 +56,20 @@ namespace Taijutsu.Domain.NewEvent.Syntax
                 get { return addHadlerAction; }
             }
 
-            public  IEnumerable<Func<TEvent, bool>> EventFilters
+            public IEnumerable<Func<TEvent, bool>> EventFilters
             {
                 get { return eventFilters; }
             }
 
             #region All<TEvent> Members
 
-            public SubscriptionSyntax.All<TEvent> Where(Func<TEvent, bool> filter)
+            public All<TEvent> Where(Func<TEvent, bool> filter)
             {
                 eventFilters.Add(filter);
                 return new AllImpl<TEvent>(AddHadlerAction, eventFilters);
             }
 
-            public SubscriptionSyntax.Projection<TEvent, TProjection> Select<TProjection>(
+            public Projection<TEvent, TProjection> Select<TProjection>(
                 Func<TEvent, TProjection> projection)
             {
                 return new ProjectionImpl<TEvent, TProjection>(this, projection);
@@ -66,16 +77,30 @@ namespace Taijutsu.Domain.NewEvent.Syntax
 
             public Action Subscribe(Action<TEvent> subscriber, int priority = 0)
             {
-                
                 return
-                    AddHadlerAction(new EventHandler<TEvent>(subscriber, e => !eventFilters.Any(f => !f(e)), priority));
+                    AddHadlerAction(new Internal.EventHandler<TEvent>(subscriber, e => !eventFilters.Any(f => !f(e)), priority));
             }
 
             #endregion
         }
 
+        #endregion
+
+
+        #region Nested type: Projection
+
+        public interface Projection<out TSource, out TProjection> : IHideObjectMembers
+        {
+            Projection<TSource, TProjection> Where(Func<TProjection, bool> filter);
+            Action Subscribe(Action<TProjection> subscriber, int priority = 0);
+        }
+
+        #endregion
+
+        #region Nested type: ProjectionImpl
+
         internal class ProjectionImpl<TEvent, TProjection> :
-              SubscriptionSyntax.Projection<TEvent, TProjection> where TEvent : class
+            Projection<TEvent, TProjection> where TEvent : class
         {
             private readonly AllImpl<TEvent> parent;
             private readonly Func<TEvent, TProjection> projection;
@@ -88,7 +113,7 @@ namespace Taijutsu.Domain.NewEvent.Syntax
             }
 
             internal ProjectionImpl(AllImpl<TEvent> parent, Func<TEvent, TProjection> projection,
-                                        IEnumerable<Func<TProjection, bool>> projectionFilters)
+                                    IEnumerable<Func<TProjection, bool>> projectionFilters)
                 : this(parent, projection)
             {
                 this.projectionFilters.AddRange(projectionFilters);
@@ -96,7 +121,7 @@ namespace Taijutsu.Domain.NewEvent.Syntax
 
             #region Projection<TEvent,TProjection> Members
 
-            public SubscriptionSyntax.Projection<TEvent, TProjection> Where(Func<TProjection, bool> filter)
+            public Projection<TEvent, TProjection> Where(Func<TProjection, bool> filter)
             {
                 return new ProjectionImpl<TEvent, TProjection>(parent, projection, projectionFilters);
             }
@@ -104,7 +129,7 @@ namespace Taijutsu.Domain.NewEvent.Syntax
             public Action Subscribe(Action<TProjection> subscriber, int priority = 0)
             {
                 Action<TEvent> evSubscriber = e => subscriber(projection(e));
-                return parent.AddHadlerAction(new EventHandler<TEvent>(evSubscriber,
+                return parent.AddHadlerAction(new Internal.EventHandler<TEvent>(evSubscriber,
                                                                        e =>
                                                                        !parent.EventFilters.Any(f => !f(e)) &&
                                                                        !projectionFilters.Any(f => !f(projection(e))),
@@ -114,5 +139,8 @@ namespace Taijutsu.Domain.NewEvent.Syntax
             #endregion
         }
 
+        #endregion
+
+        // ReSharper restore InconsistentNaming
     }
 }

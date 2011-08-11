@@ -13,7 +13,7 @@
 
 using System;
 
-namespace Taijutsu.Domain.NewEvent
+namespace Taijutsu.Domain.Event
 {
     public abstract class DomainEvent : IDomainEvent
     {
