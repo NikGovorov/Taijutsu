@@ -13,6 +13,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Taijutsu.Domain.Event.Syntax;
 
 namespace Taijutsu.Domain.Event.Internal
@@ -21,6 +23,7 @@ namespace Taijutsu.Domain.Event.Internal
     {
         private readonly object sync = new object();
         private IDictionary<Type, IList<IEventHandler>> handlersDictionary = new Dictionary<Type, IList<IEventHandler>>();
+        private IDictionary<Type, IEnumerable<Type>> targets = new Dictionary<Type, IEnumerable<Type>>();
 
         #region IEventStreamSyntax Members
 
@@ -50,7 +53,17 @@ namespace Taijutsu.Domain.Event.Internal
 
         public virtual void Raise<TEvent>(TEvent ev) where TEvent : IEvent
         {
-            throw new NotImplementedException();
+            var eventHandlers = new List<IEventHandler>();
+
+            foreach (var targetType in PotentialSubscribers(ev.GetType()))
+            {
+                eventHandlers.AddRange(handlersDictionary[targetType]);
+            }
+
+            foreach (var handler in eventHandlers.OrderByDescending(h => h.Priority))
+            {
+                handler.HandlerAction(ev);
+            }
         }
 
         #endregion
@@ -68,6 +81,40 @@ namespace Taijutsu.Domain.Event.Internal
         }
 
         #endregion
+
+        protected IEnumerable<Type> PotentialSubscribers(Type type)
+        {
+            //also covariance interface generating should be added
+            IEnumerable<Type> targetsForType;
+            if (!targets.TryGetValue(type, out targetsForType))
+            {
+                targetsForType = type.GetInterfaces().Where(i => typeof(IEvent).IsAssignableFrom(i)).Union(EventTypeHierarchy(type).Reverse()).ToArray();
+                CachePotentialSubscribers(type, targetsForType);    
+            }
+            return targetsForType;
+        }
+
+        protected IEnumerable<Type> EventTypeHierarchy(Type type)
+        {
+            if (typeof(IEvent).IsAssignableFrom(type))
+            {
+                yield return type;
+                foreach (var subtype in EventTypeHierarchy(type.BaseType))
+                {
+                    yield return subtype;
+                }
+            }
+        }
+
+        protected void CachePotentialSubscribers(Type type, IEnumerable<Type> potentialSubscribers)
+        {
+            Task.Factory.StartNew(() =>
+                                      {
+                                          var newTargets = new Dictionary<Type, IEnumerable<Type>>(targets);
+                                          newTargets[type] = potentialSubscribers;
+                                          targets = newTargets;
+                                      });
+        }
 
         protected virtual Action Subscribe(IEventHandler handler)
         {
@@ -100,8 +147,10 @@ namespace Taijutsu.Domain.Event.Internal
                     if (handlersDictionary.TryGetValue(handler.EventType, out handlers))
                     {
                         var newHandlers = new List<IEventHandler>(handlers);
-                        newHandlers.Remove(handler);
-                        handlersDictionary[handler.EventType] = newHandlers;
+                        if (newHandlers.Remove(handler))
+                        {
+                            handlersDictionary[handler.EventType] = newHandlers;    
+                        }
                     }
                 }
             };
