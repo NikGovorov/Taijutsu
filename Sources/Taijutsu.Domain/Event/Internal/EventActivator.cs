@@ -22,12 +22,12 @@ namespace Taijutsu.Domain.Event.Internal
         private static EventActivator<T> current = new EventActivator<T>();
         // ReSharper restore StaticFieldInGenericType
 
-        private readonly ConstructorInfo ñonstructor;
+        private readonly ConstructorInfo constructor;
         private Func<object[], T> ctor;
 
         private EventActivator()
         {
-            ñonstructor = typeof(T).GetConstructors(ConstructorBindingFlags).Where(c => c.GetParameters().Any()).Single();
+            constructor = typeof(T).GetConstructors(ConstructorBindingFlags).Where(c => c.GetParameters().Any()).Single();
         }
 
         public static EventActivator<T> Current
@@ -55,9 +55,9 @@ namespace Taijutsu.Domain.Event.Internal
                                                                          return Expression.TypeAs(arrayExpression, parameter.ParameterType);
                                                                      };
 
-                var parameters = ñonstructor.GetParameters().Select(converter).ToArray();
+                var parameters = constructor.GetParameters().Select(converter).ToArray();
 
-                var newExpression = Expression.New(ñonstructor, parameters);
+                var newExpression = Expression.New(constructor, parameters);
 
                 ctor = Expression.Lambda<Func<object[], T>>(newExpression, argsParameter).Compile();
             }
