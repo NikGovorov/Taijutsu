@@ -17,18 +17,18 @@ namespace Taijutsu.Domain.Event
 {
     public abstract class DomainEvent : IDomainEvent
     {
-        protected DateTime dateOfOccurrence;
+        protected DateTime occurrenceDate;
 
         protected DomainEvent()
         {
-            dateOfOccurrence = SystemTime.Now;
+            occurrenceDate = SystemTime.Now;
         }
 
         #region IDomainEvent Members
 
         public virtual DateTime DateOfOccurrence
         {
-            get { return dateOfOccurrence; }
+            get { return occurrenceDate; }
         }
 
         #endregion
@@ -37,12 +37,11 @@ namespace Taijutsu.Domain.Event
 
     public abstract class DomainEvent<TSubject> : DomainEvent, IDomainEvent<TSubject> where TSubject : IDomainObject
     {
-        protected TSubject initiatedBy;
+        protected TSubject subject;
 
         protected DomainEvent()
         {
         }
-
 
         protected DomainEvent(TSubject initiatedBy)
         {
@@ -51,14 +50,14 @@ namespace Taijutsu.Domain.Event
                 throw new ArgumentNullException("initiatedBy");
             }
 
-            this.initiatedBy = initiatedBy;
+            subject = initiatedBy;
         }
 
         #region IDomainEvent<TSubject> Members
 
         public virtual TSubject InitiatedBy
         {
-            get { return initiatedBy; }
+            get { return subject; }
         }
 
         #endregion
@@ -69,7 +68,7 @@ namespace Taijutsu.Domain.Event
         where TSubject : IDomainObject
         where TFact : IFact
     {
-        protected TFact fact;
+        protected TFact evFact;
 
         protected DomainEvent()
         {
@@ -81,14 +80,14 @@ namespace Taijutsu.Domain.Event
             {
                 throw new ArgumentNullException("fact");
             }
-            this.fact = fact;
+            evFact = fact;
         }
 
         #region IDomainEvent<TSubject,TFact> Members
 
         public virtual TFact Fact
         {
-            get { return fact; }
+            get { return evFact; }
         }
 
         #endregion
