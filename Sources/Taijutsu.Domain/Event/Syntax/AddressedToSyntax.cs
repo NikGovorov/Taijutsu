@@ -18,45 +18,9 @@ using Taijutsu.Domain.Event.Internal;
 
 namespace Taijutsu.Domain.Event.Syntax
 {
-
     public static class AddressedToSyntax
     {
         // ReSharper disable InconsistentNaming
-
-
-        public interface Full<out TEntity, out TFact> : SubscriptionSyntax.All<IExternalEvent<TEntity, TFact>>
-            where TEntity : IEntity where TFact : IFact
-        {
-            Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0);
-        }
-
-
-
-        internal class FullImpl<TEntity, TFact> : SubscriptionSyntax.AllImpl<IExternalEvent<TEntity, TFact>>,
-                                                  Full<TEntity, TFact>
-            where TEntity : IEntity where TFact : IFact
-        {
-            internal FullImpl(Func<IEventHandler, Action> addHadlerAction,
-                              IEnumerable<Func<IExternalEvent<TEntity, TFact>, bool>> eventFilters = null)
-                : base(addHadlerAction, eventFilters)
-            {
-            }
-
-            #region Full<TEntity,TFact> Members
-
-            public Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0)
-            {
-                Action<IExternalEvent<TEntity, TFact>> modSubscriber = e => subscriber(e.AddressedTo)(e.Fact);
-                return
-                    AddHadlerAction(new Internal.EventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber,
-                                                                                            e =>
-                                                                                            !EventFilters.Any(f => !f(e)),
-                                                                                            priority));
-            }
-
-            #endregion
-        }
-
 
         #region Nested type: All
 
@@ -103,6 +67,78 @@ namespace Taijutsu.Domain.Event.Syntax
                                                                                       t =>
                                                                                       e =>
                                                                                       t.IsAssignableFrom(e.GetType())));
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        #region Nested type: Full
+
+        public interface Full<out TEntity, out TFact> : SubscriptionSyntax.All<IExternalEvent<TEntity, TFact>>
+            where TEntity : IEntity where TFact : IFact
+        {
+            Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0);
+            Action Subscribe(Func<TEntity, DateTime, Action<TFact, DateTime>> subscriber, int priority = 0);
+
+            Action Subscribe(Func<TEntity, DateTime, DateTime, Action<TFact, DateTime, DateTime>> subscriber,
+                             int priority = 0);
+        }
+
+        #endregion
+
+        #region Nested type: FullImpl
+
+        internal class FullImpl<TEntity, TFact> : SubscriptionSyntax.AllImpl<IExternalEvent<TEntity, TFact>>,
+                                                  Full<TEntity, TFact>
+            where TEntity : IEntity where TFact : IFact
+        {
+            internal FullImpl(Func<IEventHandler, Action> addHadlerAction,
+                              IEnumerable<Func<IExternalEvent<TEntity, TFact>, bool>> eventFilters = null)
+                : base(addHadlerAction, eventFilters)
+            {
+            }
+
+            #region Full<TEntity,TFact> Members
+
+            public Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0)
+            {
+                Action<IExternalEvent<TEntity, TFact>> modSubscriber = e => subscriber(e.AddressedTo)(e.Fact);
+                return
+                    AddHadlerAction(new Internal.EventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber,
+                                                                                              e =>
+                                                                                              !EventFilters.Any(
+                                                                                                  f => !f(e)),
+                                                                                              priority));
+            }
+
+            public Action Subscribe(Func<TEntity, DateTime, Action<TFact, DateTime>> subscriber, int priority = 0)
+            {
+                Action<IExternalEvent<TEntity, TFact>> modSubscriber =
+                    e => subscriber(e.AddressedTo, e.DateOfOccurrence)(e.Fact, e.DateOfOccurrence);
+                return
+                    AddHadlerAction(new Internal.EventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber,
+                                                                                              e =>
+                                                                                              !EventFilters.Any(
+                                                                                                  f => !f(e)),
+                                                                                              priority));
+            }
+
+            public Action Subscribe(Func<TEntity, DateTime, DateTime, Action<TFact, DateTime, DateTime>> subscriber,
+                                    int priority = 0)
+            {
+                Action<IExternalEvent<TEntity, TFact>> modSubscriber =
+                    e =>
+                    subscriber(e.AddressedTo, e.DateOfOccurrence, e.DateOfNotice)(e.Fact, e.DateOfOccurrence,
+                                                                                  e.DateOfNotice);
+
+                return
+                    AddHadlerAction(new Internal.EventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber,
+                                                                                              e =>
+                                                                                              !EventFilters.Any(
+                                                                                                  f => !f(e)),
+                                                                                              priority));
             }
 
             #endregion

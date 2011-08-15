@@ -18,7 +18,6 @@ using Taijutsu.Domain.Event.Internal;
 
 namespace Taijutsu.Domain.Event.Syntax
 {
-
     public static class InitiatedBySyntax
     {
         // ReSharper disable InconsistentNaming
@@ -82,6 +81,7 @@ namespace Taijutsu.Domain.Event.Syntax
             where TFact : IFact
         {
             Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0);
+            Action Subscribe(Func<TEntity, DateTime, Action<TFact, DateTime>> subscriber, int priority = 0);
         }
 
         #endregion
@@ -103,6 +103,17 @@ namespace Taijutsu.Domain.Event.Syntax
             public Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0)
             {
                 Action<IDomainEvent<TEntity, TFact>> modSubscriber = e => subscriber(e.InitiatedBy)(e.Fact);
+                return
+                    AddHadlerAction(new Internal.EventHandler<IDomainEvent<TEntity, TFact>>(modSubscriber,
+                                                                                            e =>
+                                                                                            !EventFilters.Any(f => !f(e)),
+                                                                                            priority));
+            }
+
+            public Action Subscribe(Func<TEntity, DateTime, Action<TFact, DateTime>> subscriber, int priority = 0)
+            {
+                Action<IDomainEvent<TEntity, TFact>> modSubscriber =
+                    e => subscriber(e.InitiatedBy, e.DateOfOccurrence)(e.Fact, e.DateOfOccurrence);
                 return
                     AddHadlerAction(new Internal.EventHandler<IDomainEvent<TEntity, TFact>>(modSubscriber,
                                                                                             e =>
@@ -201,7 +212,7 @@ namespace Taijutsu.Domain.Event.Syntax
             All Or.InitiatedBy<TEntity>()
             {
                 return new AllImpl(addHadlerAction, new List<Type>(initiatorsTypes) {typeof (IDomainEvent<TEntity>)});
-            }
+            } 
 
             #endregion
         }
@@ -210,4 +221,4 @@ namespace Taijutsu.Domain.Event.Syntax
 
         // ReSharper restore InconsistentNaming         
     }
-}
+} 
