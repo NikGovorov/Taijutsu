@@ -11,14 +11,22 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using Taijutsu.Domain.Event.Syntax;
 
 namespace Taijutsu.Domain.Event
 {
     public static class EventAggregator
     {
+        private static readonly IEventAggregator eventAggregator = new Internal.EventAggregator();
+
         public static void Raise<TEvent>(TEvent ev) where TEvent : IEvent
         {
-           
+            eventAggregator.Raise(ev);
+        }
+
+        public static IObservableSyntax OnStream
+        {
+            get { return eventAggregator.OnStream; }
         }
     }
 }

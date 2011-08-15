@@ -12,21 +12,31 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Reflection;
 using Taijutsu.Domain.Event;
 using Taijutsu.Domain.Event.Internal;
+using Taijutsu.Domain.Event.Syntax;
 using EventAggregator = Taijutsu.Domain.Event.EventAggregator;
 
 namespace Taijutsu.Domain
 {
+
     [Serializable]
     public abstract class Entity : IdentifiedObject<object>, IEntity
     {
-        protected void Publish<TFact>(TFact fact) where TFact : IFact
+        protected static IObservableSyntax OnStream
         {
-            EventAggregator.Raise(EventFor(fact));
+            get { return EventAggregator.OnStream; }
+        }
+
+        protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
+        {
+            EventAggregator.Raise(ev);
+        }
+
+        protected PublishingSyntax DueTo<TFact>(TFact fact) where TFact : IFact
+        {
+            var ev = EventFor(fact);
+            return new PublishingSyntax(() => Publish(ev));
         }
 
         protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
@@ -84,9 +94,22 @@ namespace Taijutsu.Domain
             return Key;
         }
 
-        protected void Publish<TFact>(TFact fact) where TFact : IFact
+
+        protected static IObservableSyntax OnStream
         {
-            EventAggregator.Raise(EventFor(fact));
+            get { return EventAggregator.OnStream; }
+        }
+
+
+        protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
+        {
+            EventAggregator.Raise(ev);
+        }
+
+        protected PublishingSyntax DueTo<TFact>(TFact fact) where TFact : IFact
+        {
+            var ev = EventFor(fact);
+            return new PublishingSyntax(() => Publish(ev));
         }
 
         protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact

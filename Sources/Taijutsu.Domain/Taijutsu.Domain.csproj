@@ -64,8 +64,10 @@
     <Compile Include="EntityNotUniqueException.cs">
       <DependentUpon>EntityException.cs</DependentUpon>
     </Compile>
+    <Compile Include="Event\EventAggregator.cs" />
     <Compile Include="Event\IEventDueToFact.cs" />
     <Compile Include="Event\IExternalEvent.cs" />
+    <Compile Include="Event\Syntax\PublishingSyntax.cs" />
     <Compile Include="IAggregateRoot.cs" />
     <Compile Include="IdentifiedObject.cs" />
     <Compile Include="IDomainObject.cs" />
@@ -89,7 +91,6 @@
       <DependentUpon>IEntityConversion.cs</DependentUpon>
     </Compile>
     <Compile Include="Event\DomainEvent.cs" />
-    <Compile Include="Event\EventAggregator.cs" />
     <Compile Include="Event\IDomainEvent.cs" />
     <Compile Include="Event\IEvent.cs" />
     <Compile Include="Event\IEventAggregator.cs" />

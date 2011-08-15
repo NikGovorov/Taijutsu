@@ -57,7 +57,11 @@ namespace Taijutsu.Domain.Event.Internal
 
             foreach (var targetType in PotentialSubscribers(ev.GetType()))
             {
-                eventHandlers.AddRange(handlersDictionary[targetType]);
+                IList<IEventHandler> localHandlers;
+                if (handlersDictionary.TryGetValue(targetType, out localHandlers))
+                {
+                    eventHandlers.AddRange(localHandlers);    
+                }
             }
 
             foreach (var handler in eventHandlers.OrderByDescending(h => h.Priority))
@@ -84,7 +88,7 @@ namespace Taijutsu.Domain.Event.Internal
 
         protected IEnumerable<Type> PotentialSubscribers(Type type)
         {
-            //also covariance interface generating should be added
+            //possible covariance interface generating should be also added
             IEnumerable<Type> targetsForType;
             if (!targets.TryGetValue(type, out targetsForType))
             {
