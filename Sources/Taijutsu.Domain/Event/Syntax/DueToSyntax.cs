@@ -34,8 +34,8 @@ namespace Taijutsu.Domain.Event.Syntax
         public interface All<out TFact> : IHideObjectMembers where TFact : IFact
         {
             Or Or { get; }
-            SubscriptionSyntax.All<IDomainEvent<TEntity, TFact>> InitiatedBy<TEntity>() where TEntity : IEntity;
-            SubscriptionSyntax.All<IExternalEvent<TEntity, TFact>> AddressedTo<TEntity>() where TEntity : IEntity;
+            InitiatedBySyntax.Full<TEntity, TFact> InitiatedBy<TEntity>() where TEntity : IEntity;
+            AddressedToSyntax.Full<TEntity, TFact> AddressedTo<TEntity>() where TEntity : IEntity;
         }
 
         #endregion
@@ -103,14 +103,14 @@ namespace Taijutsu.Domain.Event.Syntax
                 get { return new OrImpl(addHadlerAction, new[] { typeof(IEventDueToFact<TFact>) }); }
             }
 
-            SubscriptionSyntax.All<IDomainEvent<TEntity, TFact>> All<TFact>.InitiatedBy<TEntity>()
+            InitiatedBySyntax.Full<TEntity, TFact> All<TFact>.InitiatedBy<TEntity>()
             {
-                return new SubscriptionSyntax.AllImpl<IDomainEvent<TEntity, TFact>>(addHadlerAction);
+                return new InitiatedBySyntax.FullImpl<TEntity, TFact>(addHadlerAction);
             }
 
-            SubscriptionSyntax.All<IExternalEvent<TEntity, TFact>> All<TFact>.AddressedTo<TEntity>()
+            AddressedToSyntax.Full<TEntity, TFact> All<TFact>.AddressedTo<TEntity>()
             {
-                return new SubscriptionSyntax.AllImpl<IExternalEvent<TEntity, TFact>>(addHadlerAction);
+                return new AddressedToSyntax.FullImpl<TEntity, TFact>(addHadlerAction);
             }
 
             SubscriptionSyntax.All<IEventDueToFact<TFact>> SubscriptionSyntax.All<IEventDueToFact<TFact>>.Where(Func<IEventDueToFact<TFact>, bool> filter)

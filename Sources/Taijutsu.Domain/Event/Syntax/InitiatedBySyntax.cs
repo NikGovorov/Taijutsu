@@ -18,6 +18,7 @@ using Taijutsu.Domain.Event.Internal;
 
 namespace Taijutsu.Domain.Event.Syntax
 {
+
     public static class InitiatedBySyntax
     {
         // ReSharper disable InconsistentNaming
@@ -33,21 +34,25 @@ namespace Taijutsu.Domain.Event.Syntax
         public interface All<out TEntity> : IHideObjectMembers where TEntity : IEntity
         {
             Or Or { get; }
-            SubscriptionSyntax.All<IDomainEvent<TEntity, TFact>> DueTo<TFact>() where TFact : IFact;
+            Full<TEntity, TFact> DueTo<TFact>() where TFact : IFact;
         }
 
         #endregion
 
+        #region Nested type: AllImpl
+
         internal class AllImpl : All
         {
-            private readonly List<Type> initiatorsTypes = new List<Type>();
             private readonly Func<IEventHandler, Action> addHadlerAction;
+            private readonly List<Type> initiatorsTypes = new List<Type>();
 
             public AllImpl(Func<IEventHandler, Action> addHadlerAction, IEnumerable<Type> initiatorsTypes)
             {
                 this.addHadlerAction = addHadlerAction;
                 this.initiatorsTypes.AddRange(initiatorsTypes);
             }
+
+            #region All Members
 
             Or All.Or
             {
@@ -56,10 +61,59 @@ namespace Taijutsu.Domain.Event.Syntax
 
             SubscriptionSyntax.All<IEventDueToFact<TFact>> All.DueTo<TFact>()
             {
-                return new SubscriptionSyntax.AllImpl<IEventDueToFact<TFact>>(addHadlerAction, initiatorsTypes.Select<Type, Func<IEventDueToFact<TFact>, bool>>(t => e => t.IsAssignableFrom(e.GetType())));
+                return new SubscriptionSyntax.AllImpl<IEventDueToFact<TFact>>(addHadlerAction,
+                                                                              initiatorsTypes.Select
+                                                                                  <Type,
+                                                                                  Func<IEventDueToFact<TFact>, bool>>(
+                                                                                      t =>
+                                                                                      e =>
+                                                                                      t.IsAssignableFrom(e.GetType())));
             }
+
+            #endregion
         }
 
+        #endregion
+
+        #region Nested type: Full
+
+        public interface Full<out TEntity, out TFact> : SubscriptionSyntax.All<IDomainEvent<TEntity, TFact>>
+            where TEntity : IDomainObject
+            where TFact : IFact
+        {
+            Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0);
+        }
+
+        #endregion
+
+        #region Nested type: FullImpl
+
+        internal class FullImpl<TEntity, TFact> : SubscriptionSyntax.AllImpl<IDomainEvent<TEntity, TFact>>,
+                                                  Full<TEntity, TFact>
+            where TEntity : IDomainObject where TFact : IFact
+        {
+            internal FullImpl(Func<IEventHandler, Action> addHadlerAction,
+                              IEnumerable<Func<IDomainEvent<TEntity, TFact>, bool>> eventFilters = null)
+                : base(addHadlerAction, eventFilters)
+            {
+            }
+
+            #region Full<TEntity,TFact> Members
+
+            public Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0)
+            {
+                Action<IDomainEvent<TEntity, TFact>> modSubscriber = e => subscriber(e.InitiatedBy)(e.Fact);
+                return
+                    AddHadlerAction(new Internal.EventHandler<IDomainEvent<TEntity, TFact>>(modSubscriber,
+                                                                                            e =>
+                                                                                            !EventFilters.Any(f => !f(e)),
+                                                                                            priority));
+            }
+
+            #endregion
+        }
+
+        #endregion
 
         #region Nested type: Init
 
@@ -85,20 +139,22 @@ namespace Taijutsu.Domain.Event.Syntax
 
             Or All<TEntity>.Or
             {
-                get { return new OrImpl(addHadlerAction, new[] { typeof(IDomainEvent<TEntity>) }); }
+                get { return new OrImpl(addHadlerAction, new[] {typeof (IDomainEvent<TEntity>)}); }
             }
 
-            SubscriptionSyntax.All<IDomainEvent<TEntity, TFact>> All<TEntity>.DueTo<TFact>()
+            Full<TEntity, TFact> All<TEntity>.DueTo<TFact>()
             {
-                return new SubscriptionSyntax.AllImpl<IDomainEvent<TEntity, TFact>>(addHadlerAction);
+                return new FullImpl<TEntity, TFact>(addHadlerAction);
             }
 
-            SubscriptionSyntax.All<IDomainEvent<TEntity>> SubscriptionSyntax.All<IDomainEvent<TEntity>>.Where(Func<IDomainEvent<TEntity>, bool> filter)
+            SubscriptionSyntax.All<IDomainEvent<TEntity>> SubscriptionSyntax.All<IDomainEvent<TEntity>>.Where(
+                Func<IDomainEvent<TEntity>, bool> filter)
             {
                 return new SubscriptionSyntax.AllImpl<IDomainEvent<TEntity>>(addHadlerAction, new[] {filter});
             }
 
-            SubscriptionSyntax.Projection<IDomainEvent<TEntity>, TProjection> SubscriptionSyntax.All<IDomainEvent<TEntity>>.Select<TProjection>(
+            SubscriptionSyntax.Projection<IDomainEvent<TEntity>, TProjection>
+                SubscriptionSyntax.All<IDomainEvent<TEntity>>.Select<TProjection>(
                 Func<IDomainEvent<TEntity>, TProjection> projection)
             {
                 return
@@ -106,7 +162,8 @@ namespace Taijutsu.Domain.Event.Syntax
                         new SubscriptionSyntax.AllImpl<IDomainEvent<TEntity>>(addHadlerAction), projection);
             }
 
-            Action SubscriptionSyntax.All<IDomainEvent<TEntity>>.Subscribe(Action<IDomainEvent<TEntity>> subscriber, int priority)
+            Action SubscriptionSyntax.All<IDomainEvent<TEntity>>.Subscribe(Action<IDomainEvent<TEntity>> subscriber,
+                                                                           int priority)
             {
                 Predicate<IDomainEvent<TEntity>> filter = e => true;
                 return addHadlerAction(new Internal.EventHandler<IDomainEvent<TEntity>>(subscriber, filter, priority));
@@ -126,10 +183,12 @@ namespace Taijutsu.Domain.Event.Syntax
 
         #endregion
 
+        #region Nested type: OrImpl
+
         internal class OrImpl : Or
         {
-            private readonly List<Type> initiatorsTypes = new List<Type>();
             private readonly Func<IEventHandler, Action> addHadlerAction;
+            private readonly List<Type> initiatorsTypes = new List<Type>();
 
             public OrImpl(Func<IEventHandler, Action> addHadlerAction, IEnumerable<Type> initiatorsTypes)
             {
@@ -137,11 +196,17 @@ namespace Taijutsu.Domain.Event.Syntax
                 this.initiatorsTypes.AddRange(initiatorsTypes);
             }
 
+            #region Or Members
+
             All Or.InitiatedBy<TEntity>()
             {
-                return new AllImpl(addHadlerAction, new List<Type>(initiatorsTypes) { typeof(IDomainEvent<TEntity>) });
+                return new AllImpl(addHadlerAction, new List<Type>(initiatorsTypes) {typeof (IDomainEvent<TEntity>)});
             }
+
+            #endregion
         }
+
+        #endregion
 
         // ReSharper restore InconsistentNaming         
     }
