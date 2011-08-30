@@ -3,6 +3,7 @@
 **/*.sln*
 bin
 obj
+Packages
 _ReSharper*
 
 *.csproj.user
