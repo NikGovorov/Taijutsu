@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Taijutsu.Domain</id>
+    <id>Taijutsu.NHibernate</id>
     <version>0.5.0.0</version>
     <authors>Nik Govorov</authors>
     <owners>Nik Govorov</owners>
@@ -9,5 +9,8 @@
     <description>Taijutsu is intended to help developers to design domain model layer.</description>
     <summary>Taijutsu is intended to help developers to design domain model layer.</summary>
     <language>en-US</language>
+	<dependencies>
+		<dependency id='Taijutsu' version='0.5.0.0'/>
+	</dependencies>
   </metadata>
 </package>
