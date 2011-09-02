@@ -4,11 +4,11 @@ using Taijutsu.Domain;
 
 namespace Taijutsu.Data.NHibernate
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
+    public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
     {
         private readonly ISessionDecorator session;
 
-        public Repository(ISessionDecorator session)
+        protected Repository(ISessionDecorator session)
         {
             this.session = session;
         }

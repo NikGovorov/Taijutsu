@@ -20,7 +20,7 @@ namespace Taijutsu.Data.NHibernate
     public interface ISessionDecorator
     {
 
-        object Session { get; }
+        object RealSession { get; }
 
         bool IsStataless { get; }
 
@@ -28,10 +28,7 @@ namespace Taijutsu.Data.NHibernate
 
         T Get<T>(object id);
 
-        object Get(string entityName, object id, LockMode lockMode);
-
         T Get<T>(object id, LockMode lockMode);
-
 
         IQuery CreateQuery(string queryString);
 

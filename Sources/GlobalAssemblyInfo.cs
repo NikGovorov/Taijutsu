@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyProduct("Taijutsu")]
@@ -7,7 +6,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright 2009-2011 Nikita Govorov - All rights reserved.")]
 
 [assembly: ComVisible(false)]
-[assembly: CLSCompliant(true)]
 
 [assembly: AssemblyVersion("0.0.0.0")]
 [assembly: AssemblyFileVersion("0.0.0.0")]

@@ -29,7 +29,7 @@ namespace Taijutsu
         public static readonly Maybe<T> Empty = new Maybe<T>();
         // ReSharper restore StaticFieldInGenericType
 
-        protected readonly T val;
+        private T value;
 
         protected Maybe()
         {
@@ -37,7 +37,7 @@ namespace Taijutsu
 
         public Maybe(T value)
         {
-            val = value;
+            this.value = value;
         }
 
         public virtual T Value
@@ -45,13 +45,14 @@ namespace Taijutsu
             get
             {
                 AssertNotNullValue();
-                return val;
+                return value;
             }
+            protected set { this.value = value; }
         }
 
         public virtual bool HasValue
         {
-            get { return !Equals(val, default(T)); }
+            get { return !Equals(value, default(T)); }
         }
 
 
@@ -77,7 +78,7 @@ namespace Taijutsu
 
         public override string ToString()
         {
-            return HasValue ? val.ToString() : string.Format("Empty Maybe of {0}.", typeof (T));
+            return HasValue ? value.ToString() : string.Format("Empty Maybe of {0}.", typeof (T));
         }
 
 

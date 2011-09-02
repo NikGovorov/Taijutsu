@@ -12,7 +12,6 @@
 // specific language governing permissions and limitations under the License.
 
 
-using System;
 using Taijutsu.Data.Internal;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
@@ -21,36 +20,33 @@ namespace Taijutsu.Data.NHibernate
 {
     public class QueryOverBuilder<TEntity> : IQueryOverBuilder<TEntity> where TEntity : class, IEntity
     {
+        private readonly IDataQueryLocator dataQueryLocator;
         private readonly ISessionDecorator session;
 
-        public QueryOverBuilder(ISessionDecorator session)
+        public QueryOverBuilder(IDataQueryLocator dataQueryLocator, ISessionDecorator session)
         {
             this.session = session;
+            this.dataQueryLocator = dataQueryLocator;
         }
 
-        protected virtual ISessionDecorator Session
+        public virtual TQuery Using<TQuery>() where TQuery : class, IQueryOver<TEntity>
         {
-            get { return session; }
+            return dataQueryLocator.LocateQuery<TQuery>(session);
         }
 
-        public virtual TQuery Using<TQuery>() where TQuery : IQueryOver<TEntity>
+        public virtual TQuery Using<TQuery>(string queryName) where TQuery : class, IQueryOver<TEntity>
         {
-            throw new NotImplementedException();
+            return dataQueryLocator.LocateQuery<TQuery>(session, queryName);
         }
 
-        public virtual TQuery Using<TQuery>(string queryName) where TQuery : IQueryOver<TEntity>
+        public virtual TRepository In<TRepository>() where TRepository : class, IRepository<TEntity>
         {
-            throw new NotImplementedException();
+            return dataQueryLocator.LocateRepository<TRepository>(session);
         }
 
-        public virtual TRepository In<TRepository>() where TRepository : IRepository<TEntity>
+        public virtual TRepository In<TRepository>(string repositoryName) where TRepository : class, IRepository<TEntity>
         {
-            throw new NotImplementedException();
-        }
-
-        public virtual TRepository In<TRepository>(string repositoryName) where TRepository : IRepository<TEntity>
-        {
-            throw new NotImplementedException();
+            return dataQueryLocator.LocateRepository<TRepository>(session, repositoryName);
         }
     }
 }

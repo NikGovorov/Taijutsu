@@ -18,7 +18,7 @@ using System.Linq;
 namespace Taijutsu.Domain
 {
     [Serializable]
-    internal class AndSpecification<TDomainObject> : CompositeSpecification<TDomainObject>
+    public class AndSpecification<TDomainObject> : CompositeSpecification<TDomainObject>
         where TDomainObject : IDomainObject
     {
         public AndSpecification(ISpecification<TDomainObject> one, ISpecification<TDomainObject> other)

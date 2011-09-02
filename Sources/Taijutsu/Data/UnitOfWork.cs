@@ -22,7 +22,7 @@ using IUnitOfWork = Taijutsu.Data.Internal.IUnitOfWork;
 
 namespace Taijutsu.Data
 {
-    public class UnitOfWork : IUnitOfWork, IAdvancedUnitOfWork, INativeUnitOf, IDisposable
+    public class UnitOfWork : IUnitOfWork, IAdvancedUnitOfWork, INative, IDisposable
     {
         private readonly IDataContext dataContext;
         private bool? completed;
@@ -64,7 +64,7 @@ namespace Taijutsu.Data
 
         public UnitOfWork(UnitOfWorkConfig unitOfWorkConfig)
         {
-            dataContext = SupervisorContext.DataContextSupervisor.RegisterUnitOfWorkBasedOn(unitOfWorkConfig);
+            dataContext = Infrastructure.DataContextSupervisor.Register(unitOfWorkConfig);
         }
 
         #region IAdvancedUnitOfWork Members
@@ -97,7 +97,7 @@ namespace Taijutsu.Data
                 {
                     if (dataContext.IsRoot)
                     {
-                        SupervisorContext.CheckDataContextSupervisorForRelease();
+                        Infrastructure.CheckDataContextSupervisorForRelease();
                     }
                 }
             }
@@ -105,9 +105,9 @@ namespace Taijutsu.Data
 
         #endregion
 
-        #region INativeUnitOf Members
+        #region INative Members
 
-        object INativeUnitOf.Native
+        object INative.Native
         {
             get { return dataContext.Provider.NativeProvider; }
         }

@@ -19,8 +19,8 @@ namespace Taijutsu.Data.Internal
 {
     public class DataContext : IDataContext
     {
-        private readonly DataContextSupervisor supervisor;
         private readonly UnitOfWorkConfig unitOfWorkConfig;
+        private readonly Action<DataContext> onClosed;
         private bool closed;
         private bool commited;
         private DataProvider dataProvider;
@@ -28,11 +28,11 @@ namespace Taijutsu.Data.Internal
         private bool rolledback;
         private int slaveCount;
 
-        public DataContext(UnitOfWorkConfig unitOfWorkConfig, DataContextSupervisor supervisor)
+        public DataContext(UnitOfWorkConfig unitOfWorkConfig, DataProvider dataProvider, Action<DataContext> onClosed)
         {
             this.unitOfWorkConfig = unitOfWorkConfig;
-            this.supervisor = supervisor;
-            dataProvider = supervisor.CreateDataProvider(unitOfWorkConfig);
+            this.dataProvider = dataProvider;
+            this.onClosed = onClosed;
             dataProvider.BeginTransaction(unitOfWorkConfig.IsolationLevel);
         }
 
@@ -138,7 +138,8 @@ namespace Taijutsu.Data.Internal
             }
 
             extension = null;
-            dataProvider = supervisor.RegisterForTerminate(this);
+            onClosed(this);
+            dataProvider = new OfflineDataProvider();
             
             if (lastExException != null)
             {

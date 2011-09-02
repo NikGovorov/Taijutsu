@@ -374,7 +374,7 @@ namespace Taijutsu.Specs.Data
             provider.Expect(p => p.NativeProvider).Return(nhSession);
             using (var uow = new UnitOfWork(dataSource))
             {
-                Assert.AreSame(nhSession, ((INativeUnitOf) uow).Native);
+                Assert.AreSame(nhSession, ((INative) uow).Native);
             }
         }
 

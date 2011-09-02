@@ -24,5 +24,6 @@ namespace Taijutsu.Data.Internal
         IReadOnlyDataProvider ReadOnlyProvider { get; }
         void Close();
         void Rollback();
+        void Commit();
     }
 }

@@ -19,10 +19,9 @@ namespace Taijutsu
     {
         private static ILogicalContext defaultContext = new DefaultLogicalContext();
 
-
         public static void Initialize(ILogicalContext context)
         {
-            defaultContext = context;
+            defaultContext = context; //todo allow only one initialization
         }
 
         public static object FindData(string name)

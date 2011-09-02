@@ -51,8 +51,8 @@ namespace Taijutsu.Data.Internal
             get { return sourceName; }
         }
 
-        public abstract DataProvider BuildDataProvider(IsolationLevel isolationLevel);
+        protected internal abstract DataProvider BuildDataProvider(IsolationLevel isolationLevel);
 
-        public abstract ReadOnlyDataProvider BuildReadOnlyDataProvider(IsolationLevel isolationLevel);
+        protected internal abstract ReadOnlyDataProvider BuildReadOnlyDataProvider(IsolationLevel isolationLevel);
     }
 }

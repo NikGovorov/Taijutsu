@@ -42,12 +42,12 @@ namespace Taijutsu.Specs.Data
         }
 
 
-        public override DataProvider BuildDataProvider(IsolationLevel isolationLevel)
+        protected internal override DataProvider BuildDataProvider(IsolationLevel isolationLevel)
         {
             return dpFactory();
         }
 
-        public override ReadOnlyDataProvider BuildReadOnlyDataProvider(IsolationLevel isolationLevel)
+        protected internal override ReadOnlyDataProvider BuildReadOnlyDataProvider(IsolationLevel isolationLevel)
         {
             return rdpFactory();
         }

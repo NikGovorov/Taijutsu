@@ -11,12 +11,11 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-
 namespace Taijutsu.Data.Internal
 {
-    public class DataProviderPlanningPolicy : IDataProviderPlanningPolicy
+    public class ProviderLifecyclePolicy : IProviderLifecyclePolicy
     {
-        #region IDataProviderPlanningPolicy Members
+        #region IProviderLifecyclePolicy Members
 
         public DataProvider Register(UnitOfWorkConfig config)
         {
@@ -27,6 +26,7 @@ namespace Taijutsu.Data.Internal
         {
             return Infrastructure.DataSource(config.SourceName).BuildReadOnlyDataProvider(config.IsolationLevel);
         }
+
         public virtual void Terminate(ReadOnlyDataProvider readOnlyDataProvider)
         {
             readOnlyDataProvider.Close();

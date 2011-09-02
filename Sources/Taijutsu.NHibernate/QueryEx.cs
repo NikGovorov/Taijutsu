@@ -27,7 +27,7 @@ namespace Taijutsu.Data.NHibernate
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IQueryable<TEntity> AllOfEx<TEntity>(this UnitOfWork unitOfWork) where TEntity : IQueryableEntity
         {
-            INativeUnitOf native = unitOfWork;
+            INative native = unitOfWork;
             var session = native.Native as ISession;
             return session.Query<TEntity>();
         }
@@ -35,7 +35,7 @@ namespace Taijutsu.Data.NHibernate
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IQueryable<TEntity> AllOfEx<TEntity>(this UnitOfQuery unitOfQuery) where TEntity : IEntity
         {
-            INativeUnitOf native = unitOfQuery;
+            INative native = unitOfQuery;
             var session = native.Native as IStatelessSession;
             return session.Query<TEntity>();
         }

@@ -40,23 +40,23 @@ namespace Taijutsu.Specs.Data
 
             using (var uoqL1I1 = new UnitOfQuery(dataSource))
             {
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
 
                 using (var uoqL2I1 = new UnitOfQuery(dataSource))
                 {
-                    Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                 }
 
                 using (var uoqL2I2 = new UnitOfQuery(dataSource))
                 {
-                    Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                     using (var uoqL3I1 = new UnitOfQuery(dataSource))
                     {
-                        Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                        Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                     }
                 }
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
             }
         }
 
@@ -64,13 +64,13 @@ namespace Taijutsu.Specs.Data
         public virtual void After_scope_of_all_units_of_query_all_of_them_should_be_unregistered()
         {
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<ReadOnlyDataProvider>(), dataSource));
-            Assert.AreEqual(0, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
-            var supervisor = SupervisorContext.ReadOnlyDataContextSupervisor;
+            Assert.AreEqual(0, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
+            var supervisor = Infrastructure.ReadOnlyDataContextSupervisor;
 
             using (var uoqL1I1 = new UnitOfQuery(dataSource))
             {
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
-                Assert.AreSame(supervisor, SupervisorContext.ReadOnlyDataContextSupervisor);
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreSame(supervisor, Infrastructure.ReadOnlyDataContextSupervisor);
 
                 using (var uoqL2I1 = new UnitOfQuery(dataSource, Require.Existing))
                 {
@@ -82,11 +82,11 @@ namespace Taijutsu.Specs.Data
                     {
                     }
                 }
-                Assert.AreSame(supervisor, SupervisorContext.ReadOnlyDataContextSupervisor);
+                Assert.AreSame(supervisor, Infrastructure.ReadOnlyDataContextSupervisor);
             }
 
-            Assert.AreEqual(0, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
-            Assert.AreNotSame(supervisor, SupervisorContext.ReadOnlyDataContextSupervisor);
+            Assert.AreEqual(0, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
+            Assert.AreNotSame(supervisor, Infrastructure.ReadOnlyDataContextSupervisor);
         }
 
 
@@ -124,36 +124,36 @@ namespace Taijutsu.Specs.Data
         public virtual void Units_of_query_with_require_new_should_create_own_hierarchy()
         {
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<ReadOnlyDataProvider>(), dataSource));
-            Assert.AreEqual(0, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+            Assert.AreEqual(0, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
 
             using (var uoqL1I1 = new UnitOfQuery(dataSource))
             {
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
 
                 using (var uoqL2I1 = new UnitOfQuery(dataSource))
                 {
-                    Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                 }
 
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
 
 
                 using (var uoqL2I2 = new UnitOfQuery(dataSource, Require.New))
                 {
-                    Assert.AreEqual(2, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(2, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                     using (var uoqL3I1 = new UnitOfQuery(dataSource, Require.New))
                     {
-                        Assert.AreEqual(3, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                        Assert.AreEqual(3, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                         using (var uoqL4I1 = new UnitOfQuery(dataSource))
                         {
-                            Assert.AreEqual(3, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                            Assert.AreEqual(3, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                         }
                     }
-                    Assert.AreEqual(2, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(2, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                 }
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
             }
-            Assert.AreEqual(0, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+            Assert.AreEqual(0, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
         }
 
 
@@ -164,58 +164,58 @@ namespace Taijutsu.Specs.Data
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<ReadOnlyDataProvider>(), "q_crm_2"));
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<ReadOnlyDataProvider>(), "q_admin_2"));
 
-            Assert.AreEqual(0, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+            Assert.AreEqual(0, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
 
             using (var uoqL1I1 = new UnitOfQuery("q_crm_2"))
             {
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
 
                 using (var uoqL2I1 = new UnitOfQuery("q_crm_2"))
                 {
-                    Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                 }
 
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
 
 
                 using (var uoqL2I2 = new UnitOfQuery("q_admin_2"))
                 {
-                    Assert.AreEqual(2, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(2, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                     using (var uoqL3I1 = new UnitOfQuery(dataSource))
                     {
-                        Assert.AreEqual(3, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                        Assert.AreEqual(3, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                         using (var uoqL4I1 = new UnitOfQuery("q_admin_2"))
                         {
-                            Assert.AreEqual(3, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                            Assert.AreEqual(3, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                         }
 
                         using (var uoqL4I2 = new UnitOfQuery(dataSource, Require.New))
                         {
-                            Assert.AreEqual(4, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                            Assert.AreEqual(4, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
 
                             using (var uoqL5I1 = new UnitOfQuery("q_crm_2"))
                             {
-                                Assert.AreEqual(4, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
-                                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Where(u => u.SourceName == "q_crm_2").Count());
+                                Assert.AreEqual(4, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
+                                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Where(u => u.SourceName == "q_crm_2").Count());
                             }
                             using (var uoqL5I1 = new UnitOfQuery("q_crm_2", Require.New))
                             {
-                                Assert.AreEqual(5, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
-                                Assert.AreEqual(2, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Where(u => u.SourceName == "q_crm_2").Count());
+                                Assert.AreEqual(5, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
+                                Assert.AreEqual(2, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Where(u => u.SourceName == "q_crm_2").Count());
                             }
 
                             using (var uoqL5I1 = new UnitOfQuery("q_admin_2"))
                             {
-                                Assert.AreEqual(4, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                                Assert.AreEqual(4, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                             }
                         }
 
                     }
-                    Assert.AreEqual(2, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(2, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
                 }
-                Assert.AreEqual(1, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
             }
-            Assert.AreEqual(0, SupervisorContext.ReadOnlyDataContextSupervisor.Roots.Count());
+            Assert.AreEqual(0, Infrastructure.ReadOnlyDataContextSupervisor.Roots.Count());
         }
 
 

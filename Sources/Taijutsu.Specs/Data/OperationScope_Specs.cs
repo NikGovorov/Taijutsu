@@ -28,7 +28,7 @@ namespace Taijutsu.Specs.Data
         [TearDown]
         protected virtual void OnTearDown()
         {
-            SupervisorContext.UnRegisterOperationScope();
+            Infrastructure.UnRegisterOperationScope();
         }
 
         #endregion

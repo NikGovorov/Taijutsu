@@ -37,8 +37,8 @@ namespace Taijutsu.Specs.Data
         {
             var provider = MockRepository.GenerateMock<ReadOnlyDataProvider>();
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => provider, dataSource));
-            provider.Expect(p => p.Commit()).Repeat.Never();
-            provider.Expect(p => p.Rollback()).Repeat.Once();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Never();
+            provider.Expect(p => p.RollbackTransaction()).Repeat.Once();
             provider.Expect(p => p.Close()).Repeat.Once();
 
             using (new UnitOfQuery(dataSource))
@@ -53,9 +53,9 @@ namespace Taijutsu.Specs.Data
         {
             var provider = MockRepository.GenerateMock<ReadOnlyDataProvider>();
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => provider, dataSource));
-            provider.Expect(p => p.Commit()).Repeat.Never();
+            provider.Expect(p => p.CommitTransaction()).Repeat.Never();
             provider.Expect(p => p.Close()).Repeat.Once();
-            provider.Stub(p => p.Rollback()).Throw(new Exception());
+            provider.Stub(p => p.RollbackTransaction()).Throw(new Exception());
 
             try
             {
@@ -111,7 +111,7 @@ namespace Taijutsu.Specs.Data
             provider.Expect(p => p.NativeProvider).Return(nhStatelessSession);
             using (var uow = new UnitOfQuery(dataSource))
             {
-                Assert.AreSame(nhStatelessSession, ((INativeUnitOf) uow).Native);
+                Assert.AreSame(nhStatelessSession, ((INative) uow).Native);
             }
         }
 

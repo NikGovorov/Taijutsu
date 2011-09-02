@@ -18,70 +18,24 @@ using System.Linq;
 
 namespace Taijutsu.Data.Internal
 {
-    public abstract class AbstractDataContextSupervisor
+    public class DataContextSupervisor
     {
-        private readonly IDataProviderPlanningPolicy dataContextSharingPolicy;
-
-        protected AbstractDataContextSupervisor()
-            : this(new DataProviderPlanningPolicy())
-        {
-        }
-
-        protected AbstractDataContextSupervisor(IDataProviderPlanningPolicy dataContextSharingPolicy)
-        {
-            this.dataContextSharingPolicy = dataContextSharingPolicy;
-        }
-
-        protected virtual IDataProviderPlanningPolicy DataContextSharingPolicy
-        {
-            get { return dataContextSharingPolicy; }
-        }
-    }
-
-    public interface IDataContextSupervisor
-    {
-        Maybe<IDataContext> CurrentContext { get; }
-        bool HasTopLevel(UnitOfWorkConfig unitOfQueryConfig);
-        IEnumerable<UnitOfWorkConfig> Roots { get; }
-        IDataContext RegisterUnitOfWorkBasedOn(UnitOfWorkConfig unitOfWorkConfig);
-    }
-
-    public class DataContextSupervisor : AbstractDataContextSupervisor, IDataContextSupervisor
-    {
+        private readonly IProviderLifecyclePolicy providerLifecyclePolicy;
         private readonly IList<DataContext> unitsOfWork = new List<DataContext>();
 
         public DataContextSupervisor()
+            : this(new ProviderLifecyclePolicy())
         {
         }
 
-        public DataContextSupervisor(IDataProviderPlanningPolicy dataContextSharingPolicy)
-            : base(dataContextSharingPolicy)
+        public DataContextSupervisor(IProviderLifecyclePolicy providerLifecyclePolicy)
         {
+            this.providerLifecyclePolicy = providerLifecyclePolicy;
         }
 
-        #region IDataContextSupervisor Members
-
-        public virtual Maybe<IDataContext> CurrentContext
+        protected virtual IProviderLifecyclePolicy ProviderLifecyclePolicy
         {
-            get
-            {
-                try
-                {
-                    return new Maybe<IDataContext>(unitsOfWork.LastOrDefault());
-                }
-                catch (InvalidOperationException)
-                {
-                    return Maybe<IDataContext>.Empty;
-                }
-            }
-        }
-
-        public virtual bool HasTopLevel(UnitOfWorkConfig unitOfQueryConfig)
-        {
-            var context = (from query in unitsOfWork
-                           where query.UnitOfWorkConfig.SourceName == unitOfQueryConfig.SourceName
-                           select query).LastOrDefault();
-            return context != null && context.UnitOfWorkConfig.IsolationLevel.IsCompatible(unitOfQueryConfig.IsolationLevel);
+            get { return providerLifecyclePolicy; }
         }
 
         public virtual IEnumerable<UnitOfWorkConfig> Roots
@@ -89,11 +43,12 @@ namespace Taijutsu.Data.Internal
             get { return unitsOfWork.Select(u => u.UnitOfWorkConfig); }
         }
 
-        public virtual IDataContext RegisterUnitOfWorkBasedOn(UnitOfWorkConfig unitOfWorkConfig)
+        public virtual IDataContext Register(UnitOfWorkConfig unitOfWorkConfig)
         {
             if (unitOfWorkConfig.Require == Require.New)
             {
-                var newContext = new DataContext(unitOfWorkConfig, this);
+                var newContext = new DataContext(unitOfWorkConfig, ProviderLifecyclePolicy.Register(unitOfWorkConfig),
+                                                 RegisterForTerminate);
                 unitsOfWork.Add(newContext);
                 return newContext;
             }
@@ -118,25 +73,18 @@ namespace Taijutsu.Data.Internal
                 throw new Exception(
                     "Unit of work requires existing of unit of work at top level, but nothing has not been found.");
 
-            context = new DataContext(unitOfWorkConfig, this);
+            context = new DataContext(unitOfWorkConfig, ProviderLifecyclePolicy.Register(unitOfWorkConfig),
+                                      RegisterForTerminate);
             unitsOfWork.Add(context);
             return context;
         }
 
-        
 
-        #endregion
-
-        internal virtual DataProvider CreateDataProvider(UnitOfWorkConfig unitOfWorkConfig)
-        {
-            return DataContextSharingPolicy.Register(unitOfWorkConfig);
-        }
-
-        internal virtual DataProvider RegisterForTerminate(DataContext dataContext)
+        protected virtual void RegisterForTerminate(DataContext dataContext)
         {
             try
             {
-                DataContextSharingPolicy.Terminate(dataContext.DataProvider);
+                ProviderLifecyclePolicy.Terminate(dataContext.DataProvider);
             }
             catch (Exception exception)
             {
@@ -153,7 +101,6 @@ namespace Taijutsu.Data.Internal
                     Trace.TraceError(exception.ToString());
                 }
             }
-            return new OfflineDataProvider();
         }
     }
 }

@@ -23,6 +23,7 @@ namespace Taijutsu.Domain
     {
         #region ISpecification<TDomainObject> Members
 
+
         public virtual bool IsSatisfiedBy(object candidate)
         {
             return candidate is TDomainObject && SatisfyingElementsFrom((new[] {(TDomainObject) candidate})).Any();

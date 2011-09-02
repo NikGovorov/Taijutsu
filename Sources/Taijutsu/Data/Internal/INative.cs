@@ -12,15 +12,14 @@
 // specific language governing permissions and limitations under the License.
 
 
-using System;
+using System.ComponentModel;
 
 namespace Taijutsu.Data.Internal
 {
-    public interface IDataProviderPlanningPolicy : IDisposable
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public interface INative
     {
-        void Terminate(DataProvider dataProvider);
-        void Terminate(ReadOnlyDataProvider dataProvider);
-        DataProvider Register(UnitOfWorkConfig config);
-        ReadOnlyDataProvider Register(UnitOfQueryConfig config);
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        object Native { get; }
     }
 }

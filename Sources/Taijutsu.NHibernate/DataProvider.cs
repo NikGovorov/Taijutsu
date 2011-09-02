@@ -21,13 +21,15 @@ using Taijutsu.Data.NHibernate.Query.Criteria;
 
 namespace Taijutsu.Data.NHibernate
 {
-    public class DataProvider : Data.Internal.DataProvider
+    public class DataProvider : Internal.DataProvider
     {
         private readonly ISession session;
+        private readonly DataSource dataSource;
 
-        public DataProvider(ISessionFactory factory)
+        public DataProvider(DataSource dataSource)
         {
-            session = factory.OpenSession();
+            this.dataSource = dataSource;
+            session = dataSource.SessionFactory.OpenSession();
             session.FlushMode = FlushMode.Auto;
         }
 
@@ -39,7 +41,7 @@ namespace Taijutsu.Data.NHibernate
 
         public override IQueryOverBuilder<TEntity> QueryOver<TEntity>()
         {
-            return new QueryOverBuilder<TEntity>(new SessionDecorator(Session));
+            return new QueryOverBuilder<TEntity>(dataSource, new Session(Session));
         }
 
         protected virtual ITransaction CurrentTransaction { get; set; }
@@ -49,11 +51,11 @@ namespace Taijutsu.Data.NHibernate
             try
             {
                 CurrentTransaction = null;
-                Session.Close();
+                Session.Dispose();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new NotImplementedException();
+                throw; //TODO Enable logging here
             }
         }
 
@@ -88,12 +90,12 @@ namespace Taijutsu.Data.NHibernate
 
         public override IQueryOfEntities<TEntity> AllOf<TEntity>()
         {
-            return new QueryOfEntities<TEntity>(new SessionDecorator(Session));
+            return new QueryOfEntities<TEntity>(new Session(Session));
         }
 
         public override IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key)
         {
-            return new QueryOfEntityByKey<TEntity>(key, new SessionDecorator(Session));
+            return new QueryOfEntityByKey<TEntity>(key, new Session(Session));
         }
 
         public override IMarkingStep<TEntity> Mark<TEntity>(TEntity entity)

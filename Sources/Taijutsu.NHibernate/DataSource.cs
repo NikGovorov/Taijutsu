@@ -16,23 +16,41 @@ using NHibernate;
 
 namespace Taijutsu.Data.NHibernate
 {
-    public class DataSource : Data.Internal.DataSource
+    public class DataSource : Internal.DataSource, IDataQueryLocator
     {
         private readonly ISessionFactory sessionFactory;
+        private readonly IDataQueryLocator dataQueryLocator;
 
-        public DataSource(string sourceName, ISessionFactory sessionFactory) : base(sourceName)
+        public DataSource(ISessionFactory sessionFactory, IDataQueryLocator dataQueryLocator, string sourceName = "")
+            : base(sourceName)
         {
             this.sessionFactory = sessionFactory;
+            this.dataQueryLocator = dataQueryLocator;
         }
 
-        public override Data.Internal.DataProvider BuildDataProvider(IsolationLevel isolationLevel)
+        public virtual ISessionFactory SessionFactory
         {
-            return new DataProvider(sessionFactory);
+            get { return sessionFactory; }
         }
 
-        public override Data.Internal.ReadOnlyDataProvider BuildReadOnlyDataProvider(IsolationLevel isolationLevel)
+        protected override Internal.DataProvider BuildDataProvider(IsolationLevel isolationLevel)
         {
-            return new ReadOnlyDataProvider(sessionFactory);
+            return new DataProvider(this);
+        }
+
+        protected override Internal.ReadOnlyDataProvider BuildReadOnlyDataProvider(IsolationLevel isolationLevel)
+        {
+            return new ReadOnlyDataProvider(this);
+        }
+
+        TQuery IDataQueryLocator.LocateQuery<TQuery>(ISessionDecorator session, string name)
+        {
+            return dataQueryLocator.LocateQuery<TQuery>(session, name);
+        }
+
+        TRepository IDataQueryLocator.LocateRepository<TRepository>(ISessionDecorator session, string name)
+        {
+            return dataQueryLocator.LocateQuery<TRepository>(session, name);
         }
     }
 }

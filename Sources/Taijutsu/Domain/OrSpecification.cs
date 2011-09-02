@@ -18,7 +18,7 @@ using System.Linq;
 namespace Taijutsu.Domain
 {
     [Serializable]
-    internal class OrSpecification<TDomainObject> : CompositeSpecification<TDomainObject>
+    public class OrSpecification<TDomainObject> : CompositeSpecification<TDomainObject>
         where TDomainObject : IDomainObject
     {
         public OrSpecification(ISpecification<TDomainObject> one, ISpecification<TDomainObject> other)

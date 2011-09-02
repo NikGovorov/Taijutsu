@@ -52,11 +52,13 @@ namespace Taijutsu.Domain
         public virtual object Key
         {
             get { return entityKey; }
+            protected set { entityKey = value; }
         }
 
         public virtual object Type
         {
             get { return entityType; }
+            protected set { entityType = value; }
         }
 
         #endregion

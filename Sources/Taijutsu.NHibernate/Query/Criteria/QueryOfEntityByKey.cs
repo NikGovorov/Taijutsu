@@ -26,10 +26,9 @@ namespace Taijutsu.Data.NHibernate.Query.Criteria
         private const string NotUniqueMessage = "More than one row with the given identifier was found";
 
         
-        public QueryOfEntityByKey(object key, ISessionDecorator session) : base(session)
+        public QueryOfEntityByKey(object key, ISessionDecorator session) : base(session, strict: true)
         {
             Key = key;
-            strict = true;
         }
 
         protected object Key { get; set; }

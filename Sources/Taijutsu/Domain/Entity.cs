@@ -55,6 +55,7 @@ namespace Taijutsu.Domain
         public virtual TKey Key
         {
             get { return entityKey; }
+            protected set { entityKey = value; }
         }
 
         public override bool Equals(object other)

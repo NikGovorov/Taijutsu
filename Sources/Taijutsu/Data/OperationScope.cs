@@ -21,104 +21,32 @@ namespace Taijutsu.Data
 {
     public class OperationScope : IDisposable
     {
-        private readonly IDataProviderPlanningPolicy dataContextSharing;
+        private readonly IProviderLifecyclePolicy contextSharing;
 
         public OperationScope()
-            : this(new DataProviderPlanningPolicy())
+            : this(new ScopedProviderLifecyclePolicy())
         {
         }
 
-        protected internal OperationScope(IDataProviderPlanningPolicy dataContextSharing)
+        protected internal OperationScope(IProviderLifecyclePolicy contextSharing)
         {
-            SupervisorContext.RegisterOperationScopeWith(dataContextSharing);
-            this.dataContextSharing = dataContextSharing;
+            Infrastructure.RegisterOperationScopeWith(contextSharing);
+            this.contextSharing = contextSharing;
         }
 
         #region IDisposable Members
 
         public virtual void Dispose()
         {
-            dataContextSharing.Dispose();
-            SupervisorContext.UnRegisterOperationScope();
+            contextSharing.Dispose();
+            Infrastructure.UnRegisterOperationScope();
         }
 
         #endregion
 
-        #region Nested type: DataProviderPlanningPolicy
+        #region Nested type: ScopedProviderLifecyclePolicy
 
-        private sealed class DataProviderPlanningPolicy : IDataProviderPlanningPolicy
-        {
-            private readonly IList<DataProvider> providers = new List<DataProvider>();
-            private readonly IList<ReadOnlyDataProvider> readOnlyProviders = new List<ReadOnlyDataProvider>();
-
-            #region IDataProviderPlanningPolicy Members
-
-            public DataProvider Register(UnitOfWorkConfig config)
-            {
-                return Internal.Infrastructure.DataSource(config.SourceName).BuildDataProvider(config.IsolationLevel);
-            }
-
-            public ReadOnlyDataProvider Register(UnitOfQueryConfig config)
-            {
-                return Internal.Infrastructure.DataSource(config.SourceName).BuildReadOnlyDataProvider(config.IsolationLevel);
-            }
-
-            public void Dispose()
-            {
-                try
-                {
-                    Exception lastEx = null;
-                    foreach (var dataProvider in providers)
-                    {
-                        try
-                        {
-                            dataProvider.Close();
-                        }
-                        catch (Exception exception)
-                        {
-                            Trace.TraceError(exception.ToString());
-                            lastEx = exception;
-                        }
-                    }
-
-                    foreach (var readOnlyDataProvider in readOnlyProviders)
-                    {
-                        try
-                        {
-                            readOnlyDataProvider.Close();
-                        }
-                        catch (Exception exception)
-                        {
-                            Trace.TraceError(exception.ToString());
-                            lastEx = exception;
-                        }
-                    }
-
-                    if (lastEx != null)
-                    {
-                        throw lastEx;
-                    }
-                }
-                finally
-                {
-                    providers.Clear();
-                    readOnlyProviders.Clear();
-                }
-            }
-
-            public void Terminate(DataProvider dataProvider)
-            {
-                providers.Add(dataProvider);
-            }
-
-            public void Terminate(ReadOnlyDataProvider readOnlyDataProvider)
-            {
-                readOnlyProviders.Add(readOnlyDataProvider);
-            }
-
-            #endregion
-        }
-
+       
         #endregion
     }
 
@@ -128,7 +56,7 @@ namespace Taijutsu.Data
         private readonly TransactionScope transactionScope;
 
         public DistributedOperationScope(TransactionScopeOption transactionScopeOption, TimeSpan scopeTimeout)
-            : this(new TransactionScope(transactionScopeOption, scopeTimeout), new DataProviderPlanningPolicy())
+            : this(new TransactionScope(transactionScopeOption, scopeTimeout), new ScopedProviderLifecyclePolicy())
         {
         }
 
@@ -136,28 +64,28 @@ namespace Taijutsu.Data
                                     EnterpriseServicesInteropOption enterpriseServicesInteropOption)
             : this(
                 new TransactionScope(transactionScopeOption, transactionOptions, enterpriseServicesInteropOption),
-                new DataProviderPlanningPolicy())
+                new ScopedProviderLifecyclePolicy())
         {
         }
 
         public DistributedOperationScope(TransactionScopeOption transactionScopeOption, TransactionOptions transactionOptions)
-            : this(new TransactionScope(transactionScopeOption, transactionOptions), new DataProviderPlanningPolicy())
+            : this(new TransactionScope(transactionScopeOption, transactionOptions), new ScopedProviderLifecyclePolicy())
         {
         }
 
         public DistributedOperationScope(TransactionScopeOption transactionScopeOption)
-            : this(new TransactionScope(transactionScopeOption), new DataProviderPlanningPolicy())
+            : this(new TransactionScope(transactionScopeOption), new ScopedProviderLifecyclePolicy())
         {
         }
 
         public DistributedOperationScope()
-            : this(new TransactionScope(), new DataProviderPlanningPolicy())
+            : this(new TransactionScope(), new ScopedProviderLifecyclePolicy())
         {
         }
 
         protected internal DistributedOperationScope(TransactionScope transactionScope,
-                                                IDataProviderPlanningPolicy dataContextSharing)
-            : base(dataContextSharing)
+                                                IProviderLifecyclePolicy contextSharing)
+            : base(contextSharing)
         {
             this.transactionScope = transactionScope;
         }
@@ -171,12 +99,87 @@ namespace Taijutsu.Data
         {
             try
             {
-                base.Dispose();
+                transactionScope.Dispose();   
             }
             finally
             {
-                transactionScope.Dispose();    
+                base.Dispose();
             }
         }
     }
+
+
+    internal sealed class ScopedProviderLifecyclePolicy : IProviderLifecyclePolicy
+    {
+        private readonly IList<DataProvider> providers = new List<DataProvider>();
+        private readonly IList<ReadOnlyDataProvider> readOnlyProviders = new List<ReadOnlyDataProvider>();
+
+        #region IProviderLifecyclePolicy Members
+
+        public DataProvider Register(UnitOfWorkConfig config)
+        {
+            return Infrastructure.DataSource(config.SourceName).BuildDataProvider(config.IsolationLevel);
+        }
+
+        public ReadOnlyDataProvider Register(UnitOfQueryConfig config)
+        {
+            return Infrastructure.DataSource(config.SourceName).BuildReadOnlyDataProvider(config.IsolationLevel);
+        }
+
+        public void Dispose()
+        {
+            try
+            {
+                Exception lastEx = null;
+                foreach (var dataProvider in providers)
+                {
+                    try
+                    {
+                        dataProvider.Close();
+                    }
+                    catch (Exception exception)
+                    {
+                        Trace.TraceError(exception.ToString());
+                        lastEx = exception;
+                    }
+                }
+
+                foreach (var readOnlyDataProvider in readOnlyProviders)
+                {
+                    try
+                    {
+                        readOnlyDataProvider.Close();
+                    }
+                    catch (Exception exception)
+                    {
+                        Trace.TraceError(exception.ToString());
+                        lastEx = exception;
+                    }
+                }
+
+                if (lastEx != null)
+                {
+                    throw lastEx;
+                }
+            }
+            finally
+            {
+                providers.Clear();
+                readOnlyProviders.Clear();
+            }
+        }
+
+        public void Terminate(DataProvider dataProvider)
+        {
+            providers.Add(dataProvider);
+        }
+
+        public void Terminate(ReadOnlyDataProvider readOnlyDataProvider)
+        {
+            readOnlyProviders.Add(readOnlyDataProvider);
+        }
+
+        #endregion
+    }
+
 }

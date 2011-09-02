@@ -19,7 +19,7 @@ using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data
 {
-    public class UnitOfQuery : IUnitOfQuery, INativeUnitOf, IDisposable
+    public class UnitOfQuery : IUnitOfQuery, INative, IDisposable
     {
         private readonly IReadOnlyDataContext dataContext;
 
@@ -55,7 +55,7 @@ namespace Taijutsu.Data
 
         public UnitOfQuery(UnitOfQueryConfig unitOfQueryConfig)
         {
-            dataContext = SupervisorContext.ReadOnlyDataContextSupervisor.RegisterUnitOfQueryBasedOn(unitOfQueryConfig);
+            dataContext = Infrastructure.ReadOnlyDataContextSupervisor.Register(unitOfQueryConfig);
         }
 
         #region IDisposable Members
@@ -64,7 +64,7 @@ namespace Taijutsu.Data
         {
             try
             {
-                dataContext.Rollback();
+                dataContext.Commit();
             }
             finally
             {
@@ -76,7 +76,7 @@ namespace Taijutsu.Data
                 {
                     if (dataContext.IsRoot)
                     {
-                        SupervisorContext.CheckReadOnlyDataContextSupervisorForRelease();
+                        Infrastructure.CheckReadOnlyDataContextSupervisorForRelease();
                     }
                 }
             }
@@ -84,9 +84,9 @@ namespace Taijutsu.Data
 
         #endregion
 
-        #region INativeUnitOf Members
+        #region INative Members
 
-        object INativeUnitOf.Native
+        object INative.Native
         {
             get { return dataContext.ReadOnlyProvider.NativeProvider; }
         }

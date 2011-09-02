@@ -10,18 +10,11 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
-
-using NHibernate;
-using NHibernate.Criterion;
-
 namespace Taijutsu.Data.NHibernate
 {
-    public static class QueryOverEx
+    public interface IDataQueryLocator
     {
-        public static IQueryOver<TEntity, TEntity> GetExecutableQueryOver<TEntity>(this QueryOver<TEntity, TEntity> queryOver,
-                                                                            ISessionDecorator sessionDecorator)
-        {
-            return sessionDecorator.IsStataless ? queryOver.GetExecutableQueryOver((IStatelessSession) sessionDecorator.Session) : queryOver.GetExecutableQueryOver((ISession) sessionDecorator.Session);
-        }
+        TQuery LocateQuery<TQuery>(ISessionDecorator session, string name = "") where TQuery : class;
+        TRepository LocateRepository<TRepository>(ISessionDecorator session, string name = "") where TRepository : class;
     }
 }

@@ -14,20 +14,114 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Taijutsu.Data.Internal
 {
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class Infrastructure
     {
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        private const string DataContextSupervisorKey = "DataContextSupervisor";
+        private const string ReadOnlyDataContextSupervisorKey = "ReadOnlyDataContextSupervisor";
+        private const string OperationScopeKey = "OperationScope";
+        private static IDictionary<string, DataSource> dataSources = new Dictionary<string, DataSource>();
+        private static readonly object sync = new object();
+
         internal static string DefaultDataSourceName = "Core";
 
-        private static IDictionary<string, DataSource> dataSources = new Dictionary<string, DataSource>();
-        private static object sync = new object();
+        internal static DataContextSupervisor DataContextSupervisor
+        {
+            get
+            {
+                var supervisor = (DataContextSupervisor) LogicalContext.FindData(DataContextSupervisorKey);
+                if (supervisor == null)
+                {
+                    supervisor = new DataContextSupervisor();
+                    LogicalContext.SetData(DataContextSupervisorKey, supervisor);
+                }
+                return supervisor;
+            }
+        }
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal static ReadOnlyDataContextSupervisor ReadOnlyDataContextSupervisor
+        {
+            get
+            {
+                var supervisor =
+                    (ReadOnlyDataContextSupervisor) LogicalContext.FindData(ReadOnlyDataContextSupervisorKey);
+                if (supervisor == null)
+                {
+                    supervisor = new ReadOnlyDataContextSupervisor();
+                    LogicalContext.SetData(ReadOnlyDataContextSupervisorKey, supervisor);
+                }
+                return supervisor;
+            }
+        }
+
+        internal static bool CheckDataContextSupervisorForRelease()
+        {
+            if (LogicalContext.FindData(OperationScopeKey) == null)
+            {
+                var supervisor = LogicalContext.FindData(DataContextSupervisorKey);
+
+                if (supervisor != null && !((DataContextSupervisor) supervisor).Roots.Any())
+                {
+                    LogicalContext.ReleaseData(DataContextSupervisorKey);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        internal static bool CheckReadOnlyDataContextSupervisorForRelease()
+        {
+            if (LogicalContext.FindData(OperationScopeKey) == null)
+            {
+                var supervisor = LogicalContext.FindData(ReadOnlyDataContextSupervisorKey);
+
+                if (supervisor != null && !((ReadOnlyDataContextSupervisor) supervisor).Roots.Any())
+                {
+                    LogicalContext.ReleaseData(ReadOnlyDataContextSupervisorKey);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        internal static void RegisterOperationScopeWith(IProviderLifecyclePolicy contextSharing)
+        {
+            if (LogicalContext.FindData(OperationScopeKey) != null)
+            {
+                throw new Exception("Only one operation scope is allowed simultaneously.");
+            }
+
+            if (LogicalContext.FindData(DataContextSupervisorKey) != null)
+            {
+                throw new Exception("Operation scope can not be included in the scope of unit of work.");
+            }
+
+            if (LogicalContext.FindData(ReadOnlyDataContextSupervisorKey) != null)
+            {
+                throw new Exception("Operation scope can not be included in the scope of unit of query.");
+            }
+
+            LogicalContext.SetData(OperationScopeKey, new object());
+
+            LogicalContext.SetData(DataContextSupervisorKey,
+                                   new DataContextSupervisor(contextSharing));
+            LogicalContext.SetData(ReadOnlyDataContextSupervisorKey,
+                                   new ReadOnlyDataContextSupervisor(contextSharing));
+        }
+
+        internal static void UnRegisterOperationScope()
+        {
+            LogicalContext.ReleaseData(DataContextSupervisorKey);
+            LogicalContext.ReleaseData(ReadOnlyDataContextSupervisorKey);
+            LogicalContext.ReleaseData(OperationScopeKey);
+        }
+
+
         internal static DataSource DataSource(string name)
         {
             DataSource dataSource;
@@ -59,20 +153,20 @@ namespace Taijutsu.Data.Internal
             }
             throw new Exception(string.Format("Data source '{0}' has already been initialized.", dataSource.Name));
         }
-        
-        
+
+
         /*  
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static Maybe<IAdvancedUnitOfWork> CurrentUnitOfWork
         {
             get
             {
-                if (!SupervisorContext.DataContextSupervisor.CurrentContext)
+                if (!Infrastructure.DataContextSupervisor.CurrentContext)
                 {
                     return Maybe<IAdvancedUnitOfWork>.Empty;
                 }
 
-                return new Maybe<IAdvancedUnitOfWork>(SupervisorContext.DataContextSupervisor.CurrentContext.Value);
+                return new Maybe<IAdvancedUnitOfWork>(Infrastructure.DataContextSupervisor.CurrentContext.Value);
             }
         }*/
     }

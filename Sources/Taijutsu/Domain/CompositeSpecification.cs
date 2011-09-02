@@ -16,25 +16,27 @@ using System;
 namespace Taijutsu.Domain
 {
     [Serializable]
-    internal abstract class CompositeSpecification<TDomainObject> : Specification<TDomainObject> where TDomainObject : IDomainObject
+    public abstract class CompositeSpecification<TDomainObject> : Specification<TDomainObject> where TDomainObject : IDomainObject
     {
-        protected ISpecification<TDomainObject> one;
-        protected ISpecification<TDomainObject> other;
+        protected ISpecification<TDomainObject> oneSpec;
+        protected ISpecification<TDomainObject> otherSpec;
 
         protected CompositeSpecification(ISpecification<TDomainObject> one, ISpecification<TDomainObject> other)
         {
-            this.one = one;
-            this.other = other;
+            oneSpec = one;
+            otherSpec = other;
         }
 
         public virtual ISpecification<TDomainObject> One
         {
-            get { return one; }
+            get { return oneSpec; }
+            protected set { oneSpec = value; }
         }
 
         public virtual ISpecification<TDomainObject> Other
         {
-            get { return other; }
+            get { return otherSpec; }
+            protected set { otherSpec = value; }
         }
     }
 }

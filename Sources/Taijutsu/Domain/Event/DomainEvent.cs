@@ -15,12 +15,18 @@ using System;
 
 namespace Taijutsu.Domain.Event
 {
-    public abstract class DomainEvent : IDomainEvent
+    [Serializable]
+    public abstract class DomainEvent : Entity<Guid>, IDomainEvent
     {
         protected DateTime occurrenceDate;
 
         protected DomainEvent()
         {
+        }
+
+        protected DomainEvent(Guid key)
+        {
+            entityKey = key;
             occurrenceDate = SystemTime.Now;
         }
 
@@ -29,12 +35,13 @@ namespace Taijutsu.Domain.Event
         public virtual DateTime DateOfOccurrence
         {
             get { return occurrenceDate; }
+            protected set { occurrenceDate = value; }
         }
 
         #endregion
     }
 
-
+    [Serializable]
     public abstract class DomainEvent<TSubject> : DomainEvent, IDomainEvent<TSubject> where TSubject : IDomainObject
     {
         protected TSubject subject;
@@ -43,7 +50,7 @@ namespace Taijutsu.Domain.Event
         {
         }
 
-        protected DomainEvent(TSubject initiatedBy)
+        protected DomainEvent(TSubject initiatedBy) : base(SeqGuid.NewGuid())
         {
             if (Equals(initiatedBy, default(TSubject)))
             {
@@ -58,17 +65,18 @@ namespace Taijutsu.Domain.Event
         public virtual TSubject InitiatedBy
         {
             get { return subject; }
+            protected set { subject = value; }
         }
 
         #endregion
     }
 
-
+    [Serializable]
     public class DomainEvent<TSubject, TFact> : DomainEvent<TSubject>, IDomainEvent<TSubject, TFact>
         where TSubject : IDomainObject
         where TFact : IFact
     {
-        protected TFact evFact;
+        protected TFact dueToFact;
 
         protected DomainEvent()
         {
@@ -76,18 +84,19 @@ namespace Taijutsu.Domain.Event
 
         public DomainEvent(TSubject initiatedBy, TFact fact) : base(initiatedBy)
         {
-            if (Equals(fact, default(TFact)))
+            if (Equals(dueToFact, default(TFact)))
             {
                 throw new ArgumentNullException("fact");
             }
-            evFact = fact;
+            dueToFact = fact;
         }
 
         #region IDomainEvent<TSubject,TFact> Members
 
         public virtual TFact Fact
         {
-            get { return evFact; }
+            get { return dueToFact; }
+            protected set { dueToFact = value; }
         }
 
         #endregion

@@ -37,8 +37,8 @@ namespace Taijutsu.Data.Internal
 
         public abstract void BeginTransaction(IsolationLevel level);
 
-        public abstract void Commit();
+        public abstract void CommitTransaction();
 
-        public abstract void Rollback();
+        public abstract void RollbackTransaction();
     }
 }

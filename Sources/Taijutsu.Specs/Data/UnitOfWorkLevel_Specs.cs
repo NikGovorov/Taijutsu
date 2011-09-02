@@ -40,28 +40,28 @@ namespace Taijutsu.Specs.Data
 
             using (var uowL1I1 = new UnitOfWork(dataSource))
             {
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
 
                 using (var uowL2I1 = new UnitOfWork(dataSource))
                 {
-                    Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
                     uowL2I1.Complete();
                 }
 
                 using (var uowL2I2 = new UnitOfWork(dataSource))
                 {
-                    Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
                     using (var uowL3I1 = new UnitOfWork(dataSource))
                     {
-                        Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                        Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
                         uowL3I1.Complete();
                     }
 
                     uowL2I2.Complete();
                 }
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
                 uowL1I1.Complete();
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
             }
         }
 
@@ -70,13 +70,13 @@ namespace Taijutsu.Specs.Data
         public virtual void After_scope_of_all_units_of_work_all_of_them_should_be_unregistered()
         {
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<DataProvider>(), dataSource));
-            Assert.AreEqual(0, SupervisorContext.DataContextSupervisor.Roots.Count());
-            var supervisor = SupervisorContext.DataContextSupervisor;
+            Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
+            var supervisor = Infrastructure.DataContextSupervisor;
 
             using (var uowL1I1 = new UnitOfWork(dataSource))
             {
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
-                Assert.AreSame(supervisor, SupervisorContext.DataContextSupervisor);
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
+                Assert.AreSame(supervisor, Infrastructure.DataContextSupervisor);
 
                 using (var uowL2I1 = new UnitOfWork(dataSource, Require.Existing))
                 {
@@ -88,11 +88,11 @@ namespace Taijutsu.Specs.Data
                     {
                     }
                 }
-                Assert.AreSame(supervisor, SupervisorContext.DataContextSupervisor);
+                Assert.AreSame(supervisor, Infrastructure.DataContextSupervisor);
             }
 
-            Assert.AreEqual(0, SupervisorContext.DataContextSupervisor.Roots.Count());
-            Assert.AreNotSame(supervisor, SupervisorContext.DataContextSupervisor);
+            Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
+            Assert.AreNotSame(supervisor, Infrastructure.DataContextSupervisor);
         }
 
         [Test]
@@ -127,36 +127,36 @@ namespace Taijutsu.Specs.Data
         public virtual void Units_of_work_with_require_new_should_create_own_hierarchy()
         {
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<DataProvider>(), dataSource));
-            Assert.AreEqual(0, SupervisorContext.DataContextSupervisor.Roots.Count());
+            Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
 
             using (var uowL1I1 = new UnitOfWork(dataSource))
             {
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
 
                 using (var uowL2I1 = new UnitOfWork(dataSource))
                 {
-                    Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
                 }
 
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
 
 
                 using (var uowL2I2 = new UnitOfWork(dataSource, Require.New))
                 {
-                    Assert.AreEqual(2, SupervisorContext.DataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(2, Infrastructure.DataContextSupervisor.Roots.Count());
                     using (var uowL3I1 = new UnitOfWork(dataSource, Require.New))
                     {
-                        Assert.AreEqual(3, SupervisorContext.DataContextSupervisor.Roots.Count());
+                        Assert.AreEqual(3, Infrastructure.DataContextSupervisor.Roots.Count());
                         using (var uowL4I1 = new UnitOfWork(dataSource))
                         {
-                            Assert.AreEqual(3, SupervisorContext.DataContextSupervisor.Roots.Count());
+                            Assert.AreEqual(3, Infrastructure.DataContextSupervisor.Roots.Count());
                         }
                     }
-                    Assert.AreEqual(2, SupervisorContext.DataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(2, Infrastructure.DataContextSupervisor.Roots.Count());
                 }
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
             }
-            Assert.AreEqual(0, SupervisorContext.DataContextSupervisor.Roots.Count());
+            Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
         }
 
         [Test]
@@ -165,58 +165,58 @@ namespace Taijutsu.Specs.Data
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<DataProvider>(), dataSource));
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<DataProvider>(), "w_crm_2"));
             Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<DataProvider>(), "w_admin_2"));
-            Assert.AreEqual(0, SupervisorContext.DataContextSupervisor.Roots.Count());
+            Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
 
             using (var uowL1I1 = new UnitOfWork("w_crm_2"))
             {
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
 
                 using (var uowL2I1 = new UnitOfWork("w_crm_2"))
                 {
-                    Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
                 }
 
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
 
 
                 using (var uowL2I2 = new UnitOfWork("w_admin_2"))
                 {
-                    Assert.AreEqual(2, SupervisorContext.DataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(2, Infrastructure.DataContextSupervisor.Roots.Count());
                     using (var uowL3I1 = new UnitOfWork(dataSource))
                     {
-                        Assert.AreEqual(3, SupervisorContext.DataContextSupervisor.Roots.Count());
+                        Assert.AreEqual(3, Infrastructure.DataContextSupervisor.Roots.Count());
                         using (var uowL4I1 = new UnitOfWork("w_admin_2"))
                         {
-                            Assert.AreEqual(3, SupervisorContext.DataContextSupervisor.Roots.Count());
+                            Assert.AreEqual(3, Infrastructure.DataContextSupervisor.Roots.Count());
                         }
 
                         using (var uowL4I2 = new UnitOfWork(dataSource, Require.New))
                         {
-                            Assert.AreEqual(4, SupervisorContext.DataContextSupervisor.Roots.Count());
+                            Assert.AreEqual(4, Infrastructure.DataContextSupervisor.Roots.Count());
 
                             using (var uowL5I1 = new UnitOfWork("w_crm_2"))
                             {
-                                Assert.AreEqual(4, SupervisorContext.DataContextSupervisor.Roots.Count());
-                                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Where(u => u.SourceName == "w_crm_2").Count());
+                                Assert.AreEqual(4, Infrastructure.DataContextSupervisor.Roots.Count());
+                                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Where(u => u.SourceName == "w_crm_2").Count());
                             }
                             using (var uowL5I1 = new UnitOfWork("w_crm_2", Require.New))
                             {
-                                Assert.AreEqual(5, SupervisorContext.DataContextSupervisor.Roots.Count());
-                                Assert.AreEqual(2, SupervisorContext.DataContextSupervisor.Roots.Where(u => u.SourceName == "w_crm_2").Count());
+                                Assert.AreEqual(5, Infrastructure.DataContextSupervisor.Roots.Count());
+                                Assert.AreEqual(2, Infrastructure.DataContextSupervisor.Roots.Where(u => u.SourceName == "w_crm_2").Count());
                             }
 
                             using (var uowL5I1 = new UnitOfWork("w_admin_2"))
                             {
-                                Assert.AreEqual(4, SupervisorContext.DataContextSupervisor.Roots.Count());
+                                Assert.AreEqual(4, Infrastructure.DataContextSupervisor.Roots.Count());
                             }
                         }
 
                     }
-                    Assert.AreEqual(2, SupervisorContext.DataContextSupervisor.Roots.Count());
+                    Assert.AreEqual(2, Infrastructure.DataContextSupervisor.Roots.Count());
                 }
-                Assert.AreEqual(1, SupervisorContext.DataContextSupervisor.Roots.Count());
+                Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
             }
-            Assert.AreEqual(0, SupervisorContext.DataContextSupervisor.Roots.Count());
+            Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
         }
 
         [Test]

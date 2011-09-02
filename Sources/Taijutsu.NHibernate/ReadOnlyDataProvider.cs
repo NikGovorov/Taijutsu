@@ -20,35 +20,50 @@ using Taijutsu.Data.NHibernate.Query.Criteria;
 
 namespace Taijutsu.Data.NHibernate
 {
-    public class ReadOnlyDataProvider : Data.Internal.ReadOnlyDataProvider
+    public class ReadOnlyDataProvider : Internal.ReadOnlyDataProvider
     {
-        private readonly IStatelessSession session;
+        //private readonly IStatelessSession session;
 
-        public ReadOnlyDataProvider(ISessionFactory factory)
+        private readonly ISession session;
+        private readonly DataSource dataSource;
+
+        public ReadOnlyDataProvider(DataSource dataSource)
         {
-            session = factory.OpenStatelessSession();
+            this.dataSource = dataSource;
+            //session = dataSource.SessionFactory.OpenStatelessSession();
+            session = dataSource.SessionFactory.OpenSession();
+            session.FlushMode = FlushMode.Never;
         }
 
-        protected virtual IStatelessSession Session
+
+        protected virtual ISession Session
         {
             get { return session; }
         }
+
+//        protected virtual IStatelessSession Session
+//        {
+//            get { return session; }
+//        }
 
         protected virtual ITransaction CurrentTransaction { get; set; }
 
         public override IQueryOfEntities<TEntity> AllOf<TEntity>()
         {
-            return new QueryOfEntities<TEntity>(new SessionDecorator(Session));
+           //return new QueryOfEntities<TEntity>(new StatelessSession(Session));
+            return new QueryOfEntities<TEntity>(new Session(Session));
         }
 
         public override IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key)
         {
-            return new QueryOfEntityByKey<TEntity>(key, new SessionDecorator(Session));
+            //return new QueryOfEntityByKey<TEntity>(key, new StatelessSession(Session));
+            return new QueryOfEntityByKey<TEntity>(key, new Session(Session));
         }
 
         public override IQueryOverBuilder<TEntity> QueryOver<TEntity>()
         {
-            return new QueryOverBuilder<TEntity>(new SessionDecorator(Session));
+            //return new QueryOverBuilder<TEntity>(dataSource, new StatelessSession(Session));
+            return new QueryOverBuilder<TEntity>(dataSource, new Session(Session));
         }
 
         public override void Close()
@@ -56,11 +71,11 @@ namespace Taijutsu.Data.NHibernate
             try
             {
                 CurrentTransaction = null;
-                Session.Close();
+                Session.Dispose();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new NotImplementedException();
+                throw; //TODO Enable logging here
             }
         }
 
@@ -69,11 +84,13 @@ namespace Taijutsu.Data.NHibernate
             CurrentTransaction = session.BeginTransaction(level);
         }
 
-        public override void Commit()
+        public override void CommitTransaction()
         {
+            CurrentTransaction.Commit();
+            CurrentTransaction.Dispose();
         }
 
-        public override void Rollback()
+        public override void RollbackTransaction()
         {
             CurrentTransaction.Rollback();
             CurrentTransaction.Dispose();

@@ -19,17 +19,18 @@ namespace Taijutsu.Data.Internal
     public class ReadOnlyDataContext : IReadOnlyDataContext
     {
         private ReadOnlyDataProvider dataProvider;
+        private readonly Action<ReadOnlyDataContext> onClosed;
+        private readonly UnitOfQueryConfig queryConfig;
         private bool closed;
+        private bool commited;
         private bool rolledback;
-        private UnitOfQueryConfig queryConfig;
-        private ReadOnlyDataContextSupervisor supervisor;
-
-        public ReadOnlyDataContext(UnitOfQueryConfig unitOfQueryConfig, ReadOnlyDataContextSupervisor supervisor)
+        
+        public ReadOnlyDataContext(UnitOfQueryConfig queryConfig, ReadOnlyDataProvider dataProvider, Action<ReadOnlyDataContext> onClosed)
         {
-            queryConfig = unitOfQueryConfig;
-            this.supervisor = supervisor;
-            dataProvider = supervisor.CreateDataProvider(unitOfQueryConfig);
-            dataProvider.BeginTransaction(unitOfQueryConfig.IsolationLevel);
+            this.queryConfig = queryConfig;
+            this.dataProvider = dataProvider;
+            this.onClosed = onClosed;
+            dataProvider.BeginTransaction(queryConfig.IsolationLevel);
         }
 
 
@@ -77,7 +78,8 @@ namespace Taijutsu.Data.Internal
                         "Read only data context can't close data provider, because it has been already closed."));
             }
             closed = true;
-            dataProvider = supervisor.RegisterForTerminate(this);
+            onClosed(this);
+            dataProvider = new OfflineReadOnlyDataProvider();
         }
 
 
@@ -91,7 +93,20 @@ namespace Taijutsu.Data.Internal
                             rolledback, closed));
             }
             rolledback = true;
-            dataProvider.Rollback();
+            dataProvider.RollbackTransaction();
+        }
+
+        public virtual void Commit()
+        {
+            if (commited || closed || rolledback)
+            {
+                throw new Exception(
+                    string.Format(
+                        "Read only data context can't commit data provider. State map: commited '{0}', rolledback '{1}', closed '{2}'.",
+                        commited, rolledback, closed));
+            }
+            commited = true;
+            dataProvider.CommitTransaction();
         }
 
         void IDisposable.Dispose()

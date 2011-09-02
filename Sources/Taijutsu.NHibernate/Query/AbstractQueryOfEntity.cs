@@ -20,14 +20,13 @@ namespace Taijutsu.Data.NHibernate.Query
     public abstract class AbstractQueryOfEntity<TEntity> : AbstractQuery<TEntity>,
                                                            IQueryOfEntity<TEntity> where TEntity : IEntity
     {
-        private bool unique = true;
-        protected bool strict;
+        private bool unique;
+        private bool strict;
 
-        protected AbstractQueryOfEntity(ISessionDecorator session)
+        protected AbstractQueryOfEntity(ISessionDecorator session, bool unique = true, bool strict = false)
             : base(session)
         {
         }
-
         
         protected virtual bool Strict
         {

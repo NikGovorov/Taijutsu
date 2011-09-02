@@ -18,9 +18,9 @@ namespace Taijutsu.Data.Internal
 {
     public interface IQueryOverBuilder<TEntity> : IHideObjectMembers where TEntity : class, IEntity
     {
-        TQuery Using<TQuery>() where TQuery : IQueryOver<TEntity>;
-        TQuery Using<TQuery>(string queryName) where TQuery : IQueryOver<TEntity>;
-        TRepository In<TRepository>() where TRepository : IRepository<TEntity>;
-        TRepository In<TRepository>(string repositoryName) where TRepository : IRepository<TEntity>;
+        TQuery Using<TQuery>() where TQuery : class, IQueryOver<TEntity>;
+        TQuery Using<TQuery>(string queryName) where TQuery : class, IQueryOver<TEntity>;
+        TRepository In<TRepository>() where TRepository : class, IRepository<TEntity>;
+        TRepository In<TRepository>(string repositoryName) where TRepository : class, IRepository<TEntity>;
     }
 }

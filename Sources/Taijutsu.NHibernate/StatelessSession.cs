@@ -17,99 +17,93 @@ using NHibernate;
 
 namespace Taijutsu.Data.NHibernate
 {
-    public class SessionDecorator : ISessionDecorator
+    public class StatelessSession: ISessionDecorator
     {
-        public SessionDecorator(ISession session)
+        private readonly IStatelessSession realSession;
+
+        public StatelessSession(IStatelessSession realSession)
         {
+            this.realSession = realSession;
         }
 
-        public SessionDecorator(IStatelessSession statelessSession)
+        public virtual object RealSession
         {
-        }
-
-        public virtual object Session
-        {
-            get { throw new NotImplementedException(); }
+            get { return realSession; }
         }
 
         public virtual bool IsStataless
         {
-            get { throw new NotImplementedException(); }
+            get { return true; }
         }
 
         public virtual object Get(string entityName, object id)
         {
-            throw new NotImplementedException();
+            return realSession.Get(entityName, id);
         }
 
         public virtual T Get<T>(object id)
         {
-            throw new NotImplementedException();
-        }
-
-        public virtual object Get(string entityName, object id, LockMode lockMode)
-        {
-            throw new NotImplementedException();
+            return realSession.Get<T>(id);
         }
 
         public virtual T Get<T>(object id, LockMode lockMode)
         {
-            throw new NotImplementedException();
+            return realSession.Get<T>(id, lockMode);
         }
 
         public virtual IQuery CreateQuery(string queryString)
         {
-            throw new NotImplementedException();
+            return realSession.CreateQuery(queryString);
         }
 
         public virtual IQuery GetNamedQuery(string queryName)
         {
-            throw new NotImplementedException();
+            return realSession.GetNamedQuery(queryName);
         }
 
         public virtual ICriteria CreateCriteria<T>() where T : class
         {
-            throw new NotImplementedException();
+            return realSession.CreateCriteria<T>();
         }
 
         public virtual ICriteria CreateCriteria<T>(string alias) where T : class
         {
-            throw new NotImplementedException();
+            return realSession.CreateCriteria<T>(alias);
         }
 
         public virtual ICriteria CreateCriteria(Type entityType)
         {
-            throw new NotImplementedException();
+            return realSession.CreateCriteria(entityType);
         }
 
         public virtual ICriteria CreateCriteria(Type entityType, string alias)
         {
-            throw new NotImplementedException();
+            return realSession.CreateCriteria(entityType, alias);
         }
 
         public virtual ICriteria CreateCriteria(string entityName)
         {
-            throw new NotImplementedException();
+            return realSession.CreateCriteria(entityName);
         }
 
         public virtual ICriteria CreateCriteria(string entityName, string alias)
         {
-            throw new NotImplementedException();
+            return realSession.CreateCriteria(entityName, alias);
         }
 
         public virtual IQueryOver<T, T> QueryOver<T>() where T : class
         {
-            throw new NotImplementedException();
+            return realSession.QueryOver<T>();
         }
 
         public virtual IQueryOver<T, T> QueryOver<T>(Expression<Func<T>> alias) where T : class
         {
-            throw new NotImplementedException();
+            return realSession.QueryOver(alias);
         }
 
         public virtual ISQLQuery CreateSqlQuery(string queryString)
         {
-            throw new NotImplementedException();
+            return realSession.CreateSQLQuery(queryString);
         }
     }
 }

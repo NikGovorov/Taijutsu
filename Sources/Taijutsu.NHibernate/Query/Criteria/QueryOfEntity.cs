@@ -25,8 +25,8 @@ namespace Taijutsu.Data.NHibernate.Query.Criteria
     public class QueryOfEntity<TEntity> : AbstractQueryOfEntity<TEntity>, IQueryOfNotUniqueEntity<TEntity>
         where TEntity : class, IEntity
     {
-        public QueryOfEntity(ISessionDecorator session)
-            : base(session)
+        public QueryOfEntity(ISessionDecorator session, bool unique = true, bool strict = false)
+            : base(session, unique, strict)
         {
         }
         

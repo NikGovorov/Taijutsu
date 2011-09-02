@@ -11,12 +11,13 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Taijutsu.Domain.Query
 {
     public interface IDerivedQueryOfEntities<TEntity> : IQueryOfEntities<TEntity> where TEntity : IEntity
     {
-        IQueryable<TSubEntity> Query<TSubEntity>() where TSubEntity : TEntity;
+        IEnumerable<TSubEntity> Query<TSubEntity>() where TSubEntity : TEntity;
     }
 }
