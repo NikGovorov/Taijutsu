@@ -21,9 +21,9 @@ namespace Taijutsu.Domain.Event
     {
         protected static readonly IEventAggregator InternalEventAggregator = new MultiThreadAggregator();
 
-        public static void Raise<TEvent>(TEvent ev) where TEvent : IEvent
+        public static void Publish<TEvent>(TEvent ev) where TEvent : IEvent
         {
-            InternalEventAggregator.Raise(ev);
+            InternalEventAggregator.Publish(ev);
         }
         
         public static IObservableSyntax OnStream

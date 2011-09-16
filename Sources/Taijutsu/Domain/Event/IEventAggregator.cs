@@ -17,7 +17,7 @@ namespace Taijutsu.Domain.Event
 {
     public interface IEventAggregator : IObservable
     {
-        void Raise<TEvent>(TEvent ev) where TEvent : IEvent;
+        void Publish<TEvent>(TEvent ev) where TEvent : IEvent;
     }
 
     public interface IObservable : IHideObjectMembers

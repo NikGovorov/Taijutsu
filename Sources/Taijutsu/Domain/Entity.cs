@@ -29,7 +29,7 @@ namespace Taijutsu.Domain
 
         protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
         {
-            EventAggregator.Raise(ev);
+            EventAggregator.Publish(ev);
         }
 
         protected PublishingSyntax DueTo<TFact>(TFact fact) where TFact : IFact
@@ -103,7 +103,7 @@ namespace Taijutsu.Domain
 
         protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
         {
-            EventAggregator.Raise(ev);
+            EventAggregator.Publish(ev);
         }
 
         protected PublishingSyntax DueTo<TFact>(TFact fact) where TFact : IFact

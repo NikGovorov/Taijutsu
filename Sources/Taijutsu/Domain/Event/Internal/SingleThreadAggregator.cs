@@ -47,7 +47,7 @@ namespace Taijutsu.Domain.Event.Internal
             get { return this; }
         }
 
-        public virtual void Raise<TEvent>(TEvent ev) where TEvent : IEvent
+        public virtual void Publish<TEvent>(TEvent ev) where TEvent : IEvent
         {
             var eventHandlers = new List<IInternalEventHandler>();
 
