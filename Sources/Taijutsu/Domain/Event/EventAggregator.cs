@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2011 Taijutsu.
+// Copyright 2009-2011 Taijutsu.
 //   
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -11,22 +11,31 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System.ComponentModel;
+using Taijutsu.Domain.Event.Internal;
 using Taijutsu.Domain.Event.Syntax;
 
 namespace Taijutsu.Domain.Event
 {
-    public static class EventAggregator
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public class EventAggregator
     {
-        private static readonly IEventAggregator eventAggregator = new Internal.EventAggregator();
+        protected static readonly IEventAggregator InternalEventAggregator = new MultiThreadAggregator();
 
         public static void Raise<TEvent>(TEvent ev) where TEvent : IEvent
         {
-            eventAggregator.Raise(ev);
+            InternalEventAggregator.Raise(ev);
         }
-
+        
         public static IObservableSyntax OnStream
         {
-            get { return eventAggregator.OnStream; }
+            get { return InternalEventAggregator.OnStream; }
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IEventAggregator Instance
+        {
+            get { return InternalEventAggregator; }
         }
     }
 }

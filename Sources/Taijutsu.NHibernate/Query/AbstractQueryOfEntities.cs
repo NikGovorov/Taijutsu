@@ -24,8 +24,8 @@ namespace Taijutsu.Data.NHibernate.Query
                                                              IQueryOfEntities<TEntity>
         where TEntity : IEntity
     {
-        private readonly HashSet<object> keysForIncluding = new HashSet<object>();
-        private readonly HashSet<Type> typesForExcluding = new HashSet<Type>();
+        private readonly HashSet<object> keysToInclude = new HashSet<object>();
+        private readonly HashSet<Type> typesToExclude = new HashSet<Type>();
         private int? skipCount;
         private int? takeCount;
 
@@ -35,14 +35,14 @@ namespace Taijutsu.Data.NHibernate.Query
         {
         }
 
-        protected virtual HashSet<object> KeysForIncluding
+        protected virtual HashSet<object> KeysToInclude
         {
-            get { return keysForIncluding; }
+            get { return keysToInclude; }
         }
 
-        protected virtual HashSet<Type> TypesForExcluding
+        protected virtual HashSet<Type> TypesToExclude
         {
-            get { return typesForExcluding; }
+            get { return typesToExclude; }
         }
 
         protected virtual int? SkipCount

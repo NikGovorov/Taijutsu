@@ -51,64 +51,6 @@ namespace Taijutsu.Data
     }
 
 
-    public class DistributedOperationScope : OperationScope
-    {
-        private readonly TransactionScope transactionScope;
-
-        public DistributedOperationScope(TransactionScopeOption transactionScopeOption, TimeSpan scopeTimeout)
-            : this(new TransactionScope(transactionScopeOption, scopeTimeout), new ScopedProviderLifecyclePolicy())
-        {
-        }
-
-        public DistributedOperationScope(TransactionScopeOption transactionScopeOption, TransactionOptions transactionOptions,
-                                    EnterpriseServicesInteropOption enterpriseServicesInteropOption)
-            : this(
-                new TransactionScope(transactionScopeOption, transactionOptions, enterpriseServicesInteropOption),
-                new ScopedProviderLifecyclePolicy())
-        {
-        }
-
-        public DistributedOperationScope(TransactionScopeOption transactionScopeOption, TransactionOptions transactionOptions)
-            : this(new TransactionScope(transactionScopeOption, transactionOptions), new ScopedProviderLifecyclePolicy())
-        {
-        }
-
-        public DistributedOperationScope(TransactionScopeOption transactionScopeOption)
-            : this(new TransactionScope(transactionScopeOption), new ScopedProviderLifecyclePolicy())
-        {
-        }
-
-        public DistributedOperationScope()
-            : this(new TransactionScope(), new ScopedProviderLifecyclePolicy())
-        {
-        }
-
-        protected internal DistributedOperationScope(TransactionScope transactionScope,
-                                                IProviderLifecyclePolicy contextSharing)
-            : base(contextSharing)
-        {
-            this.transactionScope = transactionScope;
-        }
-
-        public virtual void Complete()
-        {
-            transactionScope.Complete();
-        }
-
-        public override void Dispose()
-        {
-            try
-            {
-                transactionScope.Dispose();   
-            }
-            finally
-            {
-                base.Dispose();
-            }
-        }
-    }
-
-
     internal sealed class ScopedProviderLifecyclePolicy : IProviderLifecyclePolicy
     {
         private readonly IList<DataProvider> providers = new List<DataProvider>();

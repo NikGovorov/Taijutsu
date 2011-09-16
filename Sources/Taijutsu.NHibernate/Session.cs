@@ -105,5 +105,10 @@ namespace Taijutsu.Data.NHibernate
         {
             return realSession.CreateSQLQuery(queryString);
         }
+
+        public void Dispose()
+        {
+            realSession.Dispose();
+        }
     }
 }

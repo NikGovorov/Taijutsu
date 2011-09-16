@@ -29,6 +29,7 @@ namespace Taijutsu.Domain.Event.Syntax
             All<TSource> Where(Func<TSource, bool> filter);
             Projection<TSource, TProjection> Select<TProjection>(Func<TSource, TProjection> projection);
             Action Subscribe(Action<TSource> subscriber, int priority = 0);
+            Action Subscribe(IHandlerOf<TSource> subscriber, int priority = 0);
         }
 
         #endregion
@@ -38,10 +39,10 @@ namespace Taijutsu.Domain.Event.Syntax
         internal class AllImpl<TEvent> : All<TEvent>
             where TEvent : class
         {
-            private readonly Func<IEventHandler, Action> addHadlerAction;
+            private readonly Func<IInternalEventHandler, Action> addHadlerAction;
             private readonly List<Func<TEvent, bool>> eventFilters = new List<Func<TEvent, bool>>();
 
-            internal AllImpl(Func<IEventHandler, Action> addHadlerAction,
+            internal AllImpl(Func<IInternalEventHandler, Action> addHadlerAction,
                              IEnumerable<Func<TEvent, bool>> eventFilters = null)
             {
                 this.addHadlerAction = addHadlerAction;
@@ -51,7 +52,7 @@ namespace Taijutsu.Domain.Event.Syntax
                 }
             }
 
-            public Func<IEventHandler, Action> AddHadlerAction
+            public Func<IInternalEventHandler, Action> AddHadlerAction
             {
                 get { return addHadlerAction; }
             }
@@ -78,7 +79,12 @@ namespace Taijutsu.Domain.Event.Syntax
             public Action Subscribe(Action<TEvent> subscriber, int priority = 0)
             {
                 return
-                    AddHadlerAction(new Internal.EventHandler<TEvent>(subscriber, e => !eventFilters.Any(f => !f(e)), priority));
+                    AddHadlerAction(new InternalEventHandler<TEvent>(subscriber, e => !eventFilters.Any(f => !f(e)), priority));
+            }
+
+            public Action Subscribe(IHandlerOf<TEvent> subscriber, int priority = 0)
+            {
+                return Subscribe(subscriber.Handle, priority);
             }
 
             #endregion
@@ -93,6 +99,7 @@ namespace Taijutsu.Domain.Event.Syntax
         {
             Projection<TSource, TProjection> Where(Func<TProjection, bool> filter);
             Action Subscribe(Action<TProjection> subscriber, int priority = 0);
+            Action Subscribe(IHandlerOf<TProjection> subscriber, int priority = 0);
         }
 
         #endregion
@@ -129,11 +136,16 @@ namespace Taijutsu.Domain.Event.Syntax
             public Action Subscribe(Action<TProjection> subscriber, int priority = 0)
             {
                 Action<TEvent> evSubscriber = e => subscriber(projection(e));
-                return parent.AddHadlerAction(new Internal.EventHandler<TEvent>(evSubscriber,
+                return parent.AddHadlerAction(new InternalEventHandler<TEvent>(evSubscriber,
                                                                        e =>
                                                                        !parent.EventFilters.Any(f => !f(e)) &&
                                                                        !projectionFilters.Any(f => !f(projection(e))),
                                                                        priority));
+            }
+
+            public Action Subscribe(IHandlerOf<TProjection> subscriber, int priority = 0)
+            {
+                return Subscribe(subscriber.Handle, priority);
             }
 
             #endregion

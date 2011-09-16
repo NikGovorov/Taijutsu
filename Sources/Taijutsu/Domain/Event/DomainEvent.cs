@@ -16,18 +16,21 @@ using System;
 namespace Taijutsu.Domain.Event
 {
     [Serializable]
-    public abstract class DomainEvent : Entity<Guid>, IDomainEvent
+    public abstract class DomainEvent : Entity<Guid?>, IDomainEvent
     {
         protected DateTime occurrenceDate;
 
         protected DomainEvent()
         {
+            occurrenceDate = SystemTime.Now;
         }
 
-        protected DomainEvent(Guid key)
+        protected DomainEvent(Guid? key = null): this()
         {
-            entityKey = key;
-            occurrenceDate = SystemTime.Now;
+            if (key.HasValue)
+            {
+                entityKey = key.Value;
+            }
         }
 
         #region IDomainEvent Members
@@ -50,8 +53,14 @@ namespace Taijutsu.Domain.Event
         {
         }
 
-        protected DomainEvent(TSubject initiatedBy) : base(SeqGuid.NewGuid())
+        protected DomainEvent(TSubject initiatedBy, Guid? key = null)
+            : base(key)
         {
+            if (key.HasValue)
+            {
+                entityKey = key.Value;
+            }
+
             if (Equals(initiatedBy, default(TSubject)))
             {
                 throw new ArgumentNullException("initiatedBy");
@@ -59,6 +68,7 @@ namespace Taijutsu.Domain.Event
 
             subject = initiatedBy;
         }
+
 
         #region IDomainEvent<TSubject> Members
 
@@ -82,12 +92,13 @@ namespace Taijutsu.Domain.Event
         {
         }
 
-        public DomainEvent(TSubject initiatedBy, TFact fact) : base(initiatedBy)
+        public DomainEvent(TSubject initiatedBy, TFact fact, Guid? key = null): base(initiatedBy, key)
         {
-            if (Equals(dueToFact, default(TFact)))
+            if (Equals(fact, default(TFact)))
             {
                 throw new ArgumentNullException("fact");
             }
+
             dueToFact = fact;
         }
 

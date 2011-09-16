@@ -8,38 +8,38 @@ using System.Reflection;
 namespace Taijutsu.Domain.Event.Internal
 {
 
-    internal interface IEventActivator
+    internal interface IDomainEventActivator
     {
-        DomainEvent CreateInstance(IEntity subject, IFact fact);
+        DomainEvent CreateInstance(IEntity subject, IFact fact, Guid? eventKey = null);
     }
 
-    internal class EventActivator<T> : IEventActivator where T : DomainEvent
+    internal class DomainEventActivator<T> : IDomainEventActivator where T : DomainEvent
     {
         private const BindingFlags ConstructorBindingFlags =
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
         // ReSharper disable StaticFieldInGenericType
-        private static EventActivator<T> current = new EventActivator<T>();
+        private static DomainEventActivator<T> current = new DomainEventActivator<T>();
         // ReSharper restore StaticFieldInGenericType
 
         private readonly ConstructorInfo constructor;
         private Func<object[], T> ctor;
 
-        private EventActivator()
+        private DomainEventActivator()
         {
             constructor = typeof(T).GetConstructors(ConstructorBindingFlags).Where(c => c.GetParameters().Any()).Single();
         }
 
-        public static EventActivator<T> Current
+        public static DomainEventActivator<T> Current
         {
             get { return current; }
         }
 
-        #region IEventActivator Members
+        #region IDomainEventActivator Members
 
-        public DomainEvent CreateInstance(IEntity subject, IFact fact)
+        public DomainEvent CreateInstance(IEntity subject, IFact fact, Guid? eventKey = null)
         {
-            var args = new object[]{subject, fact};
+            var args = new object[] { subject, fact, eventKey };
 
             if (ctor == null)
             {
@@ -68,17 +68,17 @@ namespace Taijutsu.Domain.Event.Internal
         #endregion
     }
 
-    internal class DomainEventActivators
+    internal class DomainEventActivatorsHolder
     {
-        private class Activator
+        private class TypedActivator
         {
             private Type type;
-            private IEventActivator activator;
+            private IDomainEventActivator domainEventActivator;
 
-            public Activator(Type type, IEventActivator activator)
+            public TypedActivator(Type type, IDomainEventActivator domainEventActivator)
             {
                 this.type = type;
-                this.activator = activator;
+                this.domainEventActivator = domainEventActivator;
             }
 
             public Type Type
@@ -86,37 +86,37 @@ namespace Taijutsu.Domain.Event.Internal
                 get { return type; }
             }
 
-            public IEventActivator EventActivator
+            public IDomainEventActivator DomainEventActivator
             {
-                get { return activator; }
+                get { return domainEventActivator; }
             }
         }
 
         [ThreadStatic]
-        private static Dictionary<object, Activator> activators;
+        private static Dictionary<object, TypedActivator> activators;
 
-        private static Dictionary<object, Activator> Activators
+        private static Dictionary<object, TypedActivator> Activators
         {
-            get { return activators ?? (activators = new Dictionary<object, Activator>()); }
+            get { return activators ?? (activators = new Dictionary<object, TypedActivator>()); }
         }
 
-        internal static IEventActivator ActivatorFor(Type entityType, Type factType)
+        internal static IDomainEventActivator ActivatorFor(Type entityType, Type factType)
         {
             var eventTypeDef = new { entityType, factType };
 
-            Activator activator;
+            TypedActivator activator;
             if (!Activators.TryGetValue(eventTypeDef, out activator))
             {
                 var eventType = typeof(DomainEvent<,>).MakeGenericType(new[] { entityType, factType });
                 const BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
-                var domainEventActivator = (IEventActivator)typeof(EventActivator<>).MakeGenericType(eventType)
+                var domainEventActivator = (IDomainEventActivator)typeof(DomainEventActivator<>).MakeGenericType(eventType)
                                                   .GetProperty("Current", flags)
                                                   .GetValue(null, flags, null, null, CultureInfo.InvariantCulture);
 
-                activator = new Activator(eventType, domainEventActivator);
+                activator = new TypedActivator(eventType, domainEventActivator);
                 Activators.Add(eventTypeDef, activator);
             }
-            return activator.EventActivator;
+            return activator.DomainEventActivator;
         }
     }
 }

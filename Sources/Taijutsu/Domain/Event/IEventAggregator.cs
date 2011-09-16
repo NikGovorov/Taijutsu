@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2011 Taijutsu.
+// Copyright 2009-2011 Taijutsu.
 //   
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -11,10 +11,17 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using Taijutsu.Domain.Event.Syntax;
+
 namespace Taijutsu.Domain.Event
 {
     public interface IEventAggregator : IObservable
     {
         void Raise<TEvent>(TEvent ev) where TEvent : IEvent;
+    }
+
+    public interface IObservable : IHideObjectMembers
+    {
+        IObservableSyntax OnStream { get; }
     }
 }

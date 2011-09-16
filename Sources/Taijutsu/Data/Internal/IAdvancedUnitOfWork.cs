@@ -23,5 +23,8 @@ namespace Taijutsu.Data.Internal
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
         IDictionary<string, IDisposable> Extension { get; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        event Action Completed;
     }
 }

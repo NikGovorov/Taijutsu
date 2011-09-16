@@ -19,6 +19,13 @@ using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data
 {
+    public enum Require
+    {
+        New,
+        Existing,
+        None
+    }
+
     public class UnitOfQuery : IUnitOfQuery, INative, IDisposable
     {
         private readonly IReadOnlyDataContext dataContext;

@@ -155,19 +155,15 @@ namespace Taijutsu.Data.Internal
         }
 
 
-        /*  
+         
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static Maybe<IAdvancedUnitOfWork> CurrentUnitOfWork
+        internal static Maybe<IAdvancedUnitOfWork> CurrentUnitOfWork
         {
             get
             {
-                if (!Infrastructure.DataContextSupervisor.CurrentContext)
-                {
-                    return Maybe<IAdvancedUnitOfWork>.Empty;
-                }
-
-                return new Maybe<IAdvancedUnitOfWork>(Infrastructure.DataContextSupervisor.CurrentContext.Value);
+                var maybeCtx = DataContextSupervisor.Current;
+                return !maybeCtx ? Maybe<IAdvancedUnitOfWork>.Empty : new Maybe<IAdvancedUnitOfWork>(maybeCtx.Value);
             }
-        }*/
+        }
     }
 }

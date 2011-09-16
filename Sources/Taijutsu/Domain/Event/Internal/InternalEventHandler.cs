@@ -17,59 +17,58 @@ using System.ComponentModel;
 namespace Taijutsu.Domain.Event.Internal
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public interface IEventHandler
+    public interface IInternalEventHandler
     {
         Action<object> HandlerAction { get; }
         Type EventType { get; }
         int Priority { get; }
         bool Suitable(object ev);
-
     }
 
-    internal class EventHandler<TEvent> : IEventHandler where TEvent : class
+    internal class InternalEventHandler<TEvent> : IInternalEventHandler where TEvent : class
     {
         private readonly Type eventType;
         private readonly Action<TEvent> handlerAction;
         private readonly Predicate<TEvent> predicate;
         private readonly int priority;
 
-        public EventHandler(Action<TEvent> handlerAction, Predicate<TEvent> predicate, int priority)
+        public InternalEventHandler(Action<TEvent> handlerAction, Predicate<TEvent> predicate, int priority)
         {
-            eventType = typeof(TEvent);
+            eventType = typeof (TEvent);
             this.handlerAction = handlerAction;
             this.predicate = predicate;
             this.priority = priority;
         }
 
-        #region IEventHandler Members
+        #region IInternalEventHandler Members
 
-        int IEventHandler.Priority
+        int IInternalEventHandler.Priority
         {
             get { return priority; }
         }
 
-        bool IEventHandler.Suitable(object ev)
+        bool IInternalEventHandler.Suitable(object ev)
         {
             var typedEv = ev as TEvent;
             return typedEv != null && predicate(typedEv);
         }
 
-        Action<object> IEventHandler.HandlerAction
+        Action<object> IInternalEventHandler.HandlerAction
         {
             get
             {
                 return e =>
-                {
-                    var ev = e as TEvent;
-                    if (ev != null)
-                    {
-                        handlerAction(ev);
-                    }
-                };
+                           {
+                               var ev = e as TEvent;
+                               if (ev != null)
+                               {
+                                   handlerAction(ev);
+                               }
+                           };
             }
         }
 
-        Type IEventHandler.EventType
+        Type IInternalEventHandler.EventType
         {
             get { return eventType; }
         }

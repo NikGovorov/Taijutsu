@@ -15,7 +15,6 @@ using System;
 using Taijutsu.Domain.Event;
 using Taijutsu.Domain.Event.Internal;
 using Taijutsu.Domain.Event.Syntax;
-using EventAggregator = Taijutsu.Domain.Event.EventAggregator;
 
 namespace Taijutsu.Domain
 {
@@ -41,7 +40,7 @@ namespace Taijutsu.Domain
 
         protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
         {
-            return DomainEventActivators.ActivatorFor(InternalGetType(), typeof (TFact)).CreateInstance(this, fact);
+            return DomainEventActivatorsHolder.ActivatorFor(InternalGetType(), typeof(TFact)).CreateInstance(this, fact, SeqGuid.NewGuid());
         }
     }
 
@@ -115,10 +114,10 @@ namespace Taijutsu.Domain
 
         protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
         {
-            return DomainEventActivators.ActivatorFor(InternalGetType(), typeof(TFact)).CreateInstance(this, fact);
+            return DomainEventActivatorsHolder.ActivatorFor(InternalGetType(), typeof(TFact)).CreateInstance(this, fact, SeqGuid.NewGuid());
         }
         
-        public static bool operator ==(Entity<TKey> left, Entity<TKey> right)
+        public static bool operator == (Entity<TKey> left, Entity<TKey> right)
         {
             return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals(right);
         }

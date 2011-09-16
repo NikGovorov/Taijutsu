@@ -45,10 +45,10 @@ namespace Taijutsu.Domain.Event.Syntax
         internal class AllImpl : All
         {
              private readonly List<Type> factTypes = new List<Type>();
-             private readonly Func<IEventHandler, Action> addHadlerAction;
+             private readonly Func<IInternalEventHandler, Action> addHadlerAction;
 
 
-            public AllImpl(Func<IEventHandler, Action> addHadlerAction, IEnumerable<Type> factTypes)
+            public AllImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Type> factTypes)
             {
                 this.addHadlerAction = addHadlerAction;
                 this.factTypes.AddRange(factTypes);
@@ -89,9 +89,9 @@ namespace Taijutsu.Domain.Event.Syntax
 
         internal class InitImpl<TFact> : Init<TFact> where TFact : IFact
         {
-            private readonly Func<IEventHandler, Action> addHadlerAction;
+            private readonly Func<IInternalEventHandler, Action> addHadlerAction;
 
-            public InitImpl(Func<IEventHandler, Action> addHadlerAction)
+            public InitImpl(Func<IInternalEventHandler, Action> addHadlerAction)
             {
                 this.addHadlerAction = addHadlerAction;
             }
@@ -129,7 +129,12 @@ namespace Taijutsu.Domain.Event.Syntax
             Action SubscriptionSyntax.All<IEventDueToFact<TFact>>.Subscribe(Action<IEventDueToFact<TFact>> subscriber, int priority)
             {
                 Predicate<IEventDueToFact<TFact>> filter = e => true;
-                return addHadlerAction(new Internal.EventHandler<IEventDueToFact<TFact>>(subscriber, filter, priority));
+                return addHadlerAction(new InternalEventHandler<IEventDueToFact<TFact>>(subscriber, filter, priority));
+            }
+
+            Action SubscriptionSyntax.All<IEventDueToFact<TFact>>.Subscribe(IHandlerOf<IEventDueToFact<TFact>> subscriber, int priority)
+            {
+                return (this as SubscriptionSyntax.All<IEventDueToFact<TFact>>).Subscribe(subscriber.Handle, priority);
             }
 
             #endregion
@@ -151,9 +156,9 @@ namespace Taijutsu.Domain.Event.Syntax
         internal class OrImpl : Or
         {
             private readonly List<Type> factTypes = new List<Type>();
-            private readonly Func<IEventHandler, Action> addHadlerAction;
+            private readonly Func<IInternalEventHandler, Action> addHadlerAction;
 
-            public OrImpl(Func<IEventHandler, Action> addHadlerAction, IEnumerable<Type> factTypes)
+            public OrImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Type> factTypes)
             {
                 this.addHadlerAction = addHadlerAction;
                 this.factTypes.AddRange(factTypes);

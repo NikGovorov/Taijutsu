@@ -72,7 +72,7 @@ namespace Taijutsu.Data.NHibernate.Query.Criteria
             {
                 if (type.IsSubclassOf(typeof(TEntity)))
                 {
-                    TypesForExcluding.Add(type);
+                    TypesToExclude.Add(type);
                 }
             });
             return this;
@@ -80,7 +80,7 @@ namespace Taijutsu.Data.NHibernate.Query.Criteria
 
         public override IQueryOfEntities<TEntity> KeyInRangeOf(params object[] keys)
         {
-            keys.ForEach(key => KeysForIncluding.Add(key));
+            keys.ForEach(key => KeysToInclude.Add(key));
             return this;
         }
 
@@ -126,14 +126,14 @@ namespace Taijutsu.Data.NHibernate.Query.Criteria
 
         protected virtual void BuildTypeExcludingOptions(Builder<TEntity> builder)
         {
-            TypesForExcluding.ForEach(type => builder.Query.Where(e => e.GetType() != type));
+            TypesToExclude.ForEach(type => builder.Query.Where(e => e.GetType() != type));
         }
 
         protected virtual void BuildKeyIncludingOptions(Builder<TEntity> builder)
         {
-            if (KeysForIncluding.Count != 0)
+            if (KeysToInclude.Count != 0)
             {
-                builder.Query.Where(new InExpression(Projections.Id(), KeysForIncluding.ToArray()));
+                builder.Query.Where(new InExpression(Projections.Id(), KeysToInclude.ToArray()));
             }
         }
 

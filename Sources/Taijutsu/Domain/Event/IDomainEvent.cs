@@ -4,7 +4,7 @@ namespace Taijutsu.Domain.Event
     {
     }
 
-    public interface IDomainEvent<out TSubject> : IDomainObject, IEvent where TSubject : IDomainObject
+    public interface IDomainEvent<out TSubject> : IDomainEvent where TSubject : IDomainObject
     {
         TSubject InitiatedBy { get; }
     }

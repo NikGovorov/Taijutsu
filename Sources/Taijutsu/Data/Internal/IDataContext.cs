@@ -19,5 +19,6 @@ namespace Taijutsu.Data.Internal
         UnitOfWorkConfig UnitOfWorkConfig { get; }
         IDataProvider Provider { get; }
         bool Ready { get; }
+        void OnCompleted();
     }
 }

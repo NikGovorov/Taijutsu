@@ -17,7 +17,7 @@ using NHibernate;
 
 namespace Taijutsu.Data.NHibernate
 {
-    public interface ISessionDecorator
+    public interface ISessionDecorator: IDisposable
     {
 
         object RealSession { get; }

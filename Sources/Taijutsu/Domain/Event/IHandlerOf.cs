@@ -11,12 +11,10 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using Taijutsu.Domain.Event.Syntax;
-
 namespace Taijutsu.Domain.Event
 {
-    public interface IObservable : IHideObjectMembers
+    public interface IHandlerOf<in T>
     {
-        IObservableSyntax OnStream { get; }
+        void Handle(T ev);
     }
 }

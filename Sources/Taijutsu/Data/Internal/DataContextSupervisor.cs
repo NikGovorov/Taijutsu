@@ -80,6 +80,21 @@ namespace Taijutsu.Data.Internal
         }
 
 
+        internal virtual Maybe<IDataContext> Current
+        {
+            get
+            {
+                try
+                {
+                    return new Maybe<IDataContext>(unitsOfWork.LastOrDefault());
+                }
+                catch (InvalidOperationException)
+                {
+                    return Maybe<IDataContext>.Empty;
+                }
+            }
+        }
+
         protected virtual void RegisterForTerminate(DataContext dataContext)
         {
             try

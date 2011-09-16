@@ -42,10 +42,10 @@ namespace Taijutsu.Domain.Event.Syntax
 
         internal class AllImpl : All
         {
-            private readonly Func<IEventHandler, Action> addHadlerAction;
+            private readonly Func<IInternalEventHandler, Action> addHadlerAction;
             private readonly List<Type> addressTypes = new List<Type>();
 
-            public AllImpl(Func<IEventHandler, Action> addHadlerAction, IEnumerable<Type> addressTypes)
+            public AllImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Type> addressTypes)
             {
                 this.addHadlerAction = addHadlerAction;
                 this.addressTypes.AddRange(addressTypes);
@@ -60,13 +60,8 @@ namespace Taijutsu.Domain.Event.Syntax
 
             SubscriptionSyntax.All<IEventDueToFact<TFact>> All.DueTo<TFact>()
             {
-                return new SubscriptionSyntax.AllImpl<IEventDueToFact<TFact>>(addHadlerAction,
-                                                                              addressTypes.Select
-                                                                                  <Type,
-                                                                                  Func<IEventDueToFact<TFact>, bool>>(
-                                                                                      t =>
-                                                                                      e =>
-                                                                                      t.IsAssignableFrom(e.GetType())));
+                return new SubscriptionSyntax.AllImpl<IEventDueToFact<TFact>>(addHadlerAction, addressTypes
+                                                                              .Select<Type, Func<IEventDueToFact<TFact>, bool>>(t => e => t.IsAssignableFrom(e.GetType())));
             }
 
             #endregion
@@ -81,9 +76,7 @@ namespace Taijutsu.Domain.Event.Syntax
         {
             Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0);
             Action Subscribe(Func<TEntity, DateTime, Action<TFact, DateTime>> subscriber, int priority = 0);
-
-            Action Subscribe(Func<TEntity, DateTime, DateTime, Action<TFact, DateTime, DateTime>> subscriber,
-                             int priority = 0);
+            Action Subscribe(Func<TEntity, DateTime, DateTime, Action<TFact, DateTime, DateTime>> subscriber, int priority = 0);
         }
 
         #endregion
@@ -94,7 +87,7 @@ namespace Taijutsu.Domain.Event.Syntax
                                                   Full<TEntity, TFact>
             where TEntity : IEntity where TFact : IFact
         {
-            internal FullImpl(Func<IEventHandler, Action> addHadlerAction,
+            internal FullImpl(Func<IInternalEventHandler, Action> addHadlerAction,
                               IEnumerable<Func<IExternalEvent<TEntity, TFact>, bool>> eventFilters = null)
                 : base(addHadlerAction, eventFilters)
             {
@@ -106,11 +99,7 @@ namespace Taijutsu.Domain.Event.Syntax
             {
                 Action<IExternalEvent<TEntity, TFact>> modSubscriber = e => subscriber(e.AddressedTo)(e.Fact);
                 return
-                    AddHadlerAction(new Internal.EventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber,
-                                                                                              e =>
-                                                                                              !EventFilters.Any(
-                                                                                                  f => !f(e)),
-                                                                                              priority));
+                    AddHadlerAction(new InternalEventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber, e => !EventFilters.Any(f => !f(e)), priority));
             }
 
             public Action Subscribe(Func<TEntity, DateTime, Action<TFact, DateTime>> subscriber, int priority = 0)
@@ -118,11 +107,7 @@ namespace Taijutsu.Domain.Event.Syntax
                 Action<IExternalEvent<TEntity, TFact>> modSubscriber =
                     e => subscriber(e.AddressedTo, e.DateOfOccurrence)(e.Fact, e.DateOfOccurrence);
                 return
-                    AddHadlerAction(new Internal.EventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber,
-                                                                                              e =>
-                                                                                              !EventFilters.Any(
-                                                                                                  f => !f(e)),
-                                                                                              priority));
+                    AddHadlerAction(new InternalEventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber, e =>!EventFilters.Any(f => !f(e)),priority));
             }
 
             public Action Subscribe(Func<TEntity, DateTime, DateTime, Action<TFact, DateTime, DateTime>> subscriber,
@@ -134,11 +119,7 @@ namespace Taijutsu.Domain.Event.Syntax
                                                                                   e.DateOfNotice);
 
                 return
-                    AddHadlerAction(new Internal.EventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber,
-                                                                                              e =>
-                                                                                              !EventFilters.Any(
-                                                                                                  f => !f(e)),
-                                                                                              priority));
+                    AddHadlerAction(new InternalEventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber, e => !EventFilters.Any(f => !f(e)), priority));
             }
 
             #endregion
@@ -160,9 +141,9 @@ namespace Taijutsu.Domain.Event.Syntax
 
         internal class InitImpl<TEntity> : Init<TEntity> where TEntity : IEntity
         {
-            private readonly Func<IEventHandler, Action> addHadlerAction;
+            private readonly Func<IInternalEventHandler, Action> addHadlerAction;
 
-            public InitImpl(Func<IEventHandler, Action> addHadlerAction)
+            public InitImpl(Func<IInternalEventHandler, Action> addHadlerAction)
             {
                 this.addHadlerAction = addHadlerAction;
             }
@@ -198,7 +179,12 @@ namespace Taijutsu.Domain.Event.Syntax
                                                                              int priority)
             {
                 Predicate<IExternalEvent<TEntity>> filter = e => true;
-                return addHadlerAction(new Internal.EventHandler<IExternalEvent<TEntity>>(subscriber, filter, priority));
+                return addHadlerAction(new InternalEventHandler<IExternalEvent<TEntity>>(subscriber, filter, priority));
+            }
+
+            Action SubscriptionSyntax.All<IExternalEvent<TEntity>>.Subscribe(IHandlerOf<IExternalEvent<TEntity>> subscriber, int priority)
+            {
+                return (this as SubscriptionSyntax.All<IExternalEvent<TEntity>>).Subscribe(subscriber.Handle, priority);
             }
 
             #endregion
@@ -219,10 +205,10 @@ namespace Taijutsu.Domain.Event.Syntax
 
         internal class OrImpl : Or
         {
-            private readonly Func<IEventHandler, Action> addHadlerAction;
+            private readonly Func<IInternalEventHandler, Action> addHadlerAction;
             private readonly List<Type> addressTypes = new List<Type>();
 
-            public OrImpl(Func<IEventHandler, Action> addHadlerAction, IEnumerable<Type> addressTypes)
+            public OrImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Type> addressTypes)
             {
                 this.addHadlerAction = addHadlerAction;
                 this.addressTypes.AddRange(addressTypes);

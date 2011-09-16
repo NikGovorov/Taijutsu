@@ -75,6 +75,13 @@ namespace Taijutsu.Data.Internal
             get { return slaveCount == 0; }
         }
 
+        public virtual void OnCompleted()
+        {
+            if (Completed != null)
+                Completed();
+            Completed = null;
+        }
+
         public virtual bool IsRoot
         {
             get { return true; }
@@ -161,6 +168,8 @@ namespace Taijutsu.Data.Internal
             get { return extension ?? (extension = new Dictionary<string, IDisposable>()); }
         }
 
+        public event Action Completed;
+
         #endregion
 
         public virtual void RegisterCompletedSlave()
@@ -217,6 +226,11 @@ namespace Taijutsu.Data.Internal
         public virtual bool Ready
         {
             get { return true; }
+        }
+
+        public virtual void OnCompleted()
+        {
+            
         }
 
         public virtual void Commit()
@@ -276,6 +290,8 @@ namespace Taijutsu.Data.Internal
         {
             get { return extension ?? (extension = new Dictionary<string, IDisposable>()); }
         }
+
+        public event Action Completed;
 
         #endregion
     }

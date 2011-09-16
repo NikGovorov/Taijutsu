@@ -67,6 +67,13 @@ namespace Taijutsu.Data
             dataContext = Infrastructure.DataContextSupervisor.Register(unitOfWorkConfig);
         }
 
+        
+        public event Action Completed
+        {
+            add { dataContext.Completed += value; }
+            remove { dataContext.Completed -= value; }
+        }
+
         #region IAdvancedUnitOfWork Members
 
         IDictionary<string, IDisposable> IAdvancedUnitOfWork.Extension
@@ -173,6 +180,8 @@ namespace Taijutsu.Data
             }
 
             completed = true;
+
+            dataContext.OnCompleted();
         }
 
         public virtual T Complete<T>(Func<IUnitOfWork, T> forReturn)
