@@ -230,7 +230,6 @@ namespace Taijutsu.Data.Internal
 
         public virtual void OnCompleted()
         {
-            
         }
 
         public virtual void Commit()
@@ -291,7 +290,12 @@ namespace Taijutsu.Data.Internal
             get { return extension ?? (extension = new Dictionary<string, IDisposable>()); }
         }
 
-        public event Action Completed;
+
+        public event Action Completed
+        {
+            add { dataContext.Completed += value; }
+            remove { dataContext.Completed -= value; }
+        }
 
         #endregion
     }

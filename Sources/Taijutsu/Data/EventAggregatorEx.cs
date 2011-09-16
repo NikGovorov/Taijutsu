@@ -12,12 +12,14 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.ComponentModel;
 using System.Transactions;
 using Taijutsu.Data.Internal;
 using Taijutsu.Domain.Event.Syntax;
 
 namespace Taijutsu.Data
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class EventAggregatorEx
     {
         public static AfterCompleteSyntax<TSource> AfterComplete<TSource>(this SubscriptionSyntax.All<TSource> self)

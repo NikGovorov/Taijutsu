@@ -17,7 +17,6 @@ using Taijutsu.Domain.Event.Syntax;
 
 namespace Taijutsu.Domain.Event
 {
-    [EditorBrowsable(EditorBrowsableState.Never)]
     public class EventAggregator
     {
         protected static readonly IEventAggregator InternalEventAggregator = new MultiThreadAggregator();
