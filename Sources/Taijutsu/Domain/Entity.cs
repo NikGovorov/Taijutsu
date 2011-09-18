@@ -15,6 +15,8 @@ using System;
 using Taijutsu.Domain.Event;
 using Taijutsu.Domain.Event.Internal;
 using Taijutsu.Domain.Event.Syntax;
+using Taijutsu.Domain.Event.Syntax.Publishing;
+using Taijutsu.Domain.Event.Syntax.Subscribing;
 
 namespace Taijutsu.Domain
 {
@@ -32,10 +34,10 @@ namespace Taijutsu.Domain
             EventAggregator.Publish(ev);
         }
 
-        protected PublishingSyntax DueTo<TFact>(TFact fact) where TFact : IFact
+        protected PublishingSyntax.Prepared DueTo<TFact>(TFact fact) where TFact : IFact
         {
             var ev = EventFor(fact);
-            return new PublishingSyntax(() => Publish(ev));
+            return new PublishingSyntax.PreparedImpl(() => Publish(ev));
         }
 
         protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
@@ -106,10 +108,10 @@ namespace Taijutsu.Domain
             EventAggregator.Publish(ev);
         }
 
-        protected PublishingSyntax DueTo<TFact>(TFact fact) where TFact : IFact
+        protected PublishingSyntax.Prepared DueTo<TFact>(TFact fact) where TFact : IFact
         {
             var ev = EventFor(fact);
-            return new PublishingSyntax(() => Publish(ev));
+            return new PublishingSyntax.PreparedImpl(() => Publish(ev));
         }
 
         protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact

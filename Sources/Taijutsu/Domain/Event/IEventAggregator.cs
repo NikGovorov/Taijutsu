@@ -11,17 +11,17 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using Taijutsu.Domain.Event.Syntax;
+using Taijutsu.Domain.Event.Syntax.Subscribing;
+using DueToSyntax = Taijutsu.Domain.Event.Syntax.Publishing.DueToSyntax;
 
 namespace Taijutsu.Domain.Event
 {
-    public interface IEventAggregator : IObservable
-    {
-        void Publish<TEvent>(TEvent ev) where TEvent : IEvent;
-    }
-
-    public interface IObservable : IHideObjectMembers
+    public interface IEventAggregator
     {
         IObservableSyntax OnStream { get; }
+    
+        void Publish<TEvent>(TEvent ev) where TEvent : IEvent;
+
+        DueToSyntax.Init<TFact> DueTo<TFact>(TFact fact) where TFact: IFact;
     }
 }

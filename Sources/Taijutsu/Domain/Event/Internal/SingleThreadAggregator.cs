@@ -14,7 +14,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Taijutsu.Domain.Event.Syntax;
+using Taijutsu.Domain.Event.Syntax.Subscribing;
 
 namespace Taijutsu.Domain.Event.Internal
 {
@@ -64,6 +64,11 @@ namespace Taijutsu.Domain.Event.Internal
             {
                 handler.HandlerAction(ev);
             }
+        }
+
+        Syntax.Publishing.DueToSyntax.Init<TFact> IEventAggregator.DueTo<TFact>(TFact fact)
+        {
+            return new Syntax.Publishing.DueToSyntax.InitImpl<TFact>(Publish, fact, null, null);
         }
 
         #endregion

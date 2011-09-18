@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Taijutsu.Domain.Event.Internal;
 
-namespace Taijutsu.Domain.Event.Syntax
+namespace Taijutsu.Domain.Event.Syntax.Subscribing
 {
     public static class AddressedToSyntax
     {

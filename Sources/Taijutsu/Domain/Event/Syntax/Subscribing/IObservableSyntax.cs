@@ -1,4 +1,4 @@
-namespace Taijutsu.Domain.Event.Syntax
+namespace Taijutsu.Domain.Event.Syntax.Subscribing
 {
     public interface IObservableSyntax : IHideObjectMembers
     {

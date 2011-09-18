@@ -13,7 +13,7 @@
 
 using System.ComponentModel;
 using Taijutsu.Domain.Event.Internal;
-using Taijutsu.Domain.Event.Syntax;
+using Taijutsu.Domain.Event.Syntax.Subscribing;
 
 namespace Taijutsu.Domain.Event
 {
@@ -25,7 +25,12 @@ namespace Taijutsu.Domain.Event
         {
             InternalEventAggregator.Publish(ev);
         }
-        
+
+        public static Syntax.Publishing.DueToSyntax.Init<TFact> DueTo<TFact>(TFact fact) where TFact : IFact
+        {
+            return InternalEventAggregator.DueTo(fact);
+        }
+
         public static IObservableSyntax OnStream
         {
             get { return InternalEventAggregator.OnStream; }
