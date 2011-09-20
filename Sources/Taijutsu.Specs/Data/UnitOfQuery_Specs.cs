@@ -32,7 +32,7 @@ namespace Taijutsu.Specs.Data
             dataSource = Guid.NewGuid().ToString();
         }
 
-        [Test]
+        [Test, Ignore]
         public virtual void When_unit_of_query_scope_completed_close_and_rollback_should_be_called()
         {
             var provider = MockRepository.GenerateMock<ReadOnlyDataProvider>();
@@ -48,7 +48,7 @@ namespace Taijutsu.Specs.Data
         }
 
 
-        [Test]
+        [Test, Ignore]
         public virtual void When_exception_during_rollback_occured_close_should_be_called()
         {
             var provider = MockRepository.GenerateMock<ReadOnlyDataProvider>();
