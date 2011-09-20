@@ -45,21 +45,6 @@ namespace Taijutsu.Specs.Domain
             Assert.AreEqual(frozen, SystemTime.Now);            
         }
 
-        [Test]
-        public virtual void Reset_should_set_current_time_behaviour()
-        {
-            SystemTime.TimeController.SetFrozenDate(DateTime.MinValue);
-            Assert.AreNotEqual(DateTime.Now, SystemTime.Now);
-            SystemTime.TimeController.Reset();
-            Assert.That(DateTime.Now, Is.EqualTo(SystemTime.Now).Within(3).Milliseconds);
-        }
-
-        [Test]
-        public virtual void Customizing_should_work()
-        {
-            SystemTime.TimeController.Customize(() => DateTime.MinValue);
-            Assert.AreEqual(DateTime.MinValue, SystemTime.Now);
-        }
 
         [Test]
         public virtual void When_time_has_been_setted_it_should_be_live()
@@ -68,6 +53,22 @@ namespace Taijutsu.Specs.Domain
             SystemTime.TimeController.SetDate(startPoint);
             Thread.Sleep(100);
             Assert.That(new DateTime(2010, 01, 02), Is.EqualTo(SystemTime.Now).Within(3).Milliseconds);
+        }
+
+        [Test]
+        public virtual void When_time_has_been_reseted_it_should_return_current_time() 
+        {
+            SystemTime.TimeController.SetFrozenDate(DateTime.MinValue);
+            Assert.AreNotEqual(DateTime.Now, SystemTime.Now);
+            SystemTime.TimeController.Reset();
+            Assert.That(DateTime.Now, Is.EqualTo(SystemTime.Now).Within(3).Milliseconds);
+        }
+
+        [Test]
+        public virtual void When_time_is_customized_it_should_return_customized_time()
+        {
+            SystemTime.TimeController.Customize(() => DateTime.MinValue);
+            Assert.AreEqual(DateTime.MinValue, SystemTime.Now);
         }
 
     }

@@ -22,7 +22,7 @@ namespace Taijutsu.Specs.Domain
     {
 
         [Test]
-        public virtual void Logical_context_should_return_null_if_it_was_not_found()
+        public virtual void When_trying_find_not_existent_data_in_it_should_not_be_accessible_through_context()
         {
             Assert.IsNull(LogicalContext.FindData("mahdskshfd"));
         }
@@ -36,7 +36,7 @@ namespace Taijutsu.Specs.Domain
         }
 
         [Test]
-        public virtual void When_data_released_it_shoild_not_be_accessible_through_context()
+        public virtual void When_data_released_it_should_not_be_accessible_through_context()
         {
             var obj = new object();
             LogicalContext.SetData("mahasdasddskshfdsas", obj);
@@ -46,7 +46,7 @@ namespace Taijutsu.Specs.Domain
         }
 
         [Test]
-        public virtual void Default_logical_context_should_automatically_release_data()
+        public virtual void When_thread_returns_to_pool_logical_context_should_automatically_release_data()
         {
             try
             {

@@ -21,7 +21,7 @@ namespace Taijutsu.Specs.Domain
     public class EntityConversion_Specs
     {
         [Test]
-        public virtual void As_extension_by_default_use_standard_native_as()
+        public virtual void When_use_as_extension_by_default_standard_native_as_should_be_used()
         {
             var order = (Order)new InternetOrder();
             var internetOrder = order.As<InternetOrder>();

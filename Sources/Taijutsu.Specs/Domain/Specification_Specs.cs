@@ -31,9 +31,8 @@ namespace Taijutsu.Specs.Domain
         SilverUserSpecification silverUserSpec = new SilverUserSpecification();
 
         [Test]
-        public virtual void IsSatisfiedBy_should_work_based_on_SatisfyingElementsFrom()
+        public virtual void When_is_satisfied_by_is_used_specification_should_use_satisfying_elements_from()
         {
-           
             
             Assert.False(goldUserSpec.IsSatisfiedBy(notUser));
             Assert.False(goldUserSpec.IsSatisfiedBy(simpleUser));
@@ -44,7 +43,7 @@ namespace Taijutsu.Specs.Domain
         }
 
         [Test]
-        public virtual void Not_specification_should_invert_result_of_IsSatisfiedBy_of_source_spec()
+        public virtual void When_use_not_specification_it_should_invert_result_of_is_satisfied_by_of_source_spec()
         {
 
 
@@ -56,9 +55,8 @@ namespace Taijutsu.Specs.Domain
         }
 
         [Test]
-        public virtual void Not_specification_should_invert_result_of_SatisfyingElementsFrom_of_source_spec()
+        public virtual void When_use_not_specification_it_should_invert_result_of_satisfying_elements_from_by_of_source_spec()
         {
-
 
             var users = new[] {simpleUser, silverUser, goldUser};
 
@@ -69,10 +67,8 @@ namespace Taijutsu.Specs.Domain
 
 
         [Test]
-        public virtual void Not_specification_operator_overload_should_work()
+        public virtual void When_use_not_specification_its_operator_overload_should_work()
         {
-
-
             Assert.True((!goldUserSpec).IsSatisfiedBy(notUser));
             Assert.True((!goldUserSpec).IsSatisfiedBy(simpleUser));
             Assert.True((!goldUserSpec).IsSatisfiedBy(silverUser));
@@ -82,7 +78,7 @@ namespace Taijutsu.Specs.Domain
 
 
         [Test]
-        public virtual void Or_specification_should_compare_result_of_IsSatisfiedBy_of_source_spec_with_or()
+        public virtual void When_use_or_specification_it_should_compare_result_of_is_satisfiedBy_of_source_specs_with_or()
         {
             Assert.False(goldUserSpec.Or(silverUserSpec).IsSatisfiedBy(notUser));
             Assert.False(goldUserSpec.Or(silverUserSpec).IsSatisfiedBy(simpleUser));
@@ -92,7 +88,7 @@ namespace Taijutsu.Specs.Domain
         }
 
         [Test]
-        public virtual void Or_specification_should_union_result_of_SatisfyingElementsFrom_of_source_spec()
+        public virtual void When_use_or_specification_it_should_union_result_of_satisfying_elements_from_of_source_specs()
         {
             var users = new[] { simpleUser, silverUser, goldUser };
 
@@ -104,7 +100,7 @@ namespace Taijutsu.Specs.Domain
 
 
         [Test]
-        public virtual void Or_specification_operator_overload_should_work()
+        public virtual void When_use_or_specification_its_operator_overload_should_work()
         {
             Assert.False((goldUserSpec | silverUserSpec).IsSatisfiedBy(notUser));
             Assert.False((goldUserSpec | silverUserSpec).IsSatisfiedBy(simpleUser));
@@ -115,7 +111,7 @@ namespace Taijutsu.Specs.Domain
 
 
         [Test]
-        public virtual void And_specification_should_compare_result_of_IsSatisfiedBy_of_source_spec_with_and()
+        public virtual void When_use_and_specification_it_should_compare_result_of_is_satisfied_by_of_source_specs_with_and()
         {
             Assert.False(goldUserSpec.And(silverUserSpec).IsSatisfiedBy(notUser));
             Assert.False(goldUserSpec.And(silverUserSpec).IsSatisfiedBy(simpleUser));
@@ -126,7 +122,7 @@ namespace Taijutsu.Specs.Domain
 
 
         [Test]
-        public virtual void And_specification_should_intersect_result_of_SatisfyingElementsFrom_of_source_spec()
+        public virtual void When_use_and_specification_it_should_intersect_result_of_satisfying_elements_from_of_source_specs()
         {
             var users = new[] { simpleUser, silverUser, goldUser };
 
@@ -138,7 +134,7 @@ namespace Taijutsu.Specs.Domain
 
 
         [Test]
-        public virtual void And_specification_operator_overload_should_work()
+        public virtual void When_use_and_specification_its_operator_overload_should_work()
         {
             Assert.False((goldUserSpec & silverUserSpec).IsSatisfiedBy(notUser));
             Assert.False((goldUserSpec & silverUserSpec).IsSatisfiedBy(simpleUser));
@@ -148,14 +144,14 @@ namespace Taijutsu.Specs.Domain
         }
 
         [Test]
-        public virtual void Complex_specification_operator_overload_combination_should_work_for_IsSatisfiedBy()
+        public virtual void When_use_complex_specification_its_operator_overload_combination_should_work_for_is_satisfied_by()
         {
             Assert.True(((goldUserSpec & silverUserSpec) | (!silverUserSpec)).IsSatisfiedBy(simpleUser));
             Assert.True(((goldUserSpec & silverUserSpec) | (!goldUserSpec)).IsSatisfiedBy(notUser));
         }
 
         [Test]
-        public virtual void Complex_specification_operator_overload_combination_should_work_for_SatisfyingElementsFrom()
+        public virtual void When_use_omplex_specification_its_operator_overload_combination_should_work_for_satisfying_elements_from()
         {
             var users = new[] { simpleUser, silverUser, goldUser };
             Assert.AreEqual(3, ((goldUserSpec & silverUserSpec) | (!goldUserSpec)).SatisfyingElementsFrom(users).Count());

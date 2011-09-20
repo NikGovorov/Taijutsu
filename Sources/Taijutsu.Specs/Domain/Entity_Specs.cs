@@ -23,7 +23,7 @@ namespace Taijutsu.Specs.Domain
     public class Entity_Specs
     {
         [Test]
-        public virtual void Equality_comparison_should_use_build_identity_method_which_compares_type_and_key()
+        public virtual void When_compare_entities_they_should_be_compared_by_type_and_key()
         {
             var sharedkey = SeqGuid.NewGuid();
             
@@ -63,7 +63,7 @@ namespace Taijutsu.Specs.Domain
         }
 
         [Test]
-        public virtual void Get_has_code_should_be_constant_during_entity_life_period()
+        public virtual void When_use_get_hash_code_method_it_should_constant_during_entity_life_period()
         {
             var key = Guid.NewGuid();
             var set = new HashSet<TestEntity>();

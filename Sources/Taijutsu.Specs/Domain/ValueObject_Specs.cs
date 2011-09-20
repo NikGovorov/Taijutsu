@@ -21,7 +21,7 @@ namespace Taijutsu.Specs.Domain
     public class ValueObject_Specs
     {
         [Test]
-        public virtual void Equality_comparison_should_use_build_identity_method_which_compares_internal_state()
+        public virtual void When_compare_value_objects_they_should_be_compared_by_internal_state()
         {
             var name1 = new FullName("Test", "MegaTest");
             var name2 = new FullName("Test", "MegaTest");
