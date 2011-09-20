@@ -12,11 +12,12 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
-using System.Data;
+using System.Transactions;
 using NHibernate;
 using Taijutsu.Data.Internal;
 using Taijutsu.Domain.Query;
 using Taijutsu.Data.NHibernate.Query.Criteria;
+using IsolationLevel = System.Data.IsolationLevel;
 
 namespace Taijutsu.Data.NHibernate
 {
@@ -86,7 +87,15 @@ namespace Taijutsu.Data.NHibernate
 
         public override void CommitTransaction()
         {
-            CurrentTransaction.Commit();
+            if (Transaction.Current!=null)
+            {
+                CurrentTransaction.Commit();    
+            }
+            else
+            {
+                CurrentTransaction.Rollback();    
+            }
+            
             CurrentTransaction.Dispose();
         }
 
