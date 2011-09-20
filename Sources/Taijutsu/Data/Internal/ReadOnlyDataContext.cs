@@ -58,7 +58,7 @@ namespace Taijutsu.Data.Internal
             get { return true; }
         }
 
-        public bool Closed
+        public bool IsClosed
         {
             get { return closed; }
         }
@@ -111,7 +111,7 @@ namespace Taijutsu.Data.Internal
 
         void IDisposable.Dispose()
         {
-            if (!Closed)
+            if (!IsClosed)
             {
                 Close();
             }
@@ -136,9 +136,9 @@ namespace Taijutsu.Data.Internal
             get { return false; }
         }
 
-        public bool Closed
+        public bool IsClosed
         {
-            get { return readOnlyDataContext.Closed; }
+            get { return readOnlyDataContext.IsClosed; }
         }
 
         public IReadOnlyDataProvider ReadOnlyProvider
@@ -162,7 +162,7 @@ namespace Taijutsu.Data.Internal
 
         void IDisposable.Dispose()
         {
-            if (!Closed)
+            if (!IsClosed)
             {
                 Close();
             }

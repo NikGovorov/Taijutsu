@@ -324,6 +324,44 @@ namespace Taijutsu.Specs.Data
             }
 
         }
+
+
+        [Test]
+        public virtual void Complete_event_should_be_raised_after_scope_closed()
+        {
+
+            Infrastructure.RegisterDataSource(new LambdaDataSource(() => MockRepository.GenerateStub<DataProvider>(), dataSource));
+
+            Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
+
+            bool called = false;
+            Action<bool> completed = s =>
+                                         {
+                                             Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
+                                             called = true;
+                                         };
+
+            using (var uow = new UnitOfWork(dataSource))
+            {
+                (uow as IAdvancedUnitOfWork).Closed += completed;
+                uow.Complete();
+                Assert.IsFalse(called);
+            }
+            Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
+            Assert.IsTrue(called);
+            
+            called = false;
+            using (var uow = new UnitOfWork(dataSource))
+            {
+                (uow as IAdvancedUnitOfWork).Closed += completed;
+            }
+            Assert.IsTrue(called);
+
+            called = false;
+            using (var uow = new UnitOfWork(dataSource)){}
+            Assert.IsFalse(called);
+        }
+
     }
     // ReSharper restore InconsistentNaming
 }

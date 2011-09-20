@@ -25,6 +25,6 @@ namespace Taijutsu.Data.Internal
         IDictionary<string, IDisposable> Extension { get; }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        event Action Completed;
+        event Action<bool> Closed;
     }
 }

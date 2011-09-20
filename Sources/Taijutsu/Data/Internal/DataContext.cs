@@ -23,6 +23,7 @@ namespace Taijutsu.Data.Internal
         private readonly Action<DataContext> onClosed;
         private bool closed;
         private bool commited;
+        private bool successfullyCommited;
         private DataProvider dataProvider;
         private IDictionary<string, IDisposable> extension;
         private bool rolledback;
@@ -41,12 +42,12 @@ namespace Taijutsu.Data.Internal
             get { return dataProvider; }
         }
 
-        public virtual bool Commited
+        public virtual bool IsCommited
         {
             get { return commited; }
         }
 
-        public virtual bool Rolledback
+        public virtual bool IsRolledback
         {
             get { return rolledback; }
         }
@@ -65,32 +66,27 @@ namespace Taijutsu.Data.Internal
         }
 
 
+        public virtual bool IsClosed
+        {
+            get { return closed; }
+        }
+
         IReadOnlyDataProvider IReadOnlyDataContext.ReadOnlyProvider
         {
             get { return Provider; }
         }
 
-        public virtual bool Ready
+        public virtual bool IsReady
         {
             get { return slaveCount == 0; }
         }
 
-        public virtual void OnCompleted()
-        {
-            if (Completed != null)
-                Completed();
-            Completed = null;
-        }
 
         public virtual bool IsRoot
         {
             get { return true; }
         }
 
-        public virtual bool Closed
-        {
-            get { return closed; }
-        }
 
         public virtual void Commit()
         {
@@ -103,6 +99,7 @@ namespace Taijutsu.Data.Internal
             }
             commited = true;
             DataProvider.CommitTransaction();
+            successfullyCommited = true;
         }
 
         public virtual void Rollback()
@@ -145,7 +142,14 @@ namespace Taijutsu.Data.Internal
             }
 
             extension = null;
+
             onClosed(this);
+
+            if (Closed != null)
+                Closed(successfullyCommited);
+            
+            Closed = null;
+
             dataProvider = new OfflineDataProvider();
             
             if (lastExException != null)
@@ -157,7 +161,7 @@ namespace Taijutsu.Data.Internal
 
         void IDisposable.Dispose()
         {
-            if (!Closed)
+            if (!IsClosed)
             {
                 Close();
             }
@@ -168,7 +172,7 @@ namespace Taijutsu.Data.Internal
             get { return extension ?? (extension = new Dictionary<string, IDisposable>()); }
         }
 
-        public event Action Completed;
+        public event Action<bool> Closed;
 
         #endregion
 
@@ -202,9 +206,9 @@ namespace Taijutsu.Data.Internal
             get { return false; }
         }
 
-        public virtual bool Closed
+        public virtual bool IsClosed
         {
-            get { return dataContext.Closed; }
+            get { return dataContext.IsClosed; }
         }
 
         IReadOnlyDataProvider IReadOnlyDataContext.ReadOnlyProvider
@@ -223,14 +227,11 @@ namespace Taijutsu.Data.Internal
             get { return dataContext.Provider; }
         }
 
-        public virtual bool Ready
+        public virtual bool IsReady
         {
             get { return true; }
         }
 
-        public virtual void OnCompleted()
-        {
-        }
 
         public virtual void Commit()
         {
@@ -278,7 +279,7 @@ namespace Taijutsu.Data.Internal
 
         void IDisposable.Dispose()
         {
-            if (!Closed)
+            if (!IsClosed)
             {
                 ((IReadOnlyDataContext) this).Close();
             }
@@ -291,10 +292,11 @@ namespace Taijutsu.Data.Internal
         }
 
 
-        public event Action Completed
+
+        public event Action<bool> Closed
         {
-            add { dataContext.Completed += value; }
-            remove { dataContext.Completed -= value; }
+            add { dataContext.Closed += value; }
+            remove { dataContext.Closed -= value; }
         }
 
         #endregion

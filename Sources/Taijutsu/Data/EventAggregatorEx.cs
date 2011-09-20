@@ -147,8 +147,14 @@ namespace Taijutsu.Data
                                    var maybeUnitOfWork = Infrastructure.CurrentUnitOfWork;
                                    if (maybeUnitOfWork)
                                    {
-                                       maybeUnitOfWork.Value.Completed +=
-                                           () => subscriber(source);
+                                       maybeUnitOfWork.Value.Closed +=
+                                           (success) =>
+                                               {
+                                                   if (success)
+                                                   {
+                                                       subscriber(source);
+                                                   }
+                                               };
                                    }
                                    //todo warn here...    
                                }
@@ -223,13 +229,14 @@ namespace Taijutsu.Data
                                          {
                                              var target = uow.UniqueOf<TTarget>(key).Query();
                                              if (noticeDate == null && occurrenceDate == null)
-                                                 prev.AddressedTo(target).Publish();        
+                                                 prev.AddressedTo(target).Publish();
                                              else if (noticeDate != null && occurrenceDate == null)
                                                  prev.NoticedAt(noticeDate.Value).AddressedTo(target).Publish();
                                              else if (noticeDate == null && occurrenceDate != null)
                                                  prev.OccuredAt(occurrenceDate.Value).AddressedTo(target).Publish();
                                              else if (noticeDate != null && occurrenceDate != null)
-                                                 prev.OccuredAt(occurrenceDate.Value).NoticedAt(noticeDate.Value).AddressedTo(target).Publish();
+                                                 prev.OccuredAt(occurrenceDate.Value).NoticedAt(noticeDate.Value).
+                                                     AddressedTo(target).Publish();
                                              uow.Complete();
                                          }
                                      };

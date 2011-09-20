@@ -67,11 +67,11 @@ namespace Taijutsu.Data
             dataContext = Infrastructure.DataContextSupervisor.Register(unitOfWorkConfig);
         }
 
-        
-        public event Action Completed
+
+        event Action<bool> IAdvancedUnitOfWork.Closed
         {
-            add { dataContext.Completed += value; }
-            remove { dataContext.Completed -= value; }
+            add { dataContext.Closed += value; }
+            remove { dataContext.Closed -= value; }
         }
 
         #region IAdvancedUnitOfWork Members
@@ -158,7 +158,7 @@ namespace Taijutsu.Data
 
         public virtual void Complete()
         {
-            if (!dataContext.Ready)
+            if (!dataContext.IsReady)
             {
                 throw new Exception(
                     "Unit of work can not be successfully completed, because of not all subordinate units of work are successfully completed.");
@@ -181,7 +181,6 @@ namespace Taijutsu.Data
 
             completed = true;
 
-            dataContext.OnCompleted();
         }
 
         public virtual T Complete<T>(Func<IUnitOfWork, T> forReturn)
