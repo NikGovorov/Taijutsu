@@ -22,7 +22,7 @@ namespace Taijutsu.Specs.Data
     public class IsolationLevelEx_Specs
     {
         [Test]
-        public virtual void Isolation_level_compatibility_should_be_detected_in_right_way()
+        public virtual void When_isolation_level_compatibility_is_detecting_it_should_be_detected_in_the_right_way()
         {
             Assert.IsTrue(IsolationLevel.Serializable.IsCompatible(IsolationLevel.ReadCommitted));
             Assert.IsTrue(IsolationLevel.ReadCommitted.IsCompatible(IsolationLevel.Unspecified));

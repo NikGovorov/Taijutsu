@@ -20,7 +20,7 @@ namespace Taijutsu.Data.Internal
     public class DataContext : IDataContext
     {
         private readonly UnitOfWorkConfig unitOfWorkConfig;
-        private readonly Action<DataContext> onClosed;
+        private readonly Action<DataContext, Action> onClosed;
         private bool closed;
         private bool commited;
         private bool successfullyCommited;
@@ -29,7 +29,7 @@ namespace Taijutsu.Data.Internal
         private bool rolledback;
         private int slaveCount;
 
-        public DataContext(UnitOfWorkConfig unitOfWorkConfig, DataProvider dataProvider, Action<DataContext> onClosed)
+        public DataContext(UnitOfWorkConfig unitOfWorkConfig, DataProvider dataProvider, Action<DataContext, Action> onClosed)
         {
             this.unitOfWorkConfig = unitOfWorkConfig;
             this.dataProvider = dataProvider;
@@ -143,12 +143,7 @@ namespace Taijutsu.Data.Internal
 
             extension = null;
 
-            onClosed(this);
-
-            if (Closed != null)
-                Closed(successfullyCommited);
-            
-            Closed = null;
+            onClosed(this, RaiseClosedEvent);
 
             dataProvider = new OfflineDataProvider();
             
@@ -156,6 +151,15 @@ namespace Taijutsu.Data.Internal
             {
                 throw lastExException;
             }
+
+        }
+
+        protected virtual void RaiseClosedEvent()
+        {
+            if (Closed != null)
+                Closed(successfullyCommited);
+
+            Closed = null;
 
         }
 

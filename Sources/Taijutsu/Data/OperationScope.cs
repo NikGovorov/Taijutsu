@@ -14,7 +14,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Transactions;
 using Taijutsu.Data.Internal;
 
 namespace Taijutsu.Data

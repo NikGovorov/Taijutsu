@@ -338,6 +338,14 @@ namespace Taijutsu.Specs.Data
             Action<bool> completed = s =>
                                          {
                                              Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
+
+                                             using (var uow = new UnitOfWork(dataSource, Require.New))
+                                             {
+                                                 Assert.AreEqual(1, Infrastructure.DataContextSupervisor.Roots.Count());
+                                             }
+
+                                             Assert.AreEqual(0, Infrastructure.DataContextSupervisor.Roots.Count());
+
                                              called = true;
                                          };
 

@@ -36,7 +36,7 @@ namespace Taijutsu.Data.NHibernate
         public static IQueryable<TEntity> AllOfEx<TEntity>(this UnitOfQuery unitOfQuery) where TEntity : IEntity
         {
             INative native = unitOfQuery;
-            var session = native.Native as IStatelessSession;
+            var session = native.Native as ISession;
             return session.Query<TEntity>();
         }
     }

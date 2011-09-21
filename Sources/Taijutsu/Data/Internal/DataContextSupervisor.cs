@@ -47,8 +47,7 @@ namespace Taijutsu.Data.Internal
         {
             if (unitOfWorkConfig.Require == Require.New)
             {
-                var newContext = new DataContext(unitOfWorkConfig, ProviderLifecyclePolicy.Register(unitOfWorkConfig),
-                                                 RegisterForTerminate);
+                var newContext = new DataContext(unitOfWorkConfig, ProviderLifecyclePolicy.Register(unitOfWorkConfig), RegisterForTerminate);
                 unitsOfWork.Add(newContext);
                 return newContext;
             }
@@ -95,26 +94,26 @@ namespace Taijutsu.Data.Internal
             }
         }
 
-        protected virtual void RegisterForTerminate(DataContext dataContext)
+        protected virtual void RegisterForTerminate(DataContext dataContext, Action afterRemoveBeforeTerminate)
         {
             try
             {
-                ProviderLifecyclePolicy.Terminate(dataContext.DataProvider);
-            }
-            catch (Exception exception)
-            {
-                Trace.TraceError(exception.ToString());
-            }
-            finally
-            {
+                unitsOfWork.Remove(dataContext);
+                
                 try
                 {
-                    unitsOfWork.Remove(dataContext);
+                    afterRemoveBeforeTerminate();
                 }
                 catch (Exception exception)
                 {
                     Trace.TraceError(exception.ToString());
                 }
+
+                ProviderLifecyclePolicy.Terminate(dataContext.DataProvider);
+            }
+            catch (Exception exception)
+            {
+                Trace.TraceError(exception.ToString());
             }
         }
     }
