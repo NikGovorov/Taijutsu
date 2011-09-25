@@ -98,18 +98,15 @@ namespace Taijutsu.Data.Internal
         {
             try
             {
-                unitsOfWork.Remove(dataContext);
-                
                 try
                 {
+                    unitsOfWork.Remove(dataContext);
                     afterRemoveBeforeTerminate();
                 }
-                catch (Exception exception)
+                finally
                 {
-                    Trace.TraceError(exception.ToString());
-                }
-
-                ProviderLifecyclePolicy.Terminate(dataContext.DataProvider);
+                    ProviderLifecyclePolicy.Terminate(dataContext.DataProvider);
+                }                
             }
             catch (Exception exception)
             {
