@@ -243,7 +243,7 @@ namespace Taijutsu.Data
 
                 if (async)
                 {
-                    Task.Factory.StartNew(publish);
+                    Task.Factory.StartNew(publish); //todo log here TaskContinuationOptions.OnlyOnFaulted
                 }
                 else
                 {
