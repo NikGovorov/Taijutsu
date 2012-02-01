@@ -11,6 +11,7 @@
     <language>en-US</language>
 	<dependencies>
 		<dependency id='Taijutsu' version='0.5.0.0'/>
+		<dependency id='NHibernate' version='3.2.0.4000'/>
 	</dependencies>
   </metadata>
 </package>

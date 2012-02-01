@@ -34,6 +34,7 @@ namespace Taijutsu.Data.NHibernate
             //session = dataSource.SessionFactory.OpenStatelessSession();
             session = dataSource.SessionFactory.OpenSession();
             session.FlushMode = FlushMode.Never;
+            session.DefaultReadOnly = true;
         }
 
 
