@@ -60,7 +60,7 @@ namespace Taijutsu.Domain.Event.Internal
                 return e =>
                            {
                                var ev = e as TEvent;
-                               if (ev != null)
+                               if (ev != null && _predicate(ev))
                                {
                                    handlerAction(ev);
                                }
