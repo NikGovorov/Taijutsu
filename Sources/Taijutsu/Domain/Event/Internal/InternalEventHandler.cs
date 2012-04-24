@@ -22,7 +22,6 @@ namespace Taijutsu.Domain.Event.Internal
         Action<object> HandlerAction { get; }
         Type EventType { get; }
         int Priority { get; }
-        bool Suitable(object ev);
     }
 
     internal class InternalEventHandler<TEvent> : IInternalEventHandler where TEvent : class
@@ -47,11 +46,6 @@ namespace Taijutsu.Domain.Event.Internal
             get { return priority; }
         }
 
-        bool IInternalEventHandler.Suitable(object ev)
-        {
-            var typedEv = ev as TEvent;
-            return typedEv != null && predicate(typedEv);
-        }
 
         Action<object> IInternalEventHandler.HandlerAction
         {
@@ -60,7 +54,7 @@ namespace Taijutsu.Domain.Event.Internal
                 return e =>
                            {
                                var ev = e as TEvent;
-                               if (ev != null && _predicate(ev))
+                               if (ev != null && predicate(ev))
                                {
                                    handlerAction(ev);
                                }
