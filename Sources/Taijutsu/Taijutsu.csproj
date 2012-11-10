@@ -1,53 +1,154 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-	<PropertyGroup>
-		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-		<ProjectGuid>839bc857-a115-43e5-98ab-d5147718924e</ProjectGuid>
-		<OutputType>Library</OutputType>
-		<AppDesignerFolder>Properties</AppDesignerFolder>
-		<RootNamespace>Taijutsu</RootNamespace>
-		<AssemblyName>Taijutsu</AssemblyName>
-		<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-		<FileAlignment>512</FileAlignment>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-		<DebugSymbols>true</DebugSymbols>
-		<DebugType>full</DebugType>
-		<Optimize>false</Optimize>
-		<OutputPath>bin\Debug\</OutputPath>
-		<DefineConstants>DEBUG;TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-	</PropertyGroup>
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-		<DebugType>pdbonly</DebugType>
- 		<Optimize>true</Optimize>
-		<OutputPath>bin\Release\</OutputPath>
-		<DefineConstants>TRACE</DefineConstants>
-		<ErrorReport>prompt</ErrorReport>
-		<WarningLevel>4</WarningLevel>
-	</PropertyGroup>
-	<ItemGroup>
-		<Reference Include="System"/>
-		
-		<Reference Include="System.Core"/>
-		<Reference Include="System.Xml.Linq"/>
-		<Reference Include="System.Data.DataSetExtensions"/>
-		
-		
-		<Reference Include="Microsoft.CSharp"/>
- 		
-		<Reference Include="System.Data"/>
-		<Reference Include="System.Xml"/>
-	</ItemGroup>
-	<ItemGroup>
-		<Compile Include="Class1.cs" />
-
-		<Compile Include="Properties\AssemblyInfo.cs" />
-	</ItemGroup>
-	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1353B9D0-A422-4149-B916-65F855ABACB5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Taijutsu</RootNamespace>
+    <AssemblyName>Taijutsu</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Data\EventAggregatorEx.cs" />
+    <Compile Include="Data\Internal\DataContext.cs" />
+    <Compile Include="Data\Internal\DataContextSupervisor.cs" />
+    <Compile Include="Data\Internal\DataProvider.cs" />
+    <Compile Include="Data\Internal\DataSource.cs" />
+    <Compile Include="Data\Internal\IAdvancedUnitOfWork.cs" />
+    <Compile Include="Data\Internal\IDataContext.cs" />
+    <Compile Include="Data\Internal\IDataProvider.cs" />
+    <Compile Include="Data\Internal\INative.cs" />
+    <Compile Include="Data\Internal\Infrastructure.cs" />
+    <Compile Include="Data\Internal\IProviderLifecyclePolicy.cs" />
+    <Compile Include="Data\Internal\IQueryOverBuilder.cs" />
+    <Compile Include="Data\Internal\IReadOnlyDataContext.cs" />
+    <Compile Include="Data\Internal\IReadOnlyDataProvider.cs" />
+    <Compile Include="Data\Internal\IsolationLevelEx.cs" />
+    <Compile Include="Data\Internal\IUnitOfWork.cs" />
+    <Compile Include="Data\Internal\MarkingStep.cs" />
+    <Compile Include="Data\Internal\OfflineProvider.cs" />
+    <Compile Include="Data\Internal\ProviderLifecyclePolicy.cs" />
+    <Compile Include="Data\Internal\ReadOnlyDataContext.cs" />
+    <Compile Include="Data\Internal\ReadOnlyDataContextSupervisor.cs" />
+    <Compile Include="Data\Internal\ReadOnlyDataProvider.cs" />
+    <Compile Include="Data\Internal\UnitOfQueryConfig.cs" />
+    <Compile Include="Data\Internal\UnitOfWorkConfig.cs" />
+    <Compile Include="Data\OperationScope.cs" />
+    <Compile Include="Data\UnitOfQuery.cs" />
+    <Compile Include="Data\UnitOfWork.cs" />
+    <Compile Include="Domain\AndSpecification.cs" />
+    <Compile Include="Domain\CompositeSpecification.cs" />
+    <Compile Include="Domain\DomainException.cs" />
+    <Compile Include="Domain\DomainObjectEx.cs" />
+    <Compile Include="Domain\Entity.cs" />
+    <Compile Include="Domain\EntityConversionRegistry.cs" />
+    <Compile Include="Domain\EntityEx.cs" />
+    <Compile Include="Domain\EntityException.cs" />
+    <Compile Include="Domain\EntityNotFoundException.cs" />
+    <Compile Include="Domain\EntityNotUniqueException.cs" />
+    <Compile Include="Domain\Event\DomainEvent.cs" />
+    <Compile Include="Domain\Event\EventAggregator.cs" />
+    <Compile Include="Domain\Event\ExternalEvent.cs" />
+    <Compile Include="Domain\Event\IDomainEvent.cs" />
+    <Compile Include="Domain\Event\IEvent.cs" />
+    <Compile Include="Domain\Event\IEventAggregator.cs" />
+    <Compile Include="Domain\Event\IEventDueToFact.cs" />
+    <Compile Include="Domain\Event\IExternalEvent.cs" />
+    <Compile Include="Domain\Event\IFact.cs" />
+    <Compile Include="Domain\Event\IHandlerOf.cs" />
+    <Compile Include="Domain\Event\Internal\DomainEventActivator.cs" />
+    <Compile Include="Domain\Event\Internal\ExternalEventActivator.cs" />
+    <Compile Include="Domain\Event\Internal\InternalEventHandler.cs" />
+    <Compile Include="Domain\Event\Internal\MultiThreadAggregator.cs" />
+    <Compile Include="Domain\Event\Internal\SingleThreadAggregator.cs" />
+    <Compile Include="Domain\Event\Syntax\Publishing\AddressedToSyntax.cs" />
+    <Compile Include="Domain\Event\Syntax\Publishing\DueToSyntax.cs" />
+    <Compile Include="Domain\Event\Syntax\Publishing\PublishingSyntax.cs" />
+    <Compile Include="Domain\Event\Syntax\Subscribing\AddressedToSyntax.cs" />
+    <Compile Include="Domain\Event\Syntax\Subscribing\DueToSyntax.cs" />
+    <Compile Include="Domain\Event\Syntax\Subscribing\IEventStreamSyntax.cs" />
+    <Compile Include="Domain\Event\Syntax\Subscribing\InitiatedBySyntax.cs" />
+    <Compile Include="Domain\Event\Syntax\Subscribing\IObservableSyntax.cs" />
+    <Compile Include="Domain\Event\Syntax\Subscribing\SubscriptionSyntax.cs" />
+    <Compile Include="Domain\IAggregateRoot.cs" />
+    <Compile Include="Domain\IdentifiableObject.cs" />
+    <Compile Include="Domain\IDomainObject.cs" />
+    <Compile Include="Domain\IEntity.cs" />
+    <Compile Include="Domain\IEntityConversion.cs" />
+    <Compile Include="Domain\IQueryableEntity.cs" />
+    <Compile Include="Domain\IRemovableEntity.cs" />
+    <Compile Include="Domain\IRepository.cs" />
+    <Compile Include="Domain\ISoftRemovable.cs" />
+    <Compile Include="Domain\ISpecification.cs" />
+    <Compile Include="Domain\IUnitOfQuery.cs" />
+    <Compile Include="Domain\IUnitOfWork.cs" />
+    <Compile Include="Domain\IValueObject.cs" />
+    <Compile Include="Domain\IVersionedEntity.cs" />
+    <Compile Include="Domain\EntityConversion.cs" />
+    <Compile Include="Domain\NotSpecification.cs" />
+    <Compile Include="Domain\OrSpecification.cs" />
+    <Compile Include="Domain\Query\IDerivedQueryOf.cs" />
+    <Compile Include="Domain\Query\IDerivedQueryOfEntities.cs" />
+    <Compile Include="Domain\Query\IDerivedQueryOfEntity.cs" />
+    <Compile Include="Domain\Query\IQuery.cs" />
+    <Compile Include="Domain\Query\IQueryOf.cs" />
+    <Compile Include="Domain\Query\IQueryOfEntities.cs" />
+    <Compile Include="Domain\Query\IQueryOfEntity.cs" />
+    <Compile Include="Domain\Query\IQueryOfEntityByKey.cs" />
+    <Compile Include="Domain\Query\IQueryOfNotUniqueEntity.cs" />
+    <Compile Include="Domain\Query\IQueryOver.cs" />
+    <Compile Include="Domain\Query\Narrowing\IAnyNarrowing.cs" />
+    <Compile Include="Domain\Query\Narrowing\ICountNarrowing.cs" />
+    <Compile Include="Domain\Query\Narrowing\INotStrictNarrowing.cs" />
+    <Compile Include="Domain\Query\Narrowing\INotUniqueNarrowing.cs" />
+    <Compile Include="Domain\Query\Narrowing\IStrictNarrowing.cs" />
+    <Compile Include="Domain\Query\Narrowing\IUniqueNarrowing.cs" />
+    <Compile Include="Domain\Query\Option\IKeyIncludingQuery.cs" />
+    <Compile Include="Domain\Query\Option\ILimitQuery.cs" />
+    <Compile Include="Domain\Query\Option\IOffsetQuery.cs" />
+    <Compile Include="Domain\Query\Option\ITypeExcludingQuery.cs" />
+    <Compile Include="Domain\Specification.cs" />
+    <Compile Include="Domain\ValueObject.cs" />
+    <Compile Include="IHideObjectMembers.cs" />
+    <Compile Include="ILogicContext.cs" />
+    <Compile Include="LogicContext.cs" />
+    <Compile Include="Maybe.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SeqGuid.cs" />
+    <Compile Include="SystemTime.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -55,5 +156,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-
- </Project>
+</Project>
