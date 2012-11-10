@@ -12,6 +12,7 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+
 using System.Data;
 using NHibernate;
 using Taijutsu.Data.Internal;

@@ -1,4 +1,4 @@
-// Copyright 2009-2011 Taijutsu.
+// Copyright 2009-2012 Taijutsu.
 //   
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -17,7 +17,7 @@ using Taijutsu.Domain;
 
 namespace Taijutsu.Data.Internal
 {
-    public class MarkingStep<TEntity> : IMarkingStep<TEntity> where TEntity : IRemovableEntity, IAggregateRoot
+    public class MarkingStep<TEntity> : IMarkingStep where TEntity : IRemovableEntity, IAggregateRoot
     {
         private readonly Func<object> creationFuction;
         private readonly Action removingAction;

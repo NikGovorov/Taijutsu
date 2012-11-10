@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Taijutsu</id>
-    <version>0.5.0.0</version>
+    <version>0.0.1</version>
     <authors>Nik Govorov</authors>
     <owners>Nik Govorov</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>

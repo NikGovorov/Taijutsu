@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -17,12 +17,13 @@
 
 using System.ComponentModel;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.Domain
 {
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public interface INative
+    public interface IVersionedEntity<out TVersion> : IEntity where TVersion : struct
     {
+        TVersion Version { get; }
+
         [EditorBrowsable(EditorBrowsableState.Never)]
-        object Native { get; }
+        void Increment();
     }
 }

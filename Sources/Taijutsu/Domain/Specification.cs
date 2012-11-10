@@ -1,15 +1,19 @@
-﻿// Copyright 2009-2011 Taijutsu.
+﻿#region License
+
+// Copyright 2009-2012 Taijutsu.
+//    
+//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+//  this file except in compliance with the License. You may obtain a copy of the 
+//  License at 
 //   
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-// this file except in compliance with the License. You may obtain a copy of the 
-// License at 
-//  
-//      http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-// specific language governing permissions and limitations under the License.
+//  http://www.apache.org/licenses/LICENSE-2.0 
+//   
+//  Unless required by applicable law or agreed to in writing, software distributed 
+//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+//  specific language governing permissions and limitations under the License.
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -21,9 +25,6 @@ namespace Taijutsu.Domain
     public abstract class Specification<TDomainObject> : ISpecification<TDomainObject>
         where TDomainObject : IDomainObject
     {
-        #region ISpecification<TDomainObject> Members
-
-
         public virtual bool IsSatisfiedBy(object candidate)
         {
             return candidate is TDomainObject && SatisfyingElementsFrom((new[] {(TDomainObject) candidate})).Any();
@@ -67,8 +68,6 @@ namespace Taijutsu.Domain
         {
             return new NotSpecification<TDomainObject>(this);
         }
-
-        #endregion
 
         public static Specification<TDomainObject> operator &(
             Specification<TDomainObject> one, Specification<TDomainObject> other)

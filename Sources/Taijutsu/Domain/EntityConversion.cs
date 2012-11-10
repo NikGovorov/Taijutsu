@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -15,14 +15,18 @@
 
 #endregion
 
-using System.ComponentModel;
-
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.Domain
 {
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public interface INative
+    public class EntityConversion : IEntityConversion
     {
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        object Native { get; }
+        public virtual bool IsApplicableFor(object entity)
+        {
+            return true;
+        }
+
+        public virtual T SafeConvert<T>(object entity) where T : class
+        {
+            return entity as T;
+        }
     }
 }

@@ -24,7 +24,7 @@ namespace Taijutsu.Specs.Data
         [Test]
         public virtual void When_isolation_level_compatibility_is_detecting_it_should_be_detected_in_the_right_way()
         {
-            Assert.IsTrue(IsolationLevel.Serializable.IsCompatible(IsolationLevel.ReadCommitted));
+            Assert.IsTrue(IsolationLevel.Serializable.IsCompatible(IsolationLevel.ReadUncommitted));
             Assert.IsTrue(IsolationLevel.ReadCommitted.IsCompatible(IsolationLevel.Unspecified));
 
             Assert.IsFalse(IsolationLevel.ReadCommitted.IsCompatible(IsolationLevel.Serializable));

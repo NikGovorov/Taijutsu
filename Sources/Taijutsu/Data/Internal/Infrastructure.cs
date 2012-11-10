@@ -1,4 +1,4 @@
-// Copyright 2009-2011 Taijutsu.
+// Copyright 2009-2012 Taijutsu.
 //   
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -33,11 +33,11 @@ namespace Taijutsu.Data.Internal
         {
             get
             {
-                var supervisor = (DataContextSupervisor) LogicalContext.FindData(DataContextSupervisorKey);
+                var supervisor = (DataContextSupervisor) LogicContext.FindData(DataContextSupervisorKey);
                 if (supervisor == null)
                 {
                     supervisor = new DataContextSupervisor();
-                    LogicalContext.SetData(DataContextSupervisorKey, supervisor);
+                    LogicContext.SetData(DataContextSupervisorKey, supervisor);
                 }
                 return supervisor;
             }
@@ -48,11 +48,11 @@ namespace Taijutsu.Data.Internal
             get
             {
                 var supervisor =
-                    (ReadOnlyDataContextSupervisor) LogicalContext.FindData(ReadOnlyDataContextSupervisorKey);
+                    (ReadOnlyDataContextSupervisor) LogicContext.FindData(ReadOnlyDataContextSupervisorKey);
                 if (supervisor == null)
                 {
                     supervisor = new ReadOnlyDataContextSupervisor();
-                    LogicalContext.SetData(ReadOnlyDataContextSupervisorKey, supervisor);
+                    LogicContext.SetData(ReadOnlyDataContextSupervisorKey, supervisor);
                 }
                 return supervisor;
             }
@@ -60,13 +60,13 @@ namespace Taijutsu.Data.Internal
 
         internal static bool CheckDataContextSupervisorForRelease()
         {
-            if (LogicalContext.FindData(OperationScopeKey) == null)
+            if (LogicContext.FindData(OperationScopeKey) == null)
             {
-                var supervisor = LogicalContext.FindData(DataContextSupervisorKey);
+                var supervisor = LogicContext.FindData(DataContextSupervisorKey);
 
                 if (supervisor != null && !((DataContextSupervisor) supervisor).Roots.Any())
                 {
-                    LogicalContext.ReleaseData(DataContextSupervisorKey);
+                    LogicContext.ReleaseData(DataContextSupervisorKey);
                     return true;
                 }
             }
@@ -75,13 +75,13 @@ namespace Taijutsu.Data.Internal
 
         internal static bool CheckReadOnlyDataContextSupervisorForRelease()
         {
-            if (LogicalContext.FindData(OperationScopeKey) == null)
+            if (LogicContext.FindData(OperationScopeKey) == null)
             {
-                var supervisor = LogicalContext.FindData(ReadOnlyDataContextSupervisorKey);
+                var supervisor = LogicContext.FindData(ReadOnlyDataContextSupervisorKey);
 
                 if (supervisor != null && !((ReadOnlyDataContextSupervisor) supervisor).Roots.Any())
                 {
-                    LogicalContext.ReleaseData(ReadOnlyDataContextSupervisorKey);
+                    LogicContext.ReleaseData(ReadOnlyDataContextSupervisorKey);
                     return true;
                 }
             }
@@ -91,34 +91,34 @@ namespace Taijutsu.Data.Internal
 
         internal static void RegisterOperationScopeWith(IProviderLifecyclePolicy contextSharing)
         {
-            if (LogicalContext.FindData(OperationScopeKey) != null)
+            if (LogicContext.FindData(OperationScopeKey) != null)
             {
                 throw new Exception("Only one operation scope is allowed simultaneously.");
             }
 
-            if (LogicalContext.FindData(DataContextSupervisorKey) != null)
+            if (LogicContext.FindData(DataContextSupervisorKey) != null)
             {
                 throw new Exception("Operation scope can not be included in the scope of unit of work.");
             }
 
-            if (LogicalContext.FindData(ReadOnlyDataContextSupervisorKey) != null)
+            if (LogicContext.FindData(ReadOnlyDataContextSupervisorKey) != null)
             {
                 throw new Exception("Operation scope can not be included in the scope of unit of query.");
             }
 
-            LogicalContext.SetData(OperationScopeKey, new object());
+            LogicContext.SetData(OperationScopeKey, new object());
 
-            LogicalContext.SetData(DataContextSupervisorKey,
+            LogicContext.SetData(DataContextSupervisorKey,
                                    new DataContextSupervisor(contextSharing));
-            LogicalContext.SetData(ReadOnlyDataContextSupervisorKey,
+            LogicContext.SetData(ReadOnlyDataContextSupervisorKey,
                                    new ReadOnlyDataContextSupervisor(contextSharing));
         }
 
         internal static void UnRegisterOperationScope()
         {
-            LogicalContext.ReleaseData(DataContextSupervisorKey);
-            LogicalContext.ReleaseData(ReadOnlyDataContextSupervisorKey);
-            LogicalContext.ReleaseData(OperationScopeKey);
+            LogicContext.ReleaseData(DataContextSupervisorKey);
+            LogicContext.ReleaseData(ReadOnlyDataContextSupervisorKey);
+            LogicContext.ReleaseData(OperationScopeKey);
         }
 
 

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -15,14 +15,14 @@
 
 #endregion
 
-using System.ComponentModel;
-
-namespace Taijutsu.Data.Internal
+namespace Taijutsu
 {
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public interface INative
+    public interface ILogicContext : IHideObjectMembers
     {
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        object Native { get; }
+        object FindData(string name);
+
+        void SetData(string name, object value);
+
+        void ReleaseData(string name);
     }
 }

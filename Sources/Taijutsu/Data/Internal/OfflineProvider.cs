@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2011 Taijutsu.
+﻿// Copyright 2009-2012 Taijutsu.
 //   
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
@@ -73,7 +73,7 @@ namespace Taijutsu.Data.Internal
         }
 
 
-        public override IMarkingStep<TEntity> Mark<TEntity>(TEntity entity)
+        public override IMarkingStep Mark<TEntity>(TEntity entity)
         {
             throw GenerateException();
         }

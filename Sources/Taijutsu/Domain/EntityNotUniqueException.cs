@@ -1,15 +1,19 @@
-﻿// Copyright 2009-2011 Taijutsu.
+﻿#region License
+
+// Copyright 2009-2012 Taijutsu.
+//    
+//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+//  this file except in compliance with the License. You may obtain a copy of the 
+//  License at 
 //   
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-// this file except in compliance with the License. You may obtain a copy of the 
-// License at 
-//  
-//      http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-// specific language governing permissions and limitations under the License.
+//  http://www.apache.org/licenses/LICENSE-2.0 
+//   
+//  Unless required by applicable law or agreed to in writing, software distributed 
+//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+//  specific language governing permissions and limitations under the License.
+
+#endregion
 
 using System;
 
@@ -19,12 +23,12 @@ namespace Taijutsu.Domain
     public class EntityNotUniqueException<TEntity> : EntityNotUniqueException where TEntity : IEntity
     {
         public EntityNotUniqueException(object key, Exception innnerException = null)
-            : base(key, typeof(TEntity), innnerException)
+            : base(key, typeof (TEntity), innnerException)
         {
         }
 
         public EntityNotUniqueException(string queryDescription, Exception innnerException = null)
-            : base(queryDescription, typeof(TEntity), innnerException)
+            : base(queryDescription, typeof (TEntity), innnerException)
         {
         }
     }
@@ -34,7 +38,7 @@ namespace Taijutsu.Domain
     {
         public EntityNotUniqueException(string queryDescription, Type type, Exception innnerException = null)
             : base(
-                string.Format("Entity type of '{1}' is not unique. Query description: '{0}'.", queryDescription, type),
+                string.Format("Entity of '{1}' type is not unique. Query description: '{0}'.", queryDescription, type),
                 innnerException)
         {
             entityKey = "unknown";
@@ -44,7 +48,7 @@ namespace Taijutsu.Domain
 
         public EntityNotUniqueException(object key, object type, Exception innnerException = null)
             : base(
-                string.Format("Entity with '{0}' key and type of '{1}' is not unique.", key, type),
+                string.Format("Entity with '{0}' key and '{1}' type is not unique.", key, type),
                 innnerException)
         {
             entityKey = key;
