@@ -24,14 +24,14 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
 
         #region Nested type: All
 
-        public interface All : IHideObjectMembers
+        public interface All : IHiddenObjectMembers
         {
             Or Or { get; }
             SubscriptionSyntax.All<IDomainEvent<TEntity>> InitiatedBy<TEntity>() where TEntity : IEntity;
             SubscriptionSyntax.All<IExternalEvent<TEntity>> AddressedTo<TEntity>() where TEntity : IEntity;
         }
 
-        public interface All<out TFact> : IHideObjectMembers where TFact : IFact
+        public interface All<out TFact> : IHiddenObjectMembers where TFact : IFact
         {
             Or Or { get; }
             InitiatedBySyntax.Full<TEntity, TFact> InitiatedBy<TEntity>() where TEntity : IEntity;
@@ -144,7 +144,7 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
 
         #region Nested type: Or
 
-        public interface Or : IHideObjectMembers
+        public interface Or : IHiddenObjectMembers
         {
             All DueTo<TFact>() where TFact : IFact;
         }

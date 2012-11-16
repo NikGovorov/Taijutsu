@@ -17,7 +17,7 @@
 
 namespace Taijutsu.Domain.Query
 {
-    public interface IQuery : IHideObjectMembers
+    public interface IQuery : IHiddenObjectMembers
     {
     }
 }

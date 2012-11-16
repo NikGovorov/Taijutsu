@@ -24,7 +24,7 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
 
         #region Nested type: All
 
-        public interface All<out TSource> : IHideObjectMembers
+        public interface All<out TSource> : IHiddenObjectMembers
         {
             All<TSource> Where(Func<TSource, bool> filter);
             Projection<TSource, TProjection> Select<TProjection>(Func<TSource, TProjection> projection);
@@ -95,7 +95,7 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
 
         #region Nested type: Projection
 
-        public interface Projection<out TSource, out TProjection> : IHideObjectMembers
+        public interface Projection<out TSource, out TProjection> : IHiddenObjectMembers
         {
             Projection<TSource, TProjection> Where(Func<TProjection, bool> filter);
             Action Subscribe(Action<TProjection> subscriber, int priority = 0);

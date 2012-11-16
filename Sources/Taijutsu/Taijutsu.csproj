@@ -107,9 +107,9 @@
     <Compile Include="Domain\IEntity.cs" />
     <Compile Include="Domain\IEntityConversion.cs" />
     <Compile Include="Domain\IQueryableEntity.cs" />
-    <Compile Include="Domain\IRemovableEntity.cs" />
+    <Compile Include="Domain\IDeletableEntity.cs" />
     <Compile Include="Domain\IRepository.cs" />
-    <Compile Include="Domain\ISoftRemovable.cs" />
+    <Compile Include="Domain\ISoftDeletable.cs" />
     <Compile Include="Domain\ISpecification.cs" />
     <Compile Include="Domain\IUnitOfQuery.cs" />
     <Compile Include="Domain\IUnitOfWork.cs" />
@@ -140,7 +140,7 @@
     <Compile Include="Domain\Query\Option\ITypeExcludingQuery.cs" />
     <Compile Include="Domain\Specification.cs" />
     <Compile Include="Domain\ValueObject.cs" />
-    <Compile Include="IHideObjectMembers.cs" />
+    <Compile Include="IHiddenObjectMembers.cs" />
     <Compile Include="ILogicContext.cs" />
     <Compile Include="LogicContext.cs" />
     <Compile Include="Maybe.cs" />

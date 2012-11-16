@@ -17,7 +17,7 @@ using Taijutsu.Domain;
 
 namespace Taijutsu.Data.Internal
 {
-    public class MarkingStep<TEntity> : IMarkingStep where TEntity : IRemovableEntity, IAggregateRoot
+    public class MarkingStep<TEntity> : IMarkingStep where TEntity : IDeletableEntity, IAggregateRoot
     {
         private readonly Func<object> creationFuction;
         private readonly Action removingAction;
@@ -35,7 +35,7 @@ namespace Taijutsu.Data.Internal
             return creationFuction();
         }
 
-        public void AsRemoved()
+        public void AsDeleted()
         {
             removingAction();
         }

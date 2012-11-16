@@ -19,7 +19,7 @@ namespace Taijutsu.Domain.Event.Syntax.Publishing
     public static class AddressedToSyntax
     {
         // ReSharper disable InconsistentNaming
-        public interface Init<TFact> : IHideObjectMembers where TFact : IFact
+        public interface Init<TFact> : IHiddenObjectMembers where TFact : IFact
             // ReSharper restore InconsistentNaming
         {
             PublishingSyntax.Prepared AddressedTo<TTarget>(TTarget target) where TTarget : IEntity;

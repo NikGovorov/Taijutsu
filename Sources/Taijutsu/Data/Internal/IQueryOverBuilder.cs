@@ -16,7 +16,7 @@ using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data.Internal
 {
-    public interface IQueryOverBuilder<TEntity> : IHideObjectMembers where TEntity : class, IEntity
+    public interface IQueryOverBuilder<TEntity> : IHiddenObjectMembers where TEntity : class, IEntity
     {
         TQuery Using<TQuery>() where TQuery : class, IQueryOver<TEntity>;
         TQuery Using<TQuery>(string queryName) where TQuery : class, IQueryOver<TEntity>;

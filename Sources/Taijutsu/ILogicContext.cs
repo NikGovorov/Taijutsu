@@ -17,7 +17,7 @@
 
 namespace Taijutsu
 {
-    public interface ILogicContext : IHideObjectMembers
+    public interface ILogicContext : IHiddenObjectMembers
     {
         object FindData(string name);
 

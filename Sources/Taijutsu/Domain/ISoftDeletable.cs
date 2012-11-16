@@ -15,9 +15,13 @@
 
 #endregion
 
+using System;
+
 namespace Taijutsu.Domain
 {
-    public interface IDomainObject : IHiddenObjectMembers
+    public interface ISoftDeletable : IDomainObject
     {
+        DateTime? DateOfDelete { get; }
+        bool Deleted { get; }
     }
 }

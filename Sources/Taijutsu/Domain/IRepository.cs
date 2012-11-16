@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace Taijutsu.Domain
 {
-    public interface IRepository<TEntity> : IHideObjectMembers where TEntity : class, IEntity
+    public interface IRepository<TEntity> : IHiddenObjectMembers where TEntity : class, IEntity
     {
         TEntity this[object key] { get; }
         TDerivedEntity Retrieve<TDerivedEntity>(object key) where TDerivedEntity : class, TEntity;

@@ -17,7 +17,7 @@
 
 namespace Taijutsu.Domain
 {
-    public interface IDomainObject : IHiddenObjectMembers
+    public interface IDeletableEntity : IAggregateRoot
     {
     }
 }

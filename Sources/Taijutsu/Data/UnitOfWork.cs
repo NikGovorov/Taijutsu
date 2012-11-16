@@ -131,14 +131,14 @@ namespace Taijutsu.Data
             return dataContext.Provider.MarkAsCreated(entity);
         }
 
-        public void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IRemovableEntity
+        public void MarkAsDeleted<TEntity>(TEntity entity) where TEntity : IDeletableEntity
         {
             dataContext.Provider.MarkAsRemoved(entity);
         }
 
-        public IMarkingStep Mark<TEntity>(TEntity entity) where TEntity : IRemovableEntity, IAggregateRoot
+        public IMarkingStep Mark<TEntity>(TEntity entity) where TEntity : IDeletableEntity, IAggregateRoot
         {
-            return new MarkingStep<TEntity>(() => MarkAsCreated(entity), () => MarkAsRemoved(entity));
+            return new MarkingStep<TEntity>(() => MarkAsCreated(entity), () => MarkAsDeleted(entity));
         }
 
         public virtual IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IQueryableEntity

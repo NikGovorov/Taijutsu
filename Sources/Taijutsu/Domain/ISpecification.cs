@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace Taijutsu.Domain
 {
-    public interface ISpecification : IHideObjectMembers
+    public interface ISpecification : IHiddenObjectMembers
     {
         bool IsSatisfiedBy(object candidate);
     }

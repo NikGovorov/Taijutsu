@@ -19,7 +19,7 @@ using System;
 
 namespace Taijutsu
 {
-    public interface IMaybe<out T> : IHideObjectMembers
+    public interface IMaybe<out T> : IHiddenObjectMembers
     {
         T Value { get; }
         bool HasValue { get; }

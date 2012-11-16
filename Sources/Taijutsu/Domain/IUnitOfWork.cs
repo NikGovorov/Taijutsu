@@ -23,19 +23,19 @@ namespace Taijutsu.Domain
     {
         object MarkAsCreated<TEntity>(TEntity entity) where TEntity : IAggregateRoot;
 
-        void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IRemovableEntity;
+        void MarkAsDeleted<TEntity>(TEntity entity) where TEntity : IDeletableEntity;
 
         IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IQueryableEntity;
 
         IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key) where TEntity : class, IQueryableEntity;
 
-        IMarkingStep Mark<TEntity>(TEntity entity) where TEntity : IRemovableEntity, IAggregateRoot;
+        IMarkingStep Mark<TEntity>(TEntity entity) where TEntity : IDeletableEntity, IAggregateRoot;
     }
 
     public interface IMarkingStep
     {
         object AsCreated();
-        void AsRemoved();
+        void AsDeleted();
     }
 
 
@@ -46,9 +46,9 @@ namespace Taijutsu.Domain
             return uow.MarkAsCreated(entity);
         }
 
-        public static void AsRemovedIn(this IRemovableEntity entity, IUnitOfWork uow)
+        public static void AsDeletedIn(this IDeletableEntity entity, IUnitOfWork uow)
         {
-            uow.MarkAsRemoved(entity);
+            uow.MarkAsDeleted(entity);
         }
     }
 }

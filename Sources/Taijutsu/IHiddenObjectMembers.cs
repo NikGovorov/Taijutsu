@@ -21,7 +21,7 @@ using System.ComponentModel;
 namespace Taijutsu
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public interface IHideObjectMembers
+    public interface IHiddenObjectMembers
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
         Type GetType();

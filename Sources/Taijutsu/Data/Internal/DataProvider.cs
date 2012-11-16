@@ -26,7 +26,7 @@ namespace Taijutsu.Data.Internal
         #region IDataProvider Members
 
         public abstract object MarkAsCreated<TEntity>(TEntity entity) where TEntity : IAggregateRoot;
-        public abstract void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IRemovableEntity;
+        public abstract void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IDeletableEntity;
         public abstract IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IEntity;
 
         public abstract IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key)
@@ -43,6 +43,6 @@ namespace Taijutsu.Data.Internal
         public abstract void RollbackTransaction();
 
         public abstract IMarkingStep Mark<TEntity>(TEntity entity)
-            where TEntity : IRemovableEntity, IAggregateRoot;
+            where TEntity : IDeletableEntity, IAggregateRoot;
     }
 }

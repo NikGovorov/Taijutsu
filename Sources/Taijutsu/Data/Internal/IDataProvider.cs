@@ -22,6 +22,6 @@ namespace Taijutsu.Data.Internal
     public interface IDataProvider : IReadOnlyDataProvider
     {
         object MarkAsCreated<TEntity>(TEntity entity) where TEntity : IAggregateRoot;
-        void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IRemovableEntity;
+        void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IDeletableEntity;
     }
 }
