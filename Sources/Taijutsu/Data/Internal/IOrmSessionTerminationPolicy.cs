@@ -67,7 +67,7 @@ namespace Taijutsu.Data.Internal
                         }
                         catch (Exception exception)
                         {
-                            Trace.WriteLine(exception, "Taijutsu");
+                            Trace.TraceError(exception.ToString());
                             exceptions.Add(exception);
                         }
                     }

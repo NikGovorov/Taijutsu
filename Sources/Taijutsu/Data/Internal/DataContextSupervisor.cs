@@ -88,7 +88,7 @@ namespace Taijutsu.Data.Internal
             return context;
         }
 
-        public virtual DataContext CurrentContext
+        public virtual IDataContext CurrentContext
         {
             get
             {
@@ -124,6 +124,12 @@ namespace Taijutsu.Data.Internal
                 contexts.Remove(this);
                 contexts = new List<DataContextDecorator>();
                 wrappedContext.Dispose();
+            }
+
+            event Action IDataContext.Completed
+            {
+                add { wrappedContext.Completed += value; }
+                remove { wrappedContext.Completed -= value; }
             }
 
             public IOrmSession Session

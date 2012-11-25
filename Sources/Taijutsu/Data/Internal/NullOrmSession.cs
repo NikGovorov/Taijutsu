@@ -31,7 +31,7 @@ namespace Taijutsu.Data.Internal
         {
         }
 
-        public virtual T As<T>(string name = null) where T : class
+        public virtual T As<T>(dynamic options = null) where T : class
         {
             throw new NotSupportedException("NullOrmSession does not support internal services.");
         }

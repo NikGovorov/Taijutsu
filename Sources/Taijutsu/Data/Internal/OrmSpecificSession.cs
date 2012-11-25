@@ -35,7 +35,7 @@ namespace Taijutsu.Data.Internal
             get { return nativeSession; }
         }
 
-        public virtual T As<T>(string name = null) where T : class
+        public virtual T As<T>(dynamic options = null) where T : class
         {
             var native = NativeSession as T;
 

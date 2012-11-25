@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Taijutsu.Domain.Event.Internal
@@ -37,12 +38,17 @@ namespace Taijutsu.Domain.Event.Internal
                 throw new ArgumentNullException("potentialSubscribers");
             }
 
-            Task.Factory.StartNew(() =>
+            // ReSharper disable ImplicitlyCapturedClosure
+            Task.Factory
+                .StartNew(() =>
                 {
                     var newTargets = new Dictionary<Type, IEnumerable<Type>>(targets);
                     newTargets[type] = potentialSubscribers;
                     targets = newTargets;
-                });
+                })
+                .ContinueWith(t => Trace.TraceError(t.Exception == null ? string.Format("Error occurred during caching event subscribers for '{0}'.", type) : t.Exception.ToString()), 
+                              TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+            // ReSharper restore ImplicitlyCapturedClosure
         }
 
         protected override Action Subscribe(IInternalEventHandler handler)

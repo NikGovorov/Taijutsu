@@ -15,10 +15,13 @@
 
 #endregion
 
+using System;
+
 namespace Taijutsu.Data.Internal
 {
     public interface IDataContext : ICompletableScope
     {
         IOrmSession Session { get; }
+        event Action Completed;
     }
 }

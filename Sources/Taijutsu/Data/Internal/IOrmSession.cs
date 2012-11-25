@@ -23,7 +23,7 @@ namespace Taijutsu.Data.Internal
 {
     public interface IOrmSession : ICompletableScope, IHasNativeObject
     {
-        T As<T>(string name = null) where T : class;
+        T As<T>(dynamic options = null) where T : class;
 
         object MarkAsCreated<TEntity>(TEntity entity, dynamic options = null) where TEntity : IAggregateRoot;
 

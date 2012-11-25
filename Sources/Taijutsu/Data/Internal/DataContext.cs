@@ -70,6 +70,7 @@ namespace Taijutsu.Data.Internal
             }
             finally
             {
+                Completed = null;
                 disposed = true;
             }
         }
@@ -95,6 +96,11 @@ namespace Taijutsu.Data.Internal
                 }
 
                 completed = true;
+
+                if (Completed != null)
+                {
+                    Completed();
+                }
             }
             catch
             {
@@ -117,6 +123,8 @@ namespace Taijutsu.Data.Internal
         {
             subordinatesCount++;
         }
+
+        public event Action Completed;
 
         internal class Subordinate : IDataContext
         {
@@ -154,6 +162,12 @@ namespace Taijutsu.Data.Internal
             public virtual IOrmSession Session
             {
                 get { return master.Session; }
+            }
+
+            event Action IDataContext.Completed
+            {
+                add { master.Completed += value; }
+                remove { master.Completed -= value; }
             }
         }
     }

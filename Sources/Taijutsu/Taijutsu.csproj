@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\EventAggregatorEx.cs" />
     <Compile Include="Data\Internal\ConstructionScope.cs" />
     <Compile Include="Data\Internal\DataContext.cs" />
     <Compile Include="Data\Internal\DataContextSupervisor.cs" />
