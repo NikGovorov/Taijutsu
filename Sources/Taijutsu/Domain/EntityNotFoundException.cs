@@ -22,15 +22,15 @@ namespace Taijutsu.Domain
     [Serializable]
     public class EntityNotFoundException : EntityException
     {
-        public EntityNotFoundException(object key, Type type, Exception innnerException = null)
-            : this(key, (object) type, innnerException)
+        public EntityNotFoundException(object id, Type type, Exception innnerException = null)
+            : this(id, (object) type, innnerException)
         {
         }
 
-        public EntityNotFoundException(object key, object type, Exception innnerException = null)
-            : base(string.Format("Entity with '{0}' key and '{1}' type has not been found.", key, type), innnerException)
+        public EntityNotFoundException(object id, object type, Exception innnerException = null)
+            : base(string.Format("Entity with '{0}' id and '{1}' type has not been found.", id, type), innnerException)
         {
-            entityKey = key;
+            entityId = id;
             entityType = type;
         }
 
@@ -39,7 +39,7 @@ namespace Taijutsu.Domain
                 string.Format("Entity of '{1}' type has not been found. Query description: '{0}'.", queryDescription, type),
                 innnerException)
         {
-            entityKey = "unknown";
+            entityId = "unknown";
             entityType = type;
         }
     }
@@ -47,8 +47,8 @@ namespace Taijutsu.Domain
     [Serializable]
     public class EntityNotFoundException<TEntity> : EntityNotFoundException where TEntity : IEntity
     {
-        public EntityNotFoundException(object key, Exception innnerException = null)
-            : base(key, typeof (TEntity), innnerException)
+        public EntityNotFoundException(object id, Exception innnerException = null)
+            : base(id, typeof (TEntity), innnerException)
         {
         }
 

@@ -15,34 +15,68 @@
 
 #endregion
 
+using System;
 using System.Runtime.Remoting.Messaging;
 
 namespace Taijutsu
 {
     public static class LogicContext
     {
-        private static ILogicContext defaultContext = new DefaultLogicContext();
+        private static ILogicContext context = new DefaultLogicContext();
+        private static bool initialized;
+        private static readonly object sync = new object();
 
+        // ReSharper disable ParameterHidesMember
         public static void Initialize(ILogicContext context)
         {
-            defaultContext = context; // todo allow initialization only once
+            lock (sync)
+            {
+                if (initialized)
+                {
+                    throw new Exception("Context has been already initialized. Any method call causes to initialization of the context. Context can be initialized only once.");
+                }
+            
+                initialized = true;
+
+                LogicContext.context = context;
+            }
+        }
+        // ReSharper restore ParameterHidesMember
+
+        private static void CheckInitialization()
+        {
+            if (!initialized)
+            {
+                lock (sync)
+                {
+                    if (!initialized)
+                    {
+                        initialized = true;
+                    }
+                }
+            }
         }
 
         public static object FindData(string name)
         {
-            return defaultContext.FindData(name);
+            CheckInitialization();
+
+            return context.FindData(name);
         }
 
         public static void SetData(string name, object value)
         {
-            defaultContext.SetData(name, value);
+            CheckInitialization();
+
+            context.SetData(name, value);
         }
 
         public static void ReleaseData(string name)
         {
-            defaultContext.ReleaseData(name);
-        }
+            CheckInitialization();
 
+            context.ReleaseData(name);
+        }
 
         private class DefaultLogicContext : ILogicContext
         {

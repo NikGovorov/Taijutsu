@@ -22,7 +22,7 @@ namespace Taijutsu
 {
     public static class SystemTime
     {
-        private static ITimeController controller = new InternalTimeController();
+        private static ITimeController controller = new UtcTimeController();
 
         public static DateTime Now
         {
@@ -37,9 +37,9 @@ namespace Taijutsu
         }
     }
 
-    internal class InternalTimeController : ITimeController
+    internal class UtcTimeController : ITimeController
     {
-        private Func<DateTime> nowFunc = () => DateTime.Now;
+        private Func<DateTime> nowFunc = () => DateTime.UtcNow;
 
         public DateTime Now
         {

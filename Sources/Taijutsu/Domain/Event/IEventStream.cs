@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -15,20 +15,13 @@
 
 #endregion
 
+using Taijutsu.Domain.Event.Syntax.Subscribing;
+
 namespace Taijutsu.Domain.Event
 {
-    public interface IDomainEvent : IDomainObject, IEvent
+    public interface IEventStream
     {
-    }
-
-    public interface IDomainEvent<out TInitiator> : IDomainEvent where TInitiator : IDomainObject
-    {
-        TInitiator Initiator { get; }
-    }
-
-
-    public interface IDomainEvent<out TInitiator, out TFact> : IDomainEvent<TInitiator>, IFactEvent<TFact>
-        where TInitiator : IDomainObject where TFact : IFact
-    {
+        IEventStreamFilter OfEvents { get; }
+        SubscriptionSyntax.All<TEvent> Of<TEvent>() where TEvent : class, IEvent;
     }
 }

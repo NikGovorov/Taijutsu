@@ -1,15 +1,19 @@
-﻿// Copyright 2009-2012 Taijutsu.
+﻿#region License
+
+// Copyright 2009-2012 Taijutsu.
+//    
+//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+//  this file except in compliance with the License. You may obtain a copy of the 
+//  License at 
 //   
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-// this file except in compliance with the License. You may obtain a copy of the 
-// License at 
-//  
-//      http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-// specific language governing permissions and limitations under the License.
+//  http://www.apache.org/licenses/LICENSE-2.0 
+//   
+//  Unless required by applicable law or agreed to in writing, software distributed 
+//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+//  specific language governing permissions and limitations under the License.
+
+#endregion
 
 using System;
 
@@ -25,91 +29,79 @@ namespace Taijutsu.Domain.Event
             occurrenceDate = SystemTime.Now;
         }
 
-        protected DomainEvent(Guid? key = null): this()
+        protected DomainEvent(Guid? id = null) : this()
         {
-            if (key.HasValue)
+            if (id.HasValue)
             {
-                entityKey = key.Value;
+                base.id = id.Value;
             }
         }
 
-        #region IDomainEvent Members
-
-        public virtual DateTime DateOfOccurrence
+        public virtual DateTime OccurrenceDate
         {
             get { return occurrenceDate; }
             protected set { occurrenceDate = value; }
         }
-
-        #endregion
     }
 
     [Serializable]
-    public abstract class DomainEvent<TSubject> : DomainEvent, IDomainEvent<TSubject> where TSubject : IDomainObject
+    public abstract class DomainEvent<TInitiator> : DomainEvent, IDomainEvent<TInitiator>
+        where TInitiator : IDomainObject
     {
-        protected TSubject subject;
+        protected TInitiator initiator;
 
         protected DomainEvent()
         {
         }
 
-        protected DomainEvent(TSubject initiatedBy, Guid? key = null)
-            : base(key)
+        protected DomainEvent(TInitiator initiator, Guid? id = null)
+            : base(id)
         {
-            if (key.HasValue)
+            if (id.HasValue)
             {
-                entityKey = key.Value;
+                base.id = id.Value;
             }
 
-            if (Equals(initiatedBy, default(TSubject)))
+            if (Equals(initiator, default(TInitiator)))
             {
-                throw new ArgumentNullException("initiatedBy");
+                throw new ArgumentNullException("initiator");
             }
 
-            subject = initiatedBy;
+            this.initiator = initiator;
         }
 
-
-        #region IDomainEvent<TSubject> Members
-
-        public virtual TSubject InitiatedBy
+        public virtual TInitiator Initiator
         {
-            get { return subject; }
-            protected set { subject = value; }
+            get { return initiator; }
+            protected set { initiator = value; }
         }
-
-        #endregion
     }
 
     [Serializable]
-    public class DomainEvent<TSubject, TFact> : DomainEvent<TSubject>, IDomainEvent<TSubject, TFact>
-        where TSubject : IDomainObject
+    public class DomainEvent<TInitiator, TFact> : DomainEvent<TInitiator>, IDomainEvent<TInitiator, TFact>
+        where TInitiator : IDomainObject
         where TFact : IFact
     {
-        protected TFact dueToFact;
+        protected TFact fact;
 
         protected DomainEvent()
         {
         }
 
-        public DomainEvent(TSubject initiatedBy, TFact fact, Guid? key = null): base(initiatedBy, key)
+        public DomainEvent(TInitiator initiator, TFact fact, Guid? id = null) : base(initiator, id)
         {
             if (Equals(fact, default(TFact)))
             {
                 throw new ArgumentNullException("fact");
             }
 
-            dueToFact = fact;
+            this.fact = fact;
         }
-
-        #region IDomainEvent<TSubject,TFact> Members
 
         public virtual TFact Fact
         {
-            get { return dueToFact; }
-            protected set { dueToFact = value; }
+            get { return fact; }
+            protected set { fact = value; }
         }
-
-        #endregion
     }
 }

@@ -1,5 +1,4 @@
-#region License
-
+﻿#region License
 // Copyright 2009-2012 Taijutsu.
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
@@ -12,23 +11,17 @@
 //  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 //  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 //  specific language governing permissions and limitations under the License.
-
 #endregion
+
+using Taijutsu.Domain.Event.Syntax.Subscribing;
 
 namespace Taijutsu.Domain.Event
 {
-    public interface IDomainEvent : IDomainObject, IEvent
+    public interface IEventStreamFilter
     {
-    }
-
-    public interface IDomainEvent<out TInitiator> : IDomainEvent where TInitiator : IDomainObject
-    {
-        TInitiator Initiator { get; }
-    }
-
-
-    public interface IDomainEvent<out TInitiator, out TFact> : IDomainEvent<TInitiator>, IFactEvent<TFact>
-        where TInitiator : IDomainObject where TFact : IFact
-    {
+        DueToSyntax.Init<TFact> DueTo<TFact>() where TFact : IFact;
+        InitiatedBySyntax.Init<TEntity> InitiatedBy<TEntity>() where TEntity : IEntity;
+        AddressedToSyntax.Init<TEntity> AddressedTo<TEntity>() where TEntity : IEntity;
+ 
     }
 }

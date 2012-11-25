@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -17,18 +17,8 @@
 
 namespace Taijutsu.Domain.Event
 {
-    public interface IDomainEvent : IDomainObject, IEvent
+    public interface IHandler<in T>
     {
-    }
-
-    public interface IDomainEvent<out TInitiator> : IDomainEvent where TInitiator : IDomainObject
-    {
-        TInitiator Initiator { get; }
-    }
-
-
-    public interface IDomainEvent<out TInitiator, out TFact> : IDomainEvent<TInitiator>, IFactEvent<TFact>
-        where TInitiator : IDomainObject where TFact : IFact
-    {
+        void Handle(T ev);
     }
 }

@@ -1,15 +1,19 @@
-﻿// Copyright 2009-2012 Taijutsu.
+﻿#region License
+
+// Copyright 2009-2012 Taijutsu.
+//    
+//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+//  this file except in compliance with the License. You may obtain a copy of the 
+//  License at 
 //   
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-// this file except in compliance with the License. You may obtain a copy of the 
-// License at 
-//  
-//      http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-// specific language governing permissions and limitations under the License.
+//  http://www.apache.org/licenses/LICENSE-2.0 
+//   
+//  Unless required by applicable law or agreed to in writing, software distributed 
+//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+//  specific language governing permissions and limitations under the License.
+
+#endregion
 
 using System;
 
@@ -26,11 +30,11 @@ namespace Taijutsu.Domain.Event
             occurrenceDate = noticeDate;
         }
 
-        protected ExternalEvent(DateTime? occurrenceDate, DateTime? noticeDate, Guid? key = null)
+        protected ExternalEvent(DateTime? occurrenceDate, DateTime? noticeDate, Guid? id = null)
         {
-            if (key != null)
+            if (id != null)
             {
-                entityKey = key;
+                base.id = id;
             }
 
             this.noticeDate = noticeDate ?? SystemTime.Now;
@@ -38,22 +42,24 @@ namespace Taijutsu.Domain.Event
             
         }
 
-        public virtual DateTime DateOfOccurrence
+        public virtual DateTime OccurrenceDate
         {
             get { return occurrenceDate; }
+            protected set { occurrenceDate = value; }
         }
 
-        public virtual DateTime DateOfNotice
+        public virtual DateTime NoticeDate
         {
             get { return noticeDate; }
+            protected set { noticeDate = value; }
         }
     }
 
     [Serializable]
-    public class ExternalEvent<TTarget, TFact>  : ExternalEvent, IExternalEvent<TTarget, TFact> where TFact : IFact where TTarget : IEntity
+    public class ExternalEvent<TRecipient, TFact>  : ExternalEvent, IExternalEvent<TRecipient, TFact> where TFact : IFact where TRecipient : IEntity
     {
-        protected TFact dueToFact;
-        protected TTarget target;
+        protected TFact fact;
+        protected TRecipient recipient;
 
 
         protected ExternalEvent()
@@ -61,21 +67,24 @@ namespace Taijutsu.Domain.Event
             
         }
 
-        public ExternalEvent(TTarget target, TFact dueToFact, DateTime? occurrenceDate = null, DateTime? noticeDate = null, Guid? key = null) : base(occurrenceDate, noticeDate, key)
+        public ExternalEvent(TRecipient recipient, TFact fact, DateTime? occurrenceDate = null, DateTime? noticeDate = null, Guid? id = null) 
+            : base(occurrenceDate, noticeDate, id)
         {
             
-            this.target = target;
-            this.dueToFact = dueToFact;
+            this.recipient = recipient;
+            this.fact = fact;
         }
 
-        public virtual TTarget AddressedTo
+        public virtual TRecipient Recipient
         {
-            get { return target; }
+            get { return recipient; }
+            protected set { recipient = value; }
         }
 
         public virtual TFact Fact
         {
-            get { return dueToFact; }
+            get { return fact; }
+            protected set { fact = value; }
         }
     }
 }

@@ -1,15 +1,19 @@
+#region License
+
 // Copyright 2009-2012 Taijutsu.
+//    
+//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+//  this file except in compliance with the License. You may obtain a copy of the 
+//  License at 
 //   
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-// this file except in compliance with the License. You may obtain a copy of the 
-// License at 
-//  
-//      http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-// specific language governing permissions and limitations under the License.
+//  http://www.apache.org/licenses/LICENSE-2.0 
+//   
+//  Unless required by applicable law or agreed to in writing, software distributed 
+//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+//  specific language governing permissions and limitations under the License.
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -21,8 +25,6 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
     public static class DueToSyntax
     {
         // ReSharper disable InconsistentNaming
-
-        #region Nested type: All
 
         public interface All : IHiddenObjectMembers
         {
@@ -38,10 +40,6 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
             AddressedToSyntax.Full<TEntity, TFact> AddressedTo<TEntity>() where TEntity : IEntity;
         }
 
-        #endregion
-
-        #region Nested type: AllImpl
-
         internal class AllImpl : All
         {
              private readonly List<Type> factTypes = new List<Type>();
@@ -54,8 +52,6 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
                 this.factTypes.AddRange(factTypes);
             }
 
-            #region All Members
-
             Or All.Or
             {
                 get { return new OrImpl(addHadlerAction, new List<Type>(factTypes)); }
@@ -63,30 +59,22 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
 
             SubscriptionSyntax.All<IDomainEvent<TEntity>> All.InitiatedBy<TEntity>()
             {
-                return new SubscriptionSyntax.AllImpl<IDomainEvent<TEntity>>(addHadlerAction, factTypes.Select<Type, Func<IDomainEvent<TEntity>, bool>>(t=>e=>t.IsAssignableFrom(e.GetType())));
+                return new SubscriptionSyntax.AllImpl<IDomainEvent<TEntity>>
+                    (addHadlerAction, factTypes.Select<Type, Func<IDomainEvent<TEntity>, bool>>(t=>e=>t.IsInstanceOfType(e)));
             }
 
             SubscriptionSyntax.All<IExternalEvent<TEntity>> All.AddressedTo<TEntity>()
             {
-                return new SubscriptionSyntax.AllImpl<IExternalEvent<TEntity>>(addHadlerAction, factTypes.Select<Type, Func<IExternalEvent<TEntity>, bool>>(t => e => t.IsAssignableFrom(e.GetType())));
+                return new SubscriptionSyntax.AllImpl<IExternalEvent<TEntity>>
+                    (addHadlerAction, factTypes.Select<Type, Func<IExternalEvent<TEntity>, bool>>(t => e => t.IsInstanceOfType(e)));
             }
-
-            #endregion
         }
 
-        #endregion
-
-        #region Nested type: Init
-
-        public interface Init<out TFact> : All<TFact>, SubscriptionSyntax.All<IEventDueToFact<TFact>>
+        public interface Init<out TFact> : All<TFact>, SubscriptionSyntax.All<IFactEvent<TFact>>
             where TFact : IFact
         {
         }
-
-        #endregion
-
-        #region Nested type: InitImpl
-
+        
         internal class InitImpl<TFact> : Init<TFact> where TFact : IFact
         {
             private readonly Func<IInternalEventHandler, Action> addHadlerAction;
@@ -96,11 +84,9 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
                 this.addHadlerAction = addHadlerAction;
             }
 
-            #region Init<TFact> Members
-
             Or All<TFact>.Or
             {
-                get { return new OrImpl(addHadlerAction, new[] { typeof(IEventDueToFact<TFact>) }); }
+                get { return new OrImpl(addHadlerAction, new[] { typeof(IFactEvent<TFact>) }); }
             }
 
             InitiatedBySyntax.Full<TEntity, TFact> All<TFact>.InitiatedBy<TEntity>()
@@ -113,45 +99,35 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
                 return new AddressedToSyntax.FullImpl<TEntity, TFact>(addHadlerAction);
             }
 
-            SubscriptionSyntax.All<IEventDueToFact<TFact>> SubscriptionSyntax.All<IEventDueToFact<TFact>>.Where(Func<IEventDueToFact<TFact>, bool> filter)
+            SubscriptionSyntax.All<IFactEvent<TFact>> SubscriptionSyntax.All<IFactEvent<TFact>>.Where
+                (Func<IFactEvent<TFact>, bool> filter)
             {
-                return new SubscriptionSyntax.AllImpl<IEventDueToFact<TFact>>(addHadlerAction, new[] {filter});
+                return new SubscriptionSyntax.AllImpl<IFactEvent<TFact>>(addHadlerAction, new[] {filter});
             }
 
-            SubscriptionSyntax.Projection<IEventDueToFact<TFact>, TProjection> SubscriptionSyntax.All<IEventDueToFact<TFact>>.Select<TProjection>(
-                Func<IEventDueToFact<TFact>, TProjection> projection)
+            SubscriptionSyntax.Projection<IFactEvent<TFact>, TProjection> SubscriptionSyntax.All<IFactEvent<TFact>>.Select<TProjection>
+                (Func<IFactEvent<TFact>, TProjection> projection)
             {
-                return
-                    new SubscriptionSyntax.ProjectionImpl<IEventDueToFact<TFact>, TProjection>(
-                        new SubscriptionSyntax.AllImpl<IEventDueToFact<TFact>>(addHadlerAction), projection);
+                return new SubscriptionSyntax.ProjectionImpl<IFactEvent<TFact>, TProjection>
+                    (new SubscriptionSyntax.AllImpl<IFactEvent<TFact>>(addHadlerAction), projection);
             }
 
-            Action SubscriptionSyntax.All<IEventDueToFact<TFact>>.Subscribe(Action<IEventDueToFact<TFact>> subscriber, int priority)
+            Action SubscriptionSyntax.All<IFactEvent<TFact>>.Subscribe(Action<IFactEvent<TFact>> subscriber, int priority)
             {
-                Predicate<IEventDueToFact<TFact>> filter = e => true;
-                return addHadlerAction(new InternalEventHandler<IEventDueToFact<TFact>>(subscriber, filter, priority));
+                Predicate<IFactEvent<TFact>> filter = e => true;
+                return addHadlerAction(new InternalEventHandler<IFactEvent<TFact>>(subscriber, filter, priority));
             }
 
-            Action SubscriptionSyntax.All<IEventDueToFact<TFact>>.Subscribe(IHandlerOf<IEventDueToFact<TFact>> subscriber, int priority)
+            Action SubscriptionSyntax.All<IFactEvent<TFact>>.Subscribe(IHandler<IFactEvent<TFact>> subscriber, int priority)
             {
-                return (this as SubscriptionSyntax.All<IEventDueToFact<TFact>>).Subscribe(subscriber.Handle, priority);
+                return (this as SubscriptionSyntax.All<IFactEvent<TFact>>).Subscribe(subscriber.Handle, priority);
             }
-
-            #endregion
         }
-
-        #endregion
-
-        #region Nested type: Or
 
         public interface Or : IHiddenObjectMembers
         {
             All DueTo<TFact>() where TFact : IFact;
         }
-
-        #endregion
-
-        #region Nested type: OrImpl
 
         internal class OrImpl : Or
         {
@@ -164,17 +140,11 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
                 this.factTypes.AddRange(factTypes);
             }
 
-            #region Or Members
-
             All Or.DueTo<TFact>()
             {
-                return new AllImpl(addHadlerAction, new List<Type>(factTypes) { typeof(IEventDueToFact<TFact>) });
+                return new AllImpl(addHadlerAction, new List<Type>(factTypes) { typeof(IFactEvent<TFact>) });
             }
-
-            #endregion
         }
-
-        #endregion
 
         // ReSharper restore InconsistentNaming   
     }

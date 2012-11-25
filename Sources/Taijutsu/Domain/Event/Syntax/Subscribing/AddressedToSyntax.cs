@@ -1,15 +1,19 @@
+#region License
+
 // Copyright 2009-2012 Taijutsu.
+//    
+//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+//  this file except in compliance with the License. You may obtain a copy of the 
+//  License at 
 //   
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-// this file except in compliance with the License. You may obtain a copy of the 
-// License at 
-//  
-//      http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-// specific language governing permissions and limitations under the License.
+//  http://www.apache.org/licenses/LICENSE-2.0 
+//   
+//  Unless required by applicable law or agreed to in writing, software distributed 
+//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+//  specific language governing permissions and limitations under the License.
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -22,12 +26,10 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
     {
         // ReSharper disable InconsistentNaming
 
-        #region Nested type: All
-
         public interface All : IHiddenObjectMembers
         {
             Or Or { get; }
-            SubscriptionSyntax.All<IEventDueToFact<TFact>> DueTo<TFact>() where TFact : IFact;
+            SubscriptionSyntax.All<IFactEvent<TFact>> DueTo<TFact>() where TFact : IFact;
         }
 
         public interface All<out TEntity> : IHiddenObjectMembers where TEntity : IEntity
@@ -36,108 +38,73 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
             Full<TEntity, TFact> DueTo<TFact>() where TFact : IFact;
         }
 
-        #endregion
-
-        #region Nested type: AllImpl
-
         internal class AllImpl : All
         {
             private readonly Func<IInternalEventHandler, Action> addHadlerAction;
-            private readonly List<Type> addressTypes = new List<Type>();
+            private readonly List<Type> recipientTypes = new List<Type>();
 
-            public AllImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Type> addressTypes)
+            public AllImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Type> recipientTypes)
             {
                 this.addHadlerAction = addHadlerAction;
-                this.addressTypes.AddRange(addressTypes);
+                this.recipientTypes.AddRange(recipientTypes);
             }
 
-            #region All Members
-
+            
             Or All.Or
             {
-                get { return new OrImpl(addHadlerAction, new List<Type>(addressTypes)); }
+                get { return new OrImpl(addHadlerAction, new List<Type>(recipientTypes)); }
             }
 
-            SubscriptionSyntax.All<IEventDueToFact<TFact>> All.DueTo<TFact>()
+            SubscriptionSyntax.All<IFactEvent<TFact>> All.DueTo<TFact>()
             {
-                return new SubscriptionSyntax.AllImpl<IEventDueToFact<TFact>>(addHadlerAction, addressTypes
-                                                                              .Select<Type, Func<IEventDueToFact<TFact>, bool>>(t => e => t.IsAssignableFrom(e.GetType())));
+                return new SubscriptionSyntax.AllImpl<IFactEvent<TFact>>(addHadlerAction, 
+                    recipientTypes.Select<Type,Func<IFactEvent<TFact>, bool>>(t => e => t.IsInstanceOfType(e)));
             }
-
-            #endregion
         }
-
-        #endregion
-
-        #region Nested type: Full
 
         public interface Full<out TEntity, out TFact> : SubscriptionSyntax.All<IExternalEvent<TEntity, TFact>>
             where TEntity : IEntity where TFact : IFact
         {
             Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0);
+
             Action Subscribe(Func<TEntity, DateTime, Action<TFact, DateTime>> subscriber, int priority = 0);
+
             Action Subscribe(Func<TEntity, DateTime, DateTime, Action<TFact, DateTime, DateTime>> subscriber, int priority = 0);
         }
 
-        #endregion
-
-        #region Nested type: FullImpl
-
-        internal class FullImpl<TEntity, TFact> : SubscriptionSyntax.AllImpl<IExternalEvent<TEntity, TFact>>,
-                                                  Full<TEntity, TFact>
+        internal class FullImpl<TEntity, TFact> : SubscriptionSyntax.AllImpl<IExternalEvent<TEntity, TFact>>, Full<TEntity, TFact>
             where TEntity : IEntity where TFact : IFact
         {
-            internal FullImpl(Func<IInternalEventHandler, Action> addHadlerAction,
-                              IEnumerable<Func<IExternalEvent<TEntity, TFact>, bool>> eventFilters = null)
+            internal FullImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Func<IExternalEvent<TEntity, TFact>, bool>> eventFilters = null)
                 : base(addHadlerAction, eventFilters)
             {
             }
 
-            #region Full<TEntity,TFact> Members
-
             public Action Subscribe(Func<TEntity, Action<TFact>> subscriber, int priority = 0)
             {
-                Action<IExternalEvent<TEntity, TFact>> modSubscriber = e => subscriber(e.AddressedTo)(e.Fact);
-                return
-                    AddHadlerAction(new InternalEventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber, e => !EventFilters.Any(f => !f(e)), priority));
+                Action<IExternalEvent<TEntity, TFact>> modSubscriber = e => subscriber(e.Recipient)(e.Fact);
+                return AddHadlerAction(new InternalEventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber, e => EventFilters.All(f => f(e)), priority));
             }
 
             public Action Subscribe(Func<TEntity, DateTime, Action<TFact, DateTime>> subscriber, int priority = 0)
             {
-                Action<IExternalEvent<TEntity, TFact>> modSubscriber =
-                    e => subscriber(e.AddressedTo, e.DateOfOccurrence)(e.Fact, e.DateOfOccurrence);
-                return
-                    AddHadlerAction(new InternalEventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber, e =>!EventFilters.Any(f => !f(e)),priority));
+                Action<IExternalEvent<TEntity, TFact>> modSubscriber = e => subscriber(e.Recipient, e.OccurrenceDate)(e.Fact, e.OccurrenceDate);
+                return AddHadlerAction(new InternalEventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber, e => EventFilters.All(f => f(e)), priority));
             }
 
-            public Action Subscribe(Func<TEntity, DateTime, DateTime, Action<TFact, DateTime, DateTime>> subscriber,
-                                    int priority = 0)
+            public Action Subscribe(Func<TEntity, DateTime, DateTime, Action<TFact, DateTime, DateTime>> subscriber, int priority = 0)
             {
-                Action<IExternalEvent<TEntity, TFact>> modSubscriber =
-                    e =>
-                    subscriber(e.AddressedTo, e.DateOfOccurrence, e.DateOfNotice)(e.Fact, e.DateOfOccurrence,
-                                                                                  e.DateOfNotice);
+                Action<IExternalEvent<TEntity, TFact>> modSubscriber = e => subscriber(e.Recipient, e.OccurrenceDate, e.NoticeDate)(e.Fact, e.OccurrenceDate, e.NoticeDate);
 
-                return
-                    AddHadlerAction(new InternalEventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber, e => !EventFilters.Any(f => !f(e)), priority));
+                return AddHadlerAction(new InternalEventHandler<IExternalEvent<TEntity, TFact>>(modSubscriber, e => EventFilters.All(f => f(e)), priority));
             }
 
-            #endregion
         }
 
-        #endregion
-
-        #region Nested type: Init
-
-        public interface Init<out TEntity> : All<TEntity>,
-                                             SubscriptionSyntax.All<IExternalEvent<TEntity>>
+        public interface Init<out TEntity> : All<TEntity>, SubscriptionSyntax.All<IExternalEvent<TEntity>>
             where TEntity : IEntity
         {
         }
-
-        #endregion
-
-        #region Nested type: InitImpl
 
         internal class InitImpl<TEntity> : Init<TEntity> where TEntity : IEntity
         {
@@ -147,8 +114,6 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
             {
                 this.addHadlerAction = addHadlerAction;
             }
-
-            #region Init<TEntity> Members
 
             Or All<TEntity>.Or
             {
@@ -182,49 +147,36 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
                 return addHadlerAction(new InternalEventHandler<IExternalEvent<TEntity>>(subscriber, filter, priority));
             }
 
-            Action SubscriptionSyntax.All<IExternalEvent<TEntity>>.Subscribe(IHandlerOf<IExternalEvent<TEntity>> subscriber, int priority)
+            Action SubscriptionSyntax.All<IExternalEvent<TEntity>>.Subscribe(
+                IHandler<IExternalEvent<TEntity>> subscriber, int priority)
             {
                 return (this as SubscriptionSyntax.All<IExternalEvent<TEntity>>).Subscribe(subscriber.Handle, priority);
             }
 
-            #endregion
         }
-
-        #endregion
-
-        #region Nested type: Or
 
         public interface Or : IHiddenObjectMembers
         {
             All AddressedTo<TEntity>() where TEntity : IEntity;
         }
-
-        #endregion
-
-        #region Nested type: OrImpl
-
+      
         internal class OrImpl : Or
         {
             private readonly Func<IInternalEventHandler, Action> addHadlerAction;
-            private readonly List<Type> addressTypes = new List<Type>();
+            private readonly List<Type> recipientTypes = new List<Type>();
 
-            public OrImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Type> addressTypes)
+            public OrImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Type> recipientTypes)
             {
                 this.addHadlerAction = addHadlerAction;
-                this.addressTypes.AddRange(addressTypes);
+                this.recipientTypes.AddRange(recipientTypes);
             }
-
-            #region Or Members
 
             All Or.AddressedTo<TEntity>()
             {
-                return new AllImpl(addHadlerAction, new List<Type>(addressTypes) {typeof (IExternalEvent<TEntity>)});
+                return new AllImpl(addHadlerAction, new List<Type>(recipientTypes) {typeof (IExternalEvent<TEntity>)});
             }
 
-            #endregion
         }
-
-        #endregion
 
         // ReSharper restore InconsistentNaming       
     }

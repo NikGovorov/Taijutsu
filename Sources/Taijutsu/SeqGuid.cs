@@ -27,7 +27,7 @@ namespace Taijutsu
         public static Guid NewGuid()
         {
             var guidArray = Guid.NewGuid().ToByteArray();
-            var now = DateTime.Now;
+            var now = SystemTime.Now;
             var days = new TimeSpan(now.Ticks - baseTicks);
             var msecs = now.TimeOfDay;
 
@@ -42,7 +42,6 @@ namespace Taijutsu
 
             return new Guid(guidArray);
         }
-
 
         public static DateTime ToDateTime(Guid combGuid)
         {

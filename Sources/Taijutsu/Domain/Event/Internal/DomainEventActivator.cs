@@ -1,3 +1,20 @@
+#region License
+
+// Copyright 2009-2012 Taijutsu.
+//    
+//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+//  this file except in compliance with the License. You may obtain a copy of the 
+//  License at 
+//   
+//  http://www.apache.org/licenses/LICENSE-2.0 
+//   
+//  Unless required by applicable law or agreed to in writing, software distributed 
+//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+//  specific language governing permissions and limitations under the License.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -7,7 +24,6 @@ using System.Reflection;
 
 namespace Taijutsu.Domain.Event.Internal
 {
-
     internal interface IDomainEventActivator
     {
         DomainEvent CreateInstance(IEntity subject, IFact fact, Guid? eventKey = null);
@@ -18,16 +34,15 @@ namespace Taijutsu.Domain.Event.Internal
         private const BindingFlags ConstructorBindingFlags =
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-        // ReSharper disable StaticFieldInGenericType
-        private static DomainEventActivator<T> current = new DomainEventActivator<T>();
-        // ReSharper restore StaticFieldInGenericType
+        private static readonly DomainEventActivator<T> current = new DomainEventActivator<T>();
+
 
         private readonly ConstructorInfo constructor;
         private Func<object[], T> ctor;
 
         private DomainEventActivator()
         {
-            constructor = typeof(T).GetConstructors(ConstructorBindingFlags).Where(c => c.GetParameters().Any()).Single();
+            constructor = typeof (T).GetConstructors(ConstructorBindingFlags).Single(c => c.GetParameters().Any());
         }
 
         public static DomainEventActivator<T> Current
@@ -35,25 +50,23 @@ namespace Taijutsu.Domain.Event.Internal
             get { return current; }
         }
 
-        #region IDomainEventActivator Members
-
         public DomainEvent CreateInstance(IEntity subject, IFact fact, Guid? eventKey = null)
         {
-            var args = new object[] { subject, fact, eventKey };
+            var args = new object[] {subject, fact, eventKey};
 
             if (ctor == null)
             {
-                var argsParameter = Expression.Parameter(typeof(object[]), "args");
+                var argsParameter = Expression.Parameter(typeof (object[]), "args");
 
                 Func<ParameterInfo, int, Expression> converter = (parameter, index) =>
-                                                                     {
-                                                                         var arrayExpression = Expression.ArrayIndex(argsParameter, Expression.Constant(index));
+                    {
+                        var arrayExpression = Expression.ArrayIndex(argsParameter, Expression.Constant(index));
 
-                                                                         if (parameter.ParameterType.IsValueType)
-                                                                             return Expression.Convert(arrayExpression, parameter.ParameterType);
+                        if (parameter.ParameterType.IsValueType)
+                            return Expression.Convert(arrayExpression, parameter.ParameterType);
 
-                                                                         return Expression.TypeAs(arrayExpression, parameter.ParameterType);
-                                                                     };
+                        return Expression.TypeAs(arrayExpression, parameter.ParameterType);
+                    };
 
                 var parameters = constructor.GetParameters().Select(converter).ToArray();
 
@@ -64,59 +77,36 @@ namespace Taijutsu.Domain.Event.Internal
 
             return ctor(args);
         }
-
-        #endregion
     }
 
     internal class DomainEventActivatorsHolder
     {
-        private class TypedActivator
-        {
-            private Type type;
-            private IDomainEventActivator domainEventActivator;
-
-            public TypedActivator(Type type, IDomainEventActivator domainEventActivator)
-            {
-                this.type = type;
-                this.domainEventActivator = domainEventActivator;
-            }
-
-            public Type Type
-            {
-                get { return type; }
-            }
-
-            public IDomainEventActivator DomainEventActivator
-            {
-                get { return domainEventActivator; }
-            }
-        }
 
         [ThreadStatic]
-        private static Dictionary<object, TypedActivator> activators;
+        private static Dictionary<object, IDomainEventActivator> activators;
 
-        private static Dictionary<object, TypedActivator> Activators
+        private static Dictionary<object, IDomainEventActivator> Activators
         {
-            get { return activators ?? (activators = new Dictionary<object, TypedActivator>()); }
+            get { return activators ?? (activators = new Dictionary<object, IDomainEventActivator>()); }
         }
 
         internal static IDomainEventActivator ActivatorFor(Type entityType, Type factType)
         {
-            var eventTypeDef = new { entityType, factType };
+            var eventTypeDef = new {entityType, factType};
 
-            TypedActivator activator;
+            IDomainEventActivator activator;
             if (!Activators.TryGetValue(eventTypeDef, out activator))
             {
-                var eventType = typeof(DomainEvent<,>).MakeGenericType(new[] { entityType, factType });
+                var eventType = typeof (DomainEvent<,>).MakeGenericType(new[] {entityType, factType});
                 const BindingFlags flags = BindingFlags.Static | BindingFlags.Public;
-                var domainEventActivator = (IDomainEventActivator)typeof(DomainEventActivator<>).MakeGenericType(eventType)
-                                                  .GetProperty("Current", flags)
-                                                  .GetValue(null, flags, null, null, CultureInfo.InvariantCulture);
+                
+                activator = (IDomainEventActivator) typeof (DomainEventActivator<>).MakeGenericType(eventType)
+                                                                           .GetProperty("Current", flags)
+                                                                           .GetValue(null, flags, null, null, CultureInfo.InvariantCulture);
 
-                activator = new TypedActivator(eventType, domainEventActivator);
                 Activators.Add(eventTypeDef, activator);
             }
-            return activator.DomainEventActivator;
+            return activator;
         }
     }
 }

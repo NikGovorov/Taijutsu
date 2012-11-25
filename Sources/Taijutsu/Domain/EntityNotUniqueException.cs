@@ -22,8 +22,8 @@ namespace Taijutsu.Domain
     [Serializable]
     public class EntityNotUniqueException<TEntity> : EntityNotUniqueException where TEntity : IEntity
     {
-        public EntityNotUniqueException(object key, Exception innnerException = null)
-            : base(key, typeof (TEntity), innnerException)
+        public EntityNotUniqueException(object id, Exception innnerException = null)
+            : base(id, typeof (TEntity), innnerException)
         {
         }
 
@@ -41,17 +41,17 @@ namespace Taijutsu.Domain
                 string.Format("Entity of '{1}' type is not unique. Query description: '{0}'.", queryDescription, type),
                 innnerException)
         {
-            entityKey = "unknown";
+            entityId = "unknown";
             entityType = type;
         }
 
 
-        public EntityNotUniqueException(object key, object type, Exception innnerException = null)
+        public EntityNotUniqueException(object id, object type, Exception innnerException = null)
             : base(
-                string.Format("Entity with '{0}' key and '{1}' type is not unique.", key, type),
+                string.Format("Entity with '{0}' id and '{1}' type is not unique.", id, type),
                 innnerException)
         {
-            entityKey = key;
+            entityId = id;
             entityType = type;
         }
     }

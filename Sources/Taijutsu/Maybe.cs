@@ -30,7 +30,7 @@ namespace Taijutsu
     {
         public static readonly Maybe<T> Empty = new Maybe<T>();
 
-        private T value;
+        protected T value;
 
         protected Maybe()
         {
@@ -48,7 +48,6 @@ namespace Taijutsu
                 AssertNotNullValue();
                 return value;
             }
-            protected set { this.value = value; }
         }
 
         public virtual bool HasValue
@@ -58,7 +57,13 @@ namespace Taijutsu
 
         public override string ToString()
         {
-            return HasValue ? value.ToString() : string.Format("Empty Maybe of {0}.", typeof (T));
+            return HasValue ? value.ToString() : string.Format("Empty maybe of {0}.", typeof (T));
+        }
+
+        protected virtual void AssertNotNullValue()
+        {
+            if (!HasValue)
+                throw new InvalidOperationException(string.Format("Maybe of {0} must have value.", typeof(T)));
         }
 
         public static implicit operator Maybe<T>(T value)
@@ -77,11 +82,6 @@ namespace Taijutsu
             return maybe.Value;
         }
 
-        protected virtual void AssertNotNullValue()
-        {
-            if (!HasValue)
-                throw new InvalidOperationException(string.Format("Maybe of {0} must have value.", typeof (T)));
-        }
     }
 
     public static class MaybeEx

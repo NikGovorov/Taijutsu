@@ -16,17 +16,17 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using Taijutsu.Domain.Event;
 using Taijutsu.Domain.Event.Internal;
 using Taijutsu.Domain.Event.Syntax.Publishing;
-using Taijutsu.Domain.Event.Syntax.Subscribing;
 
 namespace Taijutsu.Domain
 {
     [Serializable]
     public abstract class Entity : IdentifiableObject<object>, IEntity
     {
-        protected static IObservableSyntax OnStream
+        protected static IEventStream OnStream
         {
             get { return EventAggregator.OnStream; }
         }
@@ -39,35 +39,35 @@ namespace Taijutsu.Domain
         protected PublishingSyntax.Prepared DueTo<TFact>(TFact fact) where TFact : IFact
         {
             var ev = EventFor(fact);
+
             return new PublishingSyntax.PreparedImpl(() => Publish(ev));
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
         {
-            return DomainEventActivatorsHolder.ActivatorFor(InternalGetType(),
-                                                            typeof (TFact)).CreateInstance(this, fact, SeqGuid.NewGuid());
+            return DomainEventActivatorsHolder.ActivatorFor(InternalGetType(), typeof (TFact)).CreateInstance(this, fact, SeqGuid.NewGuid());
         }
     }
 
     [Serializable]
-    public abstract class Entity<TKey> : IdentifiableObject<TKey>, IEntity<TKey>, IEquatable<Entity<TKey>>
+    public abstract class Entity<TId> : IdentifiableObject<TId>, IEntity<TId>, IEquatable<Entity<TId>>
     {
-        protected TKey entityKey;
+        protected TId id;
 
-
-        public virtual TKey Key
+        public virtual TId Id
         {
-            get { return entityKey; }
-            protected set { entityKey = value; }
+            get { return id; }
+            protected set { id = value; }
         }
 
         public override bool Equals(object other)
         {
-            var asEntity = (other as Entity<TKey>);
+            var asEntity = (other as Entity<TId>);
 
             return !ReferenceEquals(asEntity, null)
                    && InternalGetType() == asEntity.InternalGetType()
-                   && Equals(asEntity as IdentifiableObject<TKey>);
+                   && Equals(asEntity as IdentifiableObject<TId>);
         }
 
         public override int GetHashCode()
@@ -77,27 +77,25 @@ namespace Taijutsu.Domain
 
         public override string ToString()
         {
-            return entityKey.Equals(default(TKey)) ? string.Empty : entityKey.ToString();
+            return id.Equals(default(TId)) ? string.Empty : id.ToString();
         }
 
-        public virtual bool Equals(Entity<TKey> other)
+        public virtual bool Equals(Entity<TId> other)
         {
             if (ReferenceEquals(other, null)) return false;
 
-            return InternalGetType() == other.InternalGetType() && Equals(other as IdentifiableObject<TKey>);
+            return InternalGetType() == other.InternalGetType() && Equals(other as IdentifiableObject<TId>);
         }
 
-        protected override TKey BuildIdentity()
+        protected override TId BuildIdentity()
         {
-            return Key;
+            return Id;
         }
 
-
-        protected static IObservableSyntax OnStream
+        protected static IEventStream OnStream
         {
             get { return EventAggregator.OnStream; }
         }
-
 
         protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
         {
@@ -110,18 +108,18 @@ namespace Taijutsu.Domain
             return new PublishingSyntax.PreparedImpl(() => Publish(ev));
         }
 
+        [EditorBrowsable(EditorBrowsableState.Never)]
         protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
         {
-            return DomainEventActivatorsHolder.ActivatorFor(InternalGetType(),
-                                                            typeof (TFact)).CreateInstance(this, fact, SeqGuid.NewGuid());
+            return DomainEventActivatorsHolder.ActivatorFor(InternalGetType(), typeof (TFact)).CreateInstance(this, fact, SeqGuid.NewGuid());
         }
 
-        public static bool operator ==(Entity<TKey> left, Entity<TKey> right)
+        public static bool operator ==(Entity<TId> left, Entity<TId> right)
         {
             return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals(right);
         }
 
-        public static bool operator !=(Entity<TKey> left, Entity<TKey> right)
+        public static bool operator !=(Entity<TId> left, Entity<TId> right)
         {
             return !(left == right);
         }

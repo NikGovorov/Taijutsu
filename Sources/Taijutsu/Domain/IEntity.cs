@@ -21,8 +21,8 @@ namespace Taijutsu.Domain
     {
     }
 
-    public interface IEntity<out TKey> : IEntity
+    public interface IEntity<out TId> : IEntity
     {
-        TKey Key { get; }
+        TId Id { get; }
     }
 }

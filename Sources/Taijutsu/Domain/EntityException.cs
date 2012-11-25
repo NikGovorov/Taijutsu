@@ -22,14 +22,14 @@ namespace Taijutsu.Domain
 {
     public interface IEntityException
     {
-        object Key { get; }
+        object Id { get; }
         object Type { get; }
     }
 
     [Serializable]
     public abstract class EntityException : DomainException, IEntityException
     {
-        protected object entityKey;
+        protected object entityId;
         protected object entityType;
 
         protected EntityException()
@@ -51,10 +51,10 @@ namespace Taijutsu.Domain
         {
         }
 
-        public virtual object Key
+        public virtual object Id
         {
-            get { return entityKey; }
-            protected set { entityKey = value; }
+            get { return entityId; }
+            protected set { entityId = value; }
         }
 
         public virtual object Type
