@@ -15,14 +15,24 @@
 
 #endregion
 
-using Taijutsu.Domain.Event.Syntax.Subscribing;
+using System;
 
 namespace Taijutsu.Domain.Event
 {
-    public interface IEventStreamFilter
+    [Serializable]
+    public abstract class Event : IEvent
     {
-        DueToSyntax.Init<TFact> DueTo<TFact>() where TFact : IFact;
-        InitiatedBySyntax.Init<TEntity> InitiatedBy<TEntity>() where TEntity : IEntity;
-        AddressedToSyntax.Init<TEntity> AddressedTo<TEntity>() where TEntity : IEntity;
+        protected DateTime occurrenceDate;
+
+        protected Event()
+        {
+            occurrenceDate = SystemTime.Now;
+        }
+
+        public virtual DateTime OccurrenceDate
+        {
+            get { return occurrenceDate; }
+            protected set { occurrenceDate = value; }
+        }
     }
 }

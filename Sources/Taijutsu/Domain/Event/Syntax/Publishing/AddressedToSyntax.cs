@@ -28,8 +28,8 @@ namespace Taijutsu.Domain.Event.Syntax.Publishing
         // ReSharper restore UnusedTypeParameter
         // ReSharper restore InconsistentNaming
         {
-            PublishingSyntax.Prepared AddressedTo<TRecipient>(TRecipient target) where TRecipient : IEntity;
-            PublishingSyntax.Prepared AddressedTo<TRecipient>(Func<TRecipient> targetProvider) where TRecipient : IEntity;
+            PublishingSyntax.Prepared AddressedTo<TRecipient>(TRecipient recipient) where TRecipient : IEntity;
+            PublishingSyntax.Prepared AddressedTo<TRecipient>(Func<TRecipient> recipientProvider) where TRecipient : IEntity;
         }
 
 

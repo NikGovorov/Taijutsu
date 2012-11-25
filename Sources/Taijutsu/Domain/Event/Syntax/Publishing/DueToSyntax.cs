@@ -72,7 +72,6 @@ namespace Taijutsu.Domain.Event.Syntax.Publishing
             }
         }
 
-
         internal class NoticeImpl<TFact> : AddressedToSyntax.InitImpl<TFact>, Notice<TFact> where TFact : IFact
         {
             public NoticeImpl(Action<IEvent> publishAction, TFact fact, DateTime? noticeDate, DateTime? occurrenceDate)

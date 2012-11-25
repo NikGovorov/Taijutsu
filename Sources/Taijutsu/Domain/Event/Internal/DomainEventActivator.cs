@@ -26,7 +26,7 @@ namespace Taijutsu.Domain.Event.Internal
 {
     internal interface IDomainEventActivator
     {
-        DomainEvent CreateInstance(IEntity subject, IFact fact, Guid? eventKey = null);
+        DomainEvent CreateInstance(IEntity initiator, IFact fact, Guid? eventKey = null);
     }
 
     internal class DomainEventActivator<T> : IDomainEventActivator where T : DomainEvent
@@ -50,9 +50,9 @@ namespace Taijutsu.Domain.Event.Internal
             get { return current; }
         }
 
-        public DomainEvent CreateInstance(IEntity subject, IFact fact, Guid? eventKey = null)
+        public DomainEvent CreateInstance(IEntity initiator, IFact fact, Guid? eventKey = null)
         {
-            var args = new object[] {subject, fact, eventKey};
+            var args = new object[] { initiator, fact, eventKey };
 
             if (ctor == null)
             {

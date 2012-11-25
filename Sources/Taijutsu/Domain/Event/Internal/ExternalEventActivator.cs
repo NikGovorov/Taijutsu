@@ -26,7 +26,7 @@ namespace Taijutsu.Domain.Event.Internal
 {
     internal interface IExternalEventActivator
     {
-        ExternalEvent CreateInstance(IEntity target, IFact fact, DateTime? occurrenceDate = null,
+        ExternalEvent CreateInstance(IEntity recipient, IFact fact, DateTime? occurrenceDate = null,
                                      DateTime? noticeDate = null, Guid? id = null);
     }
 
@@ -50,10 +50,10 @@ namespace Taijutsu.Domain.Event.Internal
             get { return current; }
         }
 
-        public ExternalEvent CreateInstance(IEntity target, IFact fact, DateTime? occurrenceDate = null,
+        public ExternalEvent CreateInstance(IEntity recipient, IFact fact, DateTime? occurrenceDate = null,
                                             DateTime? noticeDate = null, Guid? id = null)
         {
-            var args = new object[] {target, fact, occurrenceDate, noticeDate, id};
+            var args = new object[] { recipient, fact, occurrenceDate, noticeDate, id };
 
             if (ctor == null)
             {
