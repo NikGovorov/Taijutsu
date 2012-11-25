@@ -61,16 +61,26 @@ namespace Taijutsu.Data.Internal
                     }
                     finally
                     {
-                        if (session.IsValueCreated)
+                        try
                         {
-                            terminationPolicy.Terminate(session.Value, completed.HasValue && completed.Value);    
+                            if (Finished != null)
+                            {
+                                Finished(completed.HasValue && completed.Value);
+                            }
+                        }
+                        finally
+                        {
+                            if (session.IsValueCreated)
+                            {
+                                terminationPolicy.Terminate(session.Value, completed.HasValue && completed.Value);
+                            }
                         }
                     }
                 }
             }
             finally
             {
-                Completed = null;
+                Finished = null;
                 disposed = true;
             }
         }
@@ -96,11 +106,6 @@ namespace Taijutsu.Data.Internal
                 }
 
                 completed = true;
-
-                if (Completed != null)
-                {
-                    Completed();
-                }
             }
             catch
             {
@@ -124,7 +129,7 @@ namespace Taijutsu.Data.Internal
             subordinatesCount++;
         }
 
-        public event Action Completed;
+        public event Action<bool> Finished;
 
         internal class Subordinate : IDataContext
         {
@@ -164,10 +169,10 @@ namespace Taijutsu.Data.Internal
                 get { return master.Session; }
             }
 
-            event Action IDataContext.Completed
+            event Action<bool> IDataContext.Finished
             {
-                add { master.Completed += value; }
-                remove { master.Completed -= value; }
+                add { master.Finished += value; }
+                remove { master.Finished -= value; }
             }
         }
     }

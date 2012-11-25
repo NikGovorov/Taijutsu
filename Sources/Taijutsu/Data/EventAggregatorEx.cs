@@ -31,23 +31,23 @@ namespace Taijutsu.Data
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class EventAggregatorEx
     {
-       
-        public static AfterCompleteSyntax<TSource> AfterComplete<TSource>(this SubscriptionSyntax.All<TSource> self)
+
+        public static HandledSafelySyntax<TSource> HandledSafely<TSource>(this SubscriptionSyntax.All<TSource> self)
         {
-            return new AfterCompleteSyntaxAllImpl<TSource>(self);
+            return new HandledSafelySyntaxAllImpl<TSource>(self);
         }
 
-        public static AfterCompleteSyntax<TProjection> AfterComplete<TSource, TProjection>
+        public static HandledSafelySyntax<TProjection> HandledSafely<TSource, TProjection>
             (this SubscriptionSyntax.Projection<TSource, TProjection> self)
         {
-            return new AfterCompleteSyntaxProjectionImpl<TSource, TProjection>(self);
+            return new HandledSafelySyntaxProjectionImpl<TSource, TProjection>(self);
         }
 
-        private class AfterCompleteSyntaxAllImpl<TSource> : AfterCompleteSyntaxImpl<TSource>
+        private class HandledSafelySyntaxAllImpl<TSource> : HandledSafelySyntaxImpl<TSource>
         {
             private readonly SubscriptionSyntax.All<TSource> target;
 
-            public AfterCompleteSyntaxAllImpl(SubscriptionSyntax.All<TSource> target)
+            public HandledSafelySyntaxAllImpl(SubscriptionSyntax.All<TSource> target)
             {
                 this.target = target;
             }
@@ -58,11 +58,11 @@ namespace Taijutsu.Data
             }
         }
 
-        private class AfterCompleteSyntaxProjectionImpl<TSource, TProjection> : AfterCompleteSyntaxImpl<TProjection>
+        private class HandledSafelySyntaxProjectionImpl<TSource, TProjection> : HandledSafelySyntaxImpl<TProjection>
         {
             private readonly SubscriptionSyntax.Projection<TSource, TProjection> target;
 
-            public AfterCompleteSyntaxProjectionImpl(SubscriptionSyntax.Projection<TSource, TProjection> target)
+            public HandledSafelySyntaxProjectionImpl(SubscriptionSyntax.Projection<TSource, TProjection> target)
             {
                 this.target = target;
             }
@@ -73,7 +73,7 @@ namespace Taijutsu.Data
             }
         }
 
-        private abstract class AfterCompleteSyntaxImpl<TSource> : AfterCompleteSyntax<TSource>
+        private abstract class HandledSafelySyntaxImpl<TSource> : HandledSafelySyntax<TSource>
         {
             public abstract Action Subscribe(Action<TSource> subscriber, int priority = 0);
 
@@ -105,17 +105,23 @@ namespace Taijutsu.Data
 
                             if (context != null)
                             {
-                                Action action = () => subscriber(source);
-
-                                context.Completed += () =>
+                                Action<bool> action = isSuccessfully =>
                                     {
-                                        context.Completed -= action;
-                                        action();
+                                        if (isSuccessfully)
+                                        {
+                                            subscriber(source);
+                                        }
+                                    };
+
+                                context.Finished += isSuccessfully =>
+                                    {
+                                        context.Finished -= action;
+                                        action(isSuccessfully);
                                     };
                             }
                             else
                             {
-                                throw new Exception("Event source is not surrounded with unit of work or with transaction scope.");
+                                Trace.TraceWarning("Event source is not surrounded with unit of work or with transaction scope.");
                             }
                         }
                     };
@@ -224,7 +230,7 @@ namespace Taijutsu.Data
         // ReSharper disable InconsistentNaming
         // ReSharper disable UnusedTypeParameter
 
-        public interface AfterCompleteSyntax<out TSource>
+        public interface HandledSafelySyntax<out TSource>
         {
             Action Subscribe(Action<TSource> subscriber, int priority = 0);
         }

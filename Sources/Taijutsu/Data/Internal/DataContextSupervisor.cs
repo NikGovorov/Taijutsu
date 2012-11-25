@@ -126,10 +126,10 @@ namespace Taijutsu.Data.Internal
                 wrappedContext.Dispose();
             }
 
-            event Action IDataContext.Completed
+            event Action<bool> IDataContext.Finished
             {
-                add { wrappedContext.Completed += value; }
-                remove { wrappedContext.Completed -= value; }
+                add { wrappedContext.Finished += value; }
+                remove { wrappedContext.Finished -= value; }
             }
 
             public IOrmSession Session
