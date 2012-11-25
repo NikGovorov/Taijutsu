@@ -15,14 +15,13 @@
 
 #endregion
 
-using System.ComponentModel;
+using Taijutsu.Domain;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.PrevData.Internal
 {
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public interface INative
+    public interface IDataProvider : IReadOnlyDataProvider
     {
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        object Native { get; }
+        object MarkAsCreated<TEntity>(TEntity entity) where TEntity : IAggregateRoot;
+        void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IDeletableEntity;
     }
 }

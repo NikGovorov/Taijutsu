@@ -13,11 +13,11 @@
 
 using System;
 using System.Data;
-using Taijutsu.Data.Internal;
+using Taijutsu.PrevData.Internal;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
-namespace Taijutsu.Data
+namespace Taijutsu.PrevData
 {
     public enum Require
     {
@@ -26,7 +26,7 @@ namespace Taijutsu.Data
         None
     }
 
-    public class UnitOfQuery : IUnitOfQuery, INative, IDisposable
+    public class UnitOfQuery : IUnitOfQuery, Internal.INative, IDisposable
     {
         private readonly IReadOnlyDataContext dataContext;
 
@@ -93,7 +93,7 @@ namespace Taijutsu.Data
 
         #region INative Members
 
-        object INative.Native
+        object Internal.INative.Native
         {
             get { return dataContext.ReadOnlyProvider.NativeProvider; }
         }

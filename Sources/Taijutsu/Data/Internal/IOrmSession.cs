@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -16,42 +16,25 @@
 #endregion
 
 using System;
+using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
-namespace Taijutsu.Domain
+namespace Taijutsu.Data.Internal
 {
-    public interface IUnitOfWork
+    public interface IOrmSession : ICompletableScope, IHasNativeObject
     {
+        T As<T>(string name = null) where T : class;
+
         object MarkAsCreated<TEntity>(TEntity entity, dynamic options = null) where TEntity : IAggregateRoot;
 
         object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, dynamic options = null) where TEntity : IAggregateRoot;
 
         void MarkAsDeleted<TEntity>(TEntity entity, dynamic options = null) where TEntity : IDeletableEntity;
 
-        IQueryOfEntities<TEntity> AllOf<TEntity>(dynamic options = null) where TEntity : class, IQueryableEntity;
+        IQueryOfEntities<TEntity> AllOf<TEntity>(dynamic options) where TEntity : class, IEntity;
 
-        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, dynamic options = null) where TEntity : class, IQueryableEntity;
+        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, dynamic options) where TEntity : class, IEntity;
 
-        IMarkingStep Mark<TEntity>(TEntity entity, dynamic options = null) where TEntity : IDeletableEntity, IAggregateRoot;
-    }
-
-    public interface IMarkingStep
-    {
-        object AsCreated();
-        void AsDeleted();
-    }
-
-
-    public static class UnitOfWorkEntityEx
-    {
-        public static object AsCreatedIn(this IAggregateRoot entity, IUnitOfWork uow)
-        {
-            return uow.MarkAsCreated(entity);
-        }
-
-        public static void AsDeletedIn(this IDeletableEntity entity, IUnitOfWork uow)
-        {
-            uow.MarkAsDeleted(entity);
-        }
+        IQueryOverContinuation<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity;
     }
 }

@@ -14,13 +14,13 @@
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.PrevData.Internal
 {
-    public interface IQueryOverBuilder<TEntity> : IHiddenObjectMembers where TEntity : class, IEntity
+    public interface IReadOnlyDataProvider
     {
-        TQuery Using<TQuery>() where TQuery : class, IQueryOver<TEntity>;
-        TQuery Using<TQuery>(string queryName) where TQuery : class, IQueryOver<TEntity>;
-        TRepository In<TRepository>() where TRepository : class, IRepository<TEntity>;
-        TRepository In<TRepository>(string repositoryName) where TRepository : class, IRepository<TEntity>;
+        object NativeProvider { get; }
+        IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IEntity;
+        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key) where TEntity : class, IEntity;
+        IQueryOverBuilder<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity;
     }
 }

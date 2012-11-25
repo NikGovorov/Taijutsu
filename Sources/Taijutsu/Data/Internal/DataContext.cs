@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -16,295 +16,145 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Taijutsu.Data.Internal
 {
     public class DataContext : IDataContext
     {
-        private readonly UnitOfWorkConfig unitOfWorkConfig;
-        private readonly Action<DataContext, Action> onClosed;
-        private bool closed;
-        private bool commited;
-        private bool successfullyCommited;
-        private DataProvider dataProvider;
-        private IDictionary<string, IDisposable> extension;
-        private bool rolledback;
-        private int slaveCount;
+        private readonly UnitOfWorkConfig configuration;
+        private readonly Lazy<IOrmSession> session;
+        private readonly IOrmSessionTerminationPolicy terminationPolicy;
+        private int subordinatesCount;
+        private bool? completed;
+        private bool disposed;
 
-        public DataContext(UnitOfWorkConfig unitOfWorkConfig, DataProvider dataProvider,
-                           Action<DataContext, Action> onClosed)
+        public DataContext(UnitOfWorkConfig configuration, Lazy<IOrmSession> session, IOrmSessionTerminationPolicy terminationPolicy)
         {
-            this.unitOfWorkConfig = unitOfWorkConfig;
-            this.dataProvider = dataProvider;
-            this.onClosed = onClosed;
-            dataProvider.BeginTransaction(unitOfWorkConfig.IsolationLevel);
+            this.configuration = configuration;
+            this.session = session;
+            this.terminationPolicy = terminationPolicy;
         }
 
-        protected internal virtual DataProvider DataProvider
+        public IOrmSession Session
         {
-            get { return dataProvider; }
+            get { return session.Value; }
         }
 
-        public virtual bool IsCommited
+        public virtual void Dispose()
         {
-            get { return commited; }
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        public virtual bool IsRolledback
+        protected virtual void Dispose(bool disposing)
         {
-            get { return rolledback; }
-        }
-
-        #region IDataContext Members
-
-        public virtual UnitOfWorkConfig UnitOfWorkConfig
-        {
-            get { return unitOfWorkConfig; }
-        }
-
-
-        public virtual IDataProvider Provider
-        {
-            get { return DataProvider; }
-        }
-
-
-        public virtual bool IsClosed
-        {
-            get { return closed; }
-        }
-
-        IReadOnlyDataProvider IReadOnlyDataContext.ReadOnlyProvider
-        {
-            get { return Provider; }
-        }
-
-        public virtual bool IsReady
-        {
-            get { return slaveCount == 0; }
-        }
-
-
-        public virtual bool IsRoot
-        {
-            get { return true; }
-        }
-
-
-        public virtual void Commit()
-        {
-            if (commited || closed || rolledback)
+            try
             {
-                throw new Exception(
-                    string.Format(
-                        "Data context can't commit data provider. State map: commited '{0}', rolledback '{1}', closed '{2}'.",
-                        commited, rolledback, closed));
-            }
-            commited = true;
-            DataProvider.CommitTransaction();
-            successfullyCommited = true;
-        }
-
-        public virtual void Rollback()
-        {
-            if (commited || closed || rolledback)
-            {
-                throw new Exception(
-                    string.Format(
-                        "Data context can't rollback data provider. State map: commited '{0}', rolledback '{1}', closed '{2}'.",
-                        commited, rolledback, closed));
-            }
-            rolledback = true;
-            DataProvider.RollbackTransaction();
-        }
-
-        public virtual void Close()
-        {
-            if (closed)
-            {
-                throw new Exception(
-                    string.Format(
-                        "Data context can't close data provider, because it has been already closed."));
-            }
-            closed = true;
-            Exception lastExException = null;
-            if (extension != null)
-            {
-                foreach (var disposable in extension.Values)
+                if (!disposed && disposing)
                 {
                     try
                     {
-                        disposable.Dispose();
+                        if (!completed.HasValue || !completed.Value)
+                        {
+                            completed = false;
+                        }
                     }
-                    catch (Exception exception)
+                    finally
                     {
-                        lastExException = exception;
-                        Trace.TraceWarning(exception.ToString());
+                        if (session.IsValueCreated)
+                        {
+                            terminationPolicy.Terminate(session.Value, completed.HasValue && completed.Value);    
+                        }
                     }
                 }
             }
-
-            extension = null;
-
-            onClosed(this, RaiseClosedEvent);
-
-            dataProvider = new OfflineDataProvider();
-
-            if (lastExException != null)
+            finally
             {
-                throw lastExException;
+                disposed = true;
             }
         }
 
-        protected virtual void RaiseClosedEvent()
+        public virtual void Complete()
         {
-            if (Closed != null)
-                Closed(successfullyCommited);
-
-            Closed = null;
-        }
-
-        void IDisposable.Dispose()
-        {
-            if (!IsClosed)
+            if (completed.HasValue)
             {
-                Close();
+                throw new Exception(string.Format("Data context has already been completed(with success - '{0}').",
+                                                  completed));
             }
-        }
-
-        public virtual IDictionary<string, IDisposable> Extension
-        {
-            get { return extension ?? (extension = new Dictionary<string, IDisposable>()); }
-        }
-
-        public event Action<bool> Closed;
-
-        #endregion
-
-        public virtual void RegisterCompletedSlave()
-        {
-            slaveCount++;
-        }
-
-        public virtual void RegisterUncompletedSlave()
-        {
-            slaveCount--;
-        }
-    }
-
-    public class ChildDataContext : IDataContext
-    {
-        private readonly DataContext dataContext;
-        private bool? completed;
-        private IDictionary<string, IDisposable> extension;
-
-        public ChildDataContext(DataContext dataContext)
-        {
-            this.dataContext = dataContext;
-            dataContext.RegisterUncompletedSlave();
-        }
-
-        #region IDataContext Members
-
-        public virtual bool IsRoot
-        {
-            get { return false; }
-        }
-
-        public virtual bool IsClosed
-        {
-            get { return dataContext.IsClosed; }
-        }
-
-        IReadOnlyDataProvider IReadOnlyDataContext.ReadOnlyProvider
-        {
-            get { return ((IReadOnlyDataContext) dataContext).ReadOnlyProvider; }
-        }
-
-
-        public virtual UnitOfWorkConfig UnitOfWorkConfig
-        {
-            get { return dataContext.UnitOfWorkConfig; }
-        }
-
-        public virtual IDataProvider Provider
-        {
-            get { return dataContext.Provider; }
-        }
-
-        public virtual bool IsReady
-        {
-            get { return true; }
-        }
-
-
-        public virtual void Commit()
-        {
-            if (!completed.HasValue)
+            try
             {
-                dataContext.RegisterCompletedSlave();
+                if (subordinatesCount != 0)
+                {
+                    throw new Exception(
+                        "Unit of work can not be successfully completed, because not all subordinates are completed.");
+                }
+
+                if (session.IsValueCreated)
+                {
+                    session.Value.Complete();
+                }
+
                 completed = true;
             }
-        }
-
-        public virtual void Rollback()
-        {
-            if (!completed.HasValue || !completed.Value)
+            catch
             {
                 completed = false;
+                throw;
             }
         }
 
-        void IReadOnlyDataContext.Close()
+        public virtual UnitOfWorkConfig Configuration
         {
-            Exception lastExException = null;
-            if (extension != null)
+            get { return configuration; }
+        }
+
+        protected virtual void RegisterCompletedSubordinate()
+        {
+            subordinatesCount--;
+        }
+
+        protected virtual void RegisterUncompletedSubordinate()
+        {
+            subordinatesCount++;
+        }
+
+        internal class Subordinate : IDataContext
+        {
+            private readonly DataContext master;
+            private bool? completed;
+
+            public Subordinate(DataContext master)
             {
-                foreach (var disposable in extension.Values)
+                if (master == null)
                 {
-                    try
-                    {
-                        disposable.Dispose();
-                    }
-                    catch (Exception exception)
-                    {
-                        lastExException = exception;
-                        Trace.TraceWarning(exception.ToString());
-                    }
+                    throw new ArgumentNullException("master");
+                }
+
+                this.master = master;
+                master.RegisterUncompletedSubordinate();
+            }
+
+            public virtual void Dispose()
+            {
+                if (!completed.HasValue)
+                {
+                    completed = false;
                 }
             }
 
-            extension = null;
-
-            if (lastExException != null)
+            public virtual void Complete()
             {
-                throw lastExException;
+                if (!completed.HasValue)
+                {
+                    master.RegisterCompletedSubordinate();
+                    completed = true;
+                }
+            }
+
+            public virtual IOrmSession Session
+            {
+                get { return master.Session; }
             }
         }
-
-        void IDisposable.Dispose()
-        {
-            if (!IsClosed)
-            {
-                ((IReadOnlyDataContext) this).Close();
-            }
-        }
-
-
-        public virtual IDictionary<string, IDisposable> Extension
-        {
-            get { return extension ?? (extension = new Dictionary<string, IDisposable>()); }
-        }
-
-
-        public event Action<bool> Closed
-        {
-            add { dataContext.Closed += value; }
-            remove { dataContext.Closed -= value; }
-        }
-
-        #endregion
     }
 }

@@ -19,7 +19,7 @@ using System.Data;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.PrevData.Internal
 {
     public abstract class DataProvider : IDataProvider
     {

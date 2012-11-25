@@ -15,19 +15,12 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.PrevData.Internal
 {
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public interface IAdvancedUnitOfWork
+    public interface IDataContext : IReadOnlyDataContext, IAdvancedUnitOfWork
     {
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        IDictionary<string, IDisposable> Extension { get; }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        event Action<bool> Closed;
+        UnitOfWorkConfig UnitOfWorkConfig { get; }
+        IDataProvider Provider { get; }
+        bool IsReady { get; }
     }
 }

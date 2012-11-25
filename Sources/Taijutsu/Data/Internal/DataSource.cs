@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -15,48 +15,48 @@
 
 #endregion
 
+using System;
 using System.Data;
 
 namespace Taijutsu.Data.Internal
 {
-    public abstract class DataSource
+    public class DataSource
     {
-        private IsolationLevel defaultQueryIsolationLevel = IsolationLevel.Unspecified;
-        private IsolationLevel defaultWorkIsolationLevel = IsolationLevel.Unspecified;
-        private string sourceName;
+        private readonly string name = string.Empty;
+        private readonly IsolationLevel defaultIsolationLevel;
+        private readonly Func<IsolationLevel, IOrmSession> sessionBuilder;
 
-
-        protected DataSource(string sourceName = "")
+        public DataSource(Func<IsolationLevel, IOrmSession> sessionBuilder)
+            : this("", IsolationLevel.RepeatableRead, sessionBuilder)
         {
-            if (string.IsNullOrWhiteSpace(sourceName))
-            {
-                sourceName = Infrastructure.DefaultDataSourceName;
-            }
-
-            this.sourceName = sourceName;
         }
 
-
-        public virtual IsolationLevel DefaultWorkIsolationLevel
+        public DataSource(string name, Func<IsolationLevel, IOrmSession> sessionBuilder)
+            : this(name, IsolationLevel.RepeatableRead, sessionBuilder)
         {
-            get { return defaultWorkIsolationLevel; }
-            set { defaultWorkIsolationLevel = value; }
         }
 
-        public virtual IsolationLevel DefaultQueryIsolationLevel
+        public DataSource(string name, IsolationLevel defaultIsolationLevel,
+                          Func<IsolationLevel, IOrmSession> sessionBuilder)
         {
-            get { return defaultQueryIsolationLevel; }
-            set { defaultQueryIsolationLevel = value; }
+            this.name = name;
+            this.defaultIsolationLevel = defaultIsolationLevel;
+            this.sessionBuilder = sessionBuilder;
         }
-
 
         public virtual string Name
         {
-            get { return sourceName; }
+            get { return name; }
         }
 
-        protected internal abstract DataProvider BuildDataProvider(IsolationLevel isolationLevel);
+        public virtual IsolationLevel DefaultIsolationLevel
+        {
+            get { return defaultIsolationLevel; }
+        }
 
-        protected internal abstract ReadOnlyDataProvider BuildReadOnlyDataProvider(IsolationLevel isolationLevel);
+        public virtual IOrmSession BuildSession(IsolationLevel isolationLevel)
+        {
+            return sessionBuilder(isolationLevel);
+        }
     }
 }

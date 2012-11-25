@@ -24,7 +24,7 @@ namespace Taijutsu.Domain.Event
 {
     public class EventAggregator
     {
-        private const string LocalEventAggregatorName = "LocalEventAggregator";
+        private const string LocalEventAggregatorName = "Taijutsu.LocalEventAggregator";
 
         private static readonly IEventAggregator globalEventAggregator = new MultiThreadAggregator();
 

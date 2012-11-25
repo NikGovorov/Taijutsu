@@ -15,13 +15,13 @@ using System;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Transactions;
-using Taijutsu.Data.Internal;
+using Taijutsu.PrevData.Internal;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Event;
 using Taijutsu.Domain.Event.Syntax.Subscribing;
 using DueToSyntax = Taijutsu.Domain.Event.Syntax.Publishing.DueToSyntax;
 
-namespace Taijutsu.Data
+namespace Taijutsu.PrevData
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class EventAggregatorEx

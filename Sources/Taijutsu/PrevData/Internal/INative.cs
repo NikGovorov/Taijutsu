@@ -15,10 +15,14 @@
 
 #endregion
 
-namespace Taijutsu.Data.Internal
+using System.ComponentModel;
+
+namespace Taijutsu.PrevData.Internal
 {
-    public interface IDataContext : ICompletableScope
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public interface INative
     {
-        IOrmSession Session { get; }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        object Native { get; }
     }
 }

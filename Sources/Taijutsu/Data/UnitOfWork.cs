@@ -16,194 +16,180 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using Taijutsu.Data.Internal;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
-using IUnitOfWork = Taijutsu.Data.Internal.IUnitOfWork;
 
 namespace Taijutsu.Data
 {
-    public class UnitOfWork : IUnitOfWork, IAdvancedUnitOfWork, INative, IDisposable
+    public class UnitOfWork : IUnitOfWork, IDisposable, IHasNativeObject
     {
+        private bool disposed;
         private readonly IDataContext dataContext;
         private bool? completed;
 
         public UnitOfWork(string source = "", IsolationLevel? isolation = null,
-                          Require require = Require.None) : this(new UnitOfWorkConfig(source, isolation, require))
+                          Require require = Require.None)
+            : this(new UnitOfWorkConfig(source, isolation ?? IsolationLevel.Unspecified, require))
         {
         }
 
         public UnitOfWork(IsolationLevel? isolation = null)
-            : this(new UnitOfWorkConfig("", isolation, Require.None))
+            : this(new UnitOfWorkConfig("", isolation ?? IsolationLevel.Unspecified, Require.None))
         {
         }
 
         public UnitOfWork(Require require)
-            : this(new UnitOfWorkConfig("", null, require))
+            : this(new UnitOfWorkConfig("", IsolationLevel.Unspecified, require))
         {
         }
 
         public UnitOfWork(string source)
-            : this(new UnitOfWorkConfig(source, null, Require.None))
+            : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, Require.None))
         {
         }
 
         public UnitOfWork(string source = "", Require require = Require.None)
-            : this(new UnitOfWorkConfig(source, null, require))
+            : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, require))
         {
         }
 
         public UnitOfWork(string source = "", IsolationLevel? isolation = null)
-            : this(new UnitOfWorkConfig(source, isolation, Require.None))
+            : this(new UnitOfWorkConfig(source, isolation ?? IsolationLevel.Unspecified, Require.None))
         {
         }
 
-
-        public UnitOfWork() : this(new UnitOfWorkConfig("", null, Require.None))
+        public UnitOfWork()
+            : this(new UnitOfWorkConfig("", IsolationLevel.Unspecified, Require.None))
         {
         }
 
         public UnitOfWork(UnitOfWorkConfig unitOfWorkConfig)
         {
-            dataContext = Infrastructure.DataContextSupervisor.Register(unitOfWorkConfig);
+            dataContext = InternalEnvironment.DataContextSupervisor.Register(unitOfWorkConfig);
         }
-
-
-        event Action<bool> IAdvancedUnitOfWork.Closed
-        {
-            add { dataContext.Closed += value; }
-            remove { dataContext.Closed -= value; }
-        }
-
-        #region IAdvancedUnitOfWork Members
-
-        IDictionary<string, IDisposable> IAdvancedUnitOfWork.Extension
-        {
-            get { return dataContext.Extension; }
-        }
-
-        #endregion
-
-        #region IDisposable Members
 
         void IDisposable.Dispose()
         {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
             try
             {
-                if (!completed.HasValue)
+                if (!disposed && disposing)
                 {
-                    dataContext.Rollback();
+                    try
+                    {
+                        if (!completed.HasValue)
+                        {
+                            completed = false;
+                        }
+
+                        dataContext.Dispose();
+                    }
+                    finally
+                    {
+                        InternalEnvironment.CheckDataContextSupervisorForRelease();
+                    }
                 }
             }
             finally
             {
-                try
-                {
-                    dataContext.Close();
-                }
-                finally
-                {
-                    if (dataContext.IsRoot)
-                    {
-                        Infrastructure.CheckDataContextSupervisorForRelease();
-                    }
-                }
+                disposed = true;
             }
         }
 
-        #endregion
-
-        #region INative Members
-
-        object INative.Native
+        protected virtual void AssertNotFinished()
         {
-            get { return dataContext.Provider.NativeProvider; }
+            if (completed.HasValue || disposed)
+            {
+                throw new Exception(string.Format("Unit of work has already been completed/disposed(with success - '{0}'), so it is not usable anymore.", completed));    
+            }
         }
-
-        #endregion
-
-        #region IUnitOfWork Members
-
-        public object MarkAsCreated<TEntity>(TEntity entity) where TEntity : IAggregateRoot
-        {
-            return dataContext.Provider.MarkAsCreated(entity);
-        }
-
-        public void MarkAsDeleted<TEntity>(TEntity entity) where TEntity : IDeletableEntity
-        {
-            dataContext.Provider.MarkAsRemoved(entity);
-        }
-
-        public IMarkingStep Mark<TEntity>(TEntity entity) where TEntity : IDeletableEntity, IAggregateRoot
-        {
-            return new MarkingStep<TEntity>(() => MarkAsCreated(entity), () => MarkAsDeleted(entity));
-        }
-
-        public virtual IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IQueryableEntity
-        {
-            return dataContext.Provider.AllOf<TEntity>();
-        }
-
-        public virtual IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key)
-            where TEntity : class, IQueryableEntity
-        {
-            return dataContext.Provider.UniqueOf<TEntity>(key);
-        }
-
-        public virtual IQueryOverBuilder<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity
-        {
-            return dataContext.Provider.QueryOver<TEntity>();
-        }
-
-        #endregion
 
         public virtual void Complete()
         {
-            if (!dataContext.IsReady)
-            {
-                throw new Exception(
-                    "Unit of work can not be successfully completed, because of not all subordinate units of work are successfully completed.");
-            }
-
             if (completed.HasValue)
             {
-                throw new Exception(string.Format("Unit of work has been already completed(with success - {0}).",
-                                                  completed));
+                throw new Exception(string.Format("Unit of work has already been completed(with success - '{0}').", completed));
             }
-
             try
             {
-                dataContext.Commit();
+                dataContext.Complete();
+                completed = true;
             }
             catch
             {
                 completed = false;
                 throw;
             }
-
-            completed = true;
         }
 
-        public virtual T Complete<T>(Func<IUnitOfWork, T> forReturn)
+        public virtual T Complete<T>(Func<IUnitOfWork, T> toReturn)
         {
-            var result = forReturn(this);
+            var result = toReturn(this);
             Complete();
             return result;
         }
 
-        public virtual T Complete<T>(Func<T> forReturn)
+        public virtual T Complete<T>(Func<T> toReturn)
         {
-            var result = forReturn();
+            var result = toReturn();
             Complete();
             return result;
         }
 
-        public virtual T Complete<T>(T forReturn)
+        public virtual T Complete<T>(T toReturn)
         {
             Complete();
-            return forReturn;
+            return toReturn;
         }
+
+        public virtual object MarkAsCreated<TEntity>(TEntity entity, dynamic options = null) where TEntity : IAggregateRoot
+        {
+            AssertNotFinished();
+            return dataContext.Session.MarkAsCreated(entity, options);
+        }
+
+        public virtual object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, dynamic options = null) where TEntity : IAggregateRoot
+        {
+            AssertNotFinished();
+            return dataContext.Session.MarkAsCreated(entityFactory, options);
+        }
+
+        public virtual void MarkAsDeleted<TEntity>(TEntity entity, dynamic options = null) where TEntity : IDeletableEntity
+        {
+            AssertNotFinished();
+            dataContext.Session.MarkAsDeleted(entity, options);
+        }
+
+        public virtual IQueryOfEntities<TEntity> AllOf<TEntity>(dynamic options = null) where TEntity : class, IQueryableEntity
+        {
+            AssertNotFinished();
+            return dataContext.Session.AllOf<TEntity>(options);
+        }
+
+        public virtual IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, dynamic options = null) where TEntity : class, IQueryableEntity
+        {
+            AssertNotFinished();
+            return dataContext.Session.AllOf<TEntity>(options);
+        }
+
+        public virtual IMarkingStep Mark<TEntity>(TEntity entity, dynamic options = null) where TEntity : IDeletableEntity, IAggregateRoot
+        {
+            return new MarkingStep<TEntity>(() => MarkAsCreated(entity, options), () => MarkAsDeleted(entity, options));
+        }
+
+        public virtual IQueryOverContinuation<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity
+        {
+            AssertNotFinished();
+            return dataContext.Session.QueryOver<TEntity>();
+        }
+
+        object IHasNativeObject.NativeObject { get { return dataContext.Session.NativeObject; } }
     }
 }

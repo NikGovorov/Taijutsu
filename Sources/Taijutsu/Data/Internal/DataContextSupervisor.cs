@@ -17,105 +17,118 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 
 namespace Taijutsu.Data.Internal
 {
     public class DataContextSupervisor
     {
-        private readonly IProviderLifecyclePolicy providerLifecyclePolicy;
-        private readonly IList<DataContext> unitsOfWork = new List<DataContext>();
+        private readonly List<DataContextDecorator> contexts = new List<DataContextDecorator>();
+        private readonly Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider;
+        private readonly IOrmSessionTerminationPolicy terminationPolicy;
 
-        public DataContextSupervisor()
-            : this(new ProviderLifecyclePolicy())
+        public DataContextSupervisor(Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider, IOrmSessionTerminationPolicy terminationPolicy = null)
         {
+            this.dataSourcesProvider = dataSourcesProvider;
+            this.terminationPolicy = terminationPolicy ?? new ImmediateOrmSessionTerminationPolicy();
         }
 
-        public DataContextSupervisor(IProviderLifecyclePolicy providerLifecyclePolicy)
+        public virtual bool IsActive
         {
-            this.providerLifecyclePolicy = providerLifecyclePolicy;
+            get { return contexts.Count != 0; }
         }
 
-        protected virtual IProviderLifecyclePolicy ProviderLifecyclePolicy
+        public virtual IDataContext Register(UnitOfWorkConfig config)
         {
-            get { return providerLifecyclePolicy; }
-        }
+            DataSource dataSource;
 
-        public virtual IEnumerable<UnitOfWorkConfig> Roots
-        {
-            get { return unitsOfWork.Select(u => u.UnitOfWorkConfig); }
-        }
-
-        public virtual IDataContext Register(UnitOfWorkConfig unitOfWorkConfig)
-        {
-            if (unitOfWorkConfig.Require == Require.New)
+            if (!dataSourcesProvider().TryGetValue(config.SourceName, out dataSource))
             {
-                var newContext = new DataContext(unitOfWorkConfig, ProviderLifecyclePolicy.Register(unitOfWorkConfig),
-                                                 RegisterForTerminate);
-                unitsOfWork.Add(newContext);
-                return newContext;
+                if (config.SourceName == string.Empty)
+                    throw new Exception("Default data source is not registered.");
+
+                throw new Exception(string.Format("Data source with name '{0}' is not registered.", config.SourceName));
             }
 
-            var context = (from unit in unitsOfWork
-                           where unit.UnitOfWorkConfig.SourceName == unitOfWorkConfig.SourceName
-                           select unit).LastOrDefault();
+            config = new UnitOfWorkConfig(config.SourceName,
+                                          config.IsolationLevel == IsolationLevel.Unspecified
+                                              ? dataSource.DefaultIsolationLevel
+                                              : config.IsolationLevel, config.Require);
 
+            if (config.Require == Require.New)
+            {
+                return new DataContextDecorator(new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), contexts);
+            }
+
+            // ReSharper disable ImplicitlyCapturedClosure
+            var context =
+                (from ctx in contexts where ctx.WrappedContext.Configuration.SourceName == config.SourceName select ctx)
+                    .LastOrDefault();
+            // ReSharper restore ImplicitlyCapturedClosure
 
             if (context != null)
             {
-                if (!context.UnitOfWorkConfig.IsolationLevel.IsCompatible(unitOfWorkConfig.IsolationLevel))
+                if (!context.WrappedContext.Configuration.IsolationLevel.IsCompatible(config.IsolationLevel))
                 {
                     throw new Exception(string.Format("Isolation level '{0}' is not compatible with '{1}'.",
-                                                      context.UnitOfWorkConfig.IsolationLevel,
-                                                      unitOfWorkConfig.IsolationLevel));
+                                                      context.WrappedContext.Configuration.IsolationLevel,
+                                                      config.IsolationLevel));
                 }
-                return new ChildDataContext(context);
+                return new DataContext.Subordinate(context.WrappedContext);
             }
 
-            if (unitOfWorkConfig.Require == Require.Existing)
+            if (config.Require == Require.Existing)
                 throw new Exception(
-                    "Unit of work requires existing of unit of work at top level, but nothing has not been found.");
+                    "Unit of work requires existing unit of work at the top level, but nothing has been found.");
 
-            context = new DataContext(unitOfWorkConfig, ProviderLifecyclePolicy.Register(unitOfWorkConfig),
-                                      RegisterForTerminate);
-            unitsOfWork.Add(context);
+            context = new DataContextDecorator(new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), contexts);
+
             return context;
         }
 
-
-        internal virtual Maybe<IDataContext> Current
+        public virtual DataContext CurrentContext
         {
             get
             {
-                try
-                {
-                    return new Maybe<IDataContext>(unitsOfWork.LastOrDefault());
-                }
-                catch (InvalidOperationException)
-                {
-                    return Maybe<IDataContext>.Empty;
-                }
+                var context = contexts.LastOrDefault();
+                return context != null ? context.WrappedContext : null;
             }
         }
 
-        protected virtual void RegisterForTerminate(DataContext dataContext, Action afterRemoveBeforeTerminate)
+        protected class DataContextDecorator : IDataContext
         {
-            try
+            private readonly DataContext wrappedContext;
+            private List<DataContextDecorator> contexts;
+
+            public DataContextDecorator(DataContext wrappedContext, List<DataContextDecorator> contexts)
             {
-                try
-                {
-                    unitsOfWork.Remove(dataContext);
-                    afterRemoveBeforeTerminate();
-                }
-                finally
-                {
-                    ProviderLifecyclePolicy.Terminate(dataContext.DataProvider);
-                }
+                this.wrappedContext = wrappedContext;
+                this.contexts = contexts;
+                contexts.Add(this);
             }
-            catch (Exception exception)
+
+            public virtual DataContext WrappedContext
             {
-                Trace.TraceError(exception.ToString());
+                get { return wrappedContext; }
+            }
+
+            public virtual void Complete()
+            {
+                wrappedContext.Complete();
+            }
+
+            public virtual void Dispose()
+            {
+                contexts.Remove(this);
+                contexts = new List<DataContextDecorator>();
+                wrappedContext.Dispose();
+            }
+
+            public IOrmSession Session
+            {
+                get { return wrappedContext.Session; }
             }
         }
     }

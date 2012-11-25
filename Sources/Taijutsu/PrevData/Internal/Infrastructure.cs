@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.PrevData.Internal
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class Infrastructure

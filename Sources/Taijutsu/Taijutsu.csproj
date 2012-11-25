@@ -40,33 +40,52 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\EventAggregatorEx.cs" />
+    <Compile Include="Data\Internal\ConstructionScope.cs" />
     <Compile Include="Data\Internal\DataContext.cs" />
     <Compile Include="Data\Internal\DataContextSupervisor.cs" />
-    <Compile Include="Data\Internal\DataProvider.cs" />
     <Compile Include="Data\Internal\DataSource.cs" />
-    <Compile Include="Data\Internal\IAdvancedUnitOfWork.cs" />
     <Compile Include="Data\Internal\IDataContext.cs" />
-    <Compile Include="Data\Internal\IDataProvider.cs" />
-    <Compile Include="Data\Internal\INative.cs" />
-    <Compile Include="Data\Internal\Infrastructure.cs" />
-    <Compile Include="Data\Internal\IProviderLifecyclePolicy.cs" />
-    <Compile Include="Data\Internal\IQueryOverBuilder.cs" />
-    <Compile Include="Data\Internal\IReadOnlyDataContext.cs" />
-    <Compile Include="Data\Internal\IReadOnlyDataProvider.cs" />
-    <Compile Include="Data\Internal\IsolationLevelEx.cs" />
-    <Compile Include="Data\Internal\IUnitOfWork.cs" />
+    <Compile Include="Data\Internal\InternalEnvironment.cs" />
+    <Compile Include="Data\Internal\IOrmSession.cs" />
+    <Compile Include="Data\Internal\IQueryOverContinuation.cs" />
+    <Compile Include="Data\Internal\IOrmSessionTerminationPolicy.cs" />
+    <Compile Include="Data\Internal\IsolationLevelExtensions.cs" />
     <Compile Include="Data\Internal\MarkingStep.cs" />
-    <Compile Include="Data\Internal\OfflineProvider.cs" />
-    <Compile Include="Data\Internal\ProviderLifecyclePolicy.cs" />
-    <Compile Include="Data\Internal\ReadOnlyDataContext.cs" />
-    <Compile Include="Data\Internal\ReadOnlyDataContextSupervisor.cs" />
-    <Compile Include="Data\Internal\ReadOnlyDataProvider.cs" />
-    <Compile Include="Data\Internal\UnitOfQueryConfig.cs" />
-    <Compile Include="Data\Internal\UnitOfWorkConfig.cs" />
+    <Compile Include="Data\Internal\NullOrmSession.cs" />
+    <Compile Include="Data\Internal\OrmSessionBuilder.cs" />
+    <Compile Include="Data\Internal\OrmSpecificSession.cs" />
+    <Compile Include="Data\Internal\SuppressionScope.cs" />
     <Compile Include="Data\OperationScope.cs" />
-    <Compile Include="Data\UnitOfQuery.cs" />
     <Compile Include="Data\UnitOfWork.cs" />
+    <Compile Include="Data\UnitOfWorkConfig.cs" />
+    <Compile Include="IHasNativeObject.cs" />
+    <Compile Include="PrevData\EventAggregatorEx.cs" />
+    <Compile Include="PrevData\Internal\DataContext.cs" />
+    <Compile Include="PrevData\Internal\DataContextSupervisor.cs" />
+    <Compile Include="PrevData\Internal\DataProvider.cs" />
+    <Compile Include="PrevData\Internal\DataSource.cs" />
+    <Compile Include="PrevData\Internal\IAdvancedUnitOfWork.cs" />
+    <Compile Include="PrevData\Internal\IDataContext.cs" />
+    <Compile Include="PrevData\Internal\IDataProvider.cs" />
+    <Compile Include="PrevData\Internal\INative.cs" />
+    <Compile Include="PrevData\Internal\Infrastructure.cs" />
+    <Compile Include="PrevData\Internal\IProviderLifecyclePolicy.cs" />
+    <Compile Include="PrevData\Internal\IQueryOverBuilder.cs" />
+    <Compile Include="PrevData\Internal\IReadOnlyDataContext.cs" />
+    <Compile Include="PrevData\Internal\IReadOnlyDataProvider.cs" />
+    <Compile Include="PrevData\Internal\IsolationLevelEx.cs" />
+    <Compile Include="PrevData\Internal\IUnitOfWork.cs" />
+    <Compile Include="PrevData\Internal\MarkingStep.cs" />
+    <Compile Include="PrevData\Internal\OfflineProvider.cs" />
+    <Compile Include="PrevData\Internal\ProviderLifecyclePolicy.cs" />
+    <Compile Include="PrevData\Internal\ReadOnlyDataContext.cs" />
+    <Compile Include="PrevData\Internal\ReadOnlyDataContextSupervisor.cs" />
+    <Compile Include="PrevData\Internal\ReadOnlyDataProvider.cs" />
+    <Compile Include="PrevData\Internal\UnitOfQueryConfig.cs" />
+    <Compile Include="PrevData\Internal\UnitOfWorkConfig.cs" />
+    <Compile Include="PrevData\OperationScope.cs" />
+    <Compile Include="PrevData\UnitOfQuery.cs" />
+    <Compile Include="PrevData\UnitOfWork.cs" />
     <Compile Include="Domain\AndSpecification.cs" />
     <Compile Include="Domain\CompositeSpecification.cs" />
     <Compile Include="Domain\DomainException.cs" />
@@ -140,6 +159,7 @@
     <Compile Include="Domain\Query\Option\ITypeExcludingQuery.cs" />
     <Compile Include="Domain\Specification.cs" />
     <Compile Include="Domain\ValueObject.cs" />
+    <Compile Include="ICompletableScope.cs" />
     <Compile Include="IHiddenObjectMembers.cs" />
     <Compile Include="ILogicContext.cs" />
     <Compile Include="LogicContext.cs" />
@@ -148,6 +168,7 @@
     <Compile Include="SeqGuid.cs" />
     <Compile Include="SystemTime.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

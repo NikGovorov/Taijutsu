@@ -1,5 +1,4 @@
 ﻿#region License
-
 // Copyright 2009-2012 Taijutsu.
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
@@ -12,28 +11,14 @@
 //  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 //  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 //  specific language governing permissions and limitations under the License.
-
 #endregion
 
 using System;
-using Taijutsu.Data.Internal;
 
-namespace Taijutsu.Data
+namespace Taijutsu
 {
-    public class OperationScope : IDisposable
+    public interface ICompletableScope : IHiddenObjectMembers, IDisposable
     {
-        private readonly IOrmSessionTerminationPolicy terminationPolicy;
-
-        public OperationScope(IOrmSessionTerminationPolicy terminationPolicy = null)
-        {
-            this.terminationPolicy = terminationPolicy ?? new DelayedOrmSessionTerminationPolicy();
-            InternalEnvironment.RegisterOperationScope(this.terminationPolicy);
-        }
-
-        public void Dispose()
-        {
-            terminationPolicy.Dispose();
-            InternalEnvironment.UnregisterOperationScope();
-        }
+        void Complete();
     }
 }

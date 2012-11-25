@@ -16,31 +16,22 @@
 #endregion
 
 using System;
-using Taijutsu.Domain;
 
 namespace Taijutsu.Data.Internal
 {
-    // ReSharper disable UnusedTypeParameter
-    public class MarkingStep<TEntity> : IMarkingStep where TEntity : IDeletableEntity, IAggregateRoot
-    // ReSharper restore UnusedTypeParameter
+    public class ConstructionScope : IDisposable
     {
-        private readonly Func<object> creationFuction;
-        private readonly Action removingAction;
+        private readonly bool previousValue;
 
-        public MarkingStep(Func<object> creationFuction, Action removingAction)
+        public ConstructionScope()
         {
-            this.creationFuction = creationFuction;
-            this.removingAction = removingAction;
+            previousValue = InternalEnvironment.IsInsideConstructionScope;
+            InternalEnvironment.IsInsideConstructionScope = true;
         }
 
-        public object AsCreated()
+        public virtual void Dispose()
         {
-            return creationFuction();
-        }
-
-        public void AsDeleted()
-        {
-            removingAction();
+            InternalEnvironment.IsInsideConstructionScope = previousValue;
         }
     }
 }

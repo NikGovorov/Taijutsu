@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -15,19 +15,19 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using Taijutsu.Domain.Query.Narrowing;
-using Taijutsu.Domain.Query.Option;
+using System.ComponentModel;
 
-namespace Taijutsu.Domain.Query
+namespace Taijutsu.PrevData.Internal
 {
-    public interface IQueryOfEntities<out TEntity> : IQueryOver<TEntity>,
-                                                     IQueryOf<IEnumerable<TEntity>>,
-                                                     IKeyIncludingQuery<IQueryOfEntities<TEntity>>,
-                                                     ITypeExcludingQuery<IQueryOfEntities<TEntity>>,
-                                                     ICountNarrowing,
-                                                     IAnyNarrowing
-        where TEntity : IEntity
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public interface IAdvancedUnitOfWork
     {
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        IDictionary<string, IDisposable> Extension { get; }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        event Action<bool> Closed;
     }
 }

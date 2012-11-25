@@ -1,5 +1,4 @@
 ﻿#region License
-
 // Copyright 2009-2012 Taijutsu.
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
@@ -12,35 +11,16 @@
 //  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 //  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 //  specific language governing permissions and limitations under the License.
-
 #endregion
 
-using System;
 using Taijutsu.Domain;
+using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data.Internal
 {
-    // ReSharper disable UnusedTypeParameter
-    public class MarkingStep<TEntity> : IMarkingStep where TEntity : IDeletableEntity, IAggregateRoot
-    // ReSharper restore UnusedTypeParameter
+    public interface IQueryOverContinuation<TEntity> : IHiddenObjectMembers where TEntity : class, IEntity
     {
-        private readonly Func<object> creationFuction;
-        private readonly Action removingAction;
-
-        public MarkingStep(Func<object> creationFuction, Action removingAction)
-        {
-            this.creationFuction = creationFuction;
-            this.removingAction = removingAction;
-        }
-
-        public object AsCreated()
-        {
-            return creationFuction();
-        }
-
-        public void AsDeleted()
-        {
-            removingAction();
-        }
+        TQuery Using<TQuery>(string name = null) where TQuery : class, IQueryOver<TEntity>;
+        TRepository In<TRepository>(string name = null) where TRepository : class, IRepository<TEntity>;
     }
 }

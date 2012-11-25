@@ -14,7 +14,7 @@
 
 using System;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.PrevData.Internal
 {
     public class ReadOnlyDataContext : IReadOnlyDataContext
     {

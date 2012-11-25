@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright 2009-2012 Taijutsu.
 //    
@@ -15,13 +15,14 @@
 
 #endregion
 
-using Taijutsu.Domain;
+using System.ComponentModel;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu
 {
-    public interface IDataProvider : IReadOnlyDataProvider
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    public interface IHasNativeObject
     {
-        object MarkAsCreated<TEntity>(TEntity entity) where TEntity : IAggregateRoot;
-        void MarkAsRemoved<TEntity>(TEntity entity) where TEntity : IDeletableEntity;
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        object NativeObject { get; }
     }
 }

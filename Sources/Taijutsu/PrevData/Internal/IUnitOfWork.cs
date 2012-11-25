@@ -12,15 +12,11 @@
 // specific language governing permissions and limitations under the License.
 
 using Taijutsu.Domain;
-using Taijutsu.Domain.Query;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.PrevData.Internal
 {
-    public interface IReadOnlyDataProvider
+    public interface IUnitOfWork : Domain.IUnitOfWork
     {
-        object NativeProvider { get; }
-        IQueryOfEntities<TEntity> AllOf<TEntity>() where TEntity : class, IEntity;
-        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key) where TEntity : class, IEntity;
-        IQueryOverBuilder<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity;
+        IQueryOverBuilder<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity;
     }
 }

@@ -13,7 +13,7 @@
 
 using System.Data;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.PrevData.Internal
 {
     public static class IsolationLevelEx
     {

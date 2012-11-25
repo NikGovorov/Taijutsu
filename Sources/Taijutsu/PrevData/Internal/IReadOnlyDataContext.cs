@@ -11,12 +11,19 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using Taijutsu.Domain;
 
-namespace Taijutsu.Data.Internal
+using System;
+
+namespace Taijutsu.PrevData.Internal
 {
-    public interface IUnitOfWork : Domain.IUnitOfWork
+
+    public interface IReadOnlyDataContext : IDisposable
     {
-        IQueryOverBuilder<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity;
+        bool IsRoot { get; }
+        bool IsClosed { get; }
+        IReadOnlyDataProvider ReadOnlyProvider { get; }
+        void Close();
+        void Rollback();
+        void Commit();
     }
 }
