@@ -14,24 +14,23 @@
 using System;
 using Taijutsu.Domain;
 
-namespace Taijutsu.Specs.Domain.Model
+namespace Taijutsu.Test.Domain.Model
 {
-    public class Customer : Entity<Guid>, IRemovableEntity
+    public class Customer : Entity<Guid>, IDeletableEntity
     {
-        protected DateTime dateOfCreation;
+        protected DateTime creationDate;
         protected FullName name;
 
         protected Customer()
         {
         }
 
-        public Customer(Guid key, FullName name)
+        public Customer(Guid id, FullName name)
         {
-            dateOfCreation = SystemTime.Now;
-            entityKey = key;
+            creationDate = SystemTime.Now;
+            this.id = id;
             this.name = name;
         }
-
 
         public Customer(FullName name): this(SeqGuid.NewGuid(), name)
         {
@@ -39,7 +38,7 @@ namespace Taijutsu.Specs.Domain.Model
 
         public virtual DateTime DateOfCreation
         {
-            get { return dateOfCreation; }
+            get { return creationDate; }
         }
 
         public virtual FullName Name

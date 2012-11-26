@@ -71,17 +71,14 @@ namespace Taijutsu.Data.Internal
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        internal static bool CheckDataContextSupervisorForRelease()
+        internal static void CheckDataContextSupervisorForRelease()
         {
             var supervisor = LogicContext.FindData(DataContextSupervisorKey);
 
             if (supervisor != null && !((DataContextSupervisor)supervisor).IsActive && LogicContext.FindData(OperationScopeKey) == null)
             {
                 LogicContext.ReleaseData(DataContextSupervisorKey);
-                return true;
             }
-
-            return false;
         }
 
 
@@ -100,7 +97,7 @@ namespace Taijutsu.Data.Internal
 
             LogicContext.SetData(OperationScopeKey, new object());
 
-            var supervisor = new DataContextSupervisor(() => new ReadOnlyDictionary<string, DataSource>(dataSources));
+            var supervisor = new DataContextSupervisor(() => new ReadOnlyDictionary<string, DataSource>(dataSources), policy);
 
             LogicContext.SetData(DataContextSupervisorKey, supervisor);
         }

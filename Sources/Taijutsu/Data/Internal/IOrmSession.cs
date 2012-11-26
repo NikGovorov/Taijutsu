@@ -23,17 +23,17 @@ namespace Taijutsu.Data.Internal
 {
     public interface IOrmSession : ICompletableScope, IHasNativeObject
     {
-        T As<T>(dynamic options = null) where T : class;
+        T As<T>(object options = null) where T : class;
 
-        object MarkAsCreated<TEntity>(TEntity entity, dynamic options = null) where TEntity : IAggregateRoot;
+        object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
 
-        object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, dynamic options = null) where TEntity : IAggregateRoot;
+        object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
 
-        void MarkAsDeleted<TEntity>(TEntity entity, dynamic options = null) where TEntity : IDeletableEntity;
+        void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
 
-        IQueryOfEntities<TEntity> AllOf<TEntity>(dynamic options) where TEntity : class, IEntity;
+        IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IEntity;
 
-        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, dynamic options) where TEntity : class, IEntity;
+        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IEntity;
 
         IQueryOverContinuation<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity;
     }

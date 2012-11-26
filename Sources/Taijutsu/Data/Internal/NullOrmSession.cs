@@ -31,31 +31,31 @@ namespace Taijutsu.Data.Internal
         {
         }
 
-        public virtual T As<T>(dynamic options = null) where T : class
+        public virtual T As<T>(object options = null) where T : class
         {
             throw new NotSupportedException("NullOrmSession does not support internal services.");
         }
 
-        public object MarkAsCreated<TEntity>(TEntity entity, dynamic options = null) where TEntity : IAggregateRoot
+        public object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
             return new object();
         }
 
-        public object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, dynamic options = null) where TEntity : IAggregateRoot
+        public object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
             return new object();
         }
 
-        public void MarkAsDeleted<TEntity>(TEntity entity, dynamic options = null) where TEntity : IDeletableEntity
+        public void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
         }
 
-        public IQueryOfEntities<TEntity> AllOf<TEntity>(dynamic options = null) where TEntity : class, IEntity
+        public IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IEntity
         {
             throw new NotSupportedException("NullOrmSession does not support queries.");
         }
 
-        public IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, dynamic options = null) where TEntity : class, IEntity
+        public IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IEntity
         {
             throw new NotSupportedException("NullOrmSession does not support queries.");
         }

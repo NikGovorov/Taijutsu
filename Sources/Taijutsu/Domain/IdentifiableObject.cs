@@ -64,17 +64,5 @@ namespace Taijutsu.Domain
         {
             return GetType();
         }
-
-        public static bool operator ==(
-            IdentifiableObject<TIdentifier> left, IdentifiableObject<TIdentifier> right)
-        {
-            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals(right);
-        }
-
-        public static bool operator !=(
-            IdentifiableObject<TIdentifier> left, IdentifiableObject<TIdentifier> right)
-        {
-            return !(left == right);
-        }
     }
 }

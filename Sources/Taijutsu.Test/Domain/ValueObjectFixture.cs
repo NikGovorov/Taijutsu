@@ -1,38 +1,42 @@
-﻿// Copyright 2009-2011 Taijutsu.
+#region License
+
+// Copyright 2009-2012 Taijutsu.
+//    
+//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+//  this file except in compliance with the License. You may obtain a copy of the 
+//  License at 
 //   
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-// this file except in compliance with the License. You may obtain a copy of the 
-// License at 
-//  
-//      http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-// specific language governing permissions and limitations under the License.
+//  http://www.apache.org/licenses/LICENSE-2.0 
+//   
+//  Unless required by applicable law or agreed to in writing, software distributed 
+//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+//  specific language governing permissions and limitations under the License.
+
+#endregion
 
 using NUnit.Framework;
-using Taijutsu.Specs.Domain.Model;
+using Taijutsu.Test.Domain.Model;
 
-namespace Taijutsu.Specs.Domain
+namespace Taijutsu.Test.Domain
 {
-
-    // ReSharper disable InconsistentNaming
-    public class ValueObject_Specs
+    [TestFixture]
+    public class ValueObjectFixture
     {
+
         [Test]
-        public virtual void When_compare_value_objects_they_should_be_compared_by_internal_state()
+        public virtual void ShouldBeComparedByInternalState()
         {
             var name1 = new FullName("Test", "MegaTest");
             var name2 = new FullName("Test", "MegaTest");
-            var name2x = (object) name2;
+            var name2AsObject = (object)name2;
 
             var name3 = new FullName("Test2", "OmegaTest");
             var name4 = new ExFullName("Test2", "OmegaTest", "khsadf");
 
             Assert.IsTrue(name1 == name2);
             Assert.IsTrue(name1.GetHashCode() == name2.GetHashCode());
-            Assert.IsTrue(name1.Equals(name2x));
+            Assert.IsTrue(name1.Equals(name2AsObject));
 
             Assert.IsTrue(name2 != name3);
             Assert.IsTrue(name1 != name3);
@@ -49,7 +53,6 @@ namespace Taijutsu.Specs.Domain
 
             Assert.IsTrue(name5.Equals(name1));
             Assert.IsTrue(name6.Equals(name1));
-
         }
 
         public class ExFullName : FullName
@@ -93,8 +96,5 @@ namespace Taijutsu.Specs.Domain
             {
             }
         }
-
     }
 }
-
-// ReSharper restore InconsistentNaming

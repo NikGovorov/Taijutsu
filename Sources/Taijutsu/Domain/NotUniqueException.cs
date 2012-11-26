@@ -20,23 +20,23 @@ using System;
 namespace Taijutsu.Domain
 {
     [Serializable]
-    public class EntityNotUniqueException<TEntity> : EntityNotUniqueException where TEntity : IEntity
+    public class NotUniqueException<TEntity> : NotUniqueException where TEntity : IEntity
     {
-        public EntityNotUniqueException(object id, Exception innnerException = null)
+        public NotUniqueException(object id, Exception innnerException = null)
             : base(id, typeof (TEntity), innnerException)
         {
         }
 
-        public EntityNotUniqueException(string queryDescription, Exception innnerException = null)
+        public NotUniqueException(string queryDescription, Exception innnerException = null)
             : base(queryDescription, typeof (TEntity), innnerException)
         {
         }
     }
 
     [Serializable]
-    public class EntityNotUniqueException : EntityException
+    public class NotUniqueException : EntityException
     {
-        public EntityNotUniqueException(string queryDescription, Type type, Exception innnerException = null)
+        public NotUniqueException(string queryDescription, Type type, Exception innnerException = null)
             : base(
                 string.Format("Entity of '{1}' type is not unique. Query description: '{0}'.", queryDescription, type),
                 innnerException)
@@ -46,7 +46,7 @@ namespace Taijutsu.Domain
         }
 
 
-        public EntityNotUniqueException(object id, object type, Exception innnerException = null)
+        public NotUniqueException(object id, object type, Exception innnerException = null)
             : base(
                 string.Format("Entity with '{0}' id and '{1}' type is not unique.", id, type),
                 innnerException)

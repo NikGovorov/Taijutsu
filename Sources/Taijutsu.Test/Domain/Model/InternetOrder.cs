@@ -12,20 +12,17 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
-using Taijutsu.Domain;
 
-namespace Taijutsu.Specs.Domain.Model
+namespace Taijutsu.Test.Domain.Model
 {
-    public class Order : Entity<Guid>, IOrder
+    public class InternetOrder: Order
     {
-        public Order()
+        protected internal InternetOrder()
         {
-            entityKey = Guid.NewGuid();
         }
-        
-        public Order(Guid key)
+
+        public InternetOrder(Guid id) : base(id)
         {
-            entityKey = key;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Taijutsu.Data.Internal
             this.name = name;
         }
 
-        public virtual IOrmSession BuildSession(dynamic options)
+        public virtual IOrmSession BuildSession(object options = null)
         {
             using (new ConstructionScope())
             {

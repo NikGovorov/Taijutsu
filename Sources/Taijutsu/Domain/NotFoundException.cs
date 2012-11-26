@@ -20,21 +20,21 @@ using System;
 namespace Taijutsu.Domain
 {
     [Serializable]
-    public class EntityNotFoundException : EntityException
+    public class NotFoundException : EntityException
     {
-        public EntityNotFoundException(object id, Type type, Exception innnerException = null)
+        public NotFoundException(object id, Type type, Exception innnerException = null)
             : this(id, (object) type, innnerException)
         {
         }
 
-        public EntityNotFoundException(object id, object type, Exception innnerException = null)
+        public NotFoundException(object id, object type, Exception innnerException = null)
             : base(string.Format("Entity with '{0}' id and '{1}' type has not been found.", id, type), innnerException)
         {
             entityId = id;
             entityType = type;
         }
 
-        public EntityNotFoundException(string queryDescription, Type type, Exception innnerException = null)
+        public NotFoundException(string queryDescription, Type type, Exception innnerException = null)
             : base(
                 string.Format("Entity of '{1}' type has not been found. Query description: '{0}'.", queryDescription, type),
                 innnerException)
@@ -45,14 +45,14 @@ namespace Taijutsu.Domain
     }
 
     [Serializable]
-    public class EntityNotFoundException<TEntity> : EntityNotFoundException where TEntity : IEntity
+    public class NotFoundException<TEntity> : NotFoundException where TEntity : IEntity
     {
-        public EntityNotFoundException(object id, Exception innnerException = null)
+        public NotFoundException(object id, Exception innnerException = null)
             : base(id, typeof (TEntity), innnerException)
         {
         }
 
-        public EntityNotFoundException(string queryDescription, Exception innnerException = null)
+        public NotFoundException(string queryDescription, Exception innnerException = null)
             : base(queryDescription, typeof (TEntity), innnerException)
         {
         }

@@ -149,37 +149,37 @@ namespace Taijutsu.Data
             return toReturn;
         }
 
-        public virtual object MarkAsCreated<TEntity>(TEntity entity, dynamic options = null) where TEntity : IAggregateRoot
+        public virtual object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotFinished();
             return dataContext.Session.MarkAsCreated(entity, options);
         }
 
-        public virtual object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, dynamic options = null) where TEntity : IAggregateRoot
+        public virtual object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotFinished();
             return dataContext.Session.MarkAsCreated(entityFactory, options);
         }
 
-        public virtual void MarkAsDeleted<TEntity>(TEntity entity, dynamic options = null) where TEntity : IDeletableEntity
+        public virtual void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
             AssertNotFinished();
             dataContext.Session.MarkAsDeleted(entity, options);
         }
 
-        public virtual IQueryOfEntities<TEntity> AllOf<TEntity>(dynamic options = null) where TEntity : class, IQueryableEntity
+        public virtual IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IQueryableEntity
         {
             AssertNotFinished();
             return dataContext.Session.AllOf<TEntity>(options);
         }
 
-        public virtual IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, dynamic options = null) where TEntity : class, IQueryableEntity
+        public virtual IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity
         {
             AssertNotFinished();
-            return dataContext.Session.AllOf<TEntity>(options);
+            return dataContext.Session.UniqueOf<TEntity>(options);
         }
 
-        public virtual IMarkingStep Mark<TEntity>(TEntity entity, dynamic options = null) where TEntity : IDeletableEntity, IAggregateRoot
+        public virtual IMarkingStep Mark<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity, IAggregateRoot
         {
             return new MarkingStep<TEntity>(() => MarkAsCreated(entity, options), () => MarkAsDeleted(entity, options));
         }

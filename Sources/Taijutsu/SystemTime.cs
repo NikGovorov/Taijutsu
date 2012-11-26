@@ -30,6 +30,12 @@ namespace Taijutsu
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void Reset()
+        {
+            controller = new UtcTimeController();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static ITimeController TimeController
         {
             get { return controller; }
@@ -53,8 +59,8 @@ namespace Taijutsu
 
         public void SetDate(DateTime date)
         {
-            var whnStd = DateTime.Now;
-            Func<DateTime> func = () => date + (DateTime.Now - whnStd);
+            var whnStd = DateTime.UtcNow;
+            Func<DateTime> func = () => date + (DateTime.UtcNow - whnStd);
             nowFunc = func;
         }
 
@@ -65,7 +71,7 @@ namespace Taijutsu
 
         public void Reset()
         {
-            nowFunc = () => DateTime.Now;
+            nowFunc = () => DateTime.UtcNow;
         }
     }
 

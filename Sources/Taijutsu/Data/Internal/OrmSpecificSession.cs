@@ -35,7 +35,7 @@ namespace Taijutsu.Data.Internal
             get { return nativeSession; }
         }
 
-        public virtual T As<T>(dynamic options = null) where T : class
+        public virtual T As<T>(object options = null) where T : class
         {
             var native = NativeSession as T;
 
@@ -47,13 +47,13 @@ namespace Taijutsu.Data.Internal
             return native;
         }
 
-        public abstract object MarkAsCreated<TEntity>(TEntity entity, dynamic options = null) where TEntity : IAggregateRoot;
-        public abstract object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, dynamic options = null) where TEntity : IAggregateRoot;
+        public abstract object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
+        public abstract object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
         
-        public abstract void MarkAsDeleted<TEntity>(TEntity entity, dynamic options = null) where TEntity : IDeletableEntity;
+        public abstract void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
         
-        public abstract IQueryOfEntities<TEntity> AllOf<TEntity>(dynamic options) where TEntity : class, IEntity;
-        public abstract IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, dynamic options) where TEntity : class, IEntity;
+        public abstract IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IEntity;
+        public abstract IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IEntity;
         public abstract IQueryOverContinuation<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity;
 
         public abstract void Dispose();

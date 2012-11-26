@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Runtime.Remoting.Messaging;
 
 namespace Taijutsu
@@ -78,7 +79,8 @@ namespace Taijutsu
             context.ReleaseData(name);
         }
 
-        private class DefaultLogicContext : ILogicContext
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public class DefaultLogicContext : ILogicContext
         {
             object ILogicContext.FindData(string name)
             {

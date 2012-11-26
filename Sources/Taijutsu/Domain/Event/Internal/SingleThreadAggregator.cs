@@ -100,7 +100,6 @@ namespace Taijutsu.Domain.Event.Internal
 
         protected virtual IEnumerable<Type> PotentialSubscribers(Type type)
         {
-            //possible covariance interface generating should be also added
             IEnumerable<Type> targetsForType;
             if (!targets.TryGetValue(type, out targetsForType))
             {
@@ -109,7 +108,7 @@ namespace Taijutsu.Domain.Event.Internal
                         EventTypeHierarchy(type).Reverse()).ToArray();
                 CachePotentialSubscribers(type, targetsForType);
             }
-            return targetsForType;
+            return targetsForType as Type[] ?? targetsForType.ToArray();
         }
 
         protected virtual IEnumerable<Type> EventTypeHierarchy(Type type)

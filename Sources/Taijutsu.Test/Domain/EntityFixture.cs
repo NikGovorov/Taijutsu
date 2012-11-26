@@ -1,32 +1,37 @@
-﻿// Copyright 2009-2011 Taijutsu.
+#region License
+
+// Copyright 2009-2012 Taijutsu.
+//    
+//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+//  this file except in compliance with the License. You may obtain a copy of the 
+//  License at 
 //   
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-// this file except in compliance with the License. You may obtain a copy of the 
-// License at 
-//  
-//      http://www.apache.org/licenses/LICENSE-2.0 
-//  
-// Unless required by applicable law or agreed to in writing, software distributed 
-// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-// specific language governing permissions and limitations under the License.
+//  http://www.apache.org/licenses/LICENSE-2.0 
+//   
+//  Unless required by applicable law or agreed to in writing, software distributed 
+//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+//  specific language governing permissions and limitations under the License.
+
+#endregion
 
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Taijutsu.Domain;
-using Taijutsu.Specs.Domain.Model;
+using Taijutsu.Test.Domain.Model;
+using SharpTestsEx;
 
-namespace Taijutsu.Specs.Domain
+namespace Taijutsu.Test.Domain
 {
-    // ReSharper disable InconsistentNaming
-    public class Entity_Specs
+    [TestFixture]
+    public class EntityFixture
     {
         [Test]
-        public virtual void When_compare_entities_they_should_be_compared_by_type_and_key()
+        public virtual void ShouldBeComparedByTypeAndKey()
         {
             var sharedkey = SeqGuid.NewGuid();
-            
+
             var customer = new Customer(sharedkey, new FullName("Nik", "Gov"));
             var customer2 = new Customer(SeqGuid.NewGuid(), new FullName("Nik", "Gov"));
             var customer3 = new Customer(sharedkey, new FullName("Nik", "Gov"));
@@ -38,6 +43,7 @@ namespace Taijutsu.Specs.Domain
             Assert.IsFalse(customer.Equals(customer2));
             Assert.IsFalse(customer.Equals((object)customer2));
             Assert.IsTrue(customer != null);
+            Assert.IsFalse(customer.Equals(null));
 
             Assert.IsTrue(customer == customer3);
             Assert.IsTrue(customer.Equals(customer3));
@@ -45,7 +51,9 @@ namespace Taijutsu.Specs.Domain
 
             Assert.IsTrue(customer != order);
             Assert.IsFalse(customer.Equals(order));
+            // ReSharper disable SuspiciousTypeConversion.Global
             Assert.IsFalse((customer.Equals((object)order)));
+            // ReSharper restore SuspiciousTypeConversion.Global
 
             Assert.IsTrue(order != internetOrder);
             Assert.IsFalse(order.Equals(internetOrder));
@@ -59,11 +67,10 @@ namespace Taijutsu.Specs.Domain
             Assert.IsTrue(product1 != product2);
             Assert.IsTrue(product3 != product2);
             Assert.IsTrue(product4 != product3);
-
         }
 
         [Test]
-        public virtual void When_use_get_hash_code_method_it_should_constant_during_entity_life_period()
+        public virtual void GetHashCodeShouldReturnConstantDuringEntityLifePeriod()
         {
             var key = Guid.NewGuid();
             var set = new HashSet<TestEntity>();
@@ -80,24 +87,30 @@ namespace Taijutsu.Specs.Domain
             Assert.IsTrue(entity == entity2);
         }
 
+        [Test]
+        public virtual void ToStringShouldReturnId()
+        {
+            var sharedkey = SeqGuid.NewGuid();
+            var internetOrder = new InternetOrder(sharedkey);
+            internetOrder.ToString().Should().Be(sharedkey.ToString());
+        }
 
-        class TestEntity: Entity<Guid>
+
+        class TestEntity : Entity<Guid>
         {
             public TestEntity()
             {
             }
 
-            public TestEntity(Guid key)
+            public TestEntity(Guid id)
             {
-                entityKey = key;
+                this.id = id;
             }
 
-            public virtual void SetKey(Guid guid)
-             {
-                 entityKey = guid;
-             }
+            public void SetKey(Guid newId)
+            {
+                id = newId;
+            }
         }
-
     }
-    // ReSharper restore InconsistentNaming
 }
