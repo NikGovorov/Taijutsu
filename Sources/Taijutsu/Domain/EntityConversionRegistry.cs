@@ -21,16 +21,15 @@ namespace Taijutsu.Domain
 {
     public static class EntityConversionRegistry
     {
-        private static IEntityConversion native = new EntityConversion();
+        private static readonly IEntityConversion nativeConversion = new EntityConversion();
         private static IList<IEntityConversion> conversions = new List<IEntityConversion>();
 
-        public static IEntityConversion Native
+        public static IEntityConversion NativeConversion
         {
-            get { return native; }
-            set { native = value; }
+            get { return nativeConversion; }
         }
 
-        public static IEnumerable<IEntityConversion> Custom
+        public static IEnumerable<IEntityConversion> CustomConversions
         {
             get { return conversions; }
         }

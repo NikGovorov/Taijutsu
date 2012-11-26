@@ -62,6 +62,8 @@
     <Compile Include="Data\OperationScope.cs" />
     <Compile Include="Data\UnitOfWork.cs" />
     <Compile Include="Data\UnitOfWorkConfig.cs" />
+    <Compile Include="Domain\AggregateRootEx.cs" />
+    <Compile Include="Domain\DeletableEntityEx.cs" />
     <Compile Include="Domain\Event\Event.cs" />
     <Compile Include="IHasNativeObject.cs" />
     <Compile Include="Domain\AndSpecification.cs" />
@@ -108,7 +110,6 @@
     <Compile Include="Domain\IRepository.cs" />
     <Compile Include="Domain\ISoftDeletable.cs" />
     <Compile Include="Domain\ISpecification.cs" />
-    <Compile Include="Domain\IUnitOfQuery.cs" />
     <Compile Include="Domain\IUnitOfWork.cs" />
     <Compile Include="Domain\IValueObject.cs" />
     <Compile Include="Domain\IVersionedEntity.cs" />

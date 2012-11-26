@@ -47,6 +47,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NSubstitute">
+      <HintPath>..\..\Packages\NSubstitute.1.4.3.0\lib\NET40\NSubstitute.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\Packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -69,6 +72,9 @@
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DatabaseManager.cs" />
+    <Compile Include="Domain\AggregateRootExFixture.cs" />
+    <Compile Include="Domain\DomainObjectExFixture.cs" />
+    <Compile Include="Domain\DeletableEntityExFixture.cs" />
     <Compile Include="Domain\EntityConversionFixture.cs" />
     <Compile Include="Domain\EntityFixture.cs" />
     <Compile Include="Domain\Model\Customer.cs" />

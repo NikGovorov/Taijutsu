@@ -40,18 +40,4 @@ namespace Taijutsu.Domain
         object AsCreated();
         void AsDeleted();
     }
-
-
-    public static class UnitOfWorkEntityEx
-    {
-        public static object AsCreatedIn(this IAggregateRoot entity, IUnitOfWork uow)
-        {
-            return uow.MarkAsCreated(entity);
-        }
-
-        public static void AsDeletedIn(this IDeletableEntity entity, IUnitOfWork uow)
-        {
-            uow.MarkAsDeleted(entity);
-        }
-    }
 }

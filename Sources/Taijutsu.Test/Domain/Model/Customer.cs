@@ -21,7 +21,7 @@ namespace Taijutsu.Test.Domain.Model
         protected DateTime creationDate;
         protected FullName name;
 
-        protected Customer()
+        protected internal Customer()
         {
         }
 
@@ -36,7 +36,7 @@ namespace Taijutsu.Test.Domain.Model
         {
         }
 
-        public virtual DateTime DateOfCreation
+        public virtual DateTime CreationDate
         {
             get { return creationDate; }
         }
