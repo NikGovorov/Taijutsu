@@ -43,6 +43,7 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ActionEx.cs" />
     <Compile Include="Data\EventAggregatorEx.cs" />
     <Compile Include="Data\Internal\ConstructionScope.cs" />
     <Compile Include="Data\Internal\DataContext.cs" />

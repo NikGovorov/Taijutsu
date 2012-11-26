@@ -28,13 +28,13 @@ namespace Taijutsu
         private static readonly object sync = new object();
 
         // ReSharper disable ParameterHidesMember
-        public static void Initialize(ILogicContext context)
+        public static void Customize(ILogicContext context)
         {
             lock (sync)
             {
                 if (initialized)
                 {
-                    throw new Exception("Context has been already initialized. Any method call causes to initialization of the context. Context can be initialized only once.");
+                    throw new Exception("Context has been already initialized. Any method call causes to initialization of the context. Context can be customized only once before initialization.");
                 }
             
                 initialized = true;
@@ -77,6 +77,13 @@ namespace Taijutsu
             CheckInitialization();
 
             context.ReleaseData(name);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal static void Reset()
+        {
+            initialized = false;
+            context= new DefaultLogicContext();
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]

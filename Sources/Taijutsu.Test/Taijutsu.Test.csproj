@@ -71,12 +71,14 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ActionExFixture.cs" />
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="Domain\AggregateRootExFixture.cs" />
     <Compile Include="Domain\DomainObjectExFixture.cs" />
     <Compile Include="Domain\DeletableEntityExFixture.cs" />
     <Compile Include="Domain\EntityConversionFixture.cs" />
     <Compile Include="Domain\EntityFixture.cs" />
+    <Compile Include="Domain\EventAggregatorFixture.cs" />
     <Compile Include="Domain\Model\Customer.cs" />
     <Compile Include="Domain\Model\FullName.cs" />
     <Compile Include="Domain\Model\InternetOrder.cs" />

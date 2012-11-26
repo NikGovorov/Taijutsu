@@ -16,13 +16,22 @@
 #endregion
 
 using System.Threading;
+using NSubstitute;
 using NUnit.Framework;
+using SharpTestsEx;
 
 namespace Taijutsu.Test
 {
     [TestFixture]
     public class LogicContextFixture
     {
+
+        [SetUp]
+        protected void OnSetUp()
+        {
+            LogicContext.Reset();
+        }
+
         [Test]
         public virtual void NotExistingDataShouldNotBeAccessible()
         {
@@ -49,7 +58,7 @@ namespace Taijutsu.Test
         }
 
         [Test]
-        public virtual void ContextShouldAutomaticallyReleaseDataWhenThreadIsReturnedToThePool()
+        public virtual void ShouldAutomaticallyReleaseDataWhenThreadIsReturnedToThePool()
         {
             try
             {
@@ -89,8 +98,28 @@ namespace Taijutsu.Test
                 ThreadPool.SetMinThreads(2, 2);
                 ThreadPool.SetMaxThreads(1023, 1000);
             }
-        } 
+        }
 
+
+        [Test]
+        public virtual void ShouldBeCustomizable()
+        {
+            var data = new object();
+            var context = Substitute.For<ILogicContext>();
+            context.FindData("Test").Returns(data);
+
+            LogicContext.Customize(context);
+
+            LogicContext.SetData("Test", data);
+            LogicContext.FindData("Test").Should().Be.SameInstanceAs(data);
+            LogicContext.ReleaseData("Test");
+
+            context.Received(1).FindData("Test");
+            context.Received(1).ReleaseData("Test");
+            context.Received(1).SetData("Test", data);
+
+            Assert.That(() => LogicContext.Customize(context), Throws.Exception);
+        }
 
     }
 }
