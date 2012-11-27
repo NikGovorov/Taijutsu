@@ -26,8 +26,8 @@ namespace Taijutsu.Test
     public class LogicContextFixture
     {
 
-        [SetUp]
-        protected void OnSetUp()
+        [TearDown]
+        protected void OnTearDown()
         {
             LogicContext.Reset();
         }
