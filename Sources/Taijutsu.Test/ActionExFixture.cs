@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright 2009-2012 Taijutsu.
+// Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 //  this file except in compliance with the License. You may obtain a copy of the 
@@ -21,7 +21,6 @@ using SharpTestsEx;
 
 namespace Taijutsu.Test
 {
-    [TestFixture]
     public class ActionExFixture
     {
         [TestFixture]
@@ -30,8 +29,8 @@ namespace Taijutsu.Test
             [Test]
             public virtual void ShouldReturnActionWrappedWithDisposable()
             {
-                var calledCounter = 0;
-                Action action = () => calledCounter++;
+                var callCounter = 0;
+                Action action = () => callCounter++;
 
                 var disposable = action.AsDisposable();
 
@@ -42,7 +41,7 @@ namespace Taijutsu.Test
 
                 disposable.Dispose();
 
-                calledCounter.Should().Be(2);
+                callCounter.Should().Be(2);
             }
         }
     }

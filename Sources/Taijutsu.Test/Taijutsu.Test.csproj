@@ -73,18 +73,33 @@
     </Compile>
     <Compile Include="ActionExFixture.cs" />
     <Compile Include="DatabaseManager.cs" />
+    <Compile Include="Domain\AddressedToSyntaxFixture.cs">
+      <DependentUpon>EventAggregatorFixture.cs</DependentUpon>
+    </Compile>
     <Compile Include="Domain\AggregateRootExFixture.cs" />
     <Compile Include="Domain\DomainObjectExFixture.cs" />
     <Compile Include="Domain\DeletableEntityExFixture.cs" />
+    <Compile Include="Domain\DueToSyntaxFixture.cs">
+      <DependentUpon>EventAggregatorFixture.cs</DependentUpon>
+    </Compile>
     <Compile Include="Domain\EntityConversionFixture.cs" />
     <Compile Include="Domain\EntityFixture.cs" />
     <Compile Include="Domain\EventAggregatorFixture.cs" />
+    <Compile Include="Domain\InitiatedBySyntaxFixture.cs">
+      <DependentUpon>EventAggregatorFixture.cs</DependentUpon>
+    </Compile>
     <Compile Include="Domain\Model\Customer.cs" />
+    <Compile Include="Domain\Model\ModuleEvent.cs" />
+    <Compile Include="Domain\Model\SystemEvent.cs" />
     <Compile Include="Domain\Model\FullName.cs" />
     <Compile Include="Domain\Model\InternetOrder.cs" />
     <Compile Include="Domain\Model\IOrder.cs" />
+    <Compile Include="Domain\Model\LimitReached.cs" />
     <Compile Include="Domain\Model\Order.cs" />
     <Compile Include="Domain\Model\Product.cs" />
+    <Compile Include="Domain\Model\SystemEventHandler.cs" />
+    <Compile Include="Domain\Model\UserBlocked.cs" />
+    <Compile Include="Domain\NotFoundExceptionFixture.cs" />
     <Compile Include="Domain\SpecificationFixture.cs" />
     <Compile Include="Domain\ValueObjectFixture.cs" />
     <Compile Include="HybridLogicContextFixture.cs" />

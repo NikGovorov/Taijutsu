@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright 2009-2012 Taijutsu.
+// Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 //  this file except in compliance with the License. You may obtain a copy of the 
@@ -23,6 +23,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using SharpTestsEx;
 using Taijutsu.Domain.Event;
+using Taijutsu.Test.Domain.Model;
 
 namespace Taijutsu.Test.Domain
 {
@@ -62,16 +63,16 @@ namespace Taijutsu.Test.Domain
         [Test]
         public virtual void GlobalInstanceShouldBeDefault()
         {
-            var calledCounter = 0;
+            var callCounter = 0;
 
-            using (EventAggregator.Subscribe<Event>(ev => calledCounter++).AsDisposable())
+            using (EventAggregator.Subscribe<SystemEvent>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new Event()); //+1
-                EventAggregator.Publish(new Event()); //+1
-                EventAggregator.Local.Publish(new Event());
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Local.Publish(new SystemEvent());
             }
 
-            calledCounter.Should().Be(2);
+            callCounter.Should().Be(2);
         }
 
         [Test]
@@ -90,7 +91,7 @@ namespace Taijutsu.Test.Domain
                 //start many publishers
                 for (var i = 0; i < 250; i++)
                 {
-                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new Event())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
+                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new SystemEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                 }
 
                 //start many subscribers
@@ -106,7 +107,7 @@ namespace Taijutsu.Test.Domain
                 //start many publishers
                 for (var i = 0; i < 250; i++)
                 {
-                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new DerivedEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
+                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new ModuleEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                 }
 
                 Task.WaitAll(subscribeTasks.Union(publishTasks).ToArray());
@@ -122,11 +123,11 @@ namespace Taijutsu.Test.Domain
                 {
                     var action = unsubscribeAction;
                     //start publisher
-                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new DerivedEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
+                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new ModuleEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                     //start unsubscriber
                     unsubscribTasks.Add(Task.Factory.StartNew(action).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                     //start publisher
-                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new Event())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
+                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new SystemEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                     //start subscriber
                     subscribeTasks.Add(Task.Factory.StartNew(() =>
                     {
@@ -153,126 +154,154 @@ namespace Taijutsu.Test.Domain
             }
         }
 
-
         // ReSharper disable AccessToModifiedClosure
         [Test]
         public virtual void BasicSubscribeUnsubsribeShouldWork()
         {
-            var calledCounter = 0;
+            var callCounter = 0;
 
-            var unsubscribe = EventAggregator.Subscribe<Event>(ev => calledCounter++);
-            EventAggregator.Publish(new Event()); //+1
-            EventAggregator.Publish(new Event()); //+1
-            EventAggregator.Local.Publish(new Event());
-            unsubscribe();
-            calledCounter.Should().Be(2);
-            EventAggregator.Publish(new Event());
-            calledCounter.Should().Be(2);
-            calledCounter = 0;
-
-            EventAggregator.Subscribe<Event>(ev => calledCounter++);
-            EventAggregator.Subscribe<Event>(ev => calledCounter++);
-            ((IDisposable)EventAggregator.Global).Dispose();
-            EventAggregator.Publish(new Event());
-            calledCounter.Should().Be(0);
-
-            using (EventAggregator.Local.Subscribe<Event>(ev => calledCounter++).AsDisposable())
+            using (EventAggregator.Subscribe<SystemEvent>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new Event()); //+1
-                EventAggregator.Publish(new Event()); //+1
-
-                EventAggregator.Local.Publish(new Event()); //+1    
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Local.Publish(new SystemEvent());
             }
-            calledCounter.Should().Be(3);
-            calledCounter = 0;
+            callCounter.Should().Be(2);
 
-            EventAggregator.Local.Subscribe<Event>(ev => calledCounter++);
-            EventAggregator.Local.Subscribe<Event>(ev => calledCounter++);
+            EventAggregator.Publish(new SystemEvent());
+
+            callCounter.Should().Be(2);
+
+            callCounter = 0;
+
+            EventAggregator.Subscribe<SystemEvent>(ev => callCounter++);
+            EventAggregator.Subscribe<SystemEvent>(ev => callCounter++);
+            ((IDisposable)EventAggregator.Global).Dispose();
+            EventAggregator.Publish(new SystemEvent());
+            callCounter.Should().Be(0);
+
+            using (EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++).AsDisposable())
+            {
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Publish(new SystemEvent()); //+1
+
+                EventAggregator.Local.Publish(new SystemEvent()); //+1    
+            }
+            callCounter.Should().Be(3);
+
+            EventAggregator.Publish(new SystemEvent());
+
+            callCounter.Should().Be(3);
+
+            callCounter = 0;
+
+            EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++);
+            EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++);
             ((IDisposable)EventAggregator.Local).Dispose();
-            EventAggregator.Publish(new Event());
-            EventAggregator.Local.Publish(new Event());
-            calledCounter.Should().Be(0);
+            EventAggregator.Publish(new SystemEvent());
+            EventAggregator.Local.Publish(new SystemEvent());
+            callCounter.Should().Be(0);
+
+            var handler = new SystemEventHandler();
+            using (EventAggregator.Subscribe(handler).AsDisposable())
+            {
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Local.Publish(new SystemEvent());
+            }
+            handler.CallCounter.Should().Be(2);
+
+            EventAggregator.Publish(new SystemEvent());
+
+            handler.CallCounter.Should().Be(2);
+
+            handler = new SystemEventHandler();
+            using (EventAggregator.OnStreamOf<SystemEvent>().Subscribe(handler).AsDisposable())
+            {
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Local.Publish(new SystemEvent());
+            }
+            handler.CallCounter.Should().Be(2);
+
+            EventAggregator.Publish(new SystemEvent());
+
+            handler.CallCounter.Should().Be(2);
         }
 
         [Test]
         public virtual void BasicFilteringAndProjectionShouldWork()
         {
-            var calledCounter = 0;
+            var callCounter = 0;
 
-            using (EventAggregator.OnStreamOf<Event>().Where(ev => ev.Amount == 100).Subscribe(ev => calledCounter++).AsDisposable())
+            using (EventAggregator.OnStreamOf<SystemEvent>().Where(ev => ev.HealthLevel == 100).Subscribe(ev => { callCounter++; ev.HealthLevel.Should().Be(100); }).AsDisposable())
             {
-                EventAggregator.Publish(new Event(99));
-                EventAggregator.Publish(new Event(100)); //+1
-                EventAggregator.Publish(new Event(100)); //+1
+                EventAggregator.Publish(new SystemEvent(99));
+                EventAggregator.Publish(new SystemEvent(100)); //+1
+                EventAggregator.Publish(new SystemEvent(100)); //+1
             }
-            calledCounter.Should().Be(2);
+            callCounter.Should().Be(2);
 
-            calledCounter = 0;
+            callCounter = 0;
 
-            using (EventAggregator.OnStreamOf<Event>().Where(ev => ev.Amount > 98).Select(ev => ev.Amount).Where(amount => amount == 100).Subscribe(amount => { calledCounter++; amount.Should().Be(100); }).AsDisposable())
+            using (EventAggregator.OnStreamOf<SystemEvent>().Where(ev => ev.HealthLevel > 98).Select(ev => ev.HealthLevel)
+                    .Where(amount => amount == 100).Subscribe(amount => { callCounter++; amount.Should().Be(100); }).AsDisposable())
             {
-                EventAggregator.Publish(new Event(98));
-                EventAggregator.Publish(new Event(99));
-                EventAggregator.Publish(new Event(100)); //+1
-                EventAggregator.Publish(new Event(100)); //+1
+                EventAggregator.Publish(new SystemEvent(98));
+                EventAggregator.Publish(new SystemEvent(99));
+                EventAggregator.Publish(new SystemEvent(100)); //+1
+                EventAggregator.Publish(new SystemEvent(100)); //+1
             }
-            calledCounter.Should().Be(2);
+            callCounter.Should().Be(2);
+
+            var handler = new SystemEventHandler();
+
+            using (EventAggregator.OnStreamOf<SystemEvent>().Where(ev => ev.HealthLevel > 98).Select(ev => ev)
+                    .Where(ev => ev.HealthLevel == 100).Subscribe(handler).AsDisposable())
+            {
+                EventAggregator.Publish(new SystemEvent(98));
+                EventAggregator.Publish(new SystemEvent(99));
+                EventAggregator.Publish(new SystemEvent(100)); //+1
+                EventAggregator.Publish(new SystemEvent(100)); //+1
+            }
+            handler.CallCounter.Should().Be(2);
         }
 
         [Test]
         public virtual void BasicPolymorphismShouldWork()
         {
-            var calledCounter = 0;
+            var callCounter = 0;
 
-            using (EventAggregator.Subscribe<IEvent>(ev => calledCounter++).AsDisposable())
+            using (EventAggregator.Subscribe<IEvent>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new Event()); //+1
-                EventAggregator.Publish(new DerivedEvent()); //+1
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Publish(new ModuleEvent()); //+1
             }
-            calledCounter.Should().Be(2);
+            callCounter.Should().Be(2);
 
-            calledCounter = 0;
+            callCounter = 0;
 
-            using (EventAggregator.Subscribe<Event>(ev => calledCounter++).AsDisposable())
+            using (EventAggregator.Subscribe<SystemEvent>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new Event()); //+1
-                EventAggregator.Publish(new DerivedEvent()); //+1
-            }
-
-            calledCounter.Should().Be(2);
-
-            calledCounter = 0;
-
-            using (EventAggregator.Subscribe<DerivedEvent>(ev => calledCounter++).AsDisposable())
-            {
-                EventAggregator.Publish(new Event());
-                EventAggregator.Publish(new DerivedEvent()); //+1
+                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Publish(new ModuleEvent()); //+1
             }
 
-            calledCounter.Should().Be(1);
+            callCounter.Should().Be(2);
 
-            calledCounter = 0;
+            callCounter = 0;
+
+            using (EventAggregator.Subscribe<ModuleEvent>(ev => callCounter++).AsDisposable())
+            {
+                EventAggregator.Publish(new SystemEvent());
+                EventAggregator.Publish(new ModuleEvent()); //+1
+            }
+
+            callCounter.Should().Be(1);
+
+            callCounter = 0;
         }
+        
         // ReSharper restore AccessToModifiedClosure
-
-        public class Event : IEvent
-        {
-            public Event(int amount = 0)
-            {
-                Amount = amount;
-                OccurrenceDate = SystemTime.Now;
-            }
-
-            public int Amount { get; set; }
-            public DateTime OccurrenceDate { get; set; }
-        }
-
-        public class DerivedEvent : Event
-        {
-            public DerivedEvent(int amount = 0)
-                : base(amount)
-            {
-            }
-        }
     }
 }

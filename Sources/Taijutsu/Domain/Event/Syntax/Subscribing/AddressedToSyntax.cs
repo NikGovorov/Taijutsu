@@ -1,6 +1,6 @@
 #region License
 
-// Copyright 2009-2012 Taijutsu.
+// Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 //  this file except in compliance with the License. You may obtain a copy of the 
@@ -57,8 +57,9 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
 
             SubscriptionSyntax.All<IFactEvent<TFact>> All.DueTo<TFact>()
             {
-                return new SubscriptionSyntax.AllImpl<IFactEvent<TFact>>(addHadlerAction, 
-                    recipientTypes.Select<Type,Func<IFactEvent<TFact>, bool>>(t => e => t.IsInstanceOfType(e)));
+                Func<IFactEvent<TFact>, bool> typeFilter = ev => recipientTypes.Any(t => t.IsInstanceOfType(ev));
+
+                return new SubscriptionSyntax.AllImpl<IFactEvent<TFact>>(addHadlerAction, new[] { typeFilter });
             }
         }
 

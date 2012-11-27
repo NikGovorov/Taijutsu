@@ -1,6 +1,6 @@
 #region License
 
-// Copyright 2009-2012 Taijutsu.
+//  Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 //  this file except in compliance with the License. You may obtain a copy of the 
@@ -17,8 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace Taijutsu.Domain.Event.Internal
 {
@@ -26,67 +24,43 @@ namespace Taijutsu.Domain.Event.Internal
     {
         private readonly object sync = new object();
 
-        protected override void CachePotentialSubscribers(Type type, IEnumerable<Type> potentialSubscribers)
-        {
-            if (type == null)
-            {
-                throw new ArgumentNullException("type");
-            }
-
-            if (potentialSubscribers == null)
-            {
-                throw new ArgumentNullException("potentialSubscribers");
-            }
-
-            // ReSharper disable ImplicitlyCapturedClosure
-            Task.Factory
-                .StartNew(() =>
-                {
-                    var newTargets = new Dictionary<Type, IEnumerable<Type>>(targets);
-                    newTargets[type] = potentialSubscribers;
-                    targets = newTargets;
-                })
-                .ContinueWith(t => Trace.TraceError(t.Exception == null ? string.Format("Error occurred during caching event subscribers for '{0}'.", type) : t.Exception.ToString()), 
-                              TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
-            // ReSharper restore ImplicitlyCapturedClosure
-        }
-
         protected override Action Subscribe(IInternalEventHandler handler)
         {
             lock (sync)
             {
-                IList<IInternalEventHandler> handlers;
-                if (!handlersDictionary.TryGetValue(handler.EventType, out handlers))
+                IList<IInternalEventHandler> internalEventHandlers;
+                if (!Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
                 {
-                    var newHandlersDictionary = new Dictionary<Type, IList<IInternalEventHandler>>(handlersDictionary)
+                    var newHandlers = new Dictionary<Type, IList<IInternalEventHandler>>(Handlers)
                         {
                             {handler.EventType, new List<IInternalEventHandler> {handler}}
                         };
-                    handlersDictionary = newHandlersDictionary;
+
+                    Handlers = newHandlers;
                 }
                 else
                 {
-                    var newHandlers = new List<IInternalEventHandler>(handlers) {handler};
-                    handlersDictionary[handler.EventType] = newHandlers;
+                    var newInternalEventHandlers = new List<IInternalEventHandler>(internalEventHandlers) {handler};
+                    Handlers[handler.EventType] = newInternalEventHandlers;
                 }
             }
 
-            return GenerateUnsubscriptionAction(handler);
+            return UnsubscriptionAction(handler);
         }
 
-        protected override Action GenerateUnsubscriptionAction(IInternalEventHandler handler)
+        protected override Action UnsubscriptionAction(IInternalEventHandler handler)
         {
             return delegate
                 {
                     lock (sync)
                     {
-                        IList<IInternalEventHandler> handlers;
-                        if (handlersDictionary.TryGetValue(handler.EventType, out handlers))
+                        IList<IInternalEventHandler> internalEventHandlers;
+                        if (Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
                         {
-                            var newHandlers = new List<IInternalEventHandler>(handlers);
-                            if (newHandlers.Remove(handler))
+                            var newInternalEventHandlers = new List<IInternalEventHandler>(internalEventHandlers);
+                            if (newInternalEventHandlers.Remove(handler))
                             {
-                                handlersDictionary[handler.EventType] = newHandlers;
+                                Handlers[handler.EventType] = newInternalEventHandlers;
                             }
                         }
                     }
@@ -97,7 +71,7 @@ namespace Taijutsu.Domain.Event.Internal
         {
             lock (sync)
             {
-                handlersDictionary = new Dictionary<Type, IList<IInternalEventHandler>>();
+                Handlers = new Dictionary<Type, IList<IInternalEventHandler>>();
             }
         }
     }

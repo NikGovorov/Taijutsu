@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright 2009-2012 Taijutsu.
+//  Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 //  this file except in compliance with the License. You may obtain a copy of the 
@@ -17,17 +17,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Taijutsu.Domain.Event.Syntax.Subscribing;
+using DueToSyntax = Taijutsu.Domain.Event.Syntax.Publishing.DueToSyntax;
 
 namespace Taijutsu.Domain.Event.Internal
 {
     public class SingleThreadAggregator : IEventAggregator, IEventStream, IEventStreamFilter, IDisposable
     {
-        protected IDictionary<Type, IList<IInternalEventHandler>> handlersDictionary =
-            new Dictionary<Type, IList<IInternalEventHandler>>();
+        private static readonly object sync = new object();
 
-        protected IDictionary<Type, IEnumerable<Type>> targets = new Dictionary<Type, IEnumerable<Type>>();
+        private static IDictionary<Type, IEnumerable<Type>> targets = new Dictionary<Type, IEnumerable<Type>>();
+
+        private IDictionary<Type, IList<IInternalEventHandler>> handlers = new Dictionary<Type, IList<IInternalEventHandler>>();
+
+        protected virtual IDictionary<Type, IList<IInternalEventHandler>> Handlers
+        {
+            get { return handlers; }
+            set { handlers = value; }
+        }
+
+        protected virtual IDictionary<Type, IEnumerable<Type>> Targets
+        {
+            get { return targets; }
+            set { targets = value; }
+        }
 
         public virtual IEventStream OnStream
         {
@@ -39,12 +55,14 @@ namespace Taijutsu.Domain.Event.Internal
             return OnStream.Of<TEvent>();
         }
 
-        public virtual Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
+        public virtual Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0)
+            where TEvent : class, IEvent
         {
             return OnStream.Of<TEvent>().Subscribe(subscriber, priority);
         }
 
-        public virtual  Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
+        public virtual Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0)
+            where TEvent : class, IEvent
         {
             return OnStream.Of<TEvent>().Subscribe(subscriber, priority);
         }
@@ -53,12 +71,14 @@ namespace Taijutsu.Domain.Event.Internal
         {
             var eventHandlers = new List<IInternalEventHandler>();
 
-            foreach (var targetType in PotentialSubscribers(ev.GetType()))
+            var potentialSubscriberTypes = PotentialSubscriberTypes(ev.GetType());
+
+            foreach (var targetType in potentialSubscriberTypes)
             {
-                IList<IInternalEventHandler> localHandlers;
-                if (handlersDictionary.TryGetValue(targetType, out localHandlers))
+                IList<IInternalEventHandler> internalEventHandlers;
+                if (Handlers.TryGetValue(targetType, out internalEventHandlers))
                 {
-                    eventHandlers.AddRange(localHandlers);
+                    eventHandlers.AddRange(internalEventHandlers);
                 }
             }
 
@@ -68,14 +88,14 @@ namespace Taijutsu.Domain.Event.Internal
             }
         }
 
-        Syntax.Publishing.DueToSyntax.Init<TFact> IEventAggregator.DueTo<TFact>(TFact fact)
+        DueToSyntax.Init<TFact> IEventAggregator.DueTo<TFact>(TFact fact)
         {
-            return new Syntax.Publishing.DueToSyntax.InitImpl<TFact>(Publish, fact, null, null);
+            return new DueToSyntax.InitImpl<TFact>(Publish, fact, null, null);
         }
 
-        DueToSyntax.Init<TFact> IEventStreamFilter.DueTo<TFact>()
+        Syntax.Subscribing.DueToSyntax.Init<TFact> IEventStreamFilter.DueTo<TFact>()
         {
-            return new DueToSyntax.InitImpl<TFact>(Subscribe);
+            return new Syntax.Subscribing.DueToSyntax.InitImpl<TFact>(Subscribe);
         }
 
         InitiatedBySyntax.Init<TEntity> IEventStreamFilter.InitiatedBy<TEntity>()
@@ -98,15 +118,19 @@ namespace Taijutsu.Domain.Event.Internal
             return new SubscriptionSyntax.AllImpl<TEvent>(Subscribe);
         }
 
-        protected virtual IEnumerable<Type> PotentialSubscribers(Type type)
+        protected virtual IEnumerable<Type> PotentialSubscriberTypes(Type type)
         {
             IEnumerable<Type> targetsForType;
-            if (!targets.TryGetValue(type, out targetsForType))
+
+            if (!Targets.TryGetValue(type, out targetsForType))
             {
                 targetsForType =
-                    type.GetInterfaces().Where(i => typeof (IEvent).IsAssignableFrom(i)).Union(
-                        EventTypeHierarchy(type).Reverse()).ToArray();
-                CachePotentialSubscribers(type, targetsForType);
+                    type.GetInterfaces()
+                        .Where(i => typeof (IEvent).IsAssignableFrom(i))
+                        .Union(EventTypeHierarchy(type).Reverse())
+                        .ToArray();
+
+                CachePotentialSubscriberTypes(type, targetsForType);
             }
             return targetsForType as Type[] ?? targetsForType.ToArray();
         }
@@ -123,34 +147,61 @@ namespace Taijutsu.Domain.Event.Internal
             }
         }
 
-        protected virtual void CachePotentialSubscribers(Type type, IEnumerable<Type> potentialSubscribers)
+        protected virtual void CachePotentialSubscriberTypes(Type type, IEnumerable<Type> potentialSubscriberTypes)
         {
-            targets[type] = potentialSubscribers;
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            if (potentialSubscriberTypes == null)
+            {
+                throw new ArgumentNullException("potentialSubscriberTypes");
+            }
+
+            // ReSharper disable ImplicitlyCapturedClosure
+            Task.Factory.StartNew(() =>
+                {
+                    lock (sync)
+                    {
+                        if (!Targets.ContainsKey(type))
+                        {
+                            var newTargets = new Dictionary<Type, IEnumerable<Type>>(Targets);
+                            newTargets[type] = potentialSubscriberTypes;
+                            Targets = newTargets;                            
+                        }
+                    }
+                })
+                .ContinueWith(t =>
+                    Trace.TraceError(t.Exception == null ? string.Format("Error occurred during caching event subscribers for '{0}'.", type): t.Exception.ToString()),
+                    TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+            // ReSharper restore ImplicitlyCapturedClosure
         }
 
         protected virtual Action Subscribe(IInternalEventHandler handler)
         {
-            IList<IInternalEventHandler> handlers;
-            if (!handlersDictionary.TryGetValue(handler.EventType, out handlers))
+            IList<IInternalEventHandler> internalEventHandlers;
+
+            if (!Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
             {
-                handlersDictionary.Add(handler.EventType, new List<IInternalEventHandler> {handler});
+                Handlers.Add(handler.EventType, new List<IInternalEventHandler> { handler });
             }
             else
             {
-                handlers.Add(handler);
+                internalEventHandlers.Add(handler);
             }
 
-            return GenerateUnsubscriptionAction(handler);
+            return UnsubscriptionAction(handler);
         }
 
-        protected virtual Action GenerateUnsubscriptionAction(IInternalEventHandler handler)
+        protected virtual Action UnsubscriptionAction(IInternalEventHandler handler)
         {
             return delegate
                 {
-                    IList<IInternalEventHandler> handlers;
-                    if (handlersDictionary.TryGetValue(handler.EventType, out handlers))
+                    IList<IInternalEventHandler> internalEventHandlers;
+                    if (Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
                     {
-                        handlers.Remove(handler);
+                        internalEventHandlers.Remove(handler);
                     }
                 };
         }
@@ -162,8 +213,7 @@ namespace Taijutsu.Domain.Event.Internal
 
         protected virtual void Dispose()
         {
-            handlersDictionary.Clear();
+            Handlers.Clear();
         }
-
     }
 }

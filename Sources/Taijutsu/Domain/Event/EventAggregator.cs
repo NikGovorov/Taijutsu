@@ -1,6 +1,6 @@
 #region License
 
-// Copyright 2009-2012 Taijutsu.
+// Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 //  this file except in compliance with the License. You may obtain a copy of the 
@@ -52,18 +52,18 @@ namespace Taijutsu.Domain.Event
 
         public static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
         {
-            return globalEventAggregator.OnStream.Of<TEvent>();
+            return globalEventAggregator.OnStreamOf<TEvent>();
         }
 
         public static Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
         {
-            return globalEventAggregator.OnStream.Of<TEvent>().Subscribe(subscriber, priority);
+            return globalEventAggregator.Subscribe(subscriber, priority);
         }
 
         public static Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0)
             where TEvent : class, IEvent
         {
-            return globalEventAggregator.OnStream.Of<TEvent>().Subscribe(subscriber, priority);
+            return globalEventAggregator.Subscribe(subscriber, priority);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
