@@ -87,6 +87,7 @@
     <Compile Include="Domain\Model\Product.cs" />
     <Compile Include="Domain\SpecificationFixture.cs" />
     <Compile Include="Domain\ValueObjectFixture.cs" />
+    <Compile Include="HybridLogicContextFixture.cs" />
     <Compile Include="LogicContextFixture.cs" />
     <Compile Include="MaybeFixture.cs" />
     <Compile Include="SeqGuidFixture.cs" />

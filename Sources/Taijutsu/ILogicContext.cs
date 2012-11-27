@@ -24,5 +24,7 @@ namespace Taijutsu
         void SetData(string name, object value);
 
         void ReleaseData(string name);
+        
+        bool IsApplicable();
     }
 }

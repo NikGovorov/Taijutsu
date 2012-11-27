@@ -100,7 +100,6 @@ namespace Taijutsu.Test
             }
         }
 
-
         [Test]
         public virtual void ShouldBeCustomizable()
         {

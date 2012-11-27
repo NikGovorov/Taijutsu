@@ -16,7 +16,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.Remoting.Messaging;
 
 namespace Taijutsu
@@ -85,24 +87,75 @@ namespace Taijutsu
             initialized = false;
             context= new DefaultLogicContext();
         }
+    }
 
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public class DefaultLogicContext : ILogicContext
+    public class DefaultLogicContext : ILogicContext
+    {
+        object ILogicContext.FindData(string name)
         {
-            object ILogicContext.FindData(string name)
+            return CallContext.GetData(name);
+        }
+
+        void ILogicContext.SetData(string name, object value)
+        {
+            CallContext.SetData(name, value);
+        }
+
+        void ILogicContext.ReleaseData(string name)
+        {
+            CallContext.FreeNamedDataSlot(name);
+        }
+
+        bool ILogicContext.IsApplicable()
+        {
+            return true;
+        }
+    }
+
+    public class HybridLogicContext : ILogicContext
+    {
+        readonly IEnumerable<ILogicContext> contexts;
+
+        public HybridLogicContext(IEnumerable<ILogicContext> contexts)
+        {
+            this.contexts = contexts.ToList();
+
+            if (this.contexts == null || !this.contexts.Any())
             {
-                return CallContext.GetData(name);
+                throw new ArgumentNullException("contexts");
+            }
+        }
+
+        protected virtual ILogicContext DetermineContext()
+        {
+            var context =  contexts.FirstOrDefault(c => c.IsApplicable());
+            
+            if (context == null)
+            {
+                throw new Exception("Unable to determine context implementation in the current runtime environment.");    
             }
 
-            void ILogicContext.SetData(string name, object value)
-            {
-                CallContext.SetData(name, value);
-            }
+            return context;
+        }
 
-            void ILogicContext.ReleaseData(string name)
-            {
-                CallContext.FreeNamedDataSlot(name);
-            }
+        object ILogicContext.FindData(string name)
+        {
+            return DetermineContext().FindData(name);
+        }
+
+        void ILogicContext.SetData(string name, object value)
+        {
+            DetermineContext().SetData(name, value);
+        }
+
+        void ILogicContext.ReleaseData(string name)
+        {
+            DetermineContext().ReleaseData(name);
+        }
+
+        bool ILogicContext.IsApplicable()
+        {
+            return true;
         }
     }
 }
