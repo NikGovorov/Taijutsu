@@ -174,12 +174,6 @@ namespace Taijutsu.Test.Domain
 
             callCounter = 0;
 
-            EventAggregator.Subscribe<SystemEvent>(ev => callCounter++);
-            EventAggregator.Subscribe<SystemEvent>(ev => callCounter++);
-            ((IDisposable)EventAggregator.Global).Dispose();
-            EventAggregator.Publish(new SystemEvent());
-            callCounter.Should().Be(0);
-
             using (EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++).AsDisposable())
             {
                 EventAggregator.Publish(new SystemEvent()); //+1
@@ -194,13 +188,6 @@ namespace Taijutsu.Test.Domain
             callCounter.Should().Be(3);
 
             callCounter = 0;
-
-            EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++);
-            EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++);
-            ((IDisposable)EventAggregator.Local).Dispose();
-            EventAggregator.Publish(new SystemEvent());
-            EventAggregator.Local.Publish(new SystemEvent());
-            callCounter.Should().Be(0);
 
             var handler = new SystemEventHandler();
             using (EventAggregator.Subscribe(handler).AsDisposable())
@@ -227,6 +214,25 @@ namespace Taijutsu.Test.Domain
             EventAggregator.Publish(new SystemEvent());
 
             handler.CallCounter.Should().Be(2);
+        }
+
+        [Test, Explicit]
+        public virtual void DisposeShouldRemoveAllSubscriptions()
+        {
+            var callCounter = 0;
+
+            EventAggregator.Subscribe<SystemEvent>(ev => callCounter++);
+            EventAggregator.Subscribe<SystemEvent>(ev => callCounter++);
+            ((IDisposable)EventAggregator.Global).Dispose();
+            EventAggregator.Publish(new SystemEvent());
+            callCounter.Should().Be(0);
+
+            EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++);
+            EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++);
+            ((IDisposable)EventAggregator.Local).Dispose();
+            EventAggregator.Publish(new SystemEvent());
+            EventAggregator.Local.Publish(new SystemEvent());
+            callCounter.Should().Be(0);
         }
 
         [Test]

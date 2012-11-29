@@ -81,6 +81,7 @@
     <Compile Include="Domain\EventAggregatorFixture.cs" />
     <Compile Include="Domain\Model\Customer.cs" />
     <Compile Include="Domain\Model\ModuleEvent.cs" />
+    <Compile Include="Domain\Model\OrderCreatedEvent.cs" />
     <Compile Include="Domain\Model\SystemEvent.cs" />
     <Compile Include="Domain\Model\FullName.cs" />
     <Compile Include="Domain\Model\InternetOrder.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Domain\Model\SystemEventHandler.cs" />
     <Compile Include="Domain\Model\UserBlocked.cs" />
     <Compile Include="Domain\NotFoundExceptionFixture.cs" />
+    <Compile Include="Domain\NotUniqueExceptionFixture.cs" />
     <Compile Include="Domain\SpecificationFixture.cs" />
     <Compile Include="Domain\ValueObjectFixture.cs" />
     <Compile Include="HybridLogicContextFixture.cs" />

@@ -22,11 +22,6 @@ namespace Taijutsu.Domain
     [Serializable]
     public class NotFoundException : EntityException
     {
-        public NotFoundException(object id, Type type, Exception innnerException = null)
-            : this(id, (object) type, innnerException)
-        {
-        }
-
         public NotFoundException(object id, object type, Exception innnerException = null)
             : base(string.Format("Entity with '{0}' id and '{1}' type has not been found.", id, type), innnerException)
         {
@@ -34,13 +29,23 @@ namespace Taijutsu.Domain
             entityType = type;
         }
 
-        public NotFoundException(string queryDescription, Type type, Exception innnerException = null)
+        public NotFoundException(object id, Type type, Exception innnerException = null)
+            : this(id, (object) type, innnerException)
+        {
+        }
+
+        public NotFoundException(string query, object type, Exception innnerException = null)
             : base(
-                string.Format("Entity of '{1}' type has not been found. Query description: '{0}'.", queryDescription, type),
+                string.Format("Entity of '{1}' type has not been found. Query requires not empty results. Query description: '{0}'.", query, type),
                 innnerException)
         {
             entityId = "unknown";
             entityType = type;
+        }
+
+        public NotFoundException(string query, Type type, Exception innnerException = null)
+            : this(query, (object) type, innnerException)
+        {
         }
     }
 
@@ -52,8 +57,8 @@ namespace Taijutsu.Domain
         {
         }
 
-        public NotFoundException(string queryDescription, Exception innnerException = null)
-            : base(queryDescription, typeof (TEntity), innnerException)
+        public NotFoundException(string query, Exception innnerException = null)
+            : base(query, typeof (TEntity), innnerException)
         {
         }
     }

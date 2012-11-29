@@ -19,6 +19,7 @@ using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using Taijutsu.Domain;
+using Taijutsu.Domain.Event;
 using Taijutsu.Test.Domain.Model;
 using SharpTestsEx;
 
@@ -93,6 +94,34 @@ namespace Taijutsu.Test.Domain
             var sharedkey = SeqGuid.NewGuid();
             var internetOrder = new InternetOrder(sharedkey);
             internetOrder.ToString().Should().Be(sharedkey.ToString());
+        }
+
+
+        [Test]
+        public virtual void ShouldBeAbleToPublishEvents()
+        {
+            Order expectedOrder = null;
+
+            using (EventAggregator.OnStreamOf<OrderCreatedEvent>()
+                           .Select(ev => ev.Initiator)
+                           .Subscribe(order => expectedOrder = order).AsDisposable())
+            {
+                var internetOrder = new InternetOrder(new Customer());
+
+                expectedOrder.Should().Not.Be.Null();
+                expectedOrder.Should().Be.SameInstanceAs(internetOrder);    
+            }
+        }
+
+        [Test]
+        public virtual void ShouldBeAbleToSubscribeOnEvents()
+        {
+            var customer = new Customer();
+            customer.NotifiedAboutOrder.Should().Be.False();
+            #pragma warning disable 168
+            var internetOrder = new InternetOrder(customer);
+            #pragma warning restore 168
+            customer.NotifiedAboutOrder.Should().Be.True();
         }
 
 

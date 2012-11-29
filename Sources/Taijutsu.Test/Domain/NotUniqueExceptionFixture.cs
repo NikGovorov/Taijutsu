@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 //  Copyright 2009-2013 Nikita Govorov
 //    
@@ -15,29 +15,9 @@
 
 #endregion
 
-using System;
-using Taijutsu.Domain;
-
-namespace Taijutsu.Test.Domain.Model
+namespace Taijutsu.Test.Domain
 {
-    public class Order : Entity<Guid>, IOrder
+    public class NotUniqueExceptionFixture
     {
-        protected internal Order()
-        {
-            id = Guid.NewGuid();
-            
-        }
-
-        public Order(Customer customer)
-        {
-            Publish(new OrderCreatedEvent(this, customer));
-        }
-
-        public Order(Guid id)
-        {
-            this.id = id;
-        }
-
-        public int Total { get; set; }
     }
 }

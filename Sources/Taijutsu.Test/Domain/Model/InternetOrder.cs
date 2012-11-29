@@ -24,5 +24,9 @@ namespace Taijutsu.Test.Domain.Model
         public InternetOrder(Guid id) : base(id)
         {
         }
+
+        public InternetOrder(Customer customer) : base(customer)
+        {
+        }
     }
 }

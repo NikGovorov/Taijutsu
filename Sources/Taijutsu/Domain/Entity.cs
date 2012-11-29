@@ -31,7 +31,12 @@ namespace Taijutsu.Domain
 
         protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
         {
-            return EventAggregator.OnStreamOf<TEvent>();
+            return OnStream.Of<TEvent>();
+        }
+
+        protected static void Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
+        {
+            OnStream.Of<TEvent>().Subscribe(subscriber, priority);
         }
 
         protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
@@ -89,7 +94,12 @@ namespace Taijutsu.Domain
         
         protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
         {
-            return EventAggregator.OnStreamOf<TEvent>();
+            return OnStream.Of<TEvent>();
+        }
+
+        protected static void Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
+        {
+            OnStream.Of<TEvent>().Subscribe(subscriber, priority);
         }
 
         protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent

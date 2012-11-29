@@ -21,6 +21,11 @@ namespace Taijutsu.Test.Domain.Model
         protected DateTime creationDate;
         protected FullName name;
 
+        static Customer()
+        {
+            Subscribe<OrderCreatedEvent>(ev => ev.Customer.Handle(ev));
+        }
+
         protected internal Customer()
         {
         }
@@ -44,6 +49,13 @@ namespace Taijutsu.Test.Domain.Model
         public virtual FullName Name
         {
             get { return name; }
+        }
+
+        public bool NotifiedAboutOrder { get; set; }
+
+        protected virtual void Handle(OrderCreatedEvent orderCreatedEvent)
+        {
+            NotifiedAboutOrder = true;
         }
     }
 }

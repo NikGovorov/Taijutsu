@@ -1,5 +1,4 @@
-#region License
-
+﻿#region License
 //  Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
@@ -12,32 +11,24 @@
 //  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 //  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 //  specific language governing permissions and limitations under the License.
-
 #endregion
 
 using System;
-using Taijutsu.Domain;
+using Taijutsu.Domain.Event;
 
 namespace Taijutsu.Test.Domain.Model
 {
-    public class Order : Entity<Guid>, IOrder
+    public class OrderCreatedEvent : DomainEvent<Order>
     {
-        protected internal Order()
+        protected OrderCreatedEvent()
         {
-            id = Guid.NewGuid();
-            
         }
 
-        public Order(Customer customer)
+        public OrderCreatedEvent(Order initiator, Customer customer, Guid? id = null) : base(initiator, id)
         {
-            Publish(new OrderCreatedEvent(this, customer));
+            Customer = customer;
         }
 
-        public Order(Guid id)
-        {
-            this.id = id;
-        }
-
-        public int Total { get; set; }
+        public Customer Customer { get; set; }
     }
 }

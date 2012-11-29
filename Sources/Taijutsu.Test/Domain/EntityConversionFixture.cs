@@ -18,6 +18,7 @@
 using NUnit.Framework;
 using Taijutsu.Domain;
 using Taijutsu.Test.Domain.Model;
+using SharpTestsEx;
 
 namespace Taijutsu.Test.Domain
 {
@@ -44,6 +45,9 @@ namespace Taijutsu.Test.Domain
             var internetOrder2 = order2.As<InternetOrder>();
             Assert.IsNull(internetOrder2);
             Assert.IsFalse(order2.Is<InternetOrder>());
+
+            EntityConversionRegistry.NativeConversion.IsApplicableFor(new object()).Should().Be.True();
+            EntityConversionRegistry.NativeConversion.IsApplicableFor(new InternetOrder()).Should().Be.True();
         }
 
         [Test]
