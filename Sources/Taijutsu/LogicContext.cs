@@ -118,12 +118,12 @@ namespace Taijutsu
 
         public HybridLogicContext(IEnumerable<ILogicContext> contexts)
         {
-            this.contexts = contexts.ToList();
-
-            if (this.contexts == null || !this.contexts.Any())
+            if (contexts == null)
             {
                 throw new ArgumentNullException("contexts");
             }
+            
+            this.contexts = contexts.ToList();
         }
 
         protected virtual ILogicContext DetermineContext()
