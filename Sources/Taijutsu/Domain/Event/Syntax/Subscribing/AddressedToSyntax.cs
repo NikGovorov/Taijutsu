@@ -1,6 +1,6 @@
 #region License
 
-// Copyright 2009-2013 Nikita Govorov
+//  Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 //  this file except in compliance with the License. You may obtain a copy of the 
@@ -141,8 +141,7 @@ namespace Taijutsu.Domain.Event.Syntax.Subscribing
                         new SubscriptionSyntax.AllImpl<IExternalEvent<TEntity>>(addHadlerAction), projection);
             }
 
-            Action SubscriptionSyntax.All<IExternalEvent<TEntity>>.Subscribe(Action<IExternalEvent<TEntity>> subscriber,
-                                                                             int priority)
+            Action SubscriptionSyntax.All<IExternalEvent<TEntity>>.Subscribe(Action<IExternalEvent<TEntity>> subscriber, int priority)
             {
                 Predicate<IExternalEvent<TEntity>> filter = e => true;
                 return addHadlerAction(new InternalEventHandler<IExternalEvent<TEntity>>(subscriber, filter, priority));

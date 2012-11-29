@@ -21,5 +21,11 @@ namespace Taijutsu.Test.Domain.Model
 {
     public class UserBlocked : IFact
     {
+        public UserBlocked(int days=1)
+        {
+            Days = days;
+        }
+
+        public int Days { get; set; }
     }
 }

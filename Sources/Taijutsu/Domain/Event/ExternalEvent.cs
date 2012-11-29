@@ -1,6 +1,6 @@
 ﻿#region License
 
-// Copyright 2009-2013 Nikita Govorov
+//  Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 //  this file except in compliance with the License. You may obtain a copy of the 
@@ -39,7 +39,6 @@ namespace Taijutsu.Domain.Event
 
             this.noticeDate = noticeDate ?? SystemTime.Now;
             this.occurrenceDate = occurrenceDate ?? this.noticeDate;
-            
         }
 
         public virtual DateTime OccurrenceDate
@@ -56,29 +55,47 @@ namespace Taijutsu.Domain.Event
     }
 
     [Serializable]
-    public class ExternalEvent<TRecipient, TFact>  : ExternalEvent, IExternalEvent<TRecipient, TFact> where TFact : IFact where TRecipient : IEntity
+    public class ExternalEvent<TRecipient> : ExternalEvent, IExternalEvent<TRecipient>
+        where TRecipient : IEntity
     {
-        protected TFact fact;
         protected TRecipient recipient;
 
 
         protected ExternalEvent()
         {
-            
         }
 
-        public ExternalEvent(TRecipient recipient, TFact fact, DateTime? occurrenceDate = null, DateTime? noticeDate = null, Guid? id = null) 
+        public ExternalEvent(TRecipient recipient, DateTime? occurrenceDate = null, DateTime? noticeDate = null,
+                             Guid? id = null)
             : base(occurrenceDate, noticeDate, id)
         {
-            
             this.recipient = recipient;
-            this.fact = fact;
         }
 
         public virtual TRecipient Recipient
         {
             get { return recipient; }
             protected set { recipient = value; }
+        }
+    }
+
+    [Serializable]
+    public class ExternalEvent<TRecipient, TFact> : ExternalEvent<TRecipient>, IExternalEvent<TRecipient, TFact>
+        where TFact : IFact
+        where TRecipient : IEntity
+    {
+        protected TFact fact;
+
+        protected ExternalEvent()
+        {
+        }
+
+        public ExternalEvent(TRecipient recipient, TFact fact, DateTime? occurrenceDate = null,
+                             DateTime? noticeDate = null, Guid? id = null)
+            : base(recipient, occurrenceDate, noticeDate, id)
+        {
+            this.recipient = recipient;
+            this.fact = fact;
         }
 
         public virtual TFact Fact
