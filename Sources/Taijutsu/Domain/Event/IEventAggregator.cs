@@ -16,8 +16,7 @@
 #endregion
 
 using System;
-using Taijutsu.Domain.Event.Syntax.Subscribing;
-using DueToSyntax = Taijutsu.Domain.Event.Syntax.Publishing.DueToSyntax;
+using Taijutsu.Domain.Event.Internal;
 
 namespace Taijutsu.Domain.Event
 {
@@ -32,7 +31,5 @@ namespace Taijutsu.Domain.Event
         Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent;
 
         void Publish<TEvent>(TEvent ev) where TEvent : IEvent;
-
-        DueToSyntax.Init<TFact> DueTo<TFact>(TFact fact) where TFact : IFact;
     }
 }

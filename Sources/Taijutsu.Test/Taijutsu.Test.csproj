@@ -73,21 +73,12 @@
     </Compile>
     <Compile Include="ActionExFixture.cs" />
     <Compile Include="DatabaseManager.cs" />
-    <Compile Include="Domain\AddressedToSyntaxFixture.cs">
-      <DependentUpon>EventAggregatorFixture.cs</DependentUpon>
-    </Compile>
     <Compile Include="Domain\AggregateRootExFixture.cs" />
     <Compile Include="Domain\DomainObjectExFixture.cs" />
     <Compile Include="Domain\DeletableEntityExFixture.cs" />
-    <Compile Include="Domain\DueToSyntaxFixture.cs">
-      <DependentUpon>EventAggregatorFixture.cs</DependentUpon>
-    </Compile>
     <Compile Include="Domain\EntityConversionFixture.cs" />
     <Compile Include="Domain\EntityFixture.cs" />
     <Compile Include="Domain\EventAggregatorFixture.cs" />
-    <Compile Include="Domain\InitiatedBySyntaxFixture.cs">
-      <DependentUpon>EventAggregatorFixture.cs</DependentUpon>
-    </Compile>
     <Compile Include="Domain\Model\Customer.cs" />
     <Compile Include="Domain\Model\ModuleEvent.cs" />
     <Compile Include="Domain\Model\SystemEvent.cs" />

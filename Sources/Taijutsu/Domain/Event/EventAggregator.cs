@@ -18,7 +18,7 @@
 using System;
 using System.ComponentModel;
 using Taijutsu.Domain.Event.Internal;
-using Taijutsu.Domain.Event.Syntax.Subscribing;
+
 
 namespace Taijutsu.Domain.Event
 {

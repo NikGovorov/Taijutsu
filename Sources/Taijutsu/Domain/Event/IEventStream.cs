@@ -15,13 +15,12 @@
 
 #endregion
 
-using Taijutsu.Domain.Event.Syntax.Subscribing;
+using Taijutsu.Domain.Event.Internal;
 
 namespace Taijutsu.Domain.Event
 {
     public interface IEventStream
     {
-        IEventStreamFilter OfEvents { get; }
         SubscriptionSyntax.All<TEvent> Of<TEvent>() where TEvent : class, IEvent;
     }
 }

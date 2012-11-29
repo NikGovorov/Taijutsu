@@ -16,10 +16,8 @@
 #endregion
 
 using System;
-using System.ComponentModel;
 using Taijutsu.Domain.Event;
 using Taijutsu.Domain.Event.Internal;
-using Taijutsu.Domain.Event.Syntax.Publishing;
 
 namespace Taijutsu.Domain
 {
@@ -31,22 +29,14 @@ namespace Taijutsu.Domain
             get { return EventAggregator.OnStream; }
         }
 
+        protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
+        {
+            return EventAggregator.OnStreamOf<TEvent>();
+        }
+
         protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
         {
             EventAggregator.Publish(ev);
-        }
-
-        protected PublishingSyntax.Prepared DueTo<TFact>(TFact fact) where TFact : IFact
-        {
-            var ev = EventFor(fact);
-
-            return new PublishingSyntax.PreparedImpl(() => Publish(ev));
-        }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
-        {
-            return DomainEventActivatorsHolder.ActivatorFor(InternalGetType(), typeof (TFact)).CreateInstance(this, fact, SeqGuid.NewGuid());
         }
     }
 
@@ -96,22 +86,15 @@ namespace Taijutsu.Domain
         {
             get { return EventAggregator.OnStream; }
         }
+        
+        protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
+        {
+            return EventAggregator.OnStreamOf<TEvent>();
+        }
 
         protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
         {
             EventAggregator.Publish(ev);
-        }
-
-        protected PublishingSyntax.Prepared DueTo<TFact>(TFact fact) where TFact : IFact
-        {
-            var ev = EventFor(fact);
-            return new PublishingSyntax.PreparedImpl(() => Publish(ev));
-        }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        protected virtual IDomainEvent EventFor<TFact>(TFact fact) where TFact : IFact
-        {
-            return DomainEventActivatorsHolder.ActivatorFor(InternalGetType(), typeof (TFact)).CreateInstance(this, fact, SeqGuid.NewGuid());
         }
 
         public static bool operator ==(Entity<TId> left, Entity<TId> right)

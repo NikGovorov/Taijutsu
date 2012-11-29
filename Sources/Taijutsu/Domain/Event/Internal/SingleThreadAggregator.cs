@@ -20,12 +20,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Taijutsu.Domain.Event.Syntax.Subscribing;
-using DueToSyntax = Taijutsu.Domain.Event.Syntax.Publishing.DueToSyntax;
+
 
 namespace Taijutsu.Domain.Event.Internal
 {
-    public class SingleThreadAggregator : IEventAggregator, IEventStream, IEventStreamFilter, IDisposable
+    public class SingleThreadAggregator : IEventAggregator, IEventStream, IDisposable
     {
         private static readonly object sync = new object();
 
@@ -86,31 +85,6 @@ namespace Taijutsu.Domain.Event.Internal
             {
                 handler.HandlerAction(ev);
             }
-        }
-
-        DueToSyntax.Init<TFact> IEventAggregator.DueTo<TFact>(TFact fact)
-        {
-            return new DueToSyntax.InitImpl<TFact>(Publish, fact, null, null);
-        }
-
-        Syntax.Subscribing.DueToSyntax.Init<TFact> IEventStreamFilter.DueTo<TFact>()
-        {
-            return new Syntax.Subscribing.DueToSyntax.InitImpl<TFact>(Subscribe);
-        }
-
-        InitiatedBySyntax.Init<TEntity> IEventStreamFilter.InitiatedBy<TEntity>()
-        {
-            return new InitiatedBySyntax.InitImpl<TEntity>(Subscribe);
-        }
-
-        AddressedToSyntax.Init<TEntity> IEventStreamFilter.AddressedTo<TEntity>()
-        {
-            return new AddressedToSyntax.InitImpl<TEntity>(Subscribe);
-        }
-
-        IEventStreamFilter IEventStream.OfEvents
-        {
-            get { return this; }
         }
 
         SubscriptionSyntax.All<TEvent> IEventStream.Of<TEvent>()

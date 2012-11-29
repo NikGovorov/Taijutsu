@@ -18,13 +18,9 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Transactions;
 using Taijutsu.Data.Internal;
-using Taijutsu.Domain;
-using Taijutsu.Domain.Event;
-using Taijutsu.Domain.Event.Syntax.Subscribing;
-using DueToSyntax = Taijutsu.Domain.Event.Syntax.Publishing.DueToSyntax;
+using Taijutsu.Domain.Event.Internal;
 
 namespace Taijutsu.Data
 {
@@ -128,142 +124,13 @@ namespace Taijutsu.Data
             }
         }
 
-        public static AddressedToExSyntax<TFact> HappenedOutside<TFact>(this DueToSyntax.Init<TFact> self,
-                                                               string dataSource = "") where TFact : IFact
-        {
-            return new AddressedToExSyntaxImpl<TFact>(dataSource, self);
-        }
-
-        private class AddressedToExSyntaxImpl<TFact> : AddressedToExSyntax<TFact> where TFact : IFact
-        {
-            private readonly string dataSource;
-            private readonly DueToSyntax.Init<TFact> prev;
-
-            public AddressedToExSyntaxImpl(string dataSource, DueToSyntax.Init<TFact> prev)
-            {
-                this.dataSource = dataSource;
-                this.prev = prev;
-            }
-
-            ExternalDateSyntax<TRecipient, TFact> AddressedToExSyntax<TFact>.AddressedTo<TRecipient>(object key)
-            {
-                return new ExternalDateSyntaxImpl<TRecipient, TFact>(key, dataSource, null, null, prev);
-            }
-        }
-
-        private class ExternalDateSyntaxImpl<TRecipient, TFact> : ExternalDateSyntax<TRecipient, TFact>,
-                                                                  OccurExSyntax,
-                                                                  NoticeExSyntax
-            where TFact : IFact
-            where TRecipient : class, IQueryableEntity
-        {
-            private readonly string dataSource;
-            private readonly object key;
-            private readonly DueToSyntax.Init<TFact> prev;
-            private DateTime? noticeDate;
-            private DateTime? occurrenceDate;
-
-            public ExternalDateSyntaxImpl(object key, string dataSource, DateTime? noticeDate, DateTime? occurrenceDate,
-                                          DueToSyntax.Init<TFact> prev)
-            {
-                this.key = key;
-                this.dataSource = dataSource;
-                this.noticeDate = noticeDate;
-                this.occurrenceDate = occurrenceDate;
-                this.prev = prev;
-            }
-
-            void PublishingExSyntax.Publish(bool async)
-            {
-                Action publish = () =>
-                    {
-                        using (var uow = new UnitOfWork(dataSource))
-                        {
-                            var target = uow.UniqueOf<TRecipient>(key).Query();
-                            if (noticeDate == null && occurrenceDate == null)
-                                prev.AddressedTo(target).Publish();
-                            else if (noticeDate != null && occurrenceDate == null)
-                                prev.NoticedAt(noticeDate.Value).AddressedTo(target).Publish();
-                            else if (noticeDate == null && occurrenceDate != null)
-                                prev.OccuredAt(occurrenceDate.Value).AddressedTo(target).Publish();
-                            else if (noticeDate != null && occurrenceDate != null)
-                                prev.OccuredAt(occurrenceDate.Value).NoticedAt(noticeDate.Value).
-                                     AddressedTo(target).Publish();
-                            uow.Complete();
-                        }
-                    };
-
-                if (async)
-                {
-                    Task.Factory
-                        .StartNew(publish)
-                        .ContinueWith(t => Trace.TraceError(t.Exception == null ? string.Format("Error occurred during async event publishing for '{0}'.", typeof(TRecipient)) : t.Exception.ToString()),
-                              TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
-                }
-                else
-                {
-                    publish();
-                }
-            }
-
-            NoticeExSyntax ExternalDateSyntax<TRecipient, TFact>.NoticedAt(DateTime date)
-            {
-                return new ExternalDateSyntaxImpl<TRecipient, TFact>(key, dataSource, date, occurrenceDate, prev);
-            }
-
-            OccurExSyntax ExternalDateSyntax<TRecipient, TFact>.OccuredAt(DateTime date)
-            {
-                return new ExternalDateSyntaxImpl<TRecipient, TFact>(key, dataSource, noticeDate, date, prev);
-            }
-
-            PublishingExSyntax NoticeExSyntax.OccuredAt(DateTime date)
-            {
-                return new ExternalDateSyntaxImpl<TRecipient, TFact>(key, dataSource, noticeDate, date, prev);
-            }
-
-            PublishingExSyntax OccurExSyntax.NoticedAt(DateTime date)
-            {
-                return new ExternalDateSyntaxImpl<TRecipient, TFact>(key, dataSource, date, occurrenceDate, prev);
-            }
-        }
-
         // ReSharper disable InconsistentNaming
-        // ReSharper disable UnusedTypeParameter
-
+        
         public interface HandledSafelySyntax<out TSource>
         {
             Action Subscribe(Action<TSource> subscriber, int priority = 0);
         }
 
-        public interface AddressedToExSyntax<TFact> where TFact : IFact
-        {
-            ExternalDateSyntax<TRecipient, TFact> AddressedTo<TRecipient>(object key)
-                where TRecipient : class, IQueryableEntity;
-        }
-
-        public interface ExternalDateSyntax<TRecipient, TFact> : PublishingExSyntax where TFact : IFact
-        {
-            NoticeExSyntax NoticedAt(DateTime noticeDate);
-            OccurExSyntax OccuredAt(DateTime occurrenceDate);
-        }
-
-        public interface NoticeExSyntax : PublishingExSyntax
-        {
-            PublishingExSyntax OccuredAt(DateTime occurrenceDate);
-        }
-
-        public interface OccurExSyntax : PublishingExSyntax
-        {
-            PublishingExSyntax NoticedAt(DateTime noticeDate);
-        }
-
-        public interface PublishingExSyntax
-
-        {
-            void Publish(bool async = false);
-        }
-
-        // ReSharper restore UnusedTypeParameter
         // ReSharper restore InconsistentNaming
     }
 }
