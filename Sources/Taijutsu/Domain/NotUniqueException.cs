@@ -20,6 +20,34 @@ using System;
 namespace Taijutsu.Domain
 {
     [Serializable]
+    public class NotUniqueException : EntityException
+    {
+        public NotUniqueException(object id, object type, Exception innnerException = null)
+            : base(string.Format("Entity with '{0}' id and '{1}' type is not unique.", id, type), innnerException)
+        {
+            entityId = id;
+            entityType = type;
+        }
+
+        public NotUniqueException(object id, Type type, Exception innnerException = null)
+            : this(id, (object) type, innnerException)
+        {
+        }
+
+        public NotUniqueException(string query, object type, Exception innnerException = null)
+            : base(string.Format("Entity of '{1}' type is not unique. Query requires unique results. Query description: '{0}'.", query, type), innnerException)
+        {
+            entityId = "unknown";
+            entityType = type;
+        }
+
+        public NotUniqueException(string query, Type type, Exception innnerException = null)
+            : this(query, (object) type, innnerException)
+        {
+        }
+    }
+
+    [Serializable]
     public class NotUniqueException<TEntity> : NotUniqueException where TEntity : IEntity
     {
         public NotUniqueException(object id, Exception innnerException = null)
@@ -27,32 +55,9 @@ namespace Taijutsu.Domain
         {
         }
 
-        public NotUniqueException(string queryDescription, Exception innnerException = null)
-            : base(queryDescription, typeof (TEntity), innnerException)
+        public NotUniqueException(string query, Exception innnerException = null)
+            : base(query, typeof (TEntity), innnerException)
         {
-        }
-    }
-
-    [Serializable]
-    public class NotUniqueException : EntityException
-    {
-        public NotUniqueException(string queryDescription, Type type, Exception innnerException = null)
-            : base(
-                string.Format("Entity of '{1}' type is not unique. Query description: '{0}'.", queryDescription, type),
-                innnerException)
-        {
-            entityId = "unknown";
-            entityType = type;
-        }
-
-
-        public NotUniqueException(object id, object type, Exception innnerException = null)
-            : base(
-                string.Format("Entity with '{0}' id and '{1}' type is not unique.", id, type),
-                innnerException)
-        {
-            entityId = id;
-            entityType = type;
         }
     }
 }
