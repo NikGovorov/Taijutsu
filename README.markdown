@@ -5,4 +5,4 @@ Taijutsu is intended to help developers to design domain model layer.
 Apache 2.0 - see LICENSE
 
 # REQUIREMENTS
-* .NET Framework 4.0 
+* .NET Framework 4.5 
