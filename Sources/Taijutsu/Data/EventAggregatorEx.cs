@@ -25,7 +25,7 @@ using Taijutsu.Domain.Event.Internal;
 namespace Taijutsu.Data
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static class EventAggregatorExtensions
+    public static class EventAggregatorEx
     {
 
         public static HandledSafelySyntax<TSource> HandledSafely<TSource>(this SubscriptionSyntax.All<TSource> self)
