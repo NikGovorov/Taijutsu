@@ -32,7 +32,6 @@ namespace Taijutsu.Data.Internal
     {
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
         }
 
         public void Terminate(IOrmSession session, bool isSuccessfully)
@@ -49,7 +48,6 @@ namespace Taijutsu.Data.Internal
         void IDisposable.Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)

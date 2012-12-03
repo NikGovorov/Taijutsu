@@ -29,7 +29,8 @@ namespace Taijutsu.Data.Internal
         private readonly Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider;
         private readonly IOrmSessionTerminationPolicy terminationPolicy;
 
-        public DataContextSupervisor(Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider, IOrmSessionTerminationPolicy terminationPolicy = null)
+        public DataContextSupervisor(Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider,
+                                     IOrmSessionTerminationPolicy terminationPolicy = null)
         {
             this.dataSourcesProvider = dataSourcesProvider;
             this.terminationPolicy = terminationPolicy ?? new ImmediateOrmSessionTerminationPolicy();
@@ -59,7 +60,11 @@ namespace Taijutsu.Data.Internal
 
             if (config.Require == Require.New)
             {
-                return new DataContextDecorator(new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), contexts);
+                return
+                    new DataContextDecorator(
+                        new DataContext(config,
+                                        new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel),
+                                                              false), terminationPolicy), contexts);
             }
 
             // ReSharper disable ImplicitlyCapturedClosure
@@ -83,21 +88,26 @@ namespace Taijutsu.Data.Internal
                 throw new Exception(
                     "Unit of work requires existing unit of work at the top level, but nothing has been found.");
 
-            context = new DataContextDecorator(new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), contexts);
+            context =
+                new DataContextDecorator(
+                    new DataContext(config,
+                                    new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false),
+                                    terminationPolicy), contexts);
 
             return context;
         }
 
         public virtual IDataContext CurrentContext
         {
-            get
-            {
-                var context = contexts.LastOrDefault();
-                return context != null ? context.WrappedContext : null;
-            }
+            get { return contexts.LastOrDefault(); }
         }
 
-        protected class DataContextDecorator : IDataContext
+        public virtual IEnumerable<IDataContext> Contexts
+        {
+            get { return contexts.Cast<IDataContext>().ToArray(); }
+        }
+
+        public class DataContextDecorator : IDataContext
         {
             private readonly DataContext wrappedContext;
             private List<DataContextDecorator> contexts;

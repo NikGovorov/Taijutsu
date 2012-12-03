@@ -21,9 +21,9 @@ namespace Taijutsu.Data.Internal
 {
     public static class IsolationLevelExtensions
     {
-        public static bool IsCompatible(this IsolationLevel isolationLevel, IsolationLevel comparing)
+        public static bool IsCompatible(this IsolationLevel self, IsolationLevel comparing)
         {
-            if (isolationLevel == IsolationLevel.Snapshot)
+            if (self == IsolationLevel.Snapshot)
             {
                 return comparing == IsolationLevel.Unspecified || comparing == IsolationLevel.Chaos ||
                        comparing == IsolationLevel.ReadUncommitted || comparing == IsolationLevel.ReadCommitted
@@ -32,11 +32,11 @@ namespace Taijutsu.Data.Internal
 
             if (comparing == IsolationLevel.Snapshot)
             {
-                return isolationLevel == IsolationLevel.Snapshot || isolationLevel == IsolationLevel.RepeatableRead ||
+                return self == IsolationLevel.Snapshot || self == IsolationLevel.RepeatableRead ||
                        comparing == IsolationLevel.Serializable;
             }
 
-            return isolationLevel >= comparing;
+            return self >= comparing;
         }
     }
 }

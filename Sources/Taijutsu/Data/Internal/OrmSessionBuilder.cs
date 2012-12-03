@@ -54,7 +54,7 @@ namespace Taijutsu.Data.Internal
         {
         }
 
-        public OrmSessionBuilder(Func<dynamic, IOrmSession> factory, string name = null)
+        public OrmSessionBuilder(Func<object, IOrmSession> factory, string name = null)
             : base(factory, name ?? typeof (T).FullName)
         {
         }
