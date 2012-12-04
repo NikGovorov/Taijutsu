@@ -88,15 +88,17 @@ namespace Taijutsu.Data.Internal
         {
             if (completed.HasValue)
             {
-                throw new Exception(string.Format("Data context has already been completed(with success - '{0}').",
-                                                  completed));
+                if (!completed.Value)
+                {
+                    throw new Exception(string.Format("Data context has already been completed without success."));    
+                }
+                return;
             }
             try
             {
                 if (subordinatesCount != 0)
                 {
-                    throw new Exception(
-                        "Unit of work can not be successfully completed, because not all subordinates are completed.");
+                    throw new Exception("Unit of work can not be successfully completed, because not all subordinates are completed.");
                 }
 
                 if (session.IsValueCreated)

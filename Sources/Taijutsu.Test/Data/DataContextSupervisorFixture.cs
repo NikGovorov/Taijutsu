@@ -26,7 +26,7 @@ using Taijutsu.Data.Internal;
 namespace Taijutsu.Test.Data
 {
     [TestFixture]
-    public class DataContextSupervisorFixture
+    public class DataContextSupervisorFixture : TestFixture
     {
         private string source1;
         private string source2;
@@ -45,16 +45,6 @@ namespace Taijutsu.Test.Data
         {
             InternalEnvironment.UnregisterDataSource(source1);
             InternalEnvironment.UnregisterDataSource(source2);
-        }
-
-        protected virtual void AssertThatContextCountEqualTo(int count)
-        {
-            InternalEnvironment.DataContextSupervisor.Contexts.Should().Have.Count.EqualTo(count);
-        }
-
-        protected virtual void AssertThatSupervisorDestroyed()
-        {
-            LogicContext.FindData("Taijutsu.DataContextSupervisor").Should().Be.Null();
         }
 
         [Test]

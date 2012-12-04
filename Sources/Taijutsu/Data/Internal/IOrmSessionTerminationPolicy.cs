@@ -47,14 +47,14 @@ namespace Taijutsu.Data.Internal
 
         void IDisposable.Dispose()
         {
-            Dispose(true);
+            Dispose();
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected virtual void Dispose()
         {
             try
             {
-                if (!disposed && disposing)
+                if (!disposed)
                 {
                     var exceptions = new List<Exception>();
                     foreach (var session in sessions)

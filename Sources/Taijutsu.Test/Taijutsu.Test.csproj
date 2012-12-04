@@ -73,9 +73,11 @@
     </Compile>
     <Compile Include="ActionExFixture.cs" />
     <Compile Include="DatabaseManager.cs" />
+    <Compile Include="Data\TestFixture.cs" />
     <Compile Include="Data\DataContextFixture.cs" />
     <Compile Include="Data\IsolationLevelEx.cs" />
     <Compile Include="Data\DataContextSupervisorFixture.cs" />
+    <Compile Include="Data\UnitOfWorkFixture.cs" />
     <Compile Include="Domain\AggregateRootExFixture.cs" />
     <Compile Include="Domain\DomainObjectExFixture.cs" />
     <Compile Include="Domain\DeletableEntityExFixture.cs" />

@@ -33,6 +33,7 @@ namespace Taijutsu.Test.Data
         {
             source1 = Guid.NewGuid().ToString();
             source2 = Guid.NewGuid().ToString();
+            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullOrmSession()));
             InternalEnvironment.RegisterDataSource(new DataSource(source1, il => new NullOrmSession()));
             InternalEnvironment.RegisterDataSource(new DataSource(source2, il => new NullOrmSession()));
         }
@@ -42,7 +43,9 @@ namespace Taijutsu.Test.Data
         {
             InternalEnvironment.UnregisterDataSource(source1);
             InternalEnvironment.UnregisterDataSource(source2);
+            InternalEnvironment.UnregisterDataSource();
         }
+
 
         [Test]
         [ExpectedException(ExpectedMessage = "Unit of work can not be successfully completed, because not all subordinates are completed.")]

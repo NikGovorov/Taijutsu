@@ -72,15 +72,15 @@ namespace Taijutsu.Data
 
         void IDisposable.Dispose()
         {
-            Dispose(true);
+            Dispose();
 
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected virtual void Dispose()
         {
             try
             {
-                if (!disposed && disposing)
+                if (!disposed)
                 {
                     try
                     {
@@ -103,11 +103,19 @@ namespace Taijutsu.Data
             }
         }
 
-        protected virtual void AssertNotFinished()
+        protected virtual void AssertNotCompleted()
         {
-            if (completed.HasValue || disposed)
+            if (completed.HasValue)
             {
-                throw new Exception(string.Format("Unit of work has already been completed/disposed(with success - '{0}'), so it is not usable anymore.", completed));    
+                throw new Exception(string.Format("Unit of work has already been completed(with success - '{0}'), so it is not usable for write anymore.", completed));    
+            }
+        }
+
+        protected virtual void AssertNotDisposed()
+        {
+            if (disposed)
+            {
+                throw new Exception(string.Format("Unit of work has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
             }
         }
 
@@ -115,7 +123,11 @@ namespace Taijutsu.Data
         {
             if (completed.HasValue)
             {
-                throw new Exception(string.Format("Unit of work has already been completed(with success - '{0}').", completed));
+                if (!completed.Value)
+                {
+                    throw new Exception(string.Format("Unit of work has already been completed without success."));
+                }
+                return;
             }
             try
             {
@@ -151,32 +163,20 @@ namespace Taijutsu.Data
 
         public virtual object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
-            AssertNotFinished();
+            AssertNotCompleted();
             return dataContext.Session.MarkAsCreated(entity, options);
         }
 
         public virtual object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
-            AssertNotFinished();
+            AssertNotCompleted();
             return dataContext.Session.MarkAsCreated(entityFactory, options);
         }
 
         public virtual void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
-            AssertNotFinished();
+            AssertNotCompleted();
             dataContext.Session.MarkAsDeleted(entity, options);
-        }
-
-        public virtual IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IQueryableEntity
-        {
-            AssertNotFinished();
-            return dataContext.Session.AllOf<TEntity>(options);
-        }
-
-        public virtual IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity
-        {
-            AssertNotFinished();
-            return dataContext.Session.UniqueOf<TEntity>(options);
         }
 
         public virtual IMarkingStep Mark<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity, IAggregateRoot
@@ -184,12 +184,31 @@ namespace Taijutsu.Data
             return new MarkingStep<TEntity>(() => MarkAsCreated(entity, options), () => MarkAsDeleted(entity, options));
         }
 
+        public virtual IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IQueryableEntity
+        {
+            AssertNotDisposed();
+            return dataContext.Session.AllOf<TEntity>(options);
+        }
+
+        public virtual IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity
+        {
+            AssertNotDisposed();
+            return dataContext.Session.UniqueOf<TEntity>(options);
+        }
+
         public virtual IQueryOverContinuation<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity
         {
-            AssertNotFinished();
+            AssertNotDisposed();
             return dataContext.Session.QueryOver<TEntity>();
         }
 
-        object IHasNativeObject.NativeObject { get { return dataContext.Session.NativeObject; } }
+        object IHasNativeObject.NativeObject
+        {
+            get
+            {
+                AssertNotDisposed();
+                return dataContext.Session.NativeObject;
+            }
+        }
     }
 }
