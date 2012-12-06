@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 //  Copyright 2009-2013 Nikita Govorov
 //    
@@ -15,10 +15,15 @@
 
 #endregion
 
-namespace Taijutsu.Domain.Query.Narrowing
+namespace Taijutsu.Domain.Query
 {
-    public interface INotUniqueNarrowing<out TEntity> where TEntity : IEntity
+    public interface ISingleQuery<out TEntity>
     {
-        IQueryOfNotUniqueEntity<TEntity> NotUniquely { get; }
+        TEntity Single();
+    }
+
+    public interface ISingleOrDefaultQuery<out TEntity> : ISingleQuery<TEntity>
+    {
+        TEntity SingleOrDefault();
     }
 }

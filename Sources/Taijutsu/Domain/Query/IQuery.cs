@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 //  Copyright 2009-2013 Nikita Govorov
 //    
@@ -17,7 +17,10 @@
 
 namespace Taijutsu.Domain.Query
 {
-    public interface IQuery : IHiddenObjectMembers
+    // ReSharper disable UnusedTypeParameter
+    public interface IQuery<out TEntity> : IQueryContinuation
     {
+
     }
+    // ReSharper restore UnusedTypeParameter
 }

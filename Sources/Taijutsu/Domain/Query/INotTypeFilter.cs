@@ -17,27 +17,27 @@
 
 using System;
 
-namespace Taijutsu.Domain.Query.Option
+namespace Taijutsu.Domain.Query
 {
-    public interface ITypeExcludingQuery<out TQuery> : IQuery
+    public interface INotTypeFilter<out TQuery> : IQueryContinuation
     {
-        TQuery ExcludeTypes(params Type[] derivedTypes);
+        TQuery IsNotOf(params Type[] derivedTypes);
     }
 
-    public interface IStrongTypeExcludingQuery<in TBase, out TQuery> : IQuery
+    public interface INotTypeFilter<in TBase, out TQuery> : IQueryContinuation
     {
-        TQuery ExcludeType<TDerived>() where TDerived : TBase;
+        TQuery IsNotOf<TDerived>() where TDerived : TBase;
 
-        TQuery ExcludeTypes<TDerivedFirst, TDerivedSecond>()
+        TQuery IsNotOf<TDerivedFirst, TDerivedSecond>()
             where TDerivedFirst : TBase
             where TDerivedSecond : TBase;
 
-        TQuery ExcludeTypes<TDerivedFirst, TDerivedSecond, TDerivedThird>()
+        TQuery IsNotOf<TDerivedFirst, TDerivedSecond, TDerivedThird>()
             where TDerivedFirst : TBase
             where TDerivedSecond : TBase
             where TDerivedThird : TBase;
 
-        TQuery ExcludeTypes<TDerivedFirst, TDerivedSecond, TDerivedThird, TDerivedFourth>()
+        TQuery IsNotOf<TDerivedFirst, TDerivedSecond, TDerivedThird, TDerivedFourth>()
             where TDerivedFirst : TBase
             where TDerivedSecond : TBase
             where TDerivedThird : TBase

@@ -22,7 +22,7 @@ using Taijutsu.Domain.Event.Internal;
 
 namespace Taijutsu.Domain.Event
 {
-    public class EventAggregator
+    public static class EventAggregator
     {
         private const string LocalEventAggregatorName = "Taijutsu.LocalEventAggregator";
 

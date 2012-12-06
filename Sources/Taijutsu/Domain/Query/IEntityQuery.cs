@@ -15,10 +15,13 @@
 
 #endregion
 
-namespace Taijutsu.Domain.Query.Option
+namespace Taijutsu.Domain.Query
 {
-    public interface IKeyIncludingQuery<out TQuery> : IQuery where TQuery : IQuery
+    public interface IEntityQuery<out TEntity> : ISingleOrDefaultQuery<TEntity>, IFirstOrDefaultQuery<TEntity>,
+                                                 ILastOrDefaultQuery<TEntity>, IAnyQuery<TEntity>, ICountQuery<TEntity>,
+                                                 IKeyFilter<IEntityQuery<TEntity>>,
+                                                 INotTypeFilter<IEntityQuery<TEntity>>,
+                                                 ILockOption<IEntityQuery<TEntity>> where TEntity : IEntity
     {
-        TQuery KeyInRangeOf(params object[] keys);
     }
 }

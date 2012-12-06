@@ -15,10 +15,10 @@
 
 #endregion
 
-namespace Taijutsu.Domain.Query.Option
+namespace Taijutsu.Domain.Query
 {
-    public interface ILimitQuery<out TQuery> : IQuery where TQuery : IQuery
+    public interface IAnyQuery<out TEntity> : IQuery<TEntity>
     {
-        TQuery Take(int count);
+        bool Any();
     }
 }

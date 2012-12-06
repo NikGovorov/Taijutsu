@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 //  Copyright 2009-2013 Nikita Govorov
 //    
@@ -15,10 +15,10 @@
 
 #endregion
 
-namespace Taijutsu.Domain.Query.Narrowing
+namespace Taijutsu.Domain.Query
 {
-    public interface IAnyNarrowing
+    public interface IArrayQuery<out TEntity>
     {
-        IQueryOf<bool> Any { get; }
+        TEntity[] ToArray();
     }
 }

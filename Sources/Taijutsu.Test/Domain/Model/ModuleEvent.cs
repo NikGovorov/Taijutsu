@@ -19,12 +19,9 @@ namespace Taijutsu.Test.Domain.Model
 {
     public class ModuleEvent : SystemEvent
     {
-        public ModuleEvent(int usageLevel = 0, int healthLevel = 0)
+        public ModuleEvent(int healthLevel = 0)
             : base(healthLevel)
         {
-            UsageLevel = usageLevel;
         }
-
-        public int UsageLevel { get; set; }
     }
 }

@@ -15,10 +15,9 @@
 
 #endregion
 
-namespace Taijutsu.Domain.Query.Narrowing
+namespace Taijutsu.Domain.Query
 {
-    public interface INotStrictNarrowing<out TEntity> where TEntity : IEntity
+    public interface IUniqueEntityQuery<out TEntity> : ISingleOrDefaultQuery<TEntity>, ILockOption<IUniqueEntityQuery<TEntity>>
     {
-        IQueryOfEntity<TEntity> NotStrictly { get; }
     }
 }

@@ -17,8 +17,13 @@
 
 namespace Taijutsu.Domain.Query
 {
-    public interface IQueryOf<out T> : IQuery
+    public interface ILastQuery<out TEntity>
     {
-        T Query();
+        TEntity Last();
+    }
+
+    public interface ILastOrDefaultQuery<out TEntity> : ILastQuery<TEntity>
+    {
+        TEntity LastOrDefault();
     }
 }

@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 //  Copyright 2009-2013 Nikita Govorov
 //    
@@ -15,12 +15,10 @@
 
 #endregion
 
-using System.Collections.Generic;
-
 namespace Taijutsu.Domain.Query
 {
-    public interface IDerivedQueryOfEntities<TEntity> : IQueryOfEntities<TEntity> where TEntity : IEntity
+    public interface ILimitFilter<out TQuery> : IQueryContinuation where TQuery : IQueryContinuation
     {
-        IEnumerable<TSubEntity> Query<TSubEntity>() where TSubEntity : TEntity;
+        TQuery Take(int count);
     }
 }

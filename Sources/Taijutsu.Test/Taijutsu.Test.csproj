@@ -95,7 +95,6 @@
     <Compile Include="Domain\Model\Order.cs" />
     <Compile Include="Domain\Model\Product.cs" />
     <Compile Include="Domain\Model\SystemEventHandler.cs" />
-    <Compile Include="Domain\Model\UserBlocked.cs" />
     <Compile Include="Domain\NotFoundExceptionFixture.cs" />
     <Compile Include="Domain\NotUniqueExceptionFixture.cs" />
     <Compile Include="Domain\SpecificationFixture.cs" />

@@ -15,10 +15,12 @@
 
 #endregion
 
+using System.Linq;
+
 namespace Taijutsu.Domain.Query
 {
-    public interface IDerivedQueryOfEntity<TEntity> : IQueryOfEntity<TEntity>, IDerivedQueryOf<TEntity>
-        where TEntity : IEntity
+    public interface IAsQueryableQuery<out TEntity>
     {
+        IQueryable<TEntity> AsQueryable();
     }
 }

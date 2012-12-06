@@ -28,11 +28,10 @@ namespace Taijutsu.Domain
 
         void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
 
-        IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
+        IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
 
-        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity;
+        IUniqueEntityQuery<TEntity> Unique<TEntity>(object id, object options = null) where TEntity : class, IQueryableEntity;
 
-        IMarkingStep Mark<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity, IAggregateRoot;
     }
 
     public interface IMarkingStep

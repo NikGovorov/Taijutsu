@@ -15,13 +15,15 @@
 
 #endregion
 
-using System.Collections.Generic;
-
 namespace Taijutsu.Domain.Query
 {
-    public interface IQueryOfNotUniqueEntity<out TEntity> : IQueryOf<TEntity>
-        where TEntity : IEntity
+    public interface IFirstQuery<out TEntity>
     {
-        IQueryOf<IEnumerable<TEntity>> All { get; }
+        TEntity First();
+    }
+
+    public interface IFirstOrDefaultQuery<out TEntity> : IFirstQuery<TEntity>
+    {
+        TEntity FirstOrDefault();
     }
 }

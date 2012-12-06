@@ -29,16 +29,16 @@ namespace Taijutsu.Test.Domain
     public class EntityFixture
     {
         [Test]
-        public virtual void ShouldBeComparedByTypeAndKey()
+        public virtual void ShouldBeComparedByTypeAndId()
         {
-            var sharedkey = SeqGuid.NewGuid();
+            var sharedId = SeqGuid.NewGuid();
 
-            var customer = new Customer(sharedkey, new FullName("Nik", "Gov"));
+            var customer = new Customer(sharedId, new FullName("Nik", "Gov"));
             var customer2 = new Customer(SeqGuid.NewGuid(), new FullName("Nik", "Gov"));
-            var customer3 = new Customer(sharedkey, new FullName("Nik", "Gov"));
+            var customer3 = new Customer(sharedId, new FullName("Nik", "Gov"));
 
-            var order = new Order(sharedkey);
-            var internetOrder = new InternetOrder(sharedkey);
+            var order = new Order(sharedId);
+            var internetOrder = new InternetOrder(sharedId);
 
             Assert.IsTrue(customer != customer2);
             Assert.IsFalse(customer.Equals(customer2));

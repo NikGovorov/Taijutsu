@@ -125,6 +125,90 @@ namespace Taijutsu.Test.Data
         }
 
         [Test]
+        public virtual void ShouldDelegateCreateMethodToOrmSession()
+        {
+            var options = new { };
+
+            var customer = new Customer(SeqGuid.NewGuid(), new FullName("Nikita", "Govorov"));
+
+            using (var uow = new UnitOfWork(source))
+            {
+                uow.MarkAsCreated(customer, options);
+            }
+
+            session.Received(1).MarkAsCreated(customer, options);
+
+            session.ClearReceivedCalls();
+
+            using (var uow = new UnitOfWork(source))
+            {
+                uow.Mark(customer, options).AsCreated();
+            }
+
+            session.Received(1).MarkAsCreated(customer, options);
+            
+            session.ClearReceivedCalls();
+
+            using (var uow = new UnitOfWork(source))
+            {
+                customer.AsCreatedIn(uow);
+            }
+
+            session.Received(1).MarkAsCreated(customer as IAggregateRoot);
+        }
+
+        [Test]
+        public virtual void ShouldDelegateDeleteMethodToOrmSession()
+        {
+            var options = new {};
+            
+            var customer = new Customer(SeqGuid.NewGuid(), new FullName("Nikita", "Govorov"));
+
+            using (var uow = new UnitOfWork(source))
+            {
+                uow.MarkAsDeleted(customer, options);
+            }
+
+            session.Received(1).MarkAsDeleted(customer, options);
+
+            session.ClearReceivedCalls();
+
+            using (var uow = new UnitOfWork(source))
+            {
+                uow.Mark(customer, options).AsDeleted();
+            }
+
+            session.Received(1).MarkAsDeleted(customer, options);
+
+            session.ClearReceivedCalls();
+
+            using (var uow = new UnitOfWork(source))
+            {
+                customer.AsDeletedIn(uow);
+            }
+
+            session.Received(1).MarkAsDeleted(customer as IDeletableEntity);
+        }
+
+        [Test]
+        public virtual void ShouldDelegateQueryMethodsToOrmSession()
+        {
+            var options = new {};
+            
+            using (var uow = new UnitOfWork(source))
+            {
+                uow.All<Customer>(options);
+                uow.Unique<Customer>(1, options);
+            }
+
+            session.Received(1).All<Customer>(options);
+            session.Received(1).Unique<Customer>(1, options);
+
+            session.ClearReceivedCalls();
+        }
+
+
+        [Test]
         public virtual void ShouldThrowExceptionIfCreateCalledAfterComplete()
         {
             Assert.That(() =>

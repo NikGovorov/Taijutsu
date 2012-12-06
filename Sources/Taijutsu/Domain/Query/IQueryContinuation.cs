@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 //  Copyright 2009-2013 Nikita Govorov
 //    
@@ -15,10 +15,9 @@
 
 #endregion
 
-namespace Taijutsu.Domain.Query.Option
+namespace Taijutsu.Domain.Query
 {
-    public interface IOffsetQuery<out TQuery> : IQuery where TQuery : IQuery
+    public interface IQueryContinuation : IHiddenObjectMembers
     {
-        TQuery Skip(int count);
     }
 }

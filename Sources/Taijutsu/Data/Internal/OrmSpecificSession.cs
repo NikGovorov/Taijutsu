@@ -47,14 +47,17 @@ namespace Taijutsu.Data.Internal
             return native;
         }
 
+        
         public abstract object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
         public abstract object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
         
         public abstract void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
         
-        public abstract IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IEntity;
-        public abstract IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IEntity;
-        public abstract IQueryOverContinuation<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity;
+        public abstract IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
+        public abstract IUniqueEntityQuery<TEntity> Unique<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity;
+
+        public abstract TQuery QueryWith<TEntity, TQuery>(string name = null) where TEntity : class, IEntity where TQuery : IQuery<TEntity>;
+        public abstract TRepository QueryFrom<TEntity, TRepository>(string name = null) where TEntity : class, IEntity where TRepository : IRepository<TEntity>;
 
         public abstract void Dispose();
 

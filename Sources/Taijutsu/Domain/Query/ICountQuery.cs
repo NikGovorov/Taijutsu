@@ -15,17 +15,10 @@
 
 #endregion
 
-using Taijutsu.Domain.Event;
-
-namespace Taijutsu.Test.Domain.Model
+namespace Taijutsu.Domain.Query
 {
-    public class UserBlocked : IFact
+    public interface ICountQuery<out TEntity> : IQuery<TEntity>
     {
-        public UserBlocked(int days=1)
-        {
-            Days = days;
-        }
-
-        public int Days { get; set; }
+        long Count();
     }
 }

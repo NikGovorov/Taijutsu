@@ -184,22 +184,22 @@ namespace Taijutsu.Data
             return new MarkingStep<TEntity>(() => MarkAsCreated(entity, options), () => MarkAsDeleted(entity, options));
         }
 
-        public virtual IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IQueryableEntity
+        public virtual IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity
         {
             AssertNotDisposed();
-            return dataContext.Session.AllOf<TEntity>(options);
+            return dataContext.Session.All<TEntity>(options);
         }
 
-        public virtual IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity
+        public virtual IUniqueEntityQuery<TEntity> Unique<TEntity>(object id, object options = null) where TEntity : class, IQueryableEntity
         {
             AssertNotDisposed();
-            return dataContext.Session.UniqueOf<TEntity>(options);
+            return dataContext.Session.Unique<TEntity>(id, options);
         }
 
-        public virtual IQueryOverContinuation<TEntity> Over<TEntity>() where TEntity : class, IQueryableEntity
+        public virtual IQueryOverContinuation<TEntity> Query<TEntity>() where TEntity : class, IQueryableEntity
         {
             AssertNotDisposed();
-            return dataContext.Session.QueryOver<TEntity>();
+            return new QueryOverContinuation<TEntity>(dataContext.Session);
         }
 
         object IHasNativeObject.NativeObject
@@ -208,6 +208,26 @@ namespace Taijutsu.Data
             {
                 AssertNotDisposed();
                 return dataContext.Session.NativeObject;
+            }
+        }
+
+        class QueryOverContinuation<TEntity> : IQueryOverContinuation<TEntity> where TEntity : class, IQueryableEntity
+        {
+            private readonly IOrmSession session;
+
+            public QueryOverContinuation(IOrmSession session)
+            {
+                this.session = session;
+            }
+
+            public TQuery With<TQuery>(string name = null) where TQuery : class, IQuery<TEntity>
+            {
+                return session.QueryWith<TEntity, TQuery>(name);
+            }
+
+            public TRepository From<TRepository>(string name = null) where TRepository : class, IRepository<TEntity>
+            {
+                return session.QueryFrom<TEntity, TRepository>(name);
             }
         }
     }

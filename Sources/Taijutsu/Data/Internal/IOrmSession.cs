@@ -15,26 +15,17 @@
 
 #endregion
 
-using System;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data.Internal
 {
-    public interface IOrmSession : ICompletableScope, IHasNativeObject
+    public interface IOrmSession : ICompletableScope, IHasNativeObject, IUnitOfWork
     {
         T As<T>(object options = null) where T : class;
 
-        object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
+        TQuery QueryWith<TEntity, TQuery>(string name = null) where TEntity : class, IEntity where TQuery : IQuery<TEntity>;
 
-        object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
-
-        void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
-
-        IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IEntity;
-
-        IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IEntity;
-
-        IQueryOverContinuation<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity;
+        TRepository QueryFrom<TEntity, TRepository>(string name = null) where TEntity : class, IEntity where TRepository : IRepository<TEntity>;
     }
 }

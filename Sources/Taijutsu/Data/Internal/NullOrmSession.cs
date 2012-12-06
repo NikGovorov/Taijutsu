@@ -50,19 +50,24 @@ namespace Taijutsu.Data.Internal
         {
         }
 
-        public IQueryOfEntities<TEntity> AllOf<TEntity>(object options = null) where TEntity : class, IEntity
+        public IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity
         {
             throw new NotSupportedException("NullOrmSession does not support queries.");
         }
 
-        public IQueryOfEntityByKey<TEntity> UniqueOf<TEntity>(object key, object options = null) where TEntity : class, IEntity
+        public IUniqueEntityQuery<TEntity> Unique<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity
         {
             throw new NotSupportedException("NullOrmSession does not support queries.");
         }
 
-        public IQueryOverContinuation<TEntity> QueryOver<TEntity>() where TEntity : class, IEntity
+        public TQuery QueryWith<TEntity, TQuery>(string name = null) where TEntity : class, IEntity where TQuery : IQuery<TEntity>
         {
-            throw new NotSupportedException("NullOrmSession does not support queries.");
+            throw new NotImplementedException();
+        }
+
+        public TRepository QueryFrom<TEntity, TRepository>(string name = null) where TEntity : class, IEntity where TRepository : IRepository<TEntity>
+        {
+            throw new NotImplementedException();
         }
 
         object IHasNativeObject.NativeObject { get { return this; } }

@@ -17,8 +17,8 @@
 
 namespace Taijutsu.Domain.Query
 {
-    public interface IDerivedQueryOf<TBase> : IQueryOf<TBase>
+    public interface IOffsetFilter<out TQuery> : IQueryContinuation where TQuery : IQueryContinuation
     {
-        TDerived Query<TDerived>() where TDerived : TBase;
+        TQuery Skip(int count);
     }
 }

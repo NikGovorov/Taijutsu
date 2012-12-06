@@ -16,19 +16,11 @@
 #endregion
 
 using System.Collections.Generic;
-using Taijutsu.Domain.Query.Narrowing;
-using Taijutsu.Domain.Query.Option;
 
 namespace Taijutsu.Domain.Query
 {
-    public interface IQueryOfEntities<out TEntity> : IQueryOver<TEntity>,
-                                                     IQueryOf<IEnumerable<TEntity>>,
-                                                     IKeyIncludingQuery<IQueryOfEntities<TEntity>>,
-                                                     ITypeExcludingQuery<IQueryOfEntities<TEntity>>,
-                                                     ILimitQuery<IQueryOfEntities<TEntity>>,
-                                                     ICountNarrowing,
-                                                     IAnyNarrowing
-        where TEntity : IEntity
+    public interface IListQuery<out TEntity>
     {
+        IReadOnlyList<TEntity> ToList();
     }
 }
