@@ -56,7 +56,6 @@
     <Compile Include="Data\Internal\IOrmSessionTerminationPolicy.cs" />
     <Compile Include="Data\Internal\IsolationLevelEx.cs" />
     <Compile Include="Data\Internal\MarkingStep.cs" />
-    <Compile Include="Data\Internal\NullOrmSession.cs" />
     <Compile Include="Data\Internal\OrmSessionBuilder.cs" />
     <Compile Include="Data\Internal\OrmSpecificSession.cs" />
     <Compile Include="Data\Internal\SuppressionScope.cs" />

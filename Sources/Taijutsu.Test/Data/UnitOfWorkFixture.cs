@@ -140,6 +140,17 @@ namespace Taijutsu.Test.Data
 
             session.ClearReceivedCalls();
 
+            Func<Customer> factory = () => customer;
+
+            using (var uow = new UnitOfWork(source))
+            {
+                uow.MarkAsCreated(factory, options);
+            }
+
+            session.Received(1).MarkAsCreated(factory, options);
+
+            session.ClearReceivedCalls();
+
             using (var uow = new UnitOfWork(source))
             {
                 uow.Mark(customer, options).AsCreated();
@@ -199,14 +210,75 @@ namespace Taijutsu.Test.Data
             {
                 uow.All<Customer>(options);
                 uow.Unique<Customer>(1, options);
+                uow.Query<Customer>().With<ICustomerQuery>("query");
+                uow.Query<Customer>().From<ICustomerRepository>("repository");
+
             }
 
             session.Received(1).All<Customer>(options);
             session.Received(1).Unique<Customer>(1, options);
-
-            session.ClearReceivedCalls();
+            session.Received(1).QueryWith<Customer, ICustomerQuery>("query");
+            session.Received(1).QueryFrom<Customer, ICustomerRepository>("repository");
         }
 
+        [Test]
+        public virtual void ShouldNotThrowExceptionIfQueryCalledAfterComplete()
+        {
+            var options = new { };
+
+            using (var uow = new UnitOfWork(source))
+            {
+                uow.Complete();
+                uow.All<Customer>(options);
+                uow.Unique<Customer>(1, options);
+                uow.Query<Customer>().With<ICustomerQuery>("query");
+                uow.Query<Customer>().From<ICustomerRepository>("repository");
+            }
+
+            session.Received(1).All<Customer>(options);
+            session.Received(1).Unique<Customer>(1, options);
+            session.Received(1).QueryWith<Customer, ICustomerQuery>("query");
+            session.Received(1).QueryFrom<Customer, ICustomerRepository>("repository");
+        }
+
+        [Test]
+        public virtual void ShouldThrowExceptionIfQueryCalledAfterDispose()
+        {
+            Assert.That(() =>
+            {
+                var uow = new UnitOfWork(source);
+                uow.Complete();
+                ((IDisposable)uow).Dispose();
+                uow.All<Customer>();
+
+            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, true)));
+
+            Assert.That(() =>
+            {
+                var uow = new UnitOfWork(source);
+                ((IDisposable)uow).Dispose();
+                uow.Unique<Customer>(100);
+
+            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, false)));
+
+            Assert.That(() =>
+            {
+                var uow = new UnitOfWork(source);
+                uow.Complete();
+                ((IDisposable)uow).Dispose();
+                uow.Query<Customer>().With<ICustomerQuery>("query");
+
+            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, true)));
+
+            Assert.That(() =>
+            {
+                var uow = new UnitOfWork(source);
+                ((IDisposable)uow).Dispose();
+                uow.Query<Customer>().From<ICustomerRepository>("repository");
+
+            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, false)));
+
+        }
 
         [Test]
         public virtual void ShouldThrowExceptionIfCreateCalledAfterComplete()

@@ -15,13 +15,11 @@
 
 #endregion
 
-namespace Taijutsu.Domain.Query
+using Taijutsu.Domain.Query;
+
+namespace Taijutsu.Test.Domain.Model
 {
-    public interface IEntityQuery<out TEntity> : ISingleOrDefaultQuery<TEntity>, IFirstOrDefaultQuery<TEntity>,
-                                                 IAnyQuery<TEntity>, ICountQuery<TEntity>,
-                                                 IKeyFilter<IEntityQuery<TEntity>>,
-                                                 INotTypeFilter<IEntityQuery<TEntity>>,
-                                                 ILockOption<IEntityQuery<TEntity>> where TEntity : IEntity
+    public interface ICustomerQuery : IQuery<Customer>
     {
     }
 }

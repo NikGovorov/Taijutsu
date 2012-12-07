@@ -16,10 +16,11 @@
 #endregion
 
 using System;
+using Taijutsu.Data.Internal;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.Test.Data
 {
     public class NullOrmSession : IOrmSession
     {

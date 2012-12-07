@@ -28,7 +28,8 @@ namespace Taijutsu.Domain.Query
         ICountQuery<TEntity>,
         IKeyFilter<IEntitiesQuery<TEntity>>,
         ILimitFilter<IEntitiesQuery<TEntity>>,
-        INotTypeFilter<IEntitiesQuery<TEntity>> 
+        INotTypeFilter<IEntitiesQuery<TEntity>>,
+        ILockOption<IEntitiesQuery<TEntity>>
         where TEntity : IEntity
     {
     }
