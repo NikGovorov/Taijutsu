@@ -49,11 +49,13 @@
     <Compile Include="Data\Internal\DataContext.cs" />
     <Compile Include="Data\Internal\DataContextSupervisor.cs" />
     <Compile Include="Data\Internal\DataSource.cs" />
+    <Compile Include="Data\Internal\DelayedTerminationPolicy.cs" />
     <Compile Include="Data\Internal\IDataContext.cs" />
+    <Compile Include="Data\Internal\ImmediateTerminationPolicy.cs" />
     <Compile Include="Data\Internal\InternalEnvironment.cs" />
     <Compile Include="Data\Internal\IOrmSession.cs" />
     <Compile Include="Data\Internal\IQueryOverContinuation.cs" />
-    <Compile Include="Data\Internal\IOrmSessionTerminationPolicy.cs" />
+    <Compile Include="Data\Internal\ITerminationPolicy.cs" />
     <Compile Include="Data\Internal\IsolationLevelEx.cs" />
     <Compile Include="Data\Internal\MarkingStep.cs" />
     <Compile Include="Data\Internal\OrmSessionBuilder.cs" />

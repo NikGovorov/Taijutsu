@@ -16,6 +16,8 @@
 #endregion
 
 using System;
+using System.Data;
+using NSubstitute;
 using NUnit.Framework;
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
@@ -23,37 +25,119 @@ using Taijutsu.Data.Internal;
 namespace Taijutsu.Test.Data
 {
     [TestFixture]
-    public class DataContextFixture
+    public class DataContextFixture : TestFixture
     {
-        private string source1;
-        private string source2;
+        private string source;
+        private IOrmSession session;
 
         [SetUp]
         protected void OnSetUp()
         {
-            source1 = Guid.NewGuid().ToString();
-            source2 = Guid.NewGuid().ToString();
-            InternalEnvironment.RegisterDataSource(new DataSource(source1, il => new NullOrmSession()));
-            InternalEnvironment.RegisterDataSource(new DataSource(source2, il => new NullOrmSession()));
+            source = Guid.NewGuid().ToString();
+            session = Substitute.For<IOrmSession>();
+            InternalEnvironment.RegisterDataSource(new DataSource(source, il => session));
         }
 
         [TearDown]
         protected void OnTearDown()
         {
-            InternalEnvironment.UnregisterDataSource(source1);
-            InternalEnvironment.UnregisterDataSource(source2);
+            session.ClearReceivedCalls();
+            InternalEnvironment.UnregisterDataSource(source);
         }
 
+        [Test]
+        public virtual void ShouldCallRealCompleteOnlyOnce()
+        {
+            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+            var policy = new ImmediateTerminationPolicy();
+
+            using (var context = new DataContext(config, sessionBuilder, policy))
+            {
+                Awaken(context);   
+                context.Complete();
+                context.Complete();
+            }
+            session.Received(1).Complete();
+        }
+
+        [Test]
+        public virtual void ShouldCallRealDisposeOnlyOnce()
+        {
+            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+            var policy = new ImmediateTerminationPolicy();
+
+            var context = new DataContext(config, sessionBuilder, policy);
+
+            Awaken(context);
+
+            context.Dispose();
+            context.Dispose();
+
+            session.Received(1).Dispose();
+        }
+
+        [Test]
+        public virtual void ShouldNotCallRealCompleteIfSessionHasNotBeenUsed()
+        {
+            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+            var policy = new ImmediateTerminationPolicy();
+
+            using (var context = new DataContext(config, sessionBuilder, policy))
+            {
+                context.Complete();
+            }
+            session.DidNotReceive().Complete();
+        }
+
+
+        [Test]
+        public virtual void ShouldNotCallRealDisposeIfSessionHasNotBeenUsed()
+        {
+            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+            var policy = new ImmediateTerminationPolicy();
+
+            var context = new DataContext(config, sessionBuilder, policy);
+
+            context.Dispose();
+            context.Dispose();
+
+            session.DidNotReceive().Complete();
+        }
+
+
+        [Test]
+        public virtual void ShouldThrowExceptionIfCompleteCalledAfterDispose()
+        {
+            Assert.That(() =>
+            {
+
+                var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+                var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+                var policy = new ImmediateTerminationPolicy();
+
+                var context = new DataContext(config, sessionBuilder, policy);
+                Awaken(context);
+                context.Dispose();
+                context.Complete();
+            }, Throws.Exception.With.Message.EqualTo("Data context has already been completed without success."));
+
+            session.Received(1).Dispose();
+            session.Received(0).Complete();
+        }
 
         [Test]
         [ExpectedException(ExpectedMessage = "Unit of work can not be successfully completed, because not all subordinates are completed.")]
         public virtual void ShouldThrowExceptionOnCompleteIfOneOfTheChildrenHasNotBeenCompleted()
         {
-            using (var uowla = new UnitOfWork(source1))
+            using (var uowla = new UnitOfWork(source))
             {
-                using (var uowlai2 = new UnitOfWork(source1))
+                using (var uowlai2 = new UnitOfWork(source))
                 {
-                    using (new UnitOfWork(source1))
+                    using (new UnitOfWork(source))
                     {
                     }
 
@@ -62,6 +146,19 @@ namespace Taijutsu.Test.Data
 
                 uowla.Complete();
             }
+        }
+
+        [Test]
+        [ExpectedException(ExpectedMessage = "Data context has already been disposed(with success - 'False'), so it is not usable anymore.")]
+        public virtual void ShouldThrowExceptionOnSessionCallIfDisposeHasAlreadyBeenCalled()
+        {
+            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+            var policy = new ImmediateTerminationPolicy();
+
+            var context = new DataContext(config, sessionBuilder, policy);
+            context.Dispose();
+            Awaken(context);
         }
     }
 }

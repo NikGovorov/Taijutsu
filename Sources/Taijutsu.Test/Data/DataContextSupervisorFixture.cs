@@ -64,8 +64,9 @@ namespace Taijutsu.Test.Data
                     {
                         AssertThatContextCountEqualTo(1);
 
-                        using (new UnitOfWork(source1))
+                        using (var uow = new UnitOfWork(source1))
                         {
+                            Awaken(uow);
                             AssertThatContextCountEqualTo(1);
                         }
                         using (new UnitOfWork(source1))
@@ -170,8 +171,9 @@ namespace Taijutsu.Test.Data
             {
                 AssertThatContextCountEqualTo(1);
 
-                using (new UnitOfWork(source1, Require.New))
+                using (var uow = new UnitOfWork(source1, Require.New))
                 {
+                    Awaken(uow);
                     AssertThatContextCountEqualTo(2);
 
                     using (new UnitOfWork(source1, Require.New))

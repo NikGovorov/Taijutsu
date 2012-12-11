@@ -23,12 +23,12 @@ namespace Taijutsu.Data.Internal
     {
         private readonly UnitOfWorkConfig configuration;
         private readonly Lazy<IOrmSession> session;
-        private readonly IOrmSessionTerminationPolicy terminationPolicy;
+        private readonly ITerminationPolicy terminationPolicy;
         private int subordinatesCount;
         private bool? completed;
         private bool disposed;
 
-        public DataContext(UnitOfWorkConfig configuration, Lazy<IOrmSession> session, IOrmSessionTerminationPolicy terminationPolicy)
+        public DataContext(UnitOfWorkConfig configuration, Lazy<IOrmSession> session, ITerminationPolicy terminationPolicy)
         {
             this.configuration = configuration;
             this.session = session;
@@ -37,19 +37,18 @@ namespace Taijutsu.Data.Internal
 
         public IOrmSession Session
         {
-            get { return session.Value; }
+            get
+            {
+                AssertNotDisposed();
+                return session.Value;
+            }
         }
 
         public virtual void Dispose()
         {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
             try
             {
-                if (!disposed && disposing)
+                if (!disposed)
                 {
                     try
                     {
@@ -114,6 +113,15 @@ namespace Taijutsu.Data.Internal
                 throw;
             }
         }
+
+        protected virtual void AssertNotDisposed()
+        {
+            if (disposed)
+            {
+                throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
+            }
+        }
+
 
         public virtual UnitOfWorkConfig Configuration
         {

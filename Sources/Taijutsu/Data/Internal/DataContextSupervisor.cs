@@ -27,13 +27,13 @@ namespace Taijutsu.Data.Internal
     {
         private readonly List<DataContextDecorator> contexts = new List<DataContextDecorator>();
         private readonly Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider;
-        private readonly IOrmSessionTerminationPolicy terminationPolicy;
+        private readonly ITerminationPolicy terminationPolicy;
 
         public DataContextSupervisor(Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider,
-                                     IOrmSessionTerminationPolicy terminationPolicy = null)
+                                     ITerminationPolicy terminationPolicy = null)
         {
             this.dataSourcesProvider = dataSourcesProvider;
-            this.terminationPolicy = terminationPolicy ?? new ImmediateOrmSessionTerminationPolicy();
+            this.terminationPolicy = terminationPolicy ?? new ImmediateTerminationPolicy();
         }
 
         public virtual bool IsActive

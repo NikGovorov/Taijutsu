@@ -50,13 +50,7 @@ namespace Taijutsu.Test.Data
             session.ClearReceivedCalls();
         }
 
-        protected virtual void Awaken(UnitOfWork uow)
-        {
-            #pragma warning disable 168
-            var nativeSession = ((IHasNativeObject) uow).NativeObject; // initialize lazy session
-            #pragma warning restore 168
-        }
-
+        
         [Test]
         public virtual void ShouldProvideDifferentWaysOfComplete()
         {

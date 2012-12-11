@@ -16,12 +16,29 @@
 #endregion
 
 using SharpTestsEx;
+using Taijutsu.Data;
 using Taijutsu.Data.Internal;
 
 namespace Taijutsu.Test.Data
 {
     public class TestFixture
     {
+        protected virtual void Awaken(UnitOfWork uow)
+        {
+            #pragma warning disable 168
+            var nativeSession = ((IHasNativeObject) uow).NativeObject; // initialize lazy session
+            #pragma warning restore 168
+        }
+
+
+        protected virtual void Awaken(IDataContext context)
+        {
+            #pragma warning disable 168
+            var nativeSession = context.Session; // initialize lazy session
+            #pragma warning restore 168
+        }
+
+
         protected virtual void AssertThatContextCountEqualTo(int count)
         {
             InternalEnvironment.DataContextSupervisor.Contexts.Should().Have.Count.EqualTo(count);

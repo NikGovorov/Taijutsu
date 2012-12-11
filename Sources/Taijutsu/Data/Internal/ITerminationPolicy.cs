@@ -16,24 +16,11 @@
 #endregion
 
 using System;
-using Taijutsu.Data.Internal;
 
-namespace Taijutsu.Data
+namespace Taijutsu.Data.Internal
 {
-    public class OperationScope : IDisposable
+    public interface ITerminationPolicy : IDisposable
     {
-        private readonly ITerminationPolicy terminationPolicy;
-
-        public OperationScope(ITerminationPolicy terminationPolicy = null)
-        {
-            this.terminationPolicy = terminationPolicy ?? new DelayedTerminationPolicy();
-            InternalEnvironment.RegisterOperationScope(this.terminationPolicy);
-        }
-
-        public void Dispose()
-        {
-            terminationPolicy.Dispose();
-            InternalEnvironment.UnregisterOperationScope();
-        }
+        void Terminate(IOrmSession session, bool isSuccessfully);
     }
 }

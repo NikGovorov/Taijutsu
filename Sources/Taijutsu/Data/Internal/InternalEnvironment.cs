@@ -83,7 +83,7 @@ namespace Taijutsu.Data.Internal
 
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        internal static void RegisterOperationScope(IOrmSessionTerminationPolicy policy)
+        internal static void RegisterOperationScope(ITerminationPolicy policy)
         {
             if (LogicContext.FindData(OperationScopeKey) != null)
             {
