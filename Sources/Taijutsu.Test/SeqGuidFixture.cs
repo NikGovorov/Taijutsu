@@ -49,14 +49,17 @@ namespace Taijutsu.Test
             {
                 tasks.Add(Task.Factory.StartNew(() =>
                 {
-                    var id = SeqGuid.NewGuid();
-                    generatedIds.Add(id);
+                    for (var j = 0; j < 100; j++)
+                    {
+                        var id = SeqGuid.NewGuid();
+                        generatedIds.Add(id);
+                    }
                 }));
             }
 
             Task.WaitAll(tasks.ToArray());
 
-            Assert.That(new HashSet<Guid>(generatedIds).Count, Is.EqualTo(Count));
+            Assert.That(new HashSet<Guid>(generatedIds).Count, Is.EqualTo(Count * 100));
         }
 
         [Test]

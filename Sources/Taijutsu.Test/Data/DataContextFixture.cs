@@ -21,6 +21,7 @@ using NSubstitute;
 using NUnit.Framework;
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
+using SharpTestsEx;
 
 namespace Taijutsu.Test.Data
 {
@@ -92,7 +93,6 @@ namespace Taijutsu.Test.Data
             session.DidNotReceive().Complete();
         }
 
-
         [Test]
         public virtual void ShouldNotCallRealDisposeIfSessionHasNotBeenUsed()
         {
@@ -107,7 +107,6 @@ namespace Taijutsu.Test.Data
 
             session.DidNotReceive().Complete();
         }
-
 
         [Test]
         public virtual void ShouldThrowExceptionIfCompleteCalledAfterDispose()
@@ -128,6 +127,44 @@ namespace Taijutsu.Test.Data
             session.Received(1).Dispose();
             session.Received(0).Complete();
         }
+
+        [Test]
+        public virtual void ShouldRaiseFinishedEventDuringDispose()
+        {
+            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+            var policy = new ImmediateTerminationPolicy();
+
+            bool? success = null;
+
+            var context = new DataContext(config, sessionBuilder, policy);
+
+            Awaken(context);
+
+            context.Finished += isSuccessfully => { success = isSuccessfully; session.Received(0).Dispose(); };
+
+            context.Dispose();
+
+            session.Received(1).Dispose();
+            success.Should().Not.Be(null);
+            success.Should().Be.EqualTo(false);
+            
+            session.ClearReceivedCalls();
+
+            success = null;
+
+            context = new DataContext(config, sessionBuilder, policy);
+
+            Awaken(context);
+
+            context.Finished += isSuccessfully => { success = isSuccessfully; session.Received(0).Dispose(); session.Received(1).Complete(); };
+            context.Complete();
+            context.Dispose();
+            success.Should().Not.Be(null);
+            success.Should().Be.EqualTo(true);
+            session.Received(1).Dispose();
+        }
+
 
         [Test]
         [ExpectedException(ExpectedMessage = "Unit of work can not be successfully completed, because not all subordinates are completed.")]

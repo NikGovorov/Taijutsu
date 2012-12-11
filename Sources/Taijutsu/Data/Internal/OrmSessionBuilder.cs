@@ -28,7 +28,7 @@ namespace Taijutsu.Data.Internal
         {
         }
 
-        public OrmSessionBuilder(Func<dynamic, IOrmSession> factory, string name)
+        public OrmSessionBuilder(Func<object, IOrmSession> factory, string name)
         {
             this.factory = factory;
             this.name = name;
