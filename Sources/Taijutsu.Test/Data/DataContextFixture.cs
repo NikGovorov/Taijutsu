@@ -17,6 +17,7 @@
 
 using System;
 using System.Data;
+using System.Management.Instrumentation;
 using NSubstitute;
 using NUnit.Framework;
 using Taijutsu.Data;
@@ -163,6 +164,27 @@ namespace Taijutsu.Test.Data
             success.Should().Not.Be(null);
             success.Should().Be.EqualTo(true);
             session.Received(1).Dispose();
+
+
+            session.ClearReceivedCalls();
+
+            context = new DataContext(config, sessionBuilder, policy);
+
+            Awaken(context);
+
+            context.Finished += isSuccessfully => { throw new InstanceNotFoundException();};
+
+            try
+            {
+                context.Dispose();
+            }
+            catch (InstanceNotFoundException)
+            {
+                
+            }
+
+            session.Received(1).Dispose();
+
         }
 
 

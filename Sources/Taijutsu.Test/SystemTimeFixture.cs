@@ -58,8 +58,9 @@ namespace Taijutsu.Test
         {
             var startPoint = new DateTime(2010, 01, 01, 23, 59, 59, 995);
             SystemTime.TimeController.SetDate(startPoint);
-            Thread.Sleep(5);
-            Assert.That(new DateTime(2010, 01, 02), Is.EqualTo(SystemTime.Now).Within(3).Milliseconds);
+            Thread.Sleep(50);
+            var now = SystemTime.Now;
+            Assert.That(new DateTime(2010, 01, 02, 0 , 0, 0, 45), Is.EqualTo(now).Within(30).Milliseconds);
         }
 
         [Test]
