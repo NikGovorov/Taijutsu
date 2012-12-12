@@ -15,6 +15,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 
 namespace Taijutsu.Domain
@@ -36,6 +37,7 @@ namespace Taijutsu.Domain
 
         public static void CustomizeWith(IEnumerable<IEntityConversion> newConversions)
         {
+            if (newConversions == null) throw new ArgumentNullException("newConversions");
             conversions = new List<IEntityConversion>(newConversions);
         }
     }

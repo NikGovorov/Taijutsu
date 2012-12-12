@@ -28,6 +28,9 @@ namespace Taijutsu.Domain
 
         protected CompositeSpecification(ISpecification<TDomainObject> one, ISpecification<TDomainObject> other)
         {
+            if (one == null) throw new ArgumentNullException("one");
+            if (other == null) throw new ArgumentNullException("other");
+
             oneSpec = one;
             otherSpec = other;
         }
@@ -35,13 +38,11 @@ namespace Taijutsu.Domain
         public virtual ISpecification<TDomainObject> One
         {
             get { return oneSpec; }
-            protected set { oneSpec = value; }
         }
 
         public virtual ISpecification<TDomainObject> Other
         {
             get { return otherSpec; }
-            protected set { otherSpec = value; }
         }
     }
 }

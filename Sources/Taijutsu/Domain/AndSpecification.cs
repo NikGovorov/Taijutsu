@@ -38,6 +38,8 @@ namespace Taijutsu.Domain
 
         public override IEnumerable<TDomainObject> SatisfyingElementsFrom(IEnumerable<TDomainObject> candidates)
         {
+            if (candidates == null) throw new ArgumentNullException("candidates");
+
             candidates = candidates.ToList();
 
             return One.SatisfyingElementsFrom(candidates).Intersect((Other.SatisfyingElementsFrom(candidates)));

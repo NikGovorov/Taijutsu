@@ -57,14 +57,16 @@ namespace Taijutsu.Domain.Event
         protected DomainEvent(TInitiator initiator, Guid? id = null)
             : base(id)
         {
-            if (id.HasValue)
-            {
-                base.id = id.Value;
-            }
 
             if (Equals(initiator, default(TInitiator)))
             {
                 throw new ArgumentNullException("initiator");
+            }
+
+
+            if (id.HasValue)
+            {
+                base.id = id.Value;
             }
 
             this.initiator = initiator;

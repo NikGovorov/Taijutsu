@@ -15,12 +15,16 @@
 
 #endregion
 
+using System;
+
 namespace Taijutsu.Domain
 {
     public static class AggregateRootEx
     {
         public static object AsCreatedIn(this IAggregateRoot self, IUnitOfWork uow)
         {
+            if (self == null) throw new ArgumentNullException("self");
+            if (uow == null) throw new ArgumentNullException("uow");
             return uow.MarkAsCreated(self);
         }
     }

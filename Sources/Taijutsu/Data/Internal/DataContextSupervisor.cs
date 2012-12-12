@@ -32,6 +32,8 @@ namespace Taijutsu.Data.Internal
         public DataContextSupervisor(Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider,
                                      ITerminationPolicy terminationPolicy = null)
         {
+            if (dataSourcesProvider == null) throw new ArgumentNullException("dataSourcesProvider");
+
             this.dataSourcesProvider = dataSourcesProvider;
             this.terminationPolicy = terminationPolicy ?? new ImmediateTerminationPolicy();
         }
@@ -107,7 +109,7 @@ namespace Taijutsu.Data.Internal
             get { return contexts.Cast<IDataContext>().ToArray(); }
         }
 
-        public class DataContextDecorator : IDataContext
+        internal class DataContextDecorator : IDataContext
         {
             private readonly DataContext wrappedContext;
             private List<DataContextDecorator> contexts;

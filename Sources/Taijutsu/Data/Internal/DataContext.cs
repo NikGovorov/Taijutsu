@@ -30,6 +30,10 @@ namespace Taijutsu.Data.Internal
 
         public DataContext(UnitOfWorkConfig configuration, Lazy<IOrmSession> session, ITerminationPolicy terminationPolicy)
         {
+            if (configuration == null) throw new ArgumentNullException("configuration");
+            if (session == null) throw new ArgumentNullException("session");
+            if (terminationPolicy == null) throw new ArgumentNullException("terminationPolicy");
+
             this.configuration = configuration;
             this.session = session;
             this.terminationPolicy = terminationPolicy;

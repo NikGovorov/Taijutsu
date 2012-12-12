@@ -85,6 +85,8 @@ namespace Taijutsu.Data.Internal
         [EditorBrowsable(EditorBrowsableState.Never)]
         internal static void RegisterOperationScope(ITerminationPolicy policy)
         {
+            if (policy == null) throw new ArgumentNullException("policy");
+
             if (LogicContext.FindData(OperationScopeKey) != null)
             {
                 throw new Exception("Only one operation scope is allowed simultaneously.");
@@ -112,6 +114,9 @@ namespace Taijutsu.Data.Internal
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static void RegisterDataSource(DataSource dataSource, bool throwIfExists = false)
         {
+            if (dataSource == null) throw new ArgumentNullException("dataSource");
+
+
             lock (sync)
             {
                 var newDataSources = new Dictionary<string, DataSource>(dataSources);
@@ -130,6 +135,8 @@ namespace Taijutsu.Data.Internal
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static void UnregisterDataSource(string name = "")
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             lock (sync)
             {
                 var newDataSources = new Dictionary<string, DataSource>(dataSources);

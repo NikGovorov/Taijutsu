@@ -15,12 +15,16 @@
 
 #endregion
 
+using System;
+
 namespace Taijutsu.Domain
 {
     public static class DomainObjectEx
     {
         public static bool Satisfies(this IDomainObject domainObject, ISpecification specification)
         {
+            if (specification == null) throw new ArgumentNullException("specification");
+
             return specification.IsSatisfiedBy(domainObject);
         }
     }

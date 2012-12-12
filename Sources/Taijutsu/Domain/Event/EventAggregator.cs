@@ -35,6 +35,11 @@ namespace Taijutsu.Domain.Event
 
         public static void Publish<TEvent>(TEvent ev) where TEvent : IEvent
         {
+            if (Equals(ev, default(TEvent)))
+            {
+                throw new ArgumentNullException("ev");
+            }
+
             var localEventAggregator = FindLocalEventAggregator();
 
             if (localEventAggregator != null)
@@ -57,12 +62,16 @@ namespace Taijutsu.Domain.Event
 
         public static Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
         {
+            if (subscriber == null) throw new ArgumentNullException("subscriber");
+
             return globalEventAggregator.Subscribe(subscriber, priority);
         }
 
         public static Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0)
             where TEvent : class, IEvent
         {
+            if (subscriber == null) throw new ArgumentNullException("subscriber");
+
             return globalEventAggregator.Subscribe(subscriber, priority);
         }
 

@@ -32,6 +32,8 @@ namespace Taijutsu
         // ReSharper disable ParameterHidesMember
         public static void Customize(ILogicContext context)
         {
+            if (context == null) throw new ArgumentNullException("context");
+
             lock (sync)
             {
                 if (initialized)
@@ -44,6 +46,7 @@ namespace Taijutsu
                 LogicContext.context = context;
             }
         }
+
         // ReSharper restore ParameterHidesMember
 
         private static void CheckInitialization()
@@ -62,6 +65,8 @@ namespace Taijutsu
 
         public static object FindData(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             CheckInitialization();
 
             return context.FindData(name);
@@ -69,6 +74,8 @@ namespace Taijutsu
 
         public static void SetData(string name, object value)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             CheckInitialization();
 
             context.SetData(name, value);
@@ -76,6 +83,8 @@ namespace Taijutsu
 
         public static void ReleaseData(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             CheckInitialization();
 
             context.ReleaseData(name);
@@ -118,11 +127,8 @@ namespace Taijutsu
 
         public HybridLogicContext(IEnumerable<ILogicContext> contexts)
         {
-            if (contexts == null)
-            {
-                throw new ArgumentNullException("contexts");
-            }
-            
+            if (contexts == null) throw new ArgumentNullException("contexts");
+
             this.contexts = contexts.ToList();
         }
 

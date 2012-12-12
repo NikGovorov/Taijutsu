@@ -30,12 +30,16 @@ namespace Taijutsu.Data
 
         public static HandledSafelySyntax<TSource> HandledSafely<TSource>(this SubscriptionSyntax.All<TSource> self)
         {
+            if (self == null) throw new ArgumentNullException("self");
+
             return new HandledSafelySyntaxAllImpl<TSource>(self);
         }
 
         public static HandledSafelySyntax<TProjection> HandledSafely<TSource, TProjection>
             (this SubscriptionSyntax.Projection<TSource, TProjection> self)
         {
+            if (self == null) throw new ArgumentNullException("self");
+
             return new HandledSafelySyntaxProjectionImpl<TSource, TProjection>(self);
         }
 
@@ -45,11 +49,15 @@ namespace Taijutsu.Data
 
             public HandledSafelySyntaxAllImpl(SubscriptionSyntax.All<TSource> target)
             {
+                if (target == null) throw new ArgumentNullException("target");
+
                 this.target = target;
             }
 
             public override Action Subscribe(Action<TSource> subscriber, int priority = 0)
             {
+                if (subscriber == null) throw new ArgumentNullException("subscriber");
+
                 return target.Subscribe(WrapSubscriber(subscriber), priority);
             }
         }
@@ -60,11 +68,15 @@ namespace Taijutsu.Data
 
             public HandledSafelySyntaxProjectionImpl(SubscriptionSyntax.Projection<TSource, TProjection> target)
             {
+                if (target == null) throw new ArgumentNullException("target");
+
                 this.target = target;
             }
 
             public override Action Subscribe(Action<TProjection> subscriber, int priority = 0)
             {
+                if (subscriber == null) throw new ArgumentNullException("subscriber");
+
                 return target.Subscribe(WrapSubscriber(subscriber), priority);
             }
         }
@@ -75,6 +87,8 @@ namespace Taijutsu.Data
 
             protected virtual Action<TSource> WrapSubscriber(Action<TSource> subscriber)
             {
+                if (subscriber == null) throw new ArgumentNullException("subscriber");
+
                 return source =>
                     {
                         var transaction = Transaction.Current;

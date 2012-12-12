@@ -21,7 +21,7 @@ namespace Taijutsu.Data.Internal
 {
     public class OrmSessionBuilder
     {
-        private readonly Func<dynamic, IOrmSession> factory;
+        private readonly Func<object, IOrmSession> factory;
         private readonly string name;
 
         public OrmSessionBuilder(Func<IOrmSession> factory, string name) : this(options => factory(), name)
@@ -30,6 +30,10 @@ namespace Taijutsu.Data.Internal
 
         public OrmSessionBuilder(Func<object, IOrmSession> factory, string name)
         {
+            if (factory == null) throw new ArgumentNullException("factory");
+            if (name == null) throw new ArgumentNullException("name");
+
+
             this.factory = factory;
             this.name = name;
         }

@@ -28,17 +28,13 @@ namespace Taijutsu.Data
 
     public class UnitOfWorkConfig
     {
-        private string sourceName = "";
-        private IsolationLevel isolationLevel = IsolationLevel.Unspecified;
-        private Require require = Require.None;
-
-        protected UnitOfWorkConfig()
-        {
-        }
+        private readonly string sourceName = string.Empty;
+        private readonly IsolationLevel isolationLevel = IsolationLevel.Unspecified;
+        private readonly Require require = Require.None;
 
         public UnitOfWorkConfig(string sourceName, IsolationLevel isolationLevel, Require require)
         {
-            this.sourceName = sourceName;
+            this.sourceName = sourceName ?? string.Empty;
             this.isolationLevel = isolationLevel;
             this.require = require;
         }
@@ -46,19 +42,16 @@ namespace Taijutsu.Data
         public Require Require
         {
             get { return require; }
-            protected set { require = value; }
         }
 
         public IsolationLevel IsolationLevel
         {
             get { return isolationLevel; }
-            protected set { isolationLevel = value; }
         }
 
         public string SourceName
         {
             get { return sourceName; }
-            protected set { sourceName = value; }
         }
     }
 }

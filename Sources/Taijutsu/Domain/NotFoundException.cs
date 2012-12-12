@@ -23,7 +23,7 @@ namespace Taijutsu.Domain
     public class NotFoundException : EntityException
     {
         public NotFoundException(object id, object type, Exception innnerException = null)
-            : base(string.Format("Entity with '{0}' id and '{1}' type has not been found.", id, type), innnerException)
+            : base(string.Format("Entity with '{0}' id and '{1}' type has not been found.", id ?? "unknown", type ?? typeof(IDomainObject)), innnerException)
         {
             entityId = id;
             entityType = type;
@@ -36,7 +36,7 @@ namespace Taijutsu.Domain
 
         public NotFoundException(string query, object type, Exception innnerException = null)
             : base(
-                string.Format("Entity of '{1}' type has not been found. Query requires not empty results. Query description: '{0}'.", query, type),
+                string.Format("Entity of '{1}' type has not been found. Query requires not empty results. Query description: '{0}'.", query ?? "unknown", type ?? typeof(IDomainObject)),
                 innnerException)
         {
             entityId = "unknown";

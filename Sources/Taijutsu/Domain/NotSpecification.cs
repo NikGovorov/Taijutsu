@@ -28,6 +28,8 @@ namespace Taijutsu.Domain
 
         public NotSpecification(ISpecification<TDomainObject> original)
         {
+            if (original == null) throw new ArgumentNullException("original");
+
             this.original = original;
         }
 
@@ -38,6 +40,8 @@ namespace Taijutsu.Domain
 
         public override IEnumerable<TDomainObject> SatisfyingElementsFrom(IEnumerable<TDomainObject> candidates)
         {
+            if (candidates == null) throw new ArgumentNullException("candidates");
+
             candidates = candidates.ToList();
 
             return candidates.Except(original.SatisfyingElementsFrom(candidates));

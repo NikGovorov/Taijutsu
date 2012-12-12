@@ -67,6 +67,8 @@ namespace Taijutsu.Data
 
         public UnitOfWork(UnitOfWorkConfig unitOfWorkConfig)
         {
+            if (unitOfWorkConfig == null) throw new ArgumentNullException("unitOfWorkConfig");
+
             dataContext = InternalEnvironment.DataContextSupervisor.Register(unitOfWorkConfig);
         }
 

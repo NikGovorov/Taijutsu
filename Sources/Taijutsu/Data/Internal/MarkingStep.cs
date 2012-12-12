@@ -24,18 +24,21 @@ namespace Taijutsu.Data.Internal
     public class MarkingStep<TEntity> : IMarkingStep where TEntity : IDeletableEntity, IAggregateRoot
     // ReSharper restore UnusedTypeParameter
     {
-        private readonly Func<object> creationFuction;
+        private readonly Func<object> creatingFuction;
         private readonly Action removingAction;
 
-        public MarkingStep(Func<object> creationFuction, Action removingAction)
+        public MarkingStep(Func<object> creatingFuction, Action removingAction)
         {
-            this.creationFuction = creationFuction;
+            if (creatingFuction == null) throw new ArgumentNullException("creatingFuction");
+            if (removingAction == null) throw new ArgumentNullException("removingAction");
+
+            this.creatingFuction = creatingFuction;
             this.removingAction = removingAction;
         }
 
         public object AsCreated()
         {
-            return creationFuction();
+            return creatingFuction();
         }
 
         public void AsDeleted()

@@ -39,7 +39,7 @@ namespace Taijutsu
         public static ITimeController TimeController
         {
             get { return controller; }
-            set { controller = value; }
+            set { controller = value ?? controller; }
         }
     }
 
@@ -54,6 +54,8 @@ namespace Taijutsu
 
         public void Customize(Func<DateTime> func)
         {
+            if (func == null) throw new ArgumentNullException("func");
+
             nowFunc = func;
         }
 

@@ -23,6 +23,8 @@ namespace Taijutsu
     {
         public static IDisposable AsDisposable(this Action self)
         {
+            if (self == null) throw new ArgumentNullException("self");
+
             return new DisposableAction(self);
         }
 

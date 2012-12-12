@@ -15,12 +15,16 @@
 
 #endregion
 
+using System;
+
 namespace Taijutsu.Domain
 {
     public static class DeletableEntityEx
     {
         public static void AsDeletedIn(this IDeletableEntity self, IUnitOfWork uow)
         {
+            if (self == null) throw new ArgumentNullException("self");
+            if (uow == null) throw new ArgumentNullException("uow");
             uow.MarkAsDeleted(self);
         }
     }

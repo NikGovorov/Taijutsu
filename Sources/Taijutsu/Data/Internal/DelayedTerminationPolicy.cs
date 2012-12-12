@@ -63,6 +63,8 @@ namespace Taijutsu.Data.Internal
 
         public void Terminate(IOrmSession session, bool isSuccessfully)
         {
+            if (session == null) throw new ArgumentNullException("session");
+
             if (!disposed)
             {
                 sessions.Add(session);

@@ -69,6 +69,11 @@ namespace Taijutsu.Domain.Event
                              Guid? id = null)
             : base(occurrenceDate, noticeDate, id)
         {
+            if (Equals(recipient, default(TRecipient)))
+            {
+                throw new ArgumentNullException("recipient");
+            }
+
             this.recipient = recipient;
         }
 
@@ -94,6 +99,11 @@ namespace Taijutsu.Domain.Event
                              DateTime? noticeDate = null, Guid? id = null)
             : base(recipient, occurrenceDate, noticeDate, id)
         {
+            if (Equals(fact, default(TFact)))
+            {
+                throw new ArgumentNullException("fact");
+            }
+
             this.recipient = recipient;
             this.fact = fact;
         }

@@ -39,6 +39,9 @@ namespace Taijutsu.Data.Internal
         public DataSource(string name, IsolationLevel defaultIsolationLevel,
                           Func<IsolationLevel, IOrmSession> sessionBuilder)
         {
+            if (name == null) throw new ArgumentNullException("name");
+            if (sessionBuilder == null) throw new ArgumentNullException("sessionBuilder");
+
             this.name = name;
             this.defaultIsolationLevel = defaultIsolationLevel;
             this.sessionBuilder = sessionBuilder;

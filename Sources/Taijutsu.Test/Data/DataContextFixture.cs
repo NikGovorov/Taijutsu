@@ -16,6 +16,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Management.Instrumentation;
 using NSubstitute;
@@ -154,6 +155,8 @@ namespace Taijutsu.Test.Data
 
             success = null;
 
+
+
             context = new DataContext(config, sessionBuilder, policy);
 
             Awaken(context);
@@ -165,28 +168,90 @@ namespace Taijutsu.Test.Data
             success.Should().Be.EqualTo(true);
             session.Received(1).Dispose();
 
-
             session.ClearReceivedCalls();
+        }
 
-            context = new DataContext(config, sessionBuilder, policy);
+        [Test]
+        public virtual void ShouldRaiseFinishedEventDuringDecoratorDispose()
+        {
+            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+            var policy = new ImmediateTerminationPolicy();
 
-            Awaken(context);
+            var context = new DataContext(config, sessionBuilder, policy);
+            var contextDecorator = new DataContextSupervisor.DataContextDecorator(context, new List<DataContextSupervisor.DataContextDecorator>());
 
-            context.Finished += isSuccessfully => { throw new InstanceNotFoundException();};
+            Awaken(contextDecorator);
+
+            Action<bool> eventHandler = isSuccessfully => { throw new InstanceNotFoundException(); };
+            ((IDataContext)contextDecorator).Finished += eventHandler;
 
             try
             {
-                context.Dispose();
+                contextDecorator.Dispose();
             }
             catch (InstanceNotFoundException)
             {
-                
+
             }
 
             session.Received(1).Dispose();
 
+            session.ClearReceivedCalls();
+
+
+
+            context = new DataContext(config, sessionBuilder, policy);
+            contextDecorator = new DataContextSupervisor.DataContextDecorator(context, new List<DataContextSupervisor.DataContextDecorator>());
+
+            Awaken(contextDecorator);
+
+            eventHandler = isSuccessfully => { throw new InstanceNotFoundException(); };
+            ((IDataContext)contextDecorator).Finished += eventHandler;
+            ((IDataContext)contextDecorator).Finished -= eventHandler;
+            contextDecorator.Dispose();
+            session.Received(1).Dispose();
         }
 
+        [Test]
+        public virtual void ShouldReplaceFinishedEventInSubordinate()
+        {
+            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+            var policy = new ImmediateTerminationPolicy();
+
+            bool called = false;
+
+            var context = new DataContext(config, sessionBuilder, policy);
+
+            var subordinate = new DataContext.Subordinate(context);
+
+            Awaken(subordinate);
+
+            ((IDataContext)subordinate).Finished += isSuccessfully => { called = true; };
+
+            context.Dispose();
+
+            called.Should().Be.True();
+
+            session.Received(1).Dispose();
+
+            session.ClearReceivedCalls();
+
+
+            called = false;
+            context = new DataContext(config, sessionBuilder, policy);
+            subordinate = new DataContext.Subordinate(context);
+
+            Awaken(subordinate);
+
+            Action<bool> eventHandler = isSuccessfully => { called = true; };
+            ((IDataContext)subordinate).Finished += eventHandler;
+            ((IDataContext)subordinate).Finished -= eventHandler;
+            context.Dispose();
+            session.Received(1).Dispose();
+            called.Should().Be.False();
+        }
 
         [Test]
         [ExpectedException(ExpectedMessage = "Unit of work can not be successfully completed, because not all subordinates are completed.")]

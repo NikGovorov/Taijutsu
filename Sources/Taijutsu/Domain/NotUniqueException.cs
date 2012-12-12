@@ -23,7 +23,7 @@ namespace Taijutsu.Domain
     public class NotUniqueException : EntityException
     {
         public NotUniqueException(object id, object type, Exception innnerException = null)
-            : base(string.Format("Entity with '{0}' id and '{1}' type is not unique.", id, type), innnerException)
+            : base(string.Format("Entity with '{0}' id and '{1}' type is not unique.", id ?? "unknown", type ?? typeof(IDomainObject)), innnerException)
         {
             entityId = id;
             entityType = type;
@@ -35,7 +35,7 @@ namespace Taijutsu.Domain
         }
 
         public NotUniqueException(string query, object type, Exception innnerException = null)
-            : base(string.Format("Entity of '{1}' type is not unique. Query requires unique results. Query description: '{0}'.", query, type), innnerException)
+            : base(string.Format("Entity of '{1}' type is not unique. Query requires unique results. Query description: '{0}'.", query ?? "unknown", type ?? typeof(IDomainObject)), innnerException)
         {
             entityId = "unknown";
             entityType = type;

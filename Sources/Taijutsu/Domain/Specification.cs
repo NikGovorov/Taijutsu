@@ -72,17 +72,25 @@ namespace Taijutsu.Domain
         public static Specification<TDomainObject> operator &(
             Specification<TDomainObject> one, Specification<TDomainObject> other)
         {
+            if (one == null) throw new ArgumentNullException("one");
+            if (other == null) throw new ArgumentNullException("other");
+
             return one.And(other);
         }
 
         public static Specification<TDomainObject> operator |(
             Specification<TDomainObject> one, Specification<TDomainObject> other)
         {
+            if (one == null) throw new ArgumentNullException("one");
+            if (other == null) throw new ArgumentNullException("other");
+
             return one.Or(other);
         }
 
         public static Specification<TDomainObject> operator !(Specification<TDomainObject> specification)
         {
+            if (specification == null) throw new ArgumentNullException("specification");
+
             return specification.Not();
         }
     }
