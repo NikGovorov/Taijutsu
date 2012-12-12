@@ -74,14 +74,14 @@
     <Compile Include="ActionExFixture.cs" />
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="Data\ConstructionScopeFixture.cs" />
-    <Compile Include="Data\EntitiesQuery.cs" />
-    <Compile Include="Data\EntityQuery.cs" />
+    <Compile Include="Data\DataSourceFixture.cs" />
     <Compile Include="Data\NullOrmSession.cs" />
     <Compile Include="Data\OrmSessionBuilderFixture.cs" />
+    <Compile Include="Data\OrmSpecificSessionFixture.cs" />
     <Compile Include="Data\SuppressionScopeFixture.cs" />
     <Compile Include="Data\TestFixture.cs" />
     <Compile Include="Data\DataContextFixture.cs" />
-    <Compile Include="Data\IsolationLevelEx.cs" />
+    <Compile Include="Data\IsolationLevelExFixture.cs" />
     <Compile Include="Data\DataContextSupervisorFixture.cs" />
     <Compile Include="Data\UnitOfWorkFixture.cs" />
     <Compile Include="Domain\AggregateRootExFixture.cs" />

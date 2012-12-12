@@ -23,7 +23,7 @@ using SharpTestsEx;
 namespace Taijutsu.Test.Data
 {
     [TestFixture]
-    public class IsolationLevelEx
+    public class IsolationLevelExFixture
     {
         [Test]
         public virtual void IsolationLevelCompatibilityShouldBeDeterminedCorrectly()

@@ -116,7 +116,6 @@ namespace Taijutsu.Data.Internal
         {
             if (dataSource == null) throw new ArgumentNullException("dataSource");
 
-
             lock (sync)
             {
                 var newDataSources = new Dictionary<string, DataSource>(dataSources);
