@@ -40,6 +40,10 @@
   <Target Name="Push" DependsOnTargets="Pack">
 	<NuGetPush Source="@(NugetUrl)" File="@(ProjectPackage)" APIKey="$(NugetKey)"  Condition=" '$(NugetKey)' != 'Empty' "/>
   </Target>
+  
+  <Target Name="Reset">
+	<Exec Command="@(GitPath)git checkout $(ProjectPath)Properties\VersionAssemblyInfo.cs" IgnoreExitCode="true"/>
+  </Target>
 
   <Target Name="Version">
     <SemVerGitHarvester GitPath="$(GitPath)git">
@@ -71,7 +75,7 @@
     <NUnit ToolPath="$(NUnitPath)" Assemblies="@(TestProjectAssembly)" OutputXmlFile="$(OutputPath)nunit.xml" ErrorOutputFile="$(OutputPath)nunit-error.txt" Framework="net-4.5"/>
   </Target>
 
-  <Target Name="Build" DependsOnTargets="Push" >
+  <Target Name="Build" DependsOnTargets="Push;Reset" >
   </Target>
 
 </Project>
