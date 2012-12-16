@@ -1,47 +1,54 @@
 ﻿<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-	<SourcesPath Condition=" '$(SourcesPath)' == '' ">$(MSBuildProjectDirectory)\..\Sources\</SourcesPath>
-	<PackagesPath Condition=" '$(PackagesPath)' == '' ">$(MSBuildProjectDirectory)\..\Packages\</PackagesPath>
-	<NugetPath Condition=" '$(NugetPath)' == '' ">$(MSBuildProjectDirectory)\..\Sources\.nuget\</NugetPath>
-	<GitPath Condition=" '$(GitPath)' == '' "></GitPath>
-	<OutputPath Condition=" '$(OutputPath)' == '' ">$(MSBuildProjectDirectory)\..\Output\</OutputPath>
-	<NUnitPath Condition=" '$(NUnitPath)' == '' ">$(PackagesPath)NUnit.Runners.2.6.2\tools\</NUnitPath>
-	<MSBuildCommunityTasksPath Condition=" '$(MSBuildCommunityTasksPath)' == '' ">$(PackagesPath)MSBuildTasks.1.4.0.45\tools\</MSBuildCommunityTasksPath>
-	<SemVerHarvesterPath Condition=" '$(SemVerHarvesterPath)' == '' ">$(PackagesPath)SemVerHarvester.0.3.0\msbuild\</SemVerHarvesterPath>
-	<ProjectName Condition=" '$(ProjectName)' == '' ">Taijutsu</ProjectName>
-	<ProjectPath Condition=" '$(ProjectPath)' == '' ">$(SourcesPath)$(ProjectName)\</ProjectPath>
-	<TestProjectName Condition=" '$(TestProjectName)' == '' ">Taijutsu.Test</TestProjectName>
-	<TestProjectPath Condition=" '$(TestProjectPath)' == '' ">$(SourcesPath)$(TestProjectName)\</TestProjectPath>
-	<Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <SourcesPath Condition=" '$(SourcesPath)' == '' ">$(MSBuildProjectDirectory)\..\Sources\</SourcesPath>
+    <PackagesPath Condition=" '$(PackagesPath)' == '' ">$(MSBuildProjectDirectory)\..\Packages\</PackagesPath>
+    <NugetPath Condition=" '$(NugetPath)' == '' ">$(MSBuildProjectDirectory)\..\Sources\.nuget\</NugetPath>
+    <GitPath Condition=" '$(GitPath)' == '' "></GitPath>
+    <OutputPath Condition=" '$(OutputPath)' == '' ">$(MSBuildProjectDirectory)\..\Output\</OutputPath>
+    <NUnitPath Condition=" '$(NUnitPath)' == '' ">$(PackagesPath)NUnit.Runners.2.6.2\tools\</NUnitPath>
+    <MSBuildCommunityTasksPath Condition=" '$(MSBuildCommunityTasksPath)' == '' ">$(PackagesPath)MSBuildTasks.1.4.0.45\tools\</MSBuildCommunityTasksPath>
+    <SemVerHarvesterPath Condition=" '$(SemVerHarvesterPath)' == '' ">$(PackagesPath)SemVerHarvester.0.3.0\msbuild\</SemVerHarvesterPath>
+    <ProjectName Condition=" '$(ProjectName)' == '' ">Taijutsu</ProjectName>
+    <ProjectPath Condition=" '$(ProjectPath)' == '' ">$(SourcesPath)$(ProjectName)\</ProjectPath>
+    <TestProjectName Condition=" '$(TestProjectName)' == '' ">Taijutsu.Test</TestProjectName>
+    <TestProjectPath Condition=" '$(TestProjectPath)' == '' ">$(SourcesPath)$(TestProjectName)\</TestProjectPath>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
   </PropertyGroup>
-  
+
   <Import Project="$(MSBuildCommunityTasksPath)MSBuild.Community.Tasks.Targets" />
   <Import Project="$(SemVerHarvesterPath)SemVerHarvester.Targets" />
-  
-  
+
+
   <Target Name="Version">
-	 <SemVerGitHarvester GitPath="$(GitPath)git">
-        <Output TaskParameter="MajorVersion" PropertyName="MajorVersion" />
-        <Output TaskParameter="MinorVersion" PropertyName="MinorVersion" />
-        <Output TaskParameter="PatchVersion" PropertyName="PatchVersion" />
-        <Output TaskParameter="RevisionVersion" PropertyName="RevisionVersion" />
-        <Output TaskParameter="ModifiedString" PropertyName="ModifiedString" />
+    <SemVerGitHarvester GitPath="$(GitPath)git">
+      <Output TaskParameter="MajorVersion" PropertyName="MajorVersion" />
+      <Output TaskParameter="MinorVersion" PropertyName="MinorVersion" />
+      <Output TaskParameter="PatchVersion" PropertyName="PatchVersion" />
+      <Output TaskParameter="RevisionVersion" PropertyName="RevisionVersion" />
+      <Output TaskParameter="ModifiedString" PropertyName="ModifiedString" />
+      <Output TaskParameter="CommitId" PropertyName="CommitId" />
     </SemVerGitHarvester>
+    
+    <AssemblyInfo OutputFile="$(ProjectPath)Properties\VersionAssemblyInfo.cs"
+              CodeLanguage="CS"
+              AssemblyVersion="$(MajorVersion).$(MinorVersion).$(PatchVersion).$(RevisionVersion)"
+              AssemblyFileVersion="$(MajorVersion).$(MinorVersion).$(PatchVersion).$(RevisionVersion)"
+              AssemblyInformationalVersion="$(MajorVersion).$(MinorVersion).$(PatchVersion).$(RevisionVersion)-$(CommitId)" />
   </Target>
-  
+
   <Target Name="Compile" DependsOnTargets="Version">
-	<MSBuild Projects="$(ProjectPath)$(ProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
-	<MSBuild Projects="$(TestProjectPath)$(TestProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)">
-		<Output TaskParameter="TargetOutputs" ItemName="TestAssembly" />
-	</MSBuild>
+    <MSBuild Projects="$(ProjectPath)$(ProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+    <MSBuild Projects="$(TestProjectPath)$(TestProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)">
+      <Output TaskParameter="TargetOutputs" ItemName="TestAssembly" />
+    </MSBuild>
   </Target>
-  
+
   <Target Name="Test" DependsOnTargets="Compile" >
-	<NUnit ToolPath="$(NUnitPath)" Assemblies="@(TestAssembly)" OutputXmlFile="$(OutputPath)nunit.xml" ErrorOutputFile="$(OutputPath)nunit-error.txt" Framework="net-4.5"/>
+    <NUnit ToolPath="$(NUnitPath)" Assemblies="@(TestAssembly)" OutputXmlFile="$(OutputPath)nunit.xml" ErrorOutputFile="$(OutputPath)nunit-error.txt" Framework="net-4.5"/>
   </Target>
-  
+
   <Target Name="Build" DependsOnTargets="Test" >
   </Target>
 </Project>

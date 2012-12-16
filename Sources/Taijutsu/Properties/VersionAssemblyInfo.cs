@@ -16,13 +16,9 @@
 #endregion
 
 using System.Reflection;
-using System.Runtime.InteropServices;
+
+[assembly: AssemblyVersion("0.0.0.0")]
+[assembly: AssemblyFileVersion("0.0.0.0")]
+[assembly: AssemblyInformationalVersion("0.0.0.0-0000000")]
 
 
-[assembly: AssemblyTitle("Taijutsu")]
-[assembly: AssemblyProduct("Taijutsu")]
-[assembly: AssemblyTrademark("Taijutsu")]
-[assembly: AssemblyDescription("The library is intended to help developers to create domain model layer.")]
-[assembly: AssemblyCompany("Nikita Govorov")]
-[assembly: AssemblyCopyright("Copyright 2009-2013 Nikita Govorov - All rights reserved.")]
-[assembly: ComVisible(false)]
