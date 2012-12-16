@@ -1,13 +1,15 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
-    <id>Taijutsu</id>
-    <version>0.0.1</version>
-    <authors>Nik Govorov</authors>
-    <owners>Nik Govorov</owners>
+	<id>Taijutsu</id>
+    <version>0.0.0.0</version>
+    <authors>Nikita Govorov</authors>
+    <owners>Nikita Govorov</owners>
+	<copyright>Copyright 2009-2013 Nikita Govorov</copyright>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<projectUrl>https://github.com/NikGovorov/Taijutsu</projectUrl>
+	<licenseUrl>https://raw.github.com/NikGovorov/Taijutsu/master/LICENSE</licenseUrl>
     <description>Taijutsu is intended to help developers to design domain model layer.</description>
-    <summary>Taijutsu is intended to help developers to design domain model layer.</summary>
-    <language>en-US</language>
+    <tags>DDD 'Domain Model' 'Domain Driven Design' 'Unit of Work' 'Domain Events'</tags>
   </metadata>
 </package>

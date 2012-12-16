@@ -17,9 +17,23 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectNuspec Include="$(MSBuildProjectDirectory)\$(ProjectName).nuspec"/>
+  </ItemGroup>
+  
   <Import Project="$(MSBuildCommunityTasksPath)MSBuild.Community.Tasks.Targets" />
   <Import Project="$(SemVerHarvesterPath)SemVerHarvester.Targets" />
 
+
+  <Target Name="Pack" DependsOnTargets="Test">
+    <PropertyGroup>
+      <PackageFileName>$(ProjectName).$(MajorVersion).$(MinorVersion).$(PatchVersion).$(RevisionVersion)</PackageFileName>
+      <PackageContentPath>$(OutputPath)\$(PackageFileName)\</PackageContentPath>
+    </PropertyGroup>
+    <MakeDir Directories="$(PackageContentPath)lib\net45\"/>
+    <Copy SourceFiles="@(ProjectAssembly)" DestinationFolder="$(PackageContentPath)lib\net45\"/>
+    <NuGetPack ToolPath="$(NugetPath)" File="@(ProjectNuspec)" OutputDirectory="$(OutputPath)" BasePath="$(PackageContentPath)" Version="$(MajorVersion).$(MinorVersion).$(PatchVersion).$(RevisionVersion)"/>
+  </Target>
 
   <Target Name="Version">
     <SemVerGitHarvester GitPath="$(GitPath)git">
@@ -39,17 +53,20 @@
   </Target>
 
   <Target Name="Compile" DependsOnTargets="Version">
-    <MSBuild Projects="$(ProjectPath)$(ProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+    <MSBuild Projects="$(ProjectPath)$(ProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)">
+      <Output TaskParameter="TargetOutputs" ItemName="ProjectAssembly" />
+    </MSBuild>
     <MSBuild Projects="$(TestProjectPath)$(TestProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)">
-      <Output TaskParameter="TargetOutputs" ItemName="TestAssembly" />
+      <Output TaskParameter="TargetOutputs" ItemName="TestProjectAssembly" />
     </MSBuild>
   </Target>
 
   <Target Name="Test" DependsOnTargets="Compile" >
-    <NUnit ToolPath="$(NUnitPath)" Assemblies="@(TestAssembly)" OutputXmlFile="$(OutputPath)nunit.xml" ErrorOutputFile="$(OutputPath)nunit-error.txt" Framework="net-4.5"/>
+    <NUnit ToolPath="$(NUnitPath)" Assemblies="@(TestProjectAssembly)" OutputXmlFile="$(OutputPath)nunit.xml" ErrorOutputFile="$(OutputPath)nunit-error.txt" Framework="net-4.5"/>
   </Target>
 
-  <Target Name="Build" DependsOnTargets="Test" >
+  <Target Name="Build" DependsOnTargets="Pack" >
   </Target>
+
 </Project>
 
