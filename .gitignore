@@ -3,6 +3,7 @@
 bin
 obj
 Packages
+Output
 _ReSharper*
 
 *.csproj.user
