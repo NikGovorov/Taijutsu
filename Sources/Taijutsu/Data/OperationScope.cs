@@ -32,8 +32,14 @@ namespace Taijutsu.Data
 
         public void Dispose()
         {
-            terminationPolicy.Dispose();
-            InternalEnvironment.UnregisterOperationScope();
+            try
+            {
+                terminationPolicy.Dispose();
+            }
+            finally
+            {
+                InternalEnvironment.UnregisterOperationScope();
+            }
         }
     }
 }

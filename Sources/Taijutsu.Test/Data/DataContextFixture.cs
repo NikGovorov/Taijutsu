@@ -46,6 +46,7 @@ namespace Taijutsu.Test.Data
         {
             session.ClearReceivedCalls();
             InternalEnvironment.UnregisterDataSource(source);
+            InternalEnvironment.CheckDataContextSupervisorForRelease();
         }
 
         [Test]

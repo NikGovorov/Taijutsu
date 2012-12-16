@@ -49,6 +49,16 @@ namespace Taijutsu.Data.Internal
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
+        internal static bool IsInsideOperationScope
+        {
+            get
+            {
+                var isInOperationScope = LogicContext.FindData(OperationScopeKey);
+                return isInOperationScope != null;
+            }
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
         internal static bool IsInsideSuppressionScope
         {
             get
@@ -89,12 +99,12 @@ namespace Taijutsu.Data.Internal
 
             if (LogicContext.FindData(OperationScopeKey) != null)
             {
-                throw new Exception("Only one operation scope is allowed simultaneously.");
+                throw new Exception("Operation scope does not support nesting.");
             }
 
             if (LogicContext.FindData(DataContextSupervisorKey) != null)
             {
-                throw new Exception("Operation scope can not be included in the scope of unit of work.");
+                throw new Exception("Operation scope can not be used inside of unit of work.");
             }
 
             LogicContext.SetData(OperationScopeKey, new object());

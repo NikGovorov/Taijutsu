@@ -51,7 +51,7 @@ namespace Taijutsu.Data.Internal
                     }
                     if (exceptions.Any())
                     {
-                        throw new AggregateException(exceptions);
+                        throw new AggregateException(exceptions.First().Message, exceptions);
                     }
                 }
             }
@@ -71,7 +71,7 @@ namespace Taijutsu.Data.Internal
             }
             else
             {
-                throw new Exception("TerminationPolicy has already been disposed.");
+                session.Dispose();
             }
         }
     }

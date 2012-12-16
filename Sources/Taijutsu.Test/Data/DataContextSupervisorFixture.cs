@@ -45,6 +45,7 @@ namespace Taijutsu.Test.Data
         {
             InternalEnvironment.UnregisterDataSource(source1);
             InternalEnvironment.UnregisterDataSource(source2);
+            InternalEnvironment.CheckDataContextSupervisorForRelease();
         }
 
         [Test]

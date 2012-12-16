@@ -24,6 +24,13 @@ namespace Taijutsu.Test.Data
     [TestFixture]
     public class DataSourceFixture: TestFixture
     {
+        [TearDown]
+        protected void OnTearDown()
+        {
+            InternalEnvironment.CheckDataContextSupervisorForRelease();
+        }
+
+
         [Test]
         public virtual void ShouldAllowByDefaultRegisterDataSourcesWithSameName()
         {

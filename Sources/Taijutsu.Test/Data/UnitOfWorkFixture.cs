@@ -47,6 +47,7 @@ namespace Taijutsu.Test.Data
         protected void OnTearDown()
         {
             InternalEnvironment.UnregisterDataSource(source);
+            InternalEnvironment.CheckDataContextSupervisorForRelease();
             session.ClearReceivedCalls();
         }
 
