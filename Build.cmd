@@ -1,5 +1,9 @@
 @echo Off
+set key=%1
+if "%key%" == "" (
+   set key="Empty"
+)
 mkdir Output
 mkdir Packages
 .\Sources\.nuget\nuget.exe install .\Sources\.nuget\packages.config -solutionDir .\
-%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Build\Taijutsu.proj /v:M /fl /flp:LogFile=Output\msbuild.log;Verbosity=Normal /nr:false
+%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Build\Taijutsu.proj /p:NugetKey=%key% /v:M /fl /flp:LogFile=Output\msbuild.log;Verbosity=Normal /nr:false

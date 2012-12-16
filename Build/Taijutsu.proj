@@ -9,17 +9,15 @@
     <NUnitPath Condition=" '$(NUnitPath)' == '' ">$(PackagesPath)NUnit.Runners.2.6.2\tools\</NUnitPath>
     <MSBuildCommunityTasksPath Condition=" '$(MSBuildCommunityTasksPath)' == '' ">$(PackagesPath)MSBuildTasks.1.4.0.45\tools\</MSBuildCommunityTasksPath>
     <SemVerHarvesterPath Condition=" '$(SemVerHarvesterPath)' == '' ">$(PackagesPath)SemVerHarvester.0.3.0\msbuild\</SemVerHarvesterPath>
-    <ProjectName Condition=" '$(ProjectName)' == '' ">Taijutsu</ProjectName>
+    <NugetKey Condition=" '$(NugetKey)' == '' ">Empty</NugetKey>
+	<NugetUrl Condition=" '$(NugetUrl)' == '' ">http://nuget.org/</NugetUrl>
+	<ProjectName Condition=" '$(ProjectName)' == '' ">Taijutsu</ProjectName>
     <ProjectPath Condition=" '$(ProjectPath)' == '' ">$(SourcesPath)$(ProjectName)\</ProjectPath>
     <TestProjectName Condition=" '$(TestProjectName)' == '' ">Taijutsu.Test</TestProjectName>
     <TestProjectPath Condition=" '$(TestProjectPath)' == '' ">$(SourcesPath)$(TestProjectName)\</TestProjectPath>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
   </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectNuspec Include="$(MSBuildProjectDirectory)\$(ProjectName).nuspec"/>
-  </ItemGroup>
   
   <Import Project="$(MSBuildCommunityTasksPath)MSBuild.Community.Tasks.Targets" />
   <Import Project="$(SemVerHarvesterPath)SemVerHarvester.Targets" />
@@ -30,9 +28,17 @@
       <PackageFileName>$(ProjectName).$(MajorVersion).$(MinorVersion).$(PatchVersion).$(RevisionVersion)</PackageFileName>
       <PackageContentPath>$(OutputPath)\$(PackageFileName)\</PackageContentPath>
     </PropertyGroup>
+	<ItemGroup>
+      <ProjectNuspec Include="$(MSBuildProjectDirectory)\$(ProjectName).nuspec"/>
+	  <ProjectPackage Include="$(OutputPath)$(PackageFileName).nupkg"/>
+    </ItemGroup>
     <MakeDir Directories="$(PackageContentPath)lib\net45\"/>
     <Copy SourceFiles="@(ProjectAssembly)" DestinationFolder="$(PackageContentPath)lib\net45\"/>
     <NuGetPack ToolPath="$(NugetPath)" File="@(ProjectNuspec)" OutputDirectory="$(OutputPath)" BasePath="$(PackageContentPath)" Version="$(MajorVersion).$(MinorVersion).$(PatchVersion).$(RevisionVersion)"/>
+  </Target>
+
+  <Target Name="Push" DependsOnTargets="Pack">
+	<NuGetPush Source="@(NugetUrl)" File="@(ProjectPackage)" APIKey="$(NugetKey)"  Condition=" '$(NugetKey)' != 'Empty' "/>
   </Target>
 
   <Target Name="Version">
@@ -65,7 +71,7 @@
     <NUnit ToolPath="$(NUnitPath)" Assemblies="@(TestProjectAssembly)" OutputXmlFile="$(OutputPath)nunit.xml" ErrorOutputFile="$(OutputPath)nunit-error.txt" Framework="net-4.5"/>
   </Target>
 
-  <Target Name="Build" DependsOnTargets="Pack" >
+  <Target Name="Build" DependsOnTargets="Push" >
   </Target>
 
 </Project>
