@@ -68,6 +68,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -83,6 +84,7 @@
     <Compile Include="Data\ConstructionScopeFixture.cs" />
     <Compile Include="Data\DataSourceFixture.cs" />
     <Compile Include="Data\DelayedTerminationPolicyFixture.cs" />
+    <Compile Include="Data\EventAggregatorExFixture.cs" />
     <Compile Include="Data\NullOrmSession.cs" />
     <Compile Include="Data\OperationScopeFixture.cs" />
     <Compile Include="Data\OrmSessionBuilderFixture.cs" />

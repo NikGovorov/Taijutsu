@@ -131,7 +131,7 @@ namespace Taijutsu.Data
                             }
                             else
                             {
-                                Trace.TraceWarning("Event source is not surrounded with unit of work or with transaction scope.");
+                                Trace.TraceWarning("Event source is not inside of unit of work or transaction scope.");
                             }
                         }
                     };
