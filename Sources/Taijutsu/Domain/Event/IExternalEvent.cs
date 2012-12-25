@@ -28,9 +28,4 @@ namespace Taijutsu.Domain.Event
     {
         TRecipient Recipient { get; }
     }
-
-    public interface IExternalEvent<out TRecipient, out TFact> : IExternalEvent<TRecipient>, IFactEvent<TFact>
-        where TRecipient : IEntity where TFact : IFact
-    {
-    }
 }

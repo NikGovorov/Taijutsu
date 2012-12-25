@@ -78,32 +78,4 @@ namespace Taijutsu.Domain.Event
             protected set { initiator = value; }
         }
     }
-
-    [Serializable]
-    public class DomainEvent<TInitiator, TFact> : DomainEvent<TInitiator>, IDomainEvent<TInitiator, TFact>
-        where TInitiator : IDomainObject
-        where TFact : IFact
-    {
-        protected TFact fact;
-
-        protected DomainEvent()
-        {
-        }
-
-        public DomainEvent(TInitiator initiator, TFact fact, Guid? id = null) : base(initiator, id)
-        {
-            if (Equals(fact, default(TFact)))
-            {
-                throw new ArgumentNullException("fact");
-            }
-
-            this.fact = fact;
-        }
-
-        public virtual TFact Fact
-        {
-            get { return fact; }
-            protected set { fact = value; }
-        }
-    }
 }

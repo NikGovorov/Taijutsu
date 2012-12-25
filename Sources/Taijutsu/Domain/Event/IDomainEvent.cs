@@ -25,10 +25,4 @@ namespace Taijutsu.Domain.Event
     {
         TInitiator Initiator { get; }
     }
-
-
-    public interface IDomainEvent<out TInitiator, out TFact> : IDomainEvent<TInitiator>, IFactEvent<TFact>
-        where TInitiator : IDomainObject where TFact : IFact
-    {
-    }
 }

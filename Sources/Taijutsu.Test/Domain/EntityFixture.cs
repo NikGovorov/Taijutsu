@@ -102,7 +102,7 @@ namespace Taijutsu.Test.Domain
         {
             Order expectedOrder = null;
 
-            using (EventAggregator.OnStreamOf<OrderCreatedEvent>()
+            using (EventAggregator.OnStreamOf<OrderCreated>()
                            .Select(ev => ev.Initiator)
                            .Subscribe(order => expectedOrder = order).AsDisposable())
             {

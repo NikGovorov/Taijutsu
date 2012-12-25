@@ -1,5 +1,4 @@
 ﻿#region License
-
 //  Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
@@ -12,12 +11,24 @@
 //  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 //  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 //  specific language governing permissions and limitations under the License.
-
 #endregion
 
-namespace Taijutsu.Domain.Event
+using System;
+using Taijutsu.Domain.Event;
+
+namespace Taijutsu.Test.Domain.Model
 {
-    public interface IFact : IValueObject
+    public class OrderCreated : DomainEvent<Order>
     {
+        protected OrderCreated()
+        {
+        }
+
+        public OrderCreated(Order initiator, Customer customer, Guid? id = null) : base(initiator, id)
+        {
+            Customer = customer;
+        }
+
+        public Customer Customer { get; set; }
     }
 }

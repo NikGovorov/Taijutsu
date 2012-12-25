@@ -65,11 +65,11 @@ namespace Taijutsu.Test.Domain
         {
             var callCounter = 0;
 
-            using (EventAggregator.Subscribe<SystemEvent>(ev => callCounter++).AsDisposable())
+            using (EventAggregator.Subscribe<SystemChecked>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Local.Publish(new SystemEvent());
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Local.Publish(new SystemChecked());
             }
 
             callCounter.Should().Be(2);
@@ -91,7 +91,7 @@ namespace Taijutsu.Test.Domain
                 //start many publishers
                 for (var i = 0; i < 250; i++)
                 {
-                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new SystemEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
+                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new SystemChecked())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                 }
 
                 //start many subscribers
@@ -107,7 +107,7 @@ namespace Taijutsu.Test.Domain
                 //start many publishers
                 for (var i = 0; i < 250; i++)
                 {
-                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new ModuleEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
+                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new ModuleChecked())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                 }
 
                 Task.WaitAll(subscribeTasks.Union(publishTasks).ToArray());
@@ -123,11 +123,11 @@ namespace Taijutsu.Test.Domain
                 {
                     var action = unsubscribeAction;
                     //start publisher
-                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new ModuleEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
+                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new ModuleChecked())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                     //start unsubscriber
                     unsubscribTasks.Add(Task.Factory.StartNew(action).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                     //start publisher
-                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new SystemEvent())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
+                    publishTasks.Add(Task.Factory.StartNew(() => EventAggregator.Publish(new SystemChecked())).ContinueWith(t => exception = t.Exception, TaskContinuationOptions.None));
                     //start subscriber
                     subscribeTasks.Add(Task.Factory.StartNew(() =>
                     {
@@ -160,58 +160,58 @@ namespace Taijutsu.Test.Domain
         {
             var callCounter = 0;
 
-            using (EventAggregator.Subscribe<SystemEvent>(ev => callCounter++).AsDisposable())
+            using (EventAggregator.Subscribe<SystemChecked>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Local.Publish(new SystemEvent());
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Local.Publish(new SystemChecked());
             }
             callCounter.Should().Be(2);
 
-            EventAggregator.Publish(new SystemEvent());
+            EventAggregator.Publish(new SystemChecked());
 
             callCounter.Should().Be(2);
 
             callCounter = 0;
 
-            using (EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++).AsDisposable())
+            using (EventAggregator.Local.Subscribe<SystemChecked>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Publish(new SystemEvent()); //+1
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Publish(new SystemChecked()); //+1
 
-                EventAggregator.Local.Publish(new SystemEvent()); //+1    
+                EventAggregator.Local.Publish(new SystemChecked()); //+1    
             }
             callCounter.Should().Be(3);
 
-            EventAggregator.Publish(new SystemEvent());
+            EventAggregator.Publish(new SystemChecked());
 
             callCounter.Should().Be(3);
 
             callCounter = 0;
 
-            var handler = new SystemEventHandler();
+            var handler = new SystemCheckedHandler();
             using (EventAggregator.Subscribe(handler).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Local.Publish(new SystemEvent());
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Local.Publish(new SystemChecked());
             }
             handler.CallCounter.Should().Be(2);
 
-            EventAggregator.Publish(new SystemEvent());
+            EventAggregator.Publish(new SystemChecked());
 
             handler.CallCounter.Should().Be(2);
 
-            handler = new SystemEventHandler();
-            using (EventAggregator.OnStreamOf<SystemEvent>().Subscribe(handler).AsDisposable())
+            handler = new SystemCheckedHandler();
+            using (EventAggregator.OnStreamOf<SystemChecked>().Subscribe(handler).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Local.Publish(new SystemEvent());
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Local.Publish(new SystemChecked());
             }
             handler.CallCounter.Should().Be(2);
 
-            EventAggregator.Publish(new SystemEvent());
+            EventAggregator.Publish(new SystemChecked());
 
             handler.CallCounter.Should().Be(2);
         }
@@ -221,17 +221,17 @@ namespace Taijutsu.Test.Domain
         {
             var callCounter = 0;
 
-            EventAggregator.Subscribe<SystemEvent>(ev => callCounter++);
-            EventAggregator.Subscribe<SystemEvent>(ev => callCounter++);
+            EventAggregator.Subscribe<SystemChecked>(ev => callCounter++);
+            EventAggregator.Subscribe<SystemChecked>(ev => callCounter++);
             ((IDisposable)EventAggregator.Global).Dispose();
-            EventAggregator.Publish(new SystemEvent());
+            EventAggregator.Publish(new SystemChecked());
             callCounter.Should().Be(0);
 
-            EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++);
-            EventAggregator.Local.Subscribe<SystemEvent>(ev => callCounter++);
+            EventAggregator.Local.Subscribe<SystemChecked>(ev => callCounter++);
+            EventAggregator.Local.Subscribe<SystemChecked>(ev => callCounter++);
             ((IDisposable)EventAggregator.Local).Dispose();
-            EventAggregator.Publish(new SystemEvent());
-            EventAggregator.Local.Publish(new SystemEvent());
+            EventAggregator.Publish(new SystemChecked());
+            EventAggregator.Local.Publish(new SystemChecked());
             callCounter.Should().Be(0);
         }
 
@@ -240,35 +240,35 @@ namespace Taijutsu.Test.Domain
         {
             var callCounter = 0;
 
-            using (EventAggregator.OnStreamOf<SystemEvent>().Where(ev => ev.HealthLevel == 100).Subscribe(ev => { callCounter++; ev.HealthLevel.Should().Be(100); }).AsDisposable())
+            using (EventAggregator.OnStreamOf<SystemChecked>().Where(ev => ev.HealthLevel == 100).Subscribe(ev => { callCounter++; ev.HealthLevel.Should().Be(100); }).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent(99));
-                EventAggregator.Publish(new SystemEvent(100)); //+1
-                EventAggregator.Publish(new SystemEvent(100)); //+1
+                EventAggregator.Publish(new SystemChecked(99));
+                EventAggregator.Publish(new SystemChecked(100)); //+1
+                EventAggregator.Publish(new SystemChecked(100)); //+1
             }
             callCounter.Should().Be(2);
 
             callCounter = 0;
 
-            using (EventAggregator.OnStreamOf<SystemEvent>().Where(ev => ev.HealthLevel > 98).Select(ev => ev.HealthLevel)
+            using (EventAggregator.OnStreamOf<SystemChecked>().Where(ev => ev.HealthLevel > 98).Select(ev => ev.HealthLevel)
                     .Where(amount => amount == 100).Subscribe(amount => { callCounter++; amount.Should().Be(100); }).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent(98));
-                EventAggregator.Publish(new SystemEvent(99));
-                EventAggregator.Publish(new SystemEvent(100)); //+1
-                EventAggregator.Publish(new SystemEvent(100)); //+1
+                EventAggregator.Publish(new SystemChecked(98));
+                EventAggregator.Publish(new SystemChecked(99));
+                EventAggregator.Publish(new SystemChecked(100)); //+1
+                EventAggregator.Publish(new SystemChecked(100)); //+1
             }
             callCounter.Should().Be(2);
 
-            var handler = new SystemEventHandler();
+            var handler = new SystemCheckedHandler();
 
-            using (EventAggregator.OnStreamOf<SystemEvent>().Where(ev => ev.HealthLevel > 98).Select(ev => ev)
+            using (EventAggregator.OnStreamOf<SystemChecked>().Where(ev => ev.HealthLevel > 98).Select(ev => ev)
                     .Where(ev => ev.HealthLevel == 100).Subscribe(handler).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent(98));
-                EventAggregator.Publish(new SystemEvent(99));
-                EventAggregator.Publish(new SystemEvent(100)); //+1
-                EventAggregator.Publish(new SystemEvent(100)); //+1
+                EventAggregator.Publish(new SystemChecked(98));
+                EventAggregator.Publish(new SystemChecked(99));
+                EventAggregator.Publish(new SystemChecked(100)); //+1
+                EventAggregator.Publish(new SystemChecked(100)); //+1
             }
             handler.CallCounter.Should().Be(2);
         }
@@ -280,27 +280,27 @@ namespace Taijutsu.Test.Domain
 
             using (EventAggregator.Subscribe<IEvent>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Publish(new ModuleEvent()); //+1
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Publish(new ModuleChecked()); //+1
             }
             callCounter.Should().Be(2);
 
             callCounter = 0;
 
-            using (EventAggregator.Subscribe<SystemEvent>(ev => callCounter++).AsDisposable())
+            using (EventAggregator.Subscribe<SystemChecked>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent()); //+1
-                EventAggregator.Publish(new ModuleEvent()); //+1
+                EventAggregator.Publish(new SystemChecked()); //+1
+                EventAggregator.Publish(new ModuleChecked()); //+1
             }
 
             callCounter.Should().Be(2);
 
             callCounter = 0;
 
-            using (EventAggregator.Subscribe<ModuleEvent>(ev => callCounter++).AsDisposable())
+            using (EventAggregator.Subscribe<ModuleChecked>(ev => callCounter++).AsDisposable())
             {
-                EventAggregator.Publish(new SystemEvent());
-                EventAggregator.Publish(new ModuleEvent()); //+1
+                EventAggregator.Publish(new SystemChecked());
+                EventAggregator.Publish(new ModuleChecked()); //+1
             }
 
             callCounter.Should().Be(1);

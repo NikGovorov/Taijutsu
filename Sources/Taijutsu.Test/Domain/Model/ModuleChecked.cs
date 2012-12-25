@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 //  Copyright 2009-2013 Nikita Govorov
 //    
@@ -15,17 +15,13 @@
 
 #endregion
 
-using Taijutsu.Domain.Event;
-
 namespace Taijutsu.Test.Domain.Model
 {
-    public class SystemEventHandler : IHandler<SystemEvent>
+    public class ModuleChecked : SystemChecked
     {
-        public void Handle(SystemEvent ev)
+        public ModuleChecked(int healthLevel = 0)
+            : base(healthLevel)
         {
-            CallCounter++;
         }
-
-        public int CallCounter { get; set; }
     }
 }

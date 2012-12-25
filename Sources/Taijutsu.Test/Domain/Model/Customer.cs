@@ -23,7 +23,7 @@ namespace Taijutsu.Test.Domain.Model
 
         static Customer()
         {
-            Subscribe<OrderCreatedEvent>(ev => ev.Customer.Handle(ev));
+            Subscribe<OrderCreated>(ev => ev.Customer.Handle(ev));
         }
 
         protected internal Customer()
@@ -53,7 +53,7 @@ namespace Taijutsu.Test.Domain.Model
 
         public bool NotifiedAboutOrder { get; set; }
 
-        protected virtual void Handle(OrderCreatedEvent orderCreatedEvent)
+        protected virtual void Handle(OrderCreated orderCreated)
         {
             NotifiedAboutOrder = true;
         }

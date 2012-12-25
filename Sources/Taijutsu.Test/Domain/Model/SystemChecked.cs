@@ -1,4 +1,5 @@
-﻿#region License
+#region License
+
 //  Copyright 2009-2013 Nikita Govorov
 //    
 //  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
@@ -11,24 +12,20 @@
 //  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 //  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 //  specific language governing permissions and limitations under the License.
+
 #endregion
 
-using System;
 using Taijutsu.Domain.Event;
 
 namespace Taijutsu.Test.Domain.Model
 {
-    public class OrderCreatedEvent : DomainEvent<Order>
+    public class SystemChecked : Event
     {
-        protected OrderCreatedEvent()
+        public SystemChecked(int healthLevel = 0)
         {
+            HealthLevel = healthLevel;
         }
 
-        public OrderCreatedEvent(Order initiator, Customer customer, Guid? id = null) : base(initiator, id)
-        {
-            Customer = customer;
-        }
-
-        public Customer Customer { get; set; }
+        public int HealthLevel { get; set; }
     }
 }

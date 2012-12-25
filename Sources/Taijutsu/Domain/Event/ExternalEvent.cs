@@ -83,35 +83,4 @@ namespace Taijutsu.Domain.Event
             protected set { recipient = value; }
         }
     }
-
-    [Serializable]
-    public class ExternalEvent<TRecipient, TFact> : ExternalEvent<TRecipient>, IExternalEvent<TRecipient, TFact>
-        where TFact : IFact
-        where TRecipient : IEntity
-    {
-        protected TFact fact;
-
-        protected ExternalEvent()
-        {
-        }
-
-        public ExternalEvent(TRecipient recipient, TFact fact, DateTime? occurrenceDate = null,
-                             DateTime? noticeDate = null, Guid? id = null)
-            : base(recipient, occurrenceDate, noticeDate, id)
-        {
-            if (Equals(fact, default(TFact)))
-            {
-                throw new ArgumentNullException("fact");
-            }
-
-            this.recipient = recipient;
-            this.fact = fact;
-        }
-
-        public virtual TFact Fact
-        {
-            get { return fact; }
-            protected set { fact = value; }
-        }
-    }
 }

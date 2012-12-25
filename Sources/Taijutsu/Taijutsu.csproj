@@ -74,6 +74,7 @@
     <Compile Include="Domain\AggregateRootEx.cs" />
     <Compile Include="Domain\DeletableEntityEx.cs" />
     <Compile Include="Domain\Event\Event.cs" />
+    <Compile Include="Domain\Event\IExternalEvent.cs" />
     <Compile Include="Domain\Event\Internal\SubscriptionSyntax.cs" />
     <Compile Include="Domain\Query\ILockOption.cs" />
     <Compile Include="Domain\Query\INotTypeFilter.cs" />
@@ -108,9 +109,6 @@
     <Compile Include="Domain\Event\IDomainEvent.cs" />
     <Compile Include="Domain\Event\IEvent.cs" />
     <Compile Include="Domain\Event\IEventAggregator.cs" />
-    <Compile Include="Domain\Event\IFactEvent.cs" />
-    <Compile Include="Domain\Event\IExternalEvent.cs" />
-    <Compile Include="Domain\Event\IFact.cs" />
     <Compile Include="Domain\Event\IHandler.cs" />
     <Compile Include="Domain\Event\Internal\InternalEventHandler.cs" />
     <Compile Include="Domain\Event\Internal\MultiThreadAggregator.cs" />
