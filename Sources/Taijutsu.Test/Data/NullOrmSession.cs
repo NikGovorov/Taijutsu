@@ -71,7 +71,7 @@ namespace Taijutsu.Test.Data
             throw new NotImplementedException();
         }
 
-        object IHasNativeObject.NativeObject { get { return this; } }
+        object IWrapper.Original { get { return this; } }
 
     }
 }

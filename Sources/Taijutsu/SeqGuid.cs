@@ -1,27 +1,22 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
-
-using System;
-
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 namespace Taijutsu
 {
+    using System;
+
     public static class SeqGuid
     {
         private static readonly DateTime baseDate = new DateTime(1900, 1, 1);
+
         private static readonly long baseTicks = baseDate.Ticks;
 
         public static Guid NewGuid()
@@ -32,7 +27,7 @@ namespace Taijutsu
             var msecs = now.TimeOfDay;
 
             var daysArray = BitConverter.GetBytes(days.Days);
-            var msecsArray = BitConverter.GetBytes((long) (msecs.TotalMilliseconds/3.333333));
+            var msecsArray = BitConverter.GetBytes((long)(msecs.TotalMilliseconds / 3.333333));
 
             Array.Reverse(daysArray);
             Array.Reverse(msecsArray);
@@ -58,8 +53,11 @@ namespace Taijutsu
             var days = BitConverter.ToInt32(daysArray, 0);
             var msecs = BitConverter.ToInt32(msecsArray, 0);
 
+            // ReSharper disable ImpureMethodCallOnReadonlyValueField
             var date = baseDate.AddDays(days);
-            date = date.AddMilliseconds(msecs*3.333333);
+
+            // ReSharper restore ImpureMethodCallOnReadonlyValueField
+            date = date.AddMilliseconds(msecs * 3.333333);
 
             return date;
         }

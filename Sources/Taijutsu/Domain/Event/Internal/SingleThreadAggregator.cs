@@ -1,29 +1,22 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-
-
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 namespace Taijutsu.Domain.Event.Internal
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Threading.Tasks;
+
     public class SingleThreadAggregator : IEventAggregator, IEventStream, IDisposable
     {
         private static readonly object sync = new object();
@@ -32,50 +25,65 @@ namespace Taijutsu.Domain.Event.Internal
 
         private IDictionary<Type, IList<IInternalEventHandler>> handlers = new Dictionary<Type, IList<IInternalEventHandler>>();
 
+        public virtual IEventStream OnStream
+        {
+            get
+            {
+                return this;
+            }
+        }
+
         protected virtual IDictionary<Type, IList<IInternalEventHandler>> Handlers
         {
-            get { return handlers; }
-            set { handlers = value; }
+            get
+            {
+                return this.handlers;
+            }
+
+            set
+            {
+                this.handlers = value;
+            }
         }
 
         protected virtual IDictionary<Type, IEnumerable<Type>> Targets
         {
-            get { return targets; }
-            set { targets = value; }
-        }
+            get
+            {
+                return targets;
+            }
 
-        public virtual IEventStream OnStream
-        {
-            get { return this; }
+            set
+            {
+                targets = value;
+            }
         }
 
         public virtual SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
         {
-            return OnStream.Of<TEvent>();
+            return this.OnStream.Of<TEvent>();
         }
 
-        public virtual Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0)
-            where TEvent : class, IEvent
+        public virtual Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
         {
-            return OnStream.Of<TEvent>().Subscribe(subscriber, priority);
+            return this.OnStream.Of<TEvent>().Subscribe(subscriber, priority);
         }
 
-        public virtual Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0)
-            where TEvent : class, IEvent
+        public virtual Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
         {
-            return OnStream.Of<TEvent>().Subscribe(subscriber, priority);
+            return this.OnStream.Of<TEvent>().Subscribe(subscriber, priority);
         }
 
         public virtual void Publish<TEvent>(TEvent ev) where TEvent : IEvent
         {
             var eventHandlers = new List<IInternalEventHandler>();
 
-            var potentialSubscriberTypes = PotentialSubscriberTypes(ev.GetType());
+            var potentialSubscriberTypes = this.PotentialSubscriberTypes(ev.GetType());
 
             foreach (var targetType in potentialSubscriberTypes)
             {
                 IList<IInternalEventHandler> internalEventHandlers;
-                if (Handlers.TryGetValue(targetType, out internalEventHandlers))
+                if (this.Handlers.TryGetValue(targetType, out internalEventHandlers))
                 {
                     eventHandlers.AddRange(internalEventHandlers);
                 }
@@ -89,32 +97,37 @@ namespace Taijutsu.Domain.Event.Internal
 
         SubscriptionSyntax.All<TEvent> IEventStream.Of<TEvent>()
         {
-            return new SubscriptionSyntax.AllImpl<TEvent>(Subscribe);
+            return new SubscriptionSyntax.AllImpl<TEvent>(this.Subscribe);
+        }
+
+        void IDisposable.Dispose()
+        {
+            this.Dispose();
         }
 
         protected virtual IEnumerable<Type> PotentialSubscriberTypes(Type type)
         {
             IEnumerable<Type> targetsForType;
 
-            if (!Targets.TryGetValue(type, out targetsForType))
+            if (!this.Targets.TryGetValue(type, out targetsForType))
             {
-                targetsForType =
-                    type.GetInterfaces()
-                        .Where(i => typeof (IEvent).IsAssignableFrom(i))
-                        .Union(EventTypeHierarchy(type).Reverse())
-                        .ToArray();
+                targetsForType = type.GetInterfaces().Where(i => typeof(IEvent).IsAssignableFrom(i)).Union(this.EventTypeHierarchy(type).Reverse()).ToArray();
 
-                CachePotentialSubscriberTypes(type, targetsForType);
+                this.CachePotentialSubscriberTypes(type, targetsForType);
             }
+
+            // ReSharper disable PossibleMultipleEnumeration
             return targetsForType as Type[] ?? targetsForType.ToArray();
+
+            // ReSharper restore PossibleMultipleEnumeration
         }
 
         protected virtual IEnumerable<Type> EventTypeHierarchy(Type type)
         {
-            if (typeof (IEvent).IsAssignableFrom(type))
+            if (typeof(IEvent).IsAssignableFrom(type))
             {
                 yield return type;
-                foreach (var subtype in EventTypeHierarchy(type.BaseType))
+                foreach (var subtype in this.EventTypeHierarchy(type.BaseType))
                 {
                     yield return subtype;
                 }
@@ -134,21 +147,23 @@ namespace Taijutsu.Domain.Event.Internal
             }
 
             // ReSharper disable ImplicitlyCapturedClosure
-            Task.Factory.StartNew(() =>
-                {
-                    lock (sync)
+            Task.Factory.StartNew(
+                () =>
                     {
-                        if (!Targets.ContainsKey(type))
+                        lock (sync)
                         {
-                            var newTargets = new Dictionary<Type, IEnumerable<Type>>(Targets);
-                            newTargets[type] = potentialSubscriberTypes;
-                            Targets = newTargets;                            
+                            if (!this.Targets.ContainsKey(type))
+                            {
+                                var newTargets = new Dictionary<Type, IEnumerable<Type>>(this.Targets);
+                                newTargets[type] = potentialSubscriberTypes;
+                                this.Targets = newTargets;
+                            }
                         }
-                    }
-                })
-                .ContinueWith(t =>
-                    Trace.TraceError(t.Exception == null ? string.Format("Error occurred during caching event subscribers for '{0}'.", type): t.Exception.ToString()),
+                    })
+                .ContinueWith(
+                    t => Trace.TraceError(t.Exception == null ? string.Format("Error occurred during caching event subscribers for '{0}'.", type) : t.Exception.ToString()), 
                     TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+
             // ReSharper restore ImplicitlyCapturedClosure
         }
 
@@ -156,16 +171,16 @@ namespace Taijutsu.Domain.Event.Internal
         {
             IList<IInternalEventHandler> internalEventHandlers;
 
-            if (!Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
+            if (!this.Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
             {
-                Handlers.Add(handler.EventType, new List<IInternalEventHandler> { handler });
+                this.Handlers.Add(handler.EventType, new List<IInternalEventHandler> { handler });
             }
             else
             {
                 internalEventHandlers.Add(handler);
             }
 
-            return UnsubscriptionAction(handler);
+            return this.UnsubscriptionAction(handler);
         }
 
         protected virtual Action UnsubscriptionAction(IInternalEventHandler handler)
@@ -173,21 +188,16 @@ namespace Taijutsu.Domain.Event.Internal
             return delegate
                 {
                     IList<IInternalEventHandler> internalEventHandlers;
-                    if (Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
+                    if (this.Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
                     {
                         internalEventHandlers.Remove(handler);
                     }
                 };
         }
 
-        void IDisposable.Dispose()
-        {
-            Dispose();
-        }
-
         protected virtual void Dispose()
         {
-            Handlers.Clear();
+            this.Handlers.Clear();
         }
     }
 }

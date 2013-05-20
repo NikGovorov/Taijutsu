@@ -32,7 +32,7 @@ namespace Taijutsu.Test.Data
             var actualNativeSession = new NativeSession();
             var ormSpecificSession = new OrmSpecificSessionStub(actualNativeSession);
             ormSpecificSession.As<NativeSession>(new {}).Should().Be.SameInstanceAs(actualNativeSession);
-            ((IHasNativeObject)ormSpecificSession).NativeObject.Should().Be.SameInstanceAs(actualNativeSession);
+            ((IWrapper)ormSpecificSession).Original.Should().Be.SameInstanceAs(actualNativeSession);
 
             Assert.That(() =>
                 {

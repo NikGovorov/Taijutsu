@@ -20,7 +20,7 @@ using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data.Internal
 {
-    public interface IOrmSession : ICompletableScope, IHasNativeObject, IUnitOfWork
+    public interface IOrmSession : ICompletableScope, IWrapper, IUnitOfWork
     {
         T As<T>(object options = null) where T : class;
 

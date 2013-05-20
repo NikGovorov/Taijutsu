@@ -1,32 +1,32 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
-
-using System;
-using Taijutsu.Domain.Event;
-using Taijutsu.Domain.Event.Internal;
-
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 namespace Taijutsu.Domain
 {
+    using System;
+    using System.Diagnostics.CodeAnalysis;
+
+    using Taijutsu.Domain.Event;
+    using Taijutsu.Domain.Event.Internal;
+
+    [PublicApi]
     [Serializable]
     public abstract class Entity : IdentifiableObject<object>, IEntity
     {
         protected static IEventStream OnStream
         {
-            get { return EventAggregator.OnStream; }
+            get
+            {
+                return EventAggregator.OnStream;
+            }
         }
 
         protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
@@ -46,23 +46,49 @@ namespace Taijutsu.Domain
     }
 
     [Serializable]
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppress the warning for generics.")]
     public abstract class Entity<TId> : IdentifiableObject<TId>, IEntity<TId>, IEquatable<Entity<TId>>
     {
         protected TId id;
 
         public virtual TId Id
         {
-            get { return id; }
-            protected set { id = value; }
+            get
+            {
+                return this.id;
+            }
+
+            protected set
+            {
+                this.id = value;
+            }
         }
 
+        protected static IEventStream OnStream
+        {
+            get
+            {
+                return EventAggregator.OnStream;
+            }
+        }
+
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
+        public static bool operator ==(Entity<TId> left, Entity<TId> right)
+        {
+            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals(right);
+        }
+
+        public static bool operator !=(Entity<TId> left, Entity<TId> right)
+        {
+            return !(left == right);
+        }
+
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
         public override bool Equals(object other)
         {
-            var asEntity = (other as Entity<TId>);
+            var asEntity = other as Entity<TId>;
 
-            return !ReferenceEquals(asEntity, null)
-                   && InternalGetType() == asEntity.InternalGetType()
-                   && Equals(asEntity as IdentifiableObject<TId>);
+            return !ReferenceEquals(asEntity, null) && this.InternalGetType() == asEntity.InternalGetType() && this.Equals(asEntity as IdentifiableObject<TId>);
         }
 
         public override int GetHashCode()
@@ -72,26 +98,20 @@ namespace Taijutsu.Domain
 
         public override string ToString()
         {
-            return id.Equals(default(TId)) ? string.Empty : id.ToString();
+            return this.id.Equals(default(TId)) ? string.Empty : this.id.ToString();
         }
 
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
         public virtual bool Equals(Entity<TId> other)
         {
-            if (ReferenceEquals(other, null)) return false;
+            if (ReferenceEquals(other, null))
+            {
+                return false;
+            }
 
-            return InternalGetType() == other.InternalGetType() && Equals(other as IdentifiableObject<TId>);
+            return this.InternalGetType() == other.InternalGetType() && this.Equals(other as IdentifiableObject<TId>);
         }
 
-        protected override TId BuildIdentity()
-        {
-            return Id;
-        }
-
-        protected static IEventStream OnStream
-        {
-            get { return EventAggregator.OnStream; }
-        }
-        
         protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
         {
             return OnStream.Of<TEvent>();
@@ -107,14 +127,9 @@ namespace Taijutsu.Domain
             EventAggregator.Publish(ev);
         }
 
-        public static bool operator ==(Entity<TId> left, Entity<TId> right)
+        protected override TId BuildIdentity()
         {
-            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals(right);
-        }
-
-        public static bool operator !=(Entity<TId> left, Entity<TId> right)
-        {
-            return !(left == right);
+            return this.Id;
         }
     }
 }

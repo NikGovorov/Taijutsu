@@ -63,6 +63,6 @@ namespace Taijutsu.Data.Internal
 
         public abstract void Complete();
 
-        object IHasNativeObject.NativeObject { get { return NativeSession; } }
+        object IWrapper.Original { get { return NativeSession; } }
     }
 }

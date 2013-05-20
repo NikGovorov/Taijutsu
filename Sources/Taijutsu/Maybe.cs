@@ -1,69 +1,45 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
-
-using System;
-
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 namespace Taijutsu
 {
-    public interface IMaybe<out T> : IHiddenObjectMembers
-    {
-        T Value { get; }
-        bool HasValue { get; }
-    }
+    using System;
 
     [Serializable]
-    public class Maybe<T> : IMaybe<T>
+    public sealed class Maybe<T> : IMaybe<T>
     {
-        public static readonly Maybe<T> Empty = new Maybe<T>();
+        public static readonly Maybe<T> Empty = new Maybe<T>(default(T));
 
-        protected T value;
-
-        protected Maybe()
-        {
-        }
+        private readonly T value;
 
         public Maybe(T value)
         {
             this.value = value;
         }
 
-        public virtual T Value
+        public T Value
         {
             get
             {
-                AssertNotNullValue();
-                return value;
+                this.AssertNotNullValue();
+                return this.value;
             }
         }
 
-        public virtual bool HasValue
+        public bool HasValue
         {
-            get { return !Equals(value, default(T)); }
-        }
-
-        public override string ToString()
-        {
-            return HasValue ? value.ToString() : string.Format("Empty maybe of {0}.", typeof (T));
-        }
-
-        protected virtual void AssertNotNullValue()
-        {
-            if (!HasValue)
-                throw new InvalidOperationException(string.Format("Maybe of {0} must have value.", typeof(T)));
+            get
+            {
+                return !this.value.Equals(default(T));
+            }
         }
 
         public static implicit operator Maybe<T>(T value)
@@ -82,13 +58,17 @@ namespace Taijutsu
             return maybe.Value;
         }
 
-    }
-
-    public static class MaybeEx
-    {
-        public static Maybe<T> Maybe<T>(this T value)
+        public override string ToString()
         {
-            return new Maybe<T>(value);
+            return this.HasValue ? this.value.ToString() : string.Format("Empty Maybe of {0}.", typeof(T));
+        }
+
+        private void AssertNotNullValue()
+        {
+            if (!this.HasValue)
+            {
+                throw new InvalidOperationException(string.Format("Maybe of {0} must have value.", typeof(T)));
+            }
         }
     }
 }

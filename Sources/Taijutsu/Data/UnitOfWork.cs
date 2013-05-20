@@ -23,7 +23,7 @@ using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data
 {
-    public class UnitOfWork : IUnitOfWork, IDisposable, IHasNativeObject
+    public class UnitOfWork : IUnitOfWork, IDisposable, IWrapper
     {
         private bool disposed;
         private readonly IDataContext dataContext;
@@ -204,12 +204,12 @@ namespace Taijutsu.Data
             return new QueryOverContinuation<TEntity>(dataContext.Session);
         }
 
-        object IHasNativeObject.NativeObject
+        object IWrapper.Original
         {
             get
             {
                 AssertNotDisposed();
-                return dataContext.Session.NativeObject;
+                return dataContext.Session.Original;
             }
         }
 
