@@ -46,13 +46,15 @@ namespace Taijutsu.Domain.Event.Internal
                     lock (this.sync)
                     {
                         IList<IInternalEventHandler> internalEventHandlers;
-                        if (this.Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
+                        if (!this.Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
                         {
-                            var newInternalEventHandlers = new List<IInternalEventHandler>(internalEventHandlers);
-                            if (newInternalEventHandlers.Remove(handler))
-                            {
-                                this.Handlers[handler.EventType] = newInternalEventHandlers;
-                            }
+                            return;
+                        }
+
+                        var newInternalEventHandlers = new List<IInternalEventHandler>(internalEventHandlers);
+                        if (newInternalEventHandlers.Remove(handler))
+                        {
+                            this.Handlers[handler.EventType] = newInternalEventHandlers;
                         }
                     }
                 };

@@ -88,14 +88,16 @@ namespace Taijutsu
 
         private static void CheckInitialization()
         {
-            if (!initialized)
+            if (initialized)
             {
-                lock (sync)
+                return;
+            }
+
+            lock (sync)
+            {
+                if (!initialized)
                 {
-                    if (!initialized)
-                    {
-                        initialized = true;
-                    }
+                    initialized = true;
                 }
             }
         }

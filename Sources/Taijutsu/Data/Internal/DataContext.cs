@@ -72,30 +72,32 @@ namespace Taijutsu.Data.Internal
         {
             try
             {
-                if (!this.disposed)
+                if (this.disposed)
+                {
+                    return;
+                }
+
+                try
+                {
+                    if (!this.completed.HasValue || !this.completed.Value)
+                    {
+                        this.completed = false;
+                    }
+                }
+                finally
                 {
                     try
                     {
-                        if (!this.completed.HasValue || !this.completed.Value)
+                        if (this.Finished != null)
                         {
-                            this.completed = false;
+                            this.Finished(this.completed.HasValue && this.completed.Value);
                         }
                     }
                     finally
                     {
-                        try
+                        if (this.session.IsValueCreated)
                         {
-                            if (this.Finished != null)
-                            {
-                                this.Finished(this.completed.HasValue && this.completed.Value);
-                            }
-                        }
-                        finally
-                        {
-                            if (this.session.IsValueCreated)
-                            {
-                                this.terminationPolicy.Terminate(this.session.Value, this.completed.HasValue && this.completed.Value);
-                            }
+                            this.terminationPolicy.Terminate(this.session.Value, this.completed.HasValue && this.completed.Value);
                         }
                     }
                 }
@@ -206,11 +208,13 @@ namespace Taijutsu.Data.Internal
 
             public virtual void Complete()
             {
-                if (!this.completed.HasValue)
+                if (this.completed.HasValue)
                 {
-                    this.master.RegisterCompletedSubordinate();
-                    this.completed = true;
+                    return;
                 }
+
+                this.master.RegisterCompletedSubordinate();
+                this.completed = true;
             }
         }
     }

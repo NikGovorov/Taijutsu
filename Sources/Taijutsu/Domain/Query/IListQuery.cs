@@ -13,6 +13,7 @@ namespace Taijutsu.Domain.Query
 {
     using System.Collections.Generic;
 
+    [PublicApi]
     public interface IListQuery<out TEntity>
     {
         IReadOnlyList<TEntity> ToList();

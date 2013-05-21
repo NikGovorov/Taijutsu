@@ -47,25 +47,27 @@ namespace Taijutsu.Data.Internal
         {
             try
             {
-                if (!this.disposed)
+                if (this.disposed)
                 {
-                    var exceptions = new List<Exception>();
-                    foreach (var session in this.sessions)
-                    {
-                        try
-                        {
-                            session.Dispose();
-                        }
-                        catch (Exception exception)
-                        {
-                            exceptions.Add(exception);
-                        }
-                    }
+                    return;
+                }
 
-                    if (exceptions.Any())
+                var exceptions = new List<Exception>();
+                foreach (var session in this.sessions)
+                {
+                    try
                     {
-                        throw new AggregateException(exceptions.First().Message, exceptions);
+                        session.Dispose();
                     }
+                    catch (Exception exception)
+                    {
+                        exceptions.Add(exception);
+                    }
+                }
+
+                if (exceptions.Any())
+                {
+                    throw new AggregateException(exceptions.First().Message, exceptions);
                 }
             }
             finally

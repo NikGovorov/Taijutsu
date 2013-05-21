@@ -175,21 +175,23 @@ namespace Taijutsu.Data
         {
             try
             {
-                if (!this.disposed)
+                if (this.disposed)
                 {
-                    try
-                    {
-                        if (!this.completed.HasValue)
-                        {
-                            this.completed = false;
-                        }
+                    return;
+                }
 
-                        this.dataContext.Dispose();
-                    }
-                    finally
+                try
+                {
+                    if (!this.completed.HasValue)
                     {
-                        InternalEnvironment.CheckDataContextSupervisorForRelease();
+                        this.completed = false;
                     }
+
+                    this.dataContext.Dispose();
+                }
+                finally
+                {
+                    InternalEnvironment.CheckDataContextSupervisorForRelease();
                 }
             }
             finally

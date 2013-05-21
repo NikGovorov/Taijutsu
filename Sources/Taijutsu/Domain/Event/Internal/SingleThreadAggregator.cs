@@ -124,13 +124,16 @@ namespace Taijutsu.Domain.Event.Internal
 
         protected virtual IEnumerable<Type> EventTypeHierarchy(Type type)
         {
-            if (typeof(IEvent).IsAssignableFrom(type))
+            if (!typeof(IEvent).IsAssignableFrom(type))
             {
-                yield return type;
-                foreach (var subtype in this.EventTypeHierarchy(type.BaseType))
-                {
-                    yield return subtype;
-                }
+                yield break;
+            }
+
+            yield return type;
+
+            foreach (var subtype in this.EventTypeHierarchy(type.BaseType))
+            {
+                yield return subtype;
             }
         }
 
@@ -152,12 +155,14 @@ namespace Taijutsu.Domain.Event.Internal
                     {
                         lock (sync)
                         {
-                            if (!this.Targets.ContainsKey(type))
+                            if (this.Targets.ContainsKey(type))
                             {
-                                var newTargets = new Dictionary<Type, IEnumerable<Type>>(this.Targets);
-                                newTargets[type] = potentialSubscriberTypes;
-                                this.Targets = newTargets;
+                                return;
                             }
+
+                            var newTargets = new Dictionary<Type, IEnumerable<Type>>(this.Targets);
+                            newTargets[type] = potentialSubscriberTypes;
+                            this.Targets = newTargets;
                         }
                     })
                 .ContinueWith(
