@@ -1,50 +1,70 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
-
-using System;
-
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 namespace Taijutsu.Data.Internal
 {
+    using System;
+
     public class DataContext : IDataContext
     {
         private readonly UnitOfWorkConfig configuration;
+
         private readonly Lazy<IOrmSession> session;
+
         private readonly ITerminationPolicy terminationPolicy;
+
         private int subordinatesCount;
+
         private bool? completed;
+
         private bool disposed;
 
         public DataContext(UnitOfWorkConfig configuration, Lazy<IOrmSession> session, ITerminationPolicy terminationPolicy)
         {
-            if (configuration == null) throw new ArgumentNullException("configuration");
-            if (session == null) throw new ArgumentNullException("session");
-            if (terminationPolicy == null) throw new ArgumentNullException("terminationPolicy");
+            if (configuration == null)
+            {
+                throw new ArgumentNullException("configuration");
+            }
+
+            if (session == null)
+            {
+                throw new ArgumentNullException("session");
+            }
+
+            if (terminationPolicy == null)
+            {
+                throw new ArgumentNullException("terminationPolicy");
+            }
 
             this.configuration = configuration;
             this.session = session;
             this.terminationPolicy = terminationPolicy;
         }
 
+        public event Action<bool> Finished;
+
         public IOrmSession Session
         {
             get
             {
-                AssertNotDisposed();
-                return session.Value;
+                this.AssertNotDisposed();
+                return this.session.Value;
+            }
+        }
+
+        public virtual UnitOfWorkConfig Configuration
+        {
+            get
+            {
+                return this.configuration;
             }
         }
 
@@ -52,29 +72,29 @@ namespace Taijutsu.Data.Internal
         {
             try
             {
-                if (!disposed)
+                if (!this.disposed)
                 {
                     try
                     {
-                        if (!completed.HasValue || !completed.Value)
+                        if (!this.completed.HasValue || !this.completed.Value)
                         {
-                            completed = false;
+                            this.completed = false;
                         }
                     }
                     finally
                     {
                         try
                         {
-                            if (Finished != null)
+                            if (this.Finished != null)
                             {
-                                Finished(completed.HasValue && completed.Value);
+                                this.Finished(this.completed.HasValue && this.completed.Value);
                             }
                         }
                         finally
                         {
-                            if (session.IsValueCreated)
+                            if (this.session.IsValueCreated)
                             {
-                                terminationPolicy.Terminate(session.Value, completed.HasValue && completed.Value);
+                                this.terminationPolicy.Terminate(this.session.Value, this.completed.HasValue && this.completed.Value);
                             }
                         }
                     }
@@ -82,71 +102,66 @@ namespace Taijutsu.Data.Internal
             }
             finally
             {
-                Finished = null;
-                disposed = true;
+                this.Finished = null;
+                this.disposed = true;
             }
         }
 
         public virtual void Complete()
         {
-            if (completed.HasValue)
+            if (this.completed.HasValue)
             {
-                if (!completed.Value)
+                if (!this.completed.Value)
                 {
-                    throw new Exception(string.Format("Data context has already been completed without success."));    
+                    throw new Exception(string.Format("Data context has already been completed without success."));
                 }
+
                 return;
             }
+
             try
             {
-                if (subordinatesCount != 0)
+                if (this.subordinatesCount != 0)
                 {
                     throw new Exception("Unit of work can not be successfully completed, because not all subordinates are completed.");
                 }
 
-                if (session.IsValueCreated)
+                if (this.session.IsValueCreated)
                 {
-                    session.Value.Complete();
+                    this.session.Value.Complete();
                 }
 
-                completed = true;
+                this.completed = true;
             }
             catch
             {
-                completed = false;
+                this.completed = false;
                 throw;
             }
         }
 
         protected virtual void AssertNotDisposed()
         {
-            if (disposed)
+            if (this.disposed)
             {
-                throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
+                throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", this.completed));
             }
-        }
-
-
-        public virtual UnitOfWorkConfig Configuration
-        {
-            get { return configuration; }
         }
 
         protected virtual void RegisterCompletedSubordinate()
         {
-            subordinatesCount--;
+            this.subordinatesCount--;
         }
 
         protected virtual void RegisterUncompletedSubordinate()
         {
-            subordinatesCount++;
+            this.subordinatesCount++;
         }
-
-        public event Action<bool> Finished;
 
         internal class Subordinate : IDataContext
         {
             private readonly DataContext master;
+
             private bool? completed;
 
             public Subordinate(DataContext master)
@@ -160,32 +175,42 @@ namespace Taijutsu.Data.Internal
                 master.RegisterUncompletedSubordinate();
             }
 
-            public virtual void Dispose()
+            event Action<bool> IDataContext.Finished
             {
-                if (!completed.HasValue)
+                add
                 {
-                    completed = false;
+                    this.master.Finished += value;
                 }
-            }
 
-            public virtual void Complete()
-            {
-                if (!completed.HasValue)
+                remove
                 {
-                    master.RegisterCompletedSubordinate();
-                    completed = true;
+                    this.master.Finished -= value;
                 }
             }
 
             public virtual IOrmSession Session
             {
-                get { return master.Session; }
+                get
+                {
+                    return this.master.Session;
+                }
             }
 
-            event Action<bool> IDataContext.Finished
+            public virtual void Dispose()
             {
-                add { master.Finished += value; }
-                remove { master.Finished -= value; }
+                if (!this.completed.HasValue)
+                {
+                    this.completed = false;
+                }
+            }
+
+            public virtual void Complete()
+            {
+                if (!this.completed.HasValue)
+                {
+                    this.master.RegisterCompletedSubordinate();
+                    this.completed = true;
+                }
             }
         }
     }
