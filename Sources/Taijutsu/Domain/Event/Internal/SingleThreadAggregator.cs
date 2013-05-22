@@ -17,7 +17,7 @@ namespace Taijutsu.Domain.Event.Internal
     using System.Linq;
     using System.Threading.Tasks;
 
-    public class SingleThreadAggregator : IEventAggregator, IEventStream, IDisposable
+    public class SingleThreadAggregator : IEventAggregator, IEventStream, IResettable
     {
         private static readonly object sync = new object();
 
@@ -97,12 +97,17 @@ namespace Taijutsu.Domain.Event.Internal
 
         SubscriptionSyntax.All<TEvent> IEventStream.Of<TEvent>()
         {
-            return new SubscriptionSyntax.AllImpl<TEvent>(this.Subscribe);
+            return this.Of<TEvent>();
         }
 
-        void IDisposable.Dispose()
+        void IResettable.Reset()
         {
-            this.Dispose();
+            this.Reset();
+        }
+
+        protected virtual SubscriptionSyntax.All<TEvent> Of<TEvent>() where TEvent : class, IEvent
+        {
+            return new SubscriptionSyntax.AllImpl<TEvent>(this.Subscribe);
         }
 
         protected virtual IEnumerable<Type> PotentialSubscriberTypes(Type type)
@@ -200,7 +205,7 @@ namespace Taijutsu.Domain.Event.Internal
                 };
         }
 
-        protected virtual void Dispose()
+        protected virtual void Reset()
         {
             this.Handlers.Clear();
         }

@@ -13,6 +13,7 @@ namespace Taijutsu.Domain
 {
     using System;
     using System.Runtime.Serialization;
+    using System.Security.Permissions;
 
     [PublicApi]
     public interface IEntityException
@@ -72,6 +73,14 @@ namespace Taijutsu.Domain
             {
                 this.entityType = value;
             }
+        }
+
+        [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("EntityId", this.entityId ?? string.Empty);
+            info.AddValue("EntityType", this.entityType ?? string.Empty);
+            base.GetObjectData(info, context);
         }
     }
 }

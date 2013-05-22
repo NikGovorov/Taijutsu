@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+// Copyright 2009-2013 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -11,31 +11,16 @@
 // specific language governing permissions and limitations under the License.
 namespace Taijutsu
 {
-    using System.Runtime.Remoting.Messaging;
+    using System;
 
-    public class DefaultLogicContext : ILogicContext
+    [PublicApi]
+    public class ScopeFinishedEventArgs : EventArgs
     {
-        public bool Applicable
+        public ScopeFinishedEventArgs(bool completed)
         {
-            get
-            {
-                return true;
-            }
+            this.Completed = completed;
         }
 
-        public object FindData(string name)
-        {
-            return CallContext.GetData(name);
-        }
-
-        public void SetData(string name, object value)
-        {
-            CallContext.SetData(name, value);
-        }
-
-        public void ReleaseData(string name)
-        {
-            CallContext.FreeNamedDataSlot(name);
-        }
+        public bool Completed { get; protected set; }
     }
 }

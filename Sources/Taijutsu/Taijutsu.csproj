@@ -67,6 +67,7 @@
     <Compile Include="Data\Internal\MarkingStep.cs" />
     <Compile Include="Data\Internal\OrmSessionBuilder.cs" />
     <Compile Include="Data\Internal\OrmSpecificSession.cs" />
+    <Compile Include="ScopeFinishedEventArgs.cs" />
     <Compile Include="Data\Internal\SuppressionScope.cs" />
     <Compile Include="Data\OperationScope.cs" />
     <Compile Include="Data\UnitOfWork.cs" />
@@ -93,7 +94,9 @@
     <Compile Include="Domain\Query\IQuery.cs" />
     <Compile Include="Domain\Query\IRepository.cs" />
     <Compile Include="Domain\Query\ISingleQuery.cs" />
+    <Compile Include="Properties\GlobalSuppressions.cs" />
     <Compile Include="HybridLogicContext.cs" />
+    <Compile Include="IResettable.cs" />
     <Compile Include="IWrapper.cs" />
     <Compile Include="Domain\AndSpecification.cs" />
     <Compile Include="Domain\CompositeSpecification.cs" />

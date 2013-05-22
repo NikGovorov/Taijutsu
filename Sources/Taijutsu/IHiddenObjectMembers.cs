@@ -14,7 +14,7 @@ namespace Taijutsu
     using System;
     using System.ComponentModel;
 
-    [PublicApi]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IHiddenObjectMembers
     {

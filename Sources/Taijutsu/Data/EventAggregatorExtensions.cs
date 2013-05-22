@@ -135,18 +135,18 @@ namespace Taijutsu.Data
 
                             if (context != null)
                             {
-                                Action<bool> action = isSuccessfully =>
+                                EventHandler<ScopeFinishedEventArgs> action = (sender, e) =>
                                     {
-                                        if (isSuccessfully)
+                                        if (e.Completed)
                                         {
                                             subscriber(source);
                                         }
                                     };
 
-                                context.Finished += isSuccessfully =>
+                                context.Finished += (sender, e) =>
                                     {
                                         context.Finished -= action;
-                                        action(isSuccessfully);
+                                        action(sender, e);
                                     };
                             }
                             else

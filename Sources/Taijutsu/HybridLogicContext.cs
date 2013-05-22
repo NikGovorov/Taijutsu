@@ -29,6 +29,14 @@ namespace Taijutsu
             this.contexts = contexts.ToList();
         }
 
+        public bool Applicable
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         object ILogicContext.FindData(string name)
         {
             return this.DetermineContext().FindData(name);
@@ -44,14 +52,9 @@ namespace Taijutsu
             this.DetermineContext().ReleaseData(name);
         }
 
-        bool ILogicContext.IsApplicable()
-        {
-            return true;
-        }
-
         private ILogicContext DetermineContext()
         {
-            var context = this.contexts.FirstOrDefault(c => c.IsApplicable());
+            var context = this.contexts.FirstOrDefault(c => c.Applicable);
 
             if (context == null)
             {

@@ -13,17 +13,18 @@ namespace Taijutsu.Data.Internal
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
-    public class DelayedTerminationPolicy : ITerminationPolicy
+    internal class DelayedTerminationPolicy : ITerminationPolicy
     {
         private readonly ICollection<IOrmSession> sessions = new List<IOrmSession>();
 
         private bool disposed;
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
-            this.Dispose();
+            this.Dispose(true);
         }
 
         public void Terminate(IOrmSession session, bool isSuccessfully)
@@ -43,15 +44,16 @@ namespace Taijutsu.Data.Internal
             }
         }
 
-        protected virtual void Dispose()
+        [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations", Justification = "Reviewed. Method is called in try-finally block.")]
+        protected virtual void Dispose(bool disposing)
         {
+            if (this.disposed || !disposing)
+            {
+                return;
+            }
+
             try
             {
-                if (this.disposed)
-                {
-                    return;
-                }
-
                 var exceptions = new List<Exception>();
                 foreach (var session in this.sessions)
                 {

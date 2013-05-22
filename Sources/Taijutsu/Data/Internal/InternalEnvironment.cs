@@ -130,7 +130,7 @@ namespace Taijutsu.Data.Internal
         {
             var supervisor = LogicContext.FindData(DataContextSupervisorKey);
 
-            if (supervisor != null && !((DataContextSupervisor)supervisor).IsActive && LogicContext.FindData(OperationScopeKey) == null)
+            if (supervisor != null && !((DataContextSupervisor)supervisor).Active && LogicContext.FindData(OperationScopeKey) == null)
             {
                 LogicContext.ReleaseData(DataContextSupervisorKey);
             }

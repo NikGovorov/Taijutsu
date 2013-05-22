@@ -76,18 +76,27 @@ namespace Taijutsu.Data
         {
             get
             {
-                this.AssertNotDisposed();
+                return this.Original;
+            }
+        }
+
+        protected virtual object Original
+        {
+            get
+            {
                 return this.dataContext.Session.Original;
             }
         }
 
-        void IDisposable.Dispose()
+        public void Dispose()
         {
-            this.Dispose();
+            this.Dispose(true);
         }
 
         public virtual void Complete()
         {
+            this.AssertNotDisposed();
+
             if (this.completed.HasValue)
             {
                 if (!this.completed.Value)
@@ -112,6 +121,7 @@ namespace Taijutsu.Data
 
         public virtual T Complete<T>(Func<IUnitOfWork, T> toReturn)
         {
+            this.AssertNotDisposed();
             var result = toReturn(this);
             this.Complete();
             return result;
@@ -119,6 +129,7 @@ namespace Taijutsu.Data
 
         public virtual T Complete<T>(Func<T> toReturn)
         {
+            this.AssertNotDisposed();
             var result = toReturn();
             this.Complete();
             return result;
@@ -126,6 +137,7 @@ namespace Taijutsu.Data
 
         public virtual T Complete<T>(T toReturn)
         {
+            this.AssertNotDisposed();
             this.Complete();
             return toReturn;
         }
@@ -171,15 +183,15 @@ namespace Taijutsu.Data
             return new QueryOverContinuation<TEntity>(this.dataContext.Session);
         }
 
-        protected virtual void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
+            if (this.disposed || !disposing)
+            {
+                return;
+            }
+
             try
             {
-                if (this.disposed)
-                {
-                    return;
-                }
-
                 try
                 {
                     if (!this.completed.HasValue)

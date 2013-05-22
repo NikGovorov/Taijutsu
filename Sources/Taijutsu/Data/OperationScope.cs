@@ -19,6 +19,8 @@ namespace Taijutsu.Data
     {
         private readonly ITerminationPolicy terminationPolicy;
 
+        private bool disposed;
+
         public OperationScope(ITerminationPolicy terminationPolicy = null)
         {
             this.terminationPolicy = terminationPolicy ?? new DelayedTerminationPolicy();
@@ -27,13 +29,30 @@ namespace Taijutsu.Data
 
         public void Dispose()
         {
+            this.Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this.disposed || !disposing)
+            {
+                return;
+            }
+
             try
             {
                 this.terminationPolicy.Dispose();
             }
             finally
             {
-                InternalEnvironment.UnregisterOperationScope();
+                try
+                {
+                    InternalEnvironment.UnregisterOperationScope();
+                }
+                finally
+                {
+                    this.disposed = true;
+                }
             }
         }
     }

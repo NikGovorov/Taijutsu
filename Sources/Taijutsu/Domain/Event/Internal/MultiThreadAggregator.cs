@@ -60,7 +60,7 @@ namespace Taijutsu.Domain.Event.Internal
                 };
         }
 
-        protected override void Dispose()
+        protected override void Reset()
         {
             lock (this.sync)
             {

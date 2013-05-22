@@ -94,12 +94,12 @@ namespace Taijutsu.Test.Data
                 throw new NotImplementedException();
             }
 
-            public override void Dispose()
+            public override void Complete()
             {
                 throw new NotImplementedException();
             }
 
-            public override void Complete()
+            protected override void Dispose(bool disposing)
             {
                 throw new NotImplementedException();
             }

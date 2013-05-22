@@ -14,6 +14,7 @@ namespace Taijutsu.Data.Internal
     using Taijutsu.Domain;
     using Taijutsu.Domain.Query;
 
+    [PublicApi]
     public interface IQueryOverContinuation<TEntity> : IHiddenObjectMembers
         where TEntity : class, IEntity
     {

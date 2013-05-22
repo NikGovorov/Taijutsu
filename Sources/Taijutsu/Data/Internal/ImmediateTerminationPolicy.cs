@@ -15,8 +15,9 @@ namespace Taijutsu.Data.Internal
 
     public class ImmediateTerminationPolicy : ITerminationPolicy
     {
-        void IDisposable.Dispose()
+        public void Dispose()
         {
+            this.Dispose(true);
         }
 
         public void Terminate(IOrmSession session, bool isSuccessfully)
@@ -28,5 +29,12 @@ namespace Taijutsu.Data.Internal
 
             session.Dispose();
         }
+
+        // ReSharper disable UnusedParameter.Global
+        protected virtual void Dispose(bool disposing)
+        {
+        }
+
+        // ReSharper restore UnusedParameter.Global
     }
 }

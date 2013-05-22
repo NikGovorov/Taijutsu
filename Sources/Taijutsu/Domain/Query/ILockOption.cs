@@ -11,6 +11,7 @@
 // specific language governing permissions and limitations under the License.
 namespace Taijutsu.Domain.Query
 {
+    [PublicApi]
     public interface ILockOption<out TQuery> : IQueryContinuation
         where TQuery : IQueryContinuation
     {

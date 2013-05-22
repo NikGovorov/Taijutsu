@@ -15,7 +15,7 @@ namespace Taijutsu.Data.Internal
 
     public interface IDataContext : ICompletableScope
     {
-        event Action<bool> Finished;
+        event EventHandler<ScopeFinishedEventArgs> Finished;
 
         IOrmSession Session { get; }
     }

@@ -11,11 +11,11 @@
 // specific language governing permissions and limitations under the License.
 namespace Taijutsu.Domain
 {
+    [PublicApi]
     public interface IEntity : IDomainObject
     {
     }
 
-    [PublicApi]
     public interface IEntity<out TId> : IEntity
     {
         TId Id { get; }

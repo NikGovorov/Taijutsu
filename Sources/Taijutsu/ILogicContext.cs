@@ -13,12 +13,12 @@ namespace Taijutsu
 {
     public interface ILogicContext : IHiddenObjectMembers
     {
+        bool Applicable { get; }
+
         object FindData(string name);
 
         void SetData(string name, object value);
 
         void ReleaseData(string name);
-
-        bool IsApplicable();
     }
 }

@@ -15,8 +15,10 @@ namespace Taijutsu.Data.Internal
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Data;
+    using System.Diagnostics.CodeAnalysis;
     using System.Linq;
 
+    [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Reviewed. TerminationPolicy lifetime must be managed outside.")]
     public class DataContextSupervisor
     {
         private readonly List<DataContextDecorator> contexts = new List<DataContextDecorator>();
@@ -52,7 +54,7 @@ namespace Taijutsu.Data.Internal
             }
         }
 
-        public virtual bool IsActive
+        public virtual bool Active
         {
             get
             {
@@ -122,7 +124,7 @@ namespace Taijutsu.Data.Internal
                 contexts.Add(this);
             }
 
-            event Action<bool> IDataContext.Finished
+            event EventHandler<ScopeFinishedEventArgs> IDataContext.Finished
             {
                 add
                 {

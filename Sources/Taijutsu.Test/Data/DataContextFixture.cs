@@ -144,7 +144,7 @@ namespace Taijutsu.Test.Data
 
             Awaken(context);
 
-            context.Finished += isSuccessfully => { success = isSuccessfully; session.Received(0).Dispose(); };
+            context.Finished += (sender, e) => { success = e.Completed; session.Received(0).Dispose(); };
 
             context.Dispose();
 
@@ -162,7 +162,7 @@ namespace Taijutsu.Test.Data
 
             Awaken(context);
 
-            context.Finished += isSuccessfully => { success = isSuccessfully; session.Received(0).Dispose(); session.Received(1).Complete(); };
+            context.Finished += (sender, e) => { success = e.Completed; session.Received(0).Dispose(); session.Received(1).Complete(); };
             context.Complete();
             context.Dispose();
             success.Should().Not.Be(null);
@@ -184,7 +184,7 @@ namespace Taijutsu.Test.Data
 
             Awaken(contextDecorator);
 
-            Action<bool> eventHandler = isSuccessfully => { throw new InstanceNotFoundException(); };
+            EventHandler<ScopeFinishedEventArgs> eventHandler = (sender, e) => { throw new InstanceNotFoundException(); };
             ((IDataContext)contextDecorator).Finished += eventHandler;
 
             try
@@ -207,7 +207,7 @@ namespace Taijutsu.Test.Data
 
             Awaken(contextDecorator);
 
-            eventHandler = isSuccessfully => { throw new InstanceNotFoundException(); };
+            eventHandler = (s,e) => { throw new InstanceNotFoundException(); };
             ((IDataContext)contextDecorator).Finished += eventHandler;
             ((IDataContext)contextDecorator).Finished -= eventHandler;
             contextDecorator.Dispose();
@@ -229,7 +229,7 @@ namespace Taijutsu.Test.Data
 
             Awaken(subordinate);
 
-            ((IDataContext)subordinate).Finished += isSuccessfully => { called = true; };
+            ((IDataContext)subordinate).Finished += (sender, e) => { called = true; };
 
             context.Dispose();
 
@@ -246,7 +246,7 @@ namespace Taijutsu.Test.Data
 
             Awaken(subordinate);
 
-            Action<bool> eventHandler = isSuccessfully => { called = true; };
+            EventHandler<ScopeFinishedEventArgs> eventHandler = (sender, e) => { called = true; };
             ((IDataContext)subordinate).Finished += eventHandler;
             ((IDataContext)subordinate).Finished -= eventHandler;
             context.Dispose();

@@ -29,8 +29,8 @@ namespace Taijutsu.Test
             var context1 = Substitute.For<ILogicContext>();
             var context2 = Substitute.For<ILogicContext>();
 
-            context1.IsApplicable().Returns(false);
-            context2.IsApplicable().Returns(true);
+            context1.Applicable.Returns(false);
+            context2.Applicable.Returns(true);
 
             var hybridContext = (ILogicContext)new HybridLogicContext(new[] { context1, context2 });
             var data = new { };
@@ -52,8 +52,8 @@ namespace Taijutsu.Test
             var context1 = Substitute.For<ILogicContext>();
             var context2 = Substitute.For<ILogicContext>();
             
-            context1.IsApplicable().Returns(true);
-            context2.IsApplicable().Returns(true);
+            context1.Applicable.Returns(true);
+            context2.Applicable.Returns(true);
 
             var hybridContext = (ILogicContext)new HybridLogicContext(new[] { context1, context2 });
 
@@ -69,8 +69,8 @@ namespace Taijutsu.Test
             var context1 = Substitute.For<ILogicContext>();
             var context2 = Substitute.For<ILogicContext>();
 
-            context1.IsApplicable().Returns(false);
-            context2.IsApplicable().Returns(false);
+            context1.Applicable.Returns(false);
+            context2.Applicable.Returns(false);
 
             var hybridContext = (ILogicContext)new HybridLogicContext(new[] { context1, context2 });
 

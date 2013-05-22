@@ -13,11 +13,13 @@ namespace Taijutsu.Domain.Query
 {
     using System;
 
+    [PublicApi]
     public interface INotTypeFilter<out TQuery> : IQueryContinuation
     {
         TQuery IsNotOf(params Type[] derivedTypes);
     }
 
+    [PublicApi]
     public interface INotTypeFilter<in TBase, out TQuery> : IQueryContinuation
     {
         TQuery IsNotOf<TDerived>() where TDerived : TBase;

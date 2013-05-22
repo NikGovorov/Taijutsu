@@ -330,11 +330,11 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldExposeCurrentContext()
         {
-            InternalEnvironment.DataContextSupervisor.IsActive.Should().Be.False();
+            InternalEnvironment.DataContextSupervisor.Active.Should().Be.False();
 
             using (new UnitOfWork(source1))
             {
-                InternalEnvironment.DataContextSupervisor.IsActive.Should().Be.True();
+                InternalEnvironment.DataContextSupervisor.Active.Should().Be.True();
 
                 var ctx1 = InternalEnvironment.DataContextSupervisor.Contexts.Single();
                 ctx1.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
@@ -348,7 +348,7 @@ namespace Taijutsu.Test.Data
                     {
                         var ctx3 = InternalEnvironment.DataContextSupervisor.Contexts.Last();
                         ctx3.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
-                        InternalEnvironment.DataContextSupervisor.IsActive.Should().Be.True();
+                        InternalEnvironment.DataContextSupervisor.Active.Should().Be.True();
                     }
                     ctx2.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
                 }
@@ -356,7 +356,7 @@ namespace Taijutsu.Test.Data
                 ctx1.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
             }
             InternalEnvironment.DataContextSupervisor.CurrentContext.Should().Be.Null();
-            InternalEnvironment.DataContextSupervisor.IsActive.Should().Be.False();
+            InternalEnvironment.DataContextSupervisor.Active.Should().Be.False();
         }
     }
 }

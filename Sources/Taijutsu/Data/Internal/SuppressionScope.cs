@@ -17,15 +17,34 @@ namespace Taijutsu.Data.Internal
     {
         private readonly bool previousValue;
 
+        private bool disposed;
+
         public SuppressionScope()
         {
             this.previousValue = InternalEnvironment.IsInsideSuppressionScope;
             InternalEnvironment.IsInsideSuppressionScope = true;
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
-            InternalEnvironment.IsInsideSuppressionScope = this.previousValue;
+            this.Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this.disposed || !disposing)
+            {
+                return;
+            }
+
+            try
+            {
+                InternalEnvironment.IsInsideSuppressionScope = this.previousValue;
+            }
+            finally
+            {
+                this.disposed = true;
+            }
         }
     }
 }

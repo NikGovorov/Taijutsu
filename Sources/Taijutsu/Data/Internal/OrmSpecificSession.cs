@@ -16,6 +16,7 @@ namespace Taijutsu.Data.Internal
     using Taijutsu.Domain;
     using Taijutsu.Domain.Query;
 
+    [PublicApi]
     public abstract class OrmSpecificSession<TNative> : IOrmSession
     {
         private readonly TNative nativeSession;
@@ -26,6 +27,14 @@ namespace Taijutsu.Data.Internal
         }
 
         object IWrapper.Original
+        {
+            get
+            {
+                return this.Original;
+            }
+        }
+
+        protected virtual object Original
         {
             get
             {
@@ -67,8 +76,13 @@ namespace Taijutsu.Data.Internal
 
         public abstract TRepository QueryFrom<TEntity, TRepository>(string name = null) where TEntity : class, IEntity where TRepository : IRepository<TEntity>;
 
-        public abstract void Dispose();
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
 
         public abstract void Complete();
+
+        protected abstract void Dispose(bool disposing);
     }
 }

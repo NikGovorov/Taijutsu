@@ -49,13 +49,12 @@ namespace Taijutsu.Data.Internal
             this.terminationPolicy = terminationPolicy;
         }
 
-        public event Action<bool> Finished;
+        public event EventHandler<ScopeFinishedEventArgs> Finished;
 
         public IOrmSession Session
         {
             get
             {
-                this.AssertNotDisposed();
                 return this.session.Value;
             }
         }
@@ -64,53 +63,20 @@ namespace Taijutsu.Data.Internal
         {
             get
             {
+                this.AssertNotDisposed();
                 return this.configuration;
             }
         }
 
-        public virtual void Dispose()
+        public void Dispose()
         {
-            try
-            {
-                if (this.disposed)
-                {
-                    return;
-                }
-
-                try
-                {
-                    if (!this.completed.HasValue || !this.completed.Value)
-                    {
-                        this.completed = false;
-                    }
-                }
-                finally
-                {
-                    try
-                    {
-                        if (this.Finished != null)
-                        {
-                            this.Finished(this.completed.HasValue && this.completed.Value);
-                        }
-                    }
-                    finally
-                    {
-                        if (this.session.IsValueCreated)
-                        {
-                            this.terminationPolicy.Terminate(this.session.Value, this.completed.HasValue && this.completed.Value);
-                        }
-                    }
-                }
-            }
-            finally
-            {
-                this.Finished = null;
-                this.disposed = true;
-            }
+            this.Dispose(true);
         }
 
         public virtual void Complete()
         {
+            this.AssertNotDisposed();
+
             if (this.completed.HasValue)
             {
                 if (!this.completed.Value)
@@ -142,6 +108,47 @@ namespace Taijutsu.Data.Internal
             }
         }
 
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this.disposed || !disposing)
+            {
+                return;
+            }
+
+            try
+            {
+                try
+                {
+                    if (!this.completed.HasValue || !this.completed.Value)
+                    {
+                        this.completed = false;
+                    }
+                }
+                finally
+                {
+                    try
+                    {
+                        if (this.Finished != null)
+                        {
+                            this.Finished(this, new ScopeFinishedEventArgs(this.completed.HasValue && this.completed.Value));
+                        }
+                    }
+                    finally
+                    {
+                        if (this.session.IsValueCreated)
+                        {
+                            this.terminationPolicy.Terminate(this.session.Value, this.completed.HasValue && this.completed.Value);
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                this.Finished = null;
+                this.disposed = true;
+            }
+        }
+
         protected virtual void AssertNotDisposed()
         {
             if (this.disposed)
@@ -152,11 +159,15 @@ namespace Taijutsu.Data.Internal
 
         protected virtual void RegisterCompletedSubordinate()
         {
+            this.AssertNotDisposed();
+
             this.subordinatesCount--;
         }
 
         protected virtual void RegisterUncompletedSubordinate()
         {
+            this.AssertNotDisposed();
+
             this.subordinatesCount++;
         }
 
@@ -165,6 +176,8 @@ namespace Taijutsu.Data.Internal
             private readonly DataContext master;
 
             private bool? completed;
+
+            private bool disposed;
 
             public Subordinate(DataContext master)
             {
@@ -177,15 +190,17 @@ namespace Taijutsu.Data.Internal
                 master.RegisterUncompletedSubordinate();
             }
 
-            event Action<bool> IDataContext.Finished
+            event EventHandler<ScopeFinishedEventArgs> IDataContext.Finished
             {
                 add
                 {
+                    this.AssertNotDisposed();
                     this.master.Finished += value;
                 }
 
                 remove
                 {
+                    this.AssertNotDisposed();
                     this.master.Finished -= value;
                 }
             }
@@ -200,14 +215,23 @@ namespace Taijutsu.Data.Internal
 
             public virtual void Dispose()
             {
+                if (this.disposed)
+                {
+                    return;
+                }
+
                 if (!this.completed.HasValue)
                 {
                     this.completed = false;
                 }
+
+                this.disposed = true;
             }
 
             public virtual void Complete()
             {
+                this.AssertNotDisposed();
+
                 if (this.completed.HasValue)
                 {
                     return;
@@ -215,6 +239,14 @@ namespace Taijutsu.Data.Internal
 
                 this.master.RegisterCompletedSubordinate();
                 this.completed = true;
+            }
+
+            protected virtual void AssertNotDisposed()
+            {
+                if (this.disposed)
+                {
+                    throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", this.completed));
+                }
             }
         }
     }
