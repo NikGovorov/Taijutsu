@@ -18,8 +18,7 @@ namespace Taijutsu.Domain
     public abstract class ValueObject<TValueObject> : IdentifiableObject<object>, IValueObject, IEquatable<TValueObject>
         where TValueObject : ValueObject<TValueObject>
     {
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", 
-            Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
         public static bool operator ==(ValueObject<TValueObject> left, ValueObject<TValueObject> right)
         {
             return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals((TValueObject)right);
@@ -30,8 +29,7 @@ namespace Taijutsu.Domain
             return !(left == right);
         }
 
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", 
-            Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
         public virtual bool Equals(TValueObject other)
         {
             if (ReferenceEquals(other, null))

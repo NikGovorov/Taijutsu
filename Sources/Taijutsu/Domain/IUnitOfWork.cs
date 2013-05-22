@@ -25,8 +25,7 @@ namespace Taijutsu.Domain
 
         IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
 
-        IUniqueEntityQuery<TEntity> Unique<TEntity>(object id, object options = null)
-            where TEntity : class, IQueryableEntity;
+        IUniqueEntityQuery<TEntity> Unique<TEntity>(object id, object options = null) where TEntity : class, IQueryableEntity;
     }
 
     [PublicApi]

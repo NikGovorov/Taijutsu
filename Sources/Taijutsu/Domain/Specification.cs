@@ -19,8 +19,7 @@ namespace Taijutsu.Domain
     public abstract class Specification<TDomainObject> : ISpecification<TDomainObject>
         where TDomainObject : IDomainObject
     {
-        public static Specification<TDomainObject> operator &(
-            Specification<TDomainObject> one, Specification<TDomainObject> other)
+        public static Specification<TDomainObject> operator &(Specification<TDomainObject> one, Specification<TDomainObject> other)
         {
             if (one == null)
             {
@@ -35,8 +34,7 @@ namespace Taijutsu.Domain
             return one.And(other);
         }
 
-        public static Specification<TDomainObject> operator |(
-            Specification<TDomainObject> one, Specification<TDomainObject> other)
+        public static Specification<TDomainObject> operator |(Specification<TDomainObject> one, Specification<TDomainObject> other)
         {
             if (one == null)
             {

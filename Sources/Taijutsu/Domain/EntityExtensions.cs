@@ -19,9 +19,7 @@ namespace Taijutsu.Domain
         {
             var conversion = EntityConversionRegistry.CustomConversions.FirstOrDefault(ec => ec.IsApplicableFor(entity));
 
-            return conversion != null
-                       ? conversion.SafeConvert<T>(entity)
-                       : EntityConversionRegistry.NativeConversion.SafeConvert<T>(entity);
+            return conversion != null ? conversion.SafeConvert<T>(entity) : EntityConversionRegistry.NativeConversion.SafeConvert<T>(entity);
         }
 
         public static bool Is<T>(this IEntity entity) where T : class

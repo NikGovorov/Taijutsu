@@ -20,8 +20,7 @@ namespace Taijutsu.Domain
         [NonSerialized]
         private int? hashCode;
 
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", 
-            Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
         public virtual bool Equals(IdentifiableObject<TIdentifier> other)
         {
             if (ReferenceEquals(other, null))
@@ -29,8 +28,7 @@ namespace Taijutsu.Domain
                 return false;
             }
 
-            if (Equals(this.BuildIdentity(), default(TIdentifier))
-                && Equals(other.BuildIdentity(), default(TIdentifier)))
+            if (Equals(this.BuildIdentity(), default(TIdentifier)) && Equals(other.BuildIdentity(), default(TIdentifier)))
             {
                 return ReferenceEquals(other, this);
             }
@@ -43,8 +41,7 @@ namespace Taijutsu.Domain
             return this.Equals(obj as IdentifiableObject<TIdentifier>);
         }
 
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", 
-            Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
         public override int GetHashCode()
         {
             // ReSharper disable NonReadonlyFieldInGetHashCode
