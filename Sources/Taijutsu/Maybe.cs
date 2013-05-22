@@ -12,6 +12,7 @@
 namespace Taijutsu
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
     [Serializable]
     public sealed class Maybe<T> : IMaybe<T>
@@ -34,11 +35,12 @@ namespace Taijutsu
             }
         }
 
+        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
         public bool HasValue
         {
             get
             {
-                return !this.value.Equals(default(T));
+                return !Equals(this.value, default(T));
             }
         }
 

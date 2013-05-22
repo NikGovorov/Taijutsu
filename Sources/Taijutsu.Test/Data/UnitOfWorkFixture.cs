@@ -423,7 +423,7 @@ namespace Taijutsu.Test.Data
                     ((IDisposable)uow).Dispose();
                     uow.Complete();
 
-                }, Throws.Exception.With.Message.EqualTo("Unit of work has already been completed without success."));
+                }, Throws.Exception.With.Message.EqualTo("Unit of work has already been disposed(with success - 'False'), so it is not usable anymore."));
             
             session.Received(1).Dispose();
             session.Received(0).Complete();

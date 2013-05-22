@@ -125,7 +125,7 @@ namespace Taijutsu.Test.Data
                 Awaken(context);
                 context.Dispose();
                 context.Complete();
-            }, Throws.Exception.With.Message.EqualTo("Data context has already been completed without success."));
+            }, Throws.Exception.With.Message.EqualTo("Data context has already been disposed(with success - 'False'), so it is not usable anymore."));
 
             session.Received(1).Dispose();
             session.Received(0).Complete();

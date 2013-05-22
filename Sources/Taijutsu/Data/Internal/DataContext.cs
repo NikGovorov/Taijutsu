@@ -55,6 +55,8 @@ namespace Taijutsu.Data.Internal
         {
             get
             {
+                this.AssertNotDisposed();
+
                 return this.session.Value;
             }
         }

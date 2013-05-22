@@ -13,6 +13,7 @@ namespace Taijutsu.Data
 {
     using System;
     using System.Data;
+    using System.Diagnostics.CodeAnalysis;
 
     using Taijutsu.Data.Internal;
     using Taijutsu.Domain;
@@ -84,11 +85,14 @@ namespace Taijutsu.Data
         {
             get
             {
+                this.AssertNotDisposed();
+
                 return this.dataContext.Session.Original;
             }
         }
 
-        public void Dispose()
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Reviewed. The method is supposed to be used only by using block.")]
+        void IDisposable.Dispose()
         {
             this.Dispose(true);
         }

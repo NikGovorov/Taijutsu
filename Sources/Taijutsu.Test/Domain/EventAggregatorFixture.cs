@@ -150,7 +150,7 @@ namespace Taijutsu.Test.Domain
                 {
                     action();
                 }
-                ((IDisposable)EventAggregator.Global).Dispose();
+                ((IResettable)EventAggregator.Global).Reset();
             }
         }
 
