@@ -87,7 +87,7 @@
     <Compile Include="Event\Internal\InternalEventHandler.cs" />
     <Compile Include="Event\Internal\MultiThreadAggregator.cs" />
     <Compile Include="Event\Internal\SingleThreadAggregator.cs" />
-    <Compile Include="Event\Internal\SubscriptionSyntax.cs" />
+    <Compile Include="Event\SubscriptionSyntax.cs" />
     <Compile Include="ScopeFinishedEventArgs.cs" />
     <Compile Include="Data\Internal\SuppressionScope.cs" />
     <Compile Include="Data\OperationScope.cs" />

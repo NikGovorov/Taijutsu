@@ -15,7 +15,9 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-namespace Taijutsu.Event.Internal
+using Taijutsu.Event.Internal;
+
+namespace Taijutsu.Event
 {
     public static class SubscriptionSyntax
     {
@@ -26,26 +28,12 @@ namespace Taijutsu.Event.Internal
         {
             All<TSource> Where(Func<TSource, bool> filter);
 
-            Projection<TSource, TProjection> Select<TProjection>(Func<TSource, TProjection> projection);
-
             Action Subscribe(Action<TSource> subscriber, int priority = 0);
 
             Action Subscribe(IEventHandler<TSource> subscriber, int priority = 0);
         }
 
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1302:InterfaceNamesMustBeginWithI", 
-            Justification = "Reviewed. Interfaces which participate as part of fluent syntax can violate the rule.")]
-        public interface Projection<out TSource, out TProjection> : IHiddenObjectMembers
-        {
-            Projection<TSource, TProjection> Where(Func<TProjection, bool> filter);
-
-            Action Subscribe(Action<TProjection> subscriber, int priority = 0);
-
-            Action Subscribe(IEventHandler<TProjection> subscriber, int priority = 0);
-        }
-
-        internal class AllImpl<TEvent> : All<TEvent>
-            where TEvent : class
+        internal class AllImpl<TEvent> : All<TEvent> where TEvent : class
         {
             private readonly Func<IInternalEventHandler, Action> addHadlerAction;
 
@@ -77,58 +65,12 @@ namespace Taijutsu.Event.Internal
                 return new AllImpl<TEvent>(AddHadlerAction, eventFilters);
             }
 
-            public Projection<TEvent, TProjection> Select<TProjection>(Func<TEvent, TProjection> projection)
-            {
-                return new ProjectionImpl<TEvent, TProjection>(this, projection);
-            }
-
             public Action Subscribe(Action<TEvent> subscriber, int priority = 0)
             {
                 return AddHadlerAction(new InternalEventHandler<TEvent>(subscriber, e => eventFilters.All(f => f(e)), priority));
             }
 
             public Action Subscribe(IEventHandler<TEvent> subscriber, int priority = 0)
-            {
-                return Subscribe(subscriber.Handle, priority);
-            }
-        }
-
-        internal class ProjectionImpl<TEvent, TProjection> : Projection<TEvent, TProjection>
-            where TEvent : class
-        {
-            private readonly AllImpl<TEvent> parent;
-
-            private readonly Func<TEvent, TProjection> projection;
-
-            private readonly List<Func<TProjection, bool>> projectionFilters = new List<Func<TProjection, bool>>();
-
-            internal ProjectionImpl(AllImpl<TEvent> parent, Func<TEvent, TProjection> projection)
-            {
-                this.parent = parent;
-                this.projection = projection;
-            }
-
-            internal ProjectionImpl(AllImpl<TEvent> parent, Func<TEvent, TProjection> projection, IEnumerable<Func<TProjection, bool>> projectionFilters)
-                : this(parent, projection)
-            {
-                this.projectionFilters.AddRange(projectionFilters);
-            }
-
-            public Projection<TEvent, TProjection> Where(Func<TProjection, bool> filter)
-            {
-                projectionFilters.Add(filter);
-                return new ProjectionImpl<TEvent, TProjection>(parent, projection, projectionFilters);
-            }
-
-            public Action Subscribe(Action<TProjection> subscriber, int priority = 0)
-            {
-                Action<TEvent> action = e => subscriber(projection(e));
-                return
-                    parent.AddHadlerAction(
-                        new InternalEventHandler<TEvent>(action, e => parent.EventFilters.All(f => f(e)) && projectionFilters.All(f => f(projection(e))), priority));
-            }
-
-            public Action Subscribe(IEventHandler<TProjection> subscriber, int priority = 0)
             {
                 return Subscribe(subscriber.Handle, priority);
             }

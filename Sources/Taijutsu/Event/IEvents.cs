@@ -12,8 +12,6 @@
 
 using System;
 
-using Taijutsu.Event.Internal;
-
 namespace Taijutsu.Event
 {
     public interface IEvents

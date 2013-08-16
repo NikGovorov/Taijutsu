@@ -234,6 +234,7 @@ namespace Taijutsu.Test.Domain
 
             Events.Subscribe<SystemChecked>(ev => callCounter++);
             Events.Subscribe<SystemChecked>(ev => callCounter++);
+
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((IDisposable)Events.Global).Dispose();
             Events.Publish(new SystemChecked());
@@ -241,6 +242,7 @@ namespace Taijutsu.Test.Domain
 
             Events.Local.Subscribe<SystemChecked>(ev => callCounter++);
             Events.Local.Subscribe<SystemChecked>(ev => callCounter++);
+
             // ReSharper disable once SuspiciousTypeConversion.Global
             ((IDisposable)Events.Local).Dispose();
             Events.Publish(new SystemChecked());
@@ -249,7 +251,7 @@ namespace Taijutsu.Test.Domain
         }
 
         [Test]
-        public virtual void BasicFilteringAndProjectionShouldWork()
+        public virtual void BasicFilteringShouldWork()
         {
             var callCounter = 0;
 
@@ -269,13 +271,13 @@ namespace Taijutsu.Test.Domain
 
             callCounter = 0;
 
-            using (Events.OnStreamOf<SystemChecked>().Where(ev => ev.HealthLevel > 98).Select(ev => ev.HealthLevel)
-                                  .Where(amount => amount == 100).Subscribe(
-                                      amount =>
-                                      {
-                                          callCounter++;
-                                          amount.Should().Be(100);
-                                      }).AsDisposable())
+            using (Events.OnStreamOf<SystemChecked>().Where(ev => ev.HealthLevel > 98)
+                         .Where(ev => ev.HealthLevel == 100).Subscribe(
+                             amount =>
+                             {
+                                 callCounter++;
+                                 amount.Should().Be(100);
+                             }).AsDisposable())
             {
                 Events.Publish(new SystemChecked(98));
                 Events.Publish(new SystemChecked(99));
@@ -287,8 +289,8 @@ namespace Taijutsu.Test.Domain
 
             var handler = new SystemCheckedHandler();
 
-            using (Events.OnStreamOf<SystemChecked>().Where(ev => ev.HealthLevel > 98).Select(ev => ev)
-                                  .Where(ev => ev.HealthLevel == 100).Subscribe(handler).AsDisposable())
+            using (Events.OnStreamOf<SystemChecked>().Where(ev => ev.HealthLevel > 98)
+                         .Where(ev => ev.HealthLevel == 100).Subscribe(handler).AsDisposable())
             {
                 Events.Publish(new SystemChecked(98));
                 Events.Publish(new SystemChecked(99));

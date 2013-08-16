@@ -15,7 +15,6 @@ using System.Diagnostics.CodeAnalysis;
 
 using Taijutsu.Domain.Event;
 using Taijutsu.Event;
-using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Domain
 {

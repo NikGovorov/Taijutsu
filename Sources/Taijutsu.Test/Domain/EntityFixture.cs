@@ -102,9 +102,7 @@ namespace Taijutsu.Test.Domain
         {
             Order expectedOrder = null;
 
-            using (Events.OnStreamOf<OrderCreated>()
-                                  .Select(ev => ev.Initiator)
-                                  .Subscribe(order => expectedOrder = order).AsDisposable())
+            using (Events.OnStreamOf<OrderCreated>().Subscribe(ev => expectedOrder = ev.Initiator).AsDisposable())
             {
                 var internetOrder = new InternetOrder(new Customer());
 

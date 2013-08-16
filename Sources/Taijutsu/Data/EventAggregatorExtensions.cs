@@ -16,7 +16,7 @@ using System.Diagnostics;
 using System.Transactions;
 
 using Taijutsu.Data.Internal;
-using Taijutsu.Event.Internal;
+using Taijutsu.Event;
 
 namespace Taijutsu.Data
 {
@@ -39,16 +39,6 @@ namespace Taijutsu.Data
             return new HandledSafelySyntaxAllImpl<TSource>(self);
         }
 
-        public static IHandledSafelySyntax<TProjection> HandledSafely<TSource, TProjection>(this SubscriptionSyntax.Projection<TSource, TProjection> self)
-        {
-            if (self == null)
-            {
-                throw new ArgumentNullException("self");
-            }
-
-            return new HandledSafelySyntaxProjectionImpl<TSource, TProjection>(self);
-        }
-
         private class HandledSafelySyntaxAllImpl<TSource> : HandledSafelySyntaxImpl<TSource>
         {
             private readonly SubscriptionSyntax.All<TSource> target;
@@ -64,31 +54,6 @@ namespace Taijutsu.Data
             }
 
             public override Action Subscribe(Action<TSource> subscriber, int priority = 0)
-            {
-                if (subscriber == null)
-                {
-                    throw new ArgumentNullException("subscriber");
-                }
-
-                return target.Subscribe(WrapSubscriber(subscriber), priority);
-            }
-        }
-
-        private class HandledSafelySyntaxProjectionImpl<TSource, TProjection> : HandledSafelySyntaxImpl<TProjection>
-        {
-            private readonly SubscriptionSyntax.Projection<TSource, TProjection> target;
-
-            public HandledSafelySyntaxProjectionImpl(SubscriptionSyntax.Projection<TSource, TProjection> target)
-            {
-                if (target == null)
-                {
-                    throw new ArgumentNullException("target");
-                }
-
-                this.target = target;
-            }
-
-            public override Action Subscribe(Action<TProjection> subscriber, int priority = 0)
             {
                 if (subscriber == null)
                 {
