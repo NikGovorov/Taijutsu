@@ -9,18 +9,18 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
 namespace Taijutsu.Domain
 {
-    using System;
-
     [PublicApi]
     [Serializable]
-    public abstract class CompositeSpecification<TDomainObject> : Specification<TDomainObject>
-        where TDomainObject : IDomainObject
+    public abstract class CompositeSpecification<TDomainObject> : Specification<TDomainObject>, ICompositeSpecification<TDomainObject> where TDomainObject : IDomainObject
     {
-        protected ISpecification<TDomainObject> oneSpec;
+        private ISpecification<TDomainObject> oneSpec;
 
-        protected ISpecification<TDomainObject> otherSpec;
+        private ISpecification<TDomainObject> otherSpec;
 
         protected CompositeSpecification(ISpecification<TDomainObject> one, ISpecification<TDomainObject> other)
         {
@@ -34,24 +34,24 @@ namespace Taijutsu.Domain
                 throw new ArgumentNullException("other");
             }
 
-            this.oneSpec = one;
-            this.otherSpec = other;
+            oneSpec = one;
+            otherSpec = other;
         }
 
-        public virtual ISpecification<TDomainObject> One
+        protected CompositeSpecification()
         {
-            get
-            {
-                return this.oneSpec;
-            }
         }
 
-        public virtual ISpecification<TDomainObject> Other
+        public ISpecification<TDomainObject> One
         {
-            get
-            {
-                return this.otherSpec;
-            }
+            get { return oneSpec; }
+            protected set { oneSpec = value; }
+        }
+
+        public ISpecification<TDomainObject> Other
+        {
+            get { return otherSpec; }
+            protected set { otherSpec = value; }
         }
     }
 }

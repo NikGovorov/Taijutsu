@@ -1,38 +1,38 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System;
 using System.Data;
 using System.Linq;
+
 using NUnit.Framework;
+
 using SharpTestsEx;
+
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
 
 namespace Taijutsu.Test.Data
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class DataContextSupervisorFixture : TestFixture
     {
         private string source1;
+
         private string source2;
 
         [SetUp]
-        protected void OnSetUp()
+        public void OnSetUp()
         {
             source1 = Guid.NewGuid().ToString();
             source2 = Guid.NewGuid().ToString();
@@ -41,7 +41,7 @@ namespace Taijutsu.Test.Data
         }
 
         [TearDown]
-        protected void OnTearDown()
+        public void OnTearDown()
         {
             InternalEnvironment.UnregisterDataSource(source1);
             InternalEnvironment.UnregisterDataSource(source2);
@@ -70,6 +70,7 @@ namespace Taijutsu.Test.Data
                             Awaken(uow);
                             AssertThatContextCountEqualTo(1);
                         }
+
                         using (new UnitOfWork(source1))
                         {
                             AssertThatContextCountEqualTo(1);
@@ -108,6 +109,7 @@ namespace Taijutsu.Test.Data
                         {
                             AssertThatContextCountEqualTo(1);
                         }
+
                         using (new UnitOfWork(source1, Require.None))
                         {
                             AssertThatContextCountEqualTo(1);
@@ -146,6 +148,7 @@ namespace Taijutsu.Test.Data
                         {
                             AssertThatContextCountEqualTo(1);
                         }
+
                         using (new UnitOfWork(source1, Require.Existing))
                         {
                             AssertThatContextCountEqualTo(1);
@@ -185,6 +188,7 @@ namespace Taijutsu.Test.Data
                         {
                             AssertThatContextCountEqualTo(4);
                         }
+
                         using (new UnitOfWork(source1))
                         {
                             AssertThatContextCountEqualTo(3);
@@ -223,6 +227,7 @@ namespace Taijutsu.Test.Data
                         {
                             AssertThatContextCountEqualTo(3);
                         }
+
                         using (new UnitOfWork(source2))
                         {
                             using (new UnitOfWork(source1))
@@ -244,6 +249,7 @@ namespace Taijutsu.Test.Data
                         {
                             AssertThatContextCountEqualTo(4);
                         }
+
                         AssertThatContextCountEqualTo(3);
                     }
 
@@ -269,14 +275,17 @@ namespace Taijutsu.Test.Data
                     {
                         AssertThatContextCountEqualTo(2);
                     }
+
                     AssertThatContextCountEqualTo(1);
 
                     uowlai2.Complete();
                 }
+
                 AssertThatContextCountEqualTo(1);
 
                 uowla.Complete();
             }
+
             AssertThatSupervisorDestroyed();
         }
 
@@ -350,11 +359,13 @@ namespace Taijutsu.Test.Data
                         ctx3.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
                         InternalEnvironment.DataContextSupervisor.Active.Should().Be.True();
                     }
+
                     ctx2.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
                 }
 
                 ctx1.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
             }
+
             InternalEnvironment.DataContextSupervisor.CurrentContext.Should().Be.Null();
             InternalEnvironment.DataContextSupervisor.Active.Should().Be.False();
         }

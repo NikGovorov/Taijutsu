@@ -1,40 +1,42 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Instrumentation;
+
 using NSubstitute;
+
 using NUnit.Framework;
+
+using SharpTestsEx;
+
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
-using SharpTestsEx;
 
 namespace Taijutsu.Test.Data
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class DataContextFixture : TestFixture
     {
         private string source;
+
         private IOrmSession session;
 
         [SetUp]
-        protected void OnSetUp()
+        public void OnSetUp()
         {
             source = Guid.NewGuid().ToString();
             session = Substitute.For<IOrmSession>();
@@ -42,7 +44,7 @@ namespace Taijutsu.Test.Data
         }
 
         [TearDown]
-        protected void OnTearDown()
+        public void OnTearDown()
         {
             session.ClearReceivedCalls();
             InternalEnvironment.UnregisterDataSource(source);
@@ -58,14 +60,16 @@ namespace Taijutsu.Test.Data
 
             using (var context = new DataContext(config, sessionBuilder, policy))
             {
-                Awaken(context);   
+                Awaken(context);
                 context.Complete();
                 context.Complete();
             }
+
             session.Received(1).Complete();
         }
 
         [Test]
+        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed. Acceptable for tests.")]
         public virtual void ShouldCallRealDisposeOnlyOnce()
         {
             var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
@@ -93,10 +97,12 @@ namespace Taijutsu.Test.Data
             {
                 context.Complete();
             }
+
             session.DidNotReceive().Complete();
         }
 
         [Test]
+        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed. Acceptable for tests.")]
         public virtual void ShouldNotCallRealDisposeIfSessionHasNotBeenUsed()
         {
             var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
@@ -114,18 +120,19 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldThrowExceptionIfCompleteCalledAfterDispose()
         {
-            Assert.That(() =>
-            {
+            Assert.That(
+                () =>
+                {
+                    var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+                    var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
+                    var policy = new ImmediateTerminationPolicy();
 
-                var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
-                var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
-                var policy = new ImmediateTerminationPolicy();
-
-                var context = new DataContext(config, sessionBuilder, policy);
-                Awaken(context);
-                context.Dispose();
-                context.Complete();
-            }, Throws.Exception.With.Message.EqualTo("Data context has already been disposed(with success - 'False'), so it is not usable anymore."));
+                    var context = new DataContext(config, sessionBuilder, policy);
+                    Awaken(context);
+                    context.Dispose();
+                    context.Complete();
+                }, 
+                Throws.Exception.With.Message.EqualTo("Data context has already been disposed(with success - 'False'), so it is not usable anymore."));
 
             session.Received(1).Dispose();
             session.Received(0).Complete();
@@ -144,25 +151,32 @@ namespace Taijutsu.Test.Data
 
             Awaken(context);
 
-            context.Finished += (sender, e) => { success = e.Completed; session.Received(0).Dispose(); };
+            context.Finished += (sender, e) =>
+            {
+                success = e.Completed;
+                session.Received(0).Dispose();
+            };
 
             context.Dispose();
 
             session.Received(1).Dispose();
             success.Should().Not.Be(null);
             success.Should().Be.EqualTo(false);
-            
+
             session.ClearReceivedCalls();
 
             success = null;
-
-
 
             context = new DataContext(config, sessionBuilder, policy);
 
             Awaken(context);
 
-            context.Finished += (sender, e) => { success = e.Completed; session.Received(0).Dispose(); session.Received(1).Complete(); };
+            context.Finished += (sender, e) =>
+            {
+                success = e.Completed;
+                session.Received(0).Dispose();
+                session.Received(1).Complete();
+            };
             context.Complete();
             context.Dispose();
             success.Should().Not.Be(null);
@@ -193,21 +207,18 @@ namespace Taijutsu.Test.Data
             }
             catch (InstanceNotFoundException)
             {
-
             }
 
             session.Received(1).Dispose();
 
             session.ClearReceivedCalls();
 
-
-
             context = new DataContext(config, sessionBuilder, policy);
             contextDecorator = new DataContextSupervisor.DataContextDecorator(context, new List<DataContextSupervisor.DataContextDecorator>());
 
             Awaken(contextDecorator);
 
-            eventHandler = (s,e) => { throw new InstanceNotFoundException(); };
+            eventHandler = (s, e) => { throw new InstanceNotFoundException(); };
             ((IDataContext)contextDecorator).Finished += eventHandler;
             ((IDataContext)contextDecorator).Finished -= eventHandler;
             contextDecorator.Dispose();
@@ -221,7 +232,7 @@ namespace Taijutsu.Test.Data
             var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
-            bool called = false;
+            var called = false;
 
             var context = new DataContext(config, sessionBuilder, policy);
 
@@ -238,7 +249,6 @@ namespace Taijutsu.Test.Data
             session.Received(1).Dispose();
 
             session.ClearReceivedCalls();
-
 
             called = false;
             context = new DataContext(config, sessionBuilder, policy);

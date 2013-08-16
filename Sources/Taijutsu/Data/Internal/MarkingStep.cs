@@ -9,12 +9,13 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
+using Taijutsu.Domain;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-
-    using Taijutsu.Domain;
-
     // ReSharper disable UnusedTypeParameter
     public class MarkingStep<TEntity> : IMarkingStep
         where TEntity : IDeletableEntity, IAggregateRoot
@@ -42,12 +43,12 @@ namespace Taijutsu.Data.Internal
 
         public object AsCreated()
         {
-            return this.creatingFuction();
+            return creatingFuction();
         }
 
         public void AsDeleted()
         {
-            this.removingAction();
+            removingAction();
         }
     }
 }

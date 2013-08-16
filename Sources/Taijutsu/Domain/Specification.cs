@@ -9,12 +9,13 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Taijutsu.Domain
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     [Serializable]
     public abstract class Specification<TDomainObject> : ISpecification<TDomainObject>
         where TDomainObject : IDomainObject
@@ -61,29 +62,29 @@ namespace Taijutsu.Domain
 
         public virtual bool IsSatisfiedBy(object candidate)
         {
-            return candidate is TDomainObject && this.SatisfyingElementsFrom(new[] { (TDomainObject)candidate }).Any();
+            return candidate is TDomainObject && SatisfyingElementsFrom(new[] { (TDomainObject)candidate }).Any();
         }
 
         public virtual bool IsSatisfiedBy(TDomainObject candidate)
         {
-            return this.SatisfyingElementsFrom(new[] { candidate }).Any();
+            return SatisfyingElementsFrom(new[] { candidate }).Any();
         }
 
         public abstract IEnumerable<TDomainObject> SatisfyingElementsFrom(IEnumerable<TDomainObject> candidates);
 
         ISpecification<TDomainObject> ISpecification<TDomainObject>.And(ISpecification<TDomainObject> other)
         {
-            return this.And(other);
+            return And(other);
         }
 
         ISpecification<TDomainObject> ISpecification<TDomainObject>.Or(ISpecification<TDomainObject> other)
         {
-            return this.Or(other);
+            return Or(other);
         }
 
         ISpecification<TDomainObject> ISpecification<TDomainObject>.Not()
         {
-            return this.Not();
+            return Not();
         }
 
         public virtual Specification<TDomainObject> And(ISpecification<TDomainObject> other)

@@ -9,35 +9,27 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.ComponentModel;
+
 namespace Taijutsu
 {
-    using System;
-    using System.ComponentModel;
-
     public static class SystemTime
     {
         private static ITimeController controller = new TimeController();
 
         public static DateTime Now
         {
-            get
-            {
-                return controller.Now;
-            }
+            get { return controller.Now; }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static ITimeController TimeController
         {
-            get
-            {
-                return controller;
-            }
+            get { return controller; }
 
-            set
-            {
-                controller = value ?? controller;
-            }
+            set { controller = value ?? controller; }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]

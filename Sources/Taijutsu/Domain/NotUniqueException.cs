@@ -9,19 +9,20 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Taijutsu.Domain
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-
     [Serializable]
     public class NotUniqueException : EntityException
     {
         public NotUniqueException(object id, object type, Exception innnerException = null)
             : base(string.Format("Entity with '{0}' id and '{1}' type is not unique.", id ?? "unknown", type ?? typeof(IDomainObject)), innnerException)
         {
-            this.entityId = id;
-            this.entityType = type;
+            Id = id;
+            Type = type;
         }
 
         public NotUniqueException(object id, Type type, Exception innnerException = null)
@@ -34,8 +35,8 @@ namespace Taijutsu.Domain
                 string.Format("Entity of '{1}' type is not unique. Query requires unique results. Query description: '{0}'.", query ?? "unknown", type ?? typeof(IDomainObject)), 
                 innnerException)
         {
-            this.entityId = "unknown";
-            this.entityType = type;
+            Id = "unknown";
+            Type = type;
         }
 
         public NotUniqueException(string query, Type type, Exception innnerException = null)

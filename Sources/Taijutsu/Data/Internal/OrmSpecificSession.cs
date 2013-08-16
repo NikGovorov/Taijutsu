@@ -9,13 +9,14 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
+using Taijutsu.Domain;
+using Taijutsu.Domain.Query;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-
-    using Taijutsu.Domain;
-    using Taijutsu.Domain.Query;
-
     [PublicApi]
     public abstract class OrmSpecificSession<TNative> : IOrmSession
     {
@@ -26,37 +27,28 @@ namespace Taijutsu.Data.Internal
             this.nativeSession = nativeSession;
         }
 
-        object IWrapper.Original
+        object IWrapper.Origin
         {
-            get
-            {
-                return this.Original;
-            }
+            get { return Origin; }
         }
 
-        protected virtual object Original
+        protected virtual object Origin
         {
-            get
-            {
-                return this.NativeSession;
-            }
+            get { return NativeSession; }
         }
 
         protected virtual TNative NativeSession
         {
-            get
-            {
-                return this.nativeSession;
-            }
+            get { return nativeSession; }
         }
 
         public virtual T As<T>(object options = null) where T : class
         {
-            var native = this.NativeSession as T;
+            var native = NativeSession as T;
 
             if (native == null)
             {
-                throw new Exception(string.Format("Unable to cast native session of '{0}' to '{1}'.", this.NativeSession.GetType().FullName, typeof(T).FullName));
+                throw new Exception(string.Format("Unable to cast native session of '{0}' to '{1}'.", NativeSession.GetType().FullName, typeof(T).FullName));
             }
 
             return native;
@@ -78,7 +70,7 @@ namespace Taijutsu.Data.Internal
 
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
         }
 
         public abstract void Complete();

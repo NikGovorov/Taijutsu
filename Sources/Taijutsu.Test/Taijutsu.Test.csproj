@@ -79,6 +79,12 @@
     <Compile Include="..\GlobalAssemblyInfo.cs">
       <Link>Properties\GlobalAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\SuppressionAssemblyInfo.cs">
+      <Link>Properties\SuppressionAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\VersionAssemblyInfo.cs">
+      <Link>Properties\VersionAssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="ActionExFixture.cs" />
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="Data\ConstructionScopeFixture.cs" />

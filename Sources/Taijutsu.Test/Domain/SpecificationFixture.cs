@@ -1,36 +1,38 @@
-#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System.Collections.Generic;
 using System.Linq;
+
 using NUnit.Framework;
+
 using Taijutsu.Domain;
 
 namespace Taijutsu.Test.Domain
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class SpecificationFixture
     {
-        private readonly User silverUser = new User {Balance = 100};
-        private readonly User simpleUser = new User {Balance = 99};
-        private readonly User goldUser = new User {Balance = 101};
+        private readonly User silverUser = new User { Balance = 100 };
+
+        private readonly User simpleUser = new User { Balance = 99 };
+
+        private readonly User goldUser = new User { Balance = 101 };
+
         private readonly object notUser = new object();
 
         private readonly GoldUserSpecification goldUserSpec = new GoldUserSpecification();
+
         private readonly SilverUserSpecification silverUserSpec = new SilverUserSpecification();
 
         [Test]
@@ -55,7 +57,7 @@ namespace Taijutsu.Test.Domain
         [Test]
         public virtual void NotSpecShouldInvertResultOfSatisfyingElementsFromOfSourceSpec()
         {
-            var users = new[] {simpleUser, silverUser, goldUser};
+            var users = new[] { simpleUser, silverUser, goldUser };
 
             Assert.AreEqual(2, goldUserSpec.Not().SatisfyingElementsFrom(users).Count());
             Assert.True(goldUserSpec.Not().SatisfyingElementsFrom(users).Any(u => u == simpleUser));
@@ -83,7 +85,7 @@ namespace Taijutsu.Test.Domain
         [Test]
         public virtual void OrSpecShouldCompareResultOfSatisfyingElementsFromOfSourceSpecsWithLogicalOr()
         {
-            var users = new[] {simpleUser, silverUser, goldUser};
+            var users = new[] { simpleUser, silverUser, goldUser };
 
             Assert.AreEqual(2, goldUserSpec.Or(silverUserSpec).SatisfyingElementsFrom(users).Count());
             Assert.True(goldUserSpec.Or(silverUserSpec).SatisfyingElementsFrom(users).Any(u => u == goldUser));
@@ -111,7 +113,7 @@ namespace Taijutsu.Test.Domain
         [Test]
         public virtual void AndSpecShouldCompareResultOfSatisfyingElementsFromOfSourceSpecsWithLogicalAnd()
         {
-            var users = new[] {simpleUser, silverUser, goldUser};
+            var users = new[] { simpleUser, silverUser, goldUser };
 
             Assert.AreEqual(1, goldUserSpec.And(silverUserSpec).SatisfyingElementsFrom(users).Count());
             Assert.True(goldUserSpec.And(silverUserSpec).SatisfyingElementsFrom(users).Any(u => u == goldUser));
@@ -137,10 +139,9 @@ namespace Taijutsu.Test.Domain
         [Test]
         public virtual void ComplexOperatorCombinationsShouldWorkWithSatisfyingElementsFrom()
         {
-            var users = new[] {simpleUser, silverUser, goldUser};
+            var users = new[] { simpleUser, silverUser, goldUser };
             Assert.AreEqual(3, ((goldUserSpec & silverUserSpec) | (!goldUserSpec)).SatisfyingElementsFrom(users).Count());
         }
-
 
         private class User : IDomainObject
         {

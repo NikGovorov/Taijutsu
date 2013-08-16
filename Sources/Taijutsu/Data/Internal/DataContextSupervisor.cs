@@ -9,15 +9,16 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Data;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Reviewed. TerminationPolicy lifetime must be managed outside.")]
     public class DataContextSupervisor
     {
@@ -40,33 +41,24 @@ namespace Taijutsu.Data.Internal
 
         public virtual IDataContext CurrentContext
         {
-            get
-            {
-                return this.contexts.LastOrDefault();
-            }
+            get { return contexts.LastOrDefault(); }
         }
 
         public virtual IEnumerable<IDataContext> Contexts
         {
-            get
-            {
-                return this.contexts.Cast<IDataContext>().ToArray();
-            }
+            get { return contexts.Cast<IDataContext>().ToArray(); }
         }
 
         public virtual bool Active
         {
-            get
-            {
-                return this.contexts.Count != 0;
-            }
+            get { return contexts.Count != 0; }
         }
 
         public virtual IDataContext Register(UnitOfWorkConfig config)
         {
             DataSource dataSource;
 
-            if (!this.dataSourcesProvider().TryGetValue(config.SourceName, out dataSource))
+            if (!dataSourcesProvider().TryGetValue(config.SourceName, out dataSource))
             {
                 if (config.SourceName == string.Empty)
                 {
@@ -77,18 +69,20 @@ namespace Taijutsu.Data.Internal
             }
 
             config = new UnitOfWorkConfig(
-                config.SourceName, config.IsolationLevel == IsolationLevel.Unspecified ? dataSource.DefaultIsolationLevel : config.IsolationLevel, config.Require);
+                config.SourceName, 
+                config.IsolationLevel == IsolationLevel.Unspecified ? dataSource.DefaultIsolationLevel : config.IsolationLevel, 
+                config.Require);
 
             if (config.Require == Require.New)
             {
                 return new DataContextDecorator(
-                    new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), this.terminationPolicy), this.contexts);
+                    new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), 
+                    contexts);
             }
 
-            // ReSharper disable ImplicitlyCapturedClosure
-            var context = (from ctx in this.contexts where ctx.WrappedContext.Configuration.SourceName == config.SourceName select ctx).LastOrDefault();
+            // ReSharper disable once ImplicitlyCapturedClosure
+            var context = (from ctx in contexts where ctx.WrappedContext.Configuration.SourceName == config.SourceName select ctx).LastOrDefault();
 
-            // ReSharper restore ImplicitlyCapturedClosure
             if (context != null)
             {
                 if (!context.WrappedContext.Configuration.IsolationLevel.IsCompatible(config.IsolationLevel))
@@ -106,7 +100,8 @@ namespace Taijutsu.Data.Internal
             }
 
             context = new DataContextDecorator(
-                new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), this.terminationPolicy), this.contexts);
+                new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), 
+                contexts);
 
             return context;
         }
@@ -126,43 +121,31 @@ namespace Taijutsu.Data.Internal
 
             event EventHandler<ScopeFinishedEventArgs> IDataContext.Finished
             {
-                add
-                {
-                    this.wrappedContext.Finished += value;
-                }
+                add { wrappedContext.Finished += value; }
 
-                remove
-                {
-                    this.wrappedContext.Finished -= value;
-                }
+                remove { wrappedContext.Finished -= value; }
             }
 
             public IOrmSession Session
             {
-                get
-                {
-                    return this.wrappedContext.Session;
-                }
+                get { return wrappedContext.Session; }
             }
 
             public virtual DataContext WrappedContext
             {
-                get
-                {
-                    return this.wrappedContext;
-                }
+                get { return wrappedContext; }
             }
 
             public virtual void Complete()
             {
-                this.wrappedContext.Complete();
+                wrappedContext.Complete();
             }
 
             public virtual void Dispose()
             {
-                this.contexts.Remove(this);
-                this.contexts = new List<DataContextDecorator>();
-                this.wrappedContext.Dispose();
+                contexts.Remove(this);
+                contexts = new List<DataContextDecorator>();
+                wrappedContext.Dispose();
             }
         }
     }

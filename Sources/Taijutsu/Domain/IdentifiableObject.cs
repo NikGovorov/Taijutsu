@@ -9,11 +9,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Taijutsu.Domain
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-
     [Serializable]
     public abstract class IdentifiableObject<TIdentifier> : IEquatable<IdentifiableObject<TIdentifier>>
     {
@@ -28,46 +29,45 @@ namespace Taijutsu.Domain
                 return false;
             }
 
-            if (Equals(this.BuildIdentity(), default(TIdentifier)) && Equals(other.BuildIdentity(), default(TIdentifier)))
+            if (Equals(BuildIdentity(), default(TIdentifier)) && Equals(other.BuildIdentity(), default(TIdentifier)))
             {
                 return ReferenceEquals(other, this);
             }
 
-            return ReferenceEquals(other, this) || Equals(other.BuildIdentity(), this.BuildIdentity());
+            return ReferenceEquals(other, this) || Equals(other.BuildIdentity(), BuildIdentity());
         }
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as IdentifiableObject<TIdentifier>);
+            return Equals(obj as IdentifiableObject<TIdentifier>);
         }
 
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
         public override int GetHashCode()
         {
             // ReSharper disable NonReadonlyFieldInGetHashCode
-            if (this.hashCode.HasValue)
+            if (hashCode.HasValue)
             {
-                return this.hashCode.Value;
+                return hashCode.Value;
             }
 
-            if (Equals(this.BuildIdentity(), default(TIdentifier)))
+            if (Equals(BuildIdentity(), default(TIdentifier)))
             {
-                // ReSharper disable BaseObjectGetHashCodeCallInGetHashCode
-                this.hashCode = base.GetHashCode();
+                // ReSharper disable once BaseObjectGetHashCodeCallInGetHashCode
+                hashCode = base.GetHashCode();
 
-                // ReSharper restore BaseObjectGetHashCodeCallInGetHashCode
-                return this.hashCode.Value;
+                return hashCode.Value;
             }
 
             // ReSharper restore NonReadonlyFieldInGetHashCode
-            return this.BuildIdentity().GetHashCode();
+            return BuildIdentity().GetHashCode();
         }
 
         protected abstract TIdentifier BuildIdentity();
 
         protected virtual Type InternalGetType()
         {
-            return this.GetType();
+            return GetType();
         }
     }
 }

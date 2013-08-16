@@ -9,11 +9,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Taijutsu.Domain
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-
     [Serializable]
     public abstract class ValueObject<TValueObject> : IdentifiableObject<object>, IValueObject, IEquatable<TValueObject>
         where TValueObject : ValueObject<TValueObject>
@@ -37,17 +38,17 @@ namespace Taijutsu.Domain
                 return false;
             }
 
-            return ReferenceEquals(other, this) || Equals(other.BuildIdentity(), this.BuildIdentity());
+            return ReferenceEquals(other, this) || Equals(other.BuildIdentity(), BuildIdentity());
         }
 
         public override bool Equals(object obj)
         {
-            return this.Equals(obj as TValueObject);
+            return Equals(obj as TValueObject);
         }
 
         public override int GetHashCode()
         {
-            return this.BuildIdentity().GetHashCode();
+            return BuildIdentity().GetHashCode();
         }
     }
 }

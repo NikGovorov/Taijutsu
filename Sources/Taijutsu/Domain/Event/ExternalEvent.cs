@@ -9,21 +9,24 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Taijutsu.Domain.Event
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-
     public abstract class ExternalEvent : Entity<Guid?>, IEvent
     {
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed. Can be used in inhertor's constructor.")]
         protected DateTime occurrenceDate;
 
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed. Can be used in inhertor's constructor.")]
         protected DateTime noticeDate;
 
         protected ExternalEvent()
         {
-            this.noticeDate = SystemTime.Now;
-            this.occurrenceDate = this.noticeDate;
+            noticeDate = SystemTime.Now;
+            occurrenceDate = noticeDate;
         }
 
         protected ExternalEvent(DateTime? occurrenceDate, DateTime? noticeDate, Guid? id = null)
@@ -39,28 +42,16 @@ namespace Taijutsu.Domain.Event
 
         public virtual DateTime OccurrenceDate
         {
-            get
-            {
-                return this.occurrenceDate;
-            }
+            get { return occurrenceDate; }
 
-            protected set
-            {
-                this.occurrenceDate = value;
-            }
+            protected set { occurrenceDate = value; }
         }
 
         public virtual DateTime NoticeDate
         {
-            get
-            {
-                return this.noticeDate;
-            }
+            get { return noticeDate; }
 
-            protected set
-            {
-                this.noticeDate = value;
-            }
+            protected set { noticeDate = value; }
         }
     }
 
@@ -69,6 +60,7 @@ namespace Taijutsu.Domain.Event
     public class ExternalEvent<TRecipient> : ExternalEvent, IExternalEvent<TRecipient>
         where TRecipient : IEntity
     {
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed. Can be used in inhertor's constructor.")]
         protected TRecipient recipient;
 
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
@@ -89,15 +81,9 @@ namespace Taijutsu.Domain.Event
 
         public virtual TRecipient Recipient
         {
-            get
-            {
-                return this.recipient;
-            }
+            get { return recipient; }
 
-            protected set
-            {
-                this.recipient = value;
-            }
+            protected set { recipient = value; }
         }
     }
 }

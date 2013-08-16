@@ -33,7 +33,7 @@ namespace Taijutsu
     /// </code>
     /// </example>
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
-    internal sealed class LocalizationRequiredAttribute : Attribute
+    public sealed class LocalizationRequiredAttribute : Attribute
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="LocalizationRequiredAttribute" /> class with
@@ -110,7 +110,7 @@ namespace Taijutsu
     /// </code>
     /// </example>
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    internal sealed class StringFormatMethodAttribute : Attribute
+    public sealed class StringFormatMethodAttribute : Attribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="StringFormatMethodAttribute"/> class. 
@@ -146,7 +146,7 @@ namespace Taijutsu
     /// </code>
     /// </example>
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
-    internal sealed class InvokerParameterNameAttribute : Attribute
+    public sealed class InvokerParameterNameAttribute : Attribute
     {
     }
 
@@ -214,7 +214,7 @@ namespace Taijutsu
     ///     </list>
     /// </example>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    internal sealed class NotifyPropertyChangedInvocatorAttribute : Attribute
+    public sealed class NotifyPropertyChangedInvocatorAttribute : Attribute
     {
         public NotifyPropertyChangedInvocatorAttribute()
         {
@@ -251,7 +251,7 @@ namespace Taijutsu
     [AttributeUsage(
         AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate
         | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    internal sealed class CanBeNullAttribute : Attribute
+    public sealed class CanBeNullAttribute : Attribute
     {
     }
 
@@ -270,7 +270,7 @@ namespace Taijutsu
     [AttributeUsage(
         AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate
         | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    internal sealed class NotNullAttribute : Attribute
+    public sealed class NotNullAttribute : Attribute
     {
     }
 
@@ -327,7 +327,7 @@ namespace Taijutsu
     ///     </list>
     /// </examples>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-    internal sealed class ContractAnnotationAttribute : Attribute
+    public sealed class ContractAnnotationAttribute : Attribute
     {
         public ContractAnnotationAttribute([NotNull] string fdt)
             : this(fdt, false)
@@ -373,7 +373,7 @@ namespace Taijutsu
     /// </code>
     /// </example>
     [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
-    internal sealed class CannotApplyEqualityOperatorAttribute : Attribute
+    public sealed class CannotApplyEqualityOperatorAttribute : Attribute
     {
     }
 
@@ -394,7 +394,7 @@ namespace Taijutsu
     /// </example>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     [BaseTypeRequired(typeof(Attribute))]
-    internal sealed class BaseTypeRequiredAttribute : Attribute
+    public sealed class BaseTypeRequiredAttribute : Attribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseTypeRequiredAttribute"/> class. 
@@ -419,7 +419,7 @@ namespace Taijutsu
     ///     so this symbol will not be marked as unused (as well as by other usage inspections)
     /// </summary>
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
-    internal sealed class UsedImplicitlyAttribute : Attribute
+    public sealed class UsedImplicitlyAttribute : Attribute
     {
         [UsedImplicitly]
         public UsedImplicitlyAttribute()
@@ -461,7 +461,7 @@ namespace Taijutsu
     ///     to not mark symbols marked with such attributes as unused (as well as by other usage inspections)
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    internal sealed class MeansImplicitUseAttribute : Attribute
+    public sealed class MeansImplicitUseAttribute : Attribute
     {
         [UsedImplicitly]
         public MeansImplicitUseAttribute()
@@ -499,7 +499,7 @@ namespace Taijutsu
     }
 
     [Flags]
-    internal enum ImplicitUseKindFlags
+    public enum ImplicitUseKindFlags
     {
         Default = Access | Assign | InstantiatedWithFixedConstructorSignature,
 
@@ -531,7 +531,7 @@ namespace Taijutsu
     ///         cref="UsedImplicitlyAttribute" />
     /// </summary>
     [Flags]
-    internal enum ImplicitUseTargetFlags
+    public enum ImplicitUseTargetFlags
     {
         Default = Itself,
 
@@ -552,7 +552,7 @@ namespace Taijutsu
     ///     This attribute is intended to mark publicly available API which should not be removed and so is treated as used.
     /// </summary>
     [MeansImplicitUse(ImplicitUseTargetFlags.WithMembers)]
-    internal sealed class PublicApiAttribute : Attribute
+    public sealed class PublicApiAttribute : Attribute
     {
         public PublicApiAttribute()
         {
@@ -569,7 +569,7 @@ namespace Taijutsu
     ///     If the parameter is an enumerable, indicates that it is enumerated while the method is executed.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter, Inherited = true)]
-    internal sealed class InstantHandleAttribute : Attribute
+    public sealed class InstantHandleAttribute : Attribute
     {
     }
 
@@ -594,7 +594,7 @@ namespace Taijutsu
     ///  </code>
     /// </example>
     [AttributeUsage(AttributeTargets.Method, Inherited = true)]
-    internal sealed class PureAttribute : Attribute
+    public sealed class PureAttribute : Attribute
     {
     }
 
@@ -603,7 +603,7 @@ namespace Taijutsu
     ///     Path can be relative or absolute, starting from web root (~).
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    internal class PathReferenceAttribute : Attribute
+    public class PathReferenceAttribute : Attribute
     {
         public PathReferenceAttribute()
         {
@@ -628,7 +628,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
-    internal sealed class AspMvcActionAttribute : Attribute
+    public sealed class AspMvcActionAttribute : Attribute
     {
         [UsedImplicitly]
         public string AnonymousProperty { get; private set; }
@@ -649,7 +649,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    internal sealed class AspMvcAreaAttribute : PathReferenceAttribute
+    public sealed class AspMvcAreaAttribute : PathReferenceAttribute
     {
         [UsedImplicitly]
         public string AnonymousProperty { get; private set; }
@@ -672,7 +672,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.Mvc.Html.ChildActionExtensions.RenderAction(HtmlHelper, String, String)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
-    internal sealed class AspMvcControllerAttribute : Attribute
+    public sealed class AspMvcControllerAttribute : Attribute
     {
         [UsedImplicitly]
         public string AnonymousProperty { get; private set; }
@@ -693,7 +693,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.Mvc.Controller.View(String, String)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    internal sealed class AspMvcMasterAttribute : Attribute
+    public sealed class AspMvcMasterAttribute : Attribute
     {
     }
 
@@ -703,7 +703,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.Mvc.Controller.View(String, Object)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    internal sealed class AspMvcModelTypeAttribute : Attribute
+    public sealed class AspMvcModelTypeAttribute : Attribute
     {
     }
 
@@ -714,7 +714,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.Mvc.Html.RenderPartialExtensions.RenderPartial(HtmlHelper, String)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
-    internal sealed class AspMvcPartialViewAttribute : PathReferenceAttribute
+    public sealed class AspMvcPartialViewAttribute : PathReferenceAttribute
     {
     }
 
@@ -722,7 +722,7 @@ namespace Taijutsu
     ///     ASP.NET MVC attribute. Allows disabling all inspections for MVC views within a class or a method.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    internal sealed class AspMvcSupressViewErrorAttribute : Attribute
+    public sealed class AspMvcSupressViewErrorAttribute : Attribute
     {
     }
 
@@ -732,7 +732,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.Mvc.Html.DisplayExtensions.DisplayForModel(HtmlHelper, String)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    internal sealed class AspMvcDisplayTemplateAttribute : Attribute
+    public sealed class AspMvcDisplayTemplateAttribute : Attribute
     {
     }
 
@@ -742,7 +742,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.Mvc.Html.EditorExtensions.EditorForModel(HtmlHelper, String)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter)]
-    internal sealed class AspMvcEditorTemplateAttribute : Attribute
+    public sealed class AspMvcEditorTemplateAttribute : Attribute
     {
     }
 
@@ -753,7 +753,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.Mvc.Controller.View(Object)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method)]
-    internal sealed class AspMvcViewAttribute : PathReferenceAttribute
+    public sealed class AspMvcViewAttribute : PathReferenceAttribute
     {
     }
 
@@ -772,7 +772,7 @@ namespace Taijutsu
     /// </code>
     /// </example>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Property)]
-    internal sealed class AspMvcActionSelectorAttribute : Attribute
+    public sealed class AspMvcActionSelectorAttribute : Attribute
     {
     }
 
@@ -784,7 +784,7 @@ namespace Taijutsu
     ///     <see cref="System.Web.WebPages.WebPageBase.RenderSection(String)" />
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter | AttributeTargets.Method, Inherited = true)]
-    internal sealed class RazorSectionAttribute : Attribute
+    public sealed class RazorSectionAttribute : Attribute
     {
     }
 }

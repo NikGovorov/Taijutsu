@@ -9,12 +9,13 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
+using Taijutsu.Data.Internal;
+
 namespace Taijutsu.Data
 {
-    using System;
-
-    using Taijutsu.Data.Internal;
-
     public class OperationScope : IDisposable
     {
         private readonly ITerminationPolicy terminationPolicy;
@@ -29,19 +30,19 @@ namespace Taijutsu.Data
 
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (this.disposed || !disposing)
+            if (disposed || !disposing)
             {
                 return;
             }
 
             try
             {
-                this.terminationPolicy.Dispose();
+                terminationPolicy.Dispose();
             }
             finally
             {
@@ -51,7 +52,7 @@ namespace Taijutsu.Data
                 }
                 finally
                 {
-                    this.disposed = true;
+                    disposed = true;
                 }
             }
         }

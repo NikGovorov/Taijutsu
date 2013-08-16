@@ -9,10 +9,11 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-
     public class DataContext : IDataContext
     {
         private readonly UnitOfWorkConfig configuration;
@@ -55,9 +56,9 @@ namespace Taijutsu.Data.Internal
         {
             get
             {
-                this.AssertNotDisposed();
+                AssertNotDisposed();
 
-                return this.session.Value;
+                return session.Value;
             }
         }
 
@@ -65,23 +66,23 @@ namespace Taijutsu.Data.Internal
         {
             get
             {
-                this.AssertNotDisposed();
-                return this.configuration;
+                AssertNotDisposed();
+                return configuration;
             }
         }
 
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
         }
 
         public virtual void Complete()
         {
-            this.AssertNotDisposed();
+            AssertNotDisposed();
 
-            if (this.completed.HasValue)
+            if (completed.HasValue)
             {
-                if (!this.completed.Value)
+                if (!completed.Value)
                 {
                     throw new Exception(string.Format("Data context has already been completed without success."));
                 }
@@ -91,28 +92,28 @@ namespace Taijutsu.Data.Internal
 
             try
             {
-                if (this.subordinatesCount != 0)
+                if (subordinatesCount != 0)
                 {
                     throw new Exception("Unit of work can not be successfully completed, because not all subordinates are completed.");
                 }
 
-                if (this.session.IsValueCreated)
+                if (session.IsValueCreated)
                 {
-                    this.session.Value.Complete();
+                    session.Value.Complete();
                 }
 
-                this.completed = true;
+                completed = true;
             }
             catch
             {
-                this.completed = false;
+                completed = false;
                 throw;
             }
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (this.disposed || !disposing)
+            if (disposed || !disposing)
             {
                 return;
             }
@@ -121,56 +122,56 @@ namespace Taijutsu.Data.Internal
             {
                 try
                 {
-                    if (!this.completed.HasValue || !this.completed.Value)
+                    if (!completed.HasValue || !completed.Value)
                     {
-                        this.completed = false;
+                        completed = false;
                     }
                 }
                 finally
                 {
                     try
                     {
-                        if (this.Finished != null)
+                        if (Finished != null)
                         {
-                            this.Finished(this, new ScopeFinishedEventArgs(this.completed.HasValue && this.completed.Value));
+                            Finished(this, new ScopeFinishedEventArgs(completed.HasValue && completed.Value));
                         }
                     }
                     finally
                     {
-                        if (this.session.IsValueCreated)
+                        if (session.IsValueCreated)
                         {
-                            this.terminationPolicy.Terminate(this.session.Value, this.completed.HasValue && this.completed.Value);
+                            terminationPolicy.Terminate(session.Value, completed.HasValue && completed.Value);
                         }
                     }
                 }
             }
             finally
             {
-                this.Finished = null;
-                this.disposed = true;
+                Finished = null;
+                disposed = true;
             }
         }
 
         protected virtual void AssertNotDisposed()
         {
-            if (this.disposed)
+            if (disposed)
             {
-                throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", this.completed));
+                throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
             }
         }
 
         protected virtual void RegisterCompletedSubordinate()
         {
-            this.AssertNotDisposed();
+            AssertNotDisposed();
 
-            this.subordinatesCount--;
+            subordinatesCount--;
         }
 
         protected virtual void RegisterUncompletedSubordinate()
         {
-            this.AssertNotDisposed();
+            AssertNotDisposed();
 
-            this.subordinatesCount++;
+            subordinatesCount++;
         }
 
         internal class Subordinate : IDataContext
@@ -196,58 +197,55 @@ namespace Taijutsu.Data.Internal
             {
                 add
                 {
-                    this.AssertNotDisposed();
-                    this.master.Finished += value;
+                    AssertNotDisposed();
+                    master.Finished += value;
                 }
 
                 remove
                 {
-                    this.AssertNotDisposed();
-                    this.master.Finished -= value;
+                    AssertNotDisposed();
+                    master.Finished -= value;
                 }
             }
 
             public virtual IOrmSession Session
             {
-                get
-                {
-                    return this.master.Session;
-                }
+                get { return master.Session; }
             }
 
             public virtual void Dispose()
             {
-                if (this.disposed)
+                if (disposed)
                 {
                     return;
                 }
 
-                if (!this.completed.HasValue)
+                if (!completed.HasValue)
                 {
-                    this.completed = false;
+                    completed = false;
                 }
 
-                this.disposed = true;
+                disposed = true;
             }
 
             public virtual void Complete()
             {
-                this.AssertNotDisposed();
+                AssertNotDisposed();
 
-                if (this.completed.HasValue)
+                if (completed.HasValue)
                 {
                     return;
                 }
 
-                this.master.RegisterCompletedSubordinate();
-                this.completed = true;
+                master.RegisterCompletedSubordinate();
+                completed = true;
             }
 
             protected virtual void AssertNotDisposed()
             {
-                if (this.disposed)
+                if (disposed)
                 {
-                    throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", this.completed));
+                    throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
                 }
             }
         }

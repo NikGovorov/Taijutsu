@@ -11,10 +11,8 @@
 // specific language governing permissions and limitations under the License.
 namespace Taijutsu.Domain.Query
 {
-    // ReSharper disable UnusedTypeParameter
+    // ReSharper disable once UnusedTypeParameter
     public interface IQuery<out TEntity> : IQueryContinuation
     {
     }
-
-    // ReSharper restore UnusedTypeParameter
 }

@@ -9,13 +9,14 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-
     internal class DelayedTerminationPolicy : ITerminationPolicy
     {
         private readonly ICollection<IOrmSession> sessions = new List<IOrmSession>();
@@ -24,7 +25,7 @@ namespace Taijutsu.Data.Internal
 
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
         }
 
         public void Terminate(IOrmSession session, bool isSuccessfully)
@@ -34,9 +35,9 @@ namespace Taijutsu.Data.Internal
                 throw new ArgumentNullException("session");
             }
 
-            if (!this.disposed)
+            if (!disposed)
             {
-                this.sessions.Add(session);
+                sessions.Add(session);
             }
             else
             {
@@ -47,7 +48,7 @@ namespace Taijutsu.Data.Internal
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations", Justification = "Reviewed. Method is called in try-finally block.")]
         protected virtual void Dispose(bool disposing)
         {
-            if (this.disposed || !disposing)
+            if (disposed || !disposing)
             {
                 return;
             }
@@ -55,7 +56,7 @@ namespace Taijutsu.Data.Internal
             try
             {
                 var exceptions = new List<Exception>();
-                foreach (var session in this.sessions)
+                foreach (var session in sessions)
                 {
                     try
                     {
@@ -74,7 +75,7 @@ namespace Taijutsu.Data.Internal
             }
             finally
             {
-                this.disposed = true;
+                disposed = true;
             }
         }
     }

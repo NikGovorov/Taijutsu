@@ -15,6 +15,7 @@ namespace Taijutsu
     {
         bool Applicable { get; }
 
+        [CanBeNull]
         object FindData(string name);
 
         void SetData(string name, object value);

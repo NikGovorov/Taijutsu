@@ -9,16 +9,17 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
+
+using Taijutsu.Data.Internal;
+using Taijutsu.Domain;
+using Taijutsu.Domain.Query;
+
 namespace Taijutsu.Data
 {
-    using System;
-    using System.Data;
-    using System.Diagnostics.CodeAnalysis;
-
-    using Taijutsu.Data.Internal;
-    using Taijutsu.Domain;
-    using Taijutsu.Domain.Query;
-
     [PublicApi]
     public class UnitOfWork : IUnitOfWork, IDisposable, IWrapper
     {
@@ -70,40 +71,37 @@ namespace Taijutsu.Data
                 throw new ArgumentNullException("unitOfWorkConfig");
             }
 
-            this.dataContext = InternalEnvironment.DataContextSupervisor.Register(unitOfWorkConfig);
+            dataContext = InternalEnvironment.DataContextSupervisor.Register(unitOfWorkConfig);
         }
 
-        object IWrapper.Original
+        object IWrapper.Origin
+        {
+            get { return Origin; }
+        }
+
+        protected virtual object Origin
         {
             get
             {
-                return this.Original;
-            }
-        }
+                AssertNotDisposed();
 
-        protected virtual object Original
-        {
-            get
-            {
-                this.AssertNotDisposed();
-
-                return this.dataContext.Session.Original;
+                return dataContext.Session.Origin;
             }
         }
 
         [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Reviewed. The method is supposed to be used only by using block.")]
         void IDisposable.Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
         }
 
         public virtual void Complete()
         {
-            this.AssertNotDisposed();
+            AssertNotDisposed();
 
-            if (this.completed.HasValue)
+            if (completed.HasValue)
             {
-                if (!this.completed.Value)
+                if (!completed.Value)
                 {
                     throw new Exception(string.Format("Unit of work has already been completed without success."));
                 }
@@ -113,83 +111,83 @@ namespace Taijutsu.Data
 
             try
             {
-                this.dataContext.Complete();
-                this.completed = true;
+                dataContext.Complete();
+                completed = true;
             }
             catch
             {
-                this.completed = false;
+                completed = false;
                 throw;
             }
         }
 
         public virtual T Complete<T>(Func<IUnitOfWork, T> toReturn)
         {
-            this.AssertNotDisposed();
+            AssertNotDisposed();
             var result = toReturn(this);
-            this.Complete();
+            Complete();
             return result;
         }
 
         public virtual T Complete<T>(Func<T> toReturn)
         {
-            this.AssertNotDisposed();
+            AssertNotDisposed();
             var result = toReturn();
-            this.Complete();
+            Complete();
             return result;
         }
 
         public virtual T Complete<T>(T toReturn)
         {
-            this.AssertNotDisposed();
-            this.Complete();
+            AssertNotDisposed();
+            Complete();
             return toReturn;
         }
 
         public virtual object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
-            this.AssertNotCompleted();
-            return this.dataContext.Session.MarkAsCreated(entity, options);
+            AssertNotCompleted();
+            return dataContext.Session.MarkAsCreated(entity, options);
         }
 
         public virtual object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
-            this.AssertNotCompleted();
-            return this.dataContext.Session.MarkAsCreated(entityFactory, options);
+            AssertNotCompleted();
+            return dataContext.Session.MarkAsCreated(entityFactory, options);
         }
 
         public virtual void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
-            this.AssertNotCompleted();
-            this.dataContext.Session.MarkAsDeleted(entity, options);
+            AssertNotCompleted();
+            dataContext.Session.MarkAsDeleted(entity, options);
         }
 
         public virtual IMarkingStep Mark<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity, IAggregateRoot
         {
-            return new MarkingStep<TEntity>(() => MarkAsCreated(entity, options), () => this.MarkAsDeleted(entity, options));
+            return new MarkingStep<TEntity>(() => MarkAsCreated(entity, options), () => MarkAsDeleted(entity, options));
         }
 
         public virtual IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity
         {
-            this.AssertNotDisposed();
-            return this.dataContext.Session.All<TEntity>(options);
+            AssertNotDisposed();
+            return dataContext.Session.All<TEntity>(options);
         }
 
         public virtual IUniqueEntityQuery<TEntity> Unique<TEntity>(object id, object options = null) where TEntity : class, IQueryableEntity
         {
-            this.AssertNotDisposed();
-            return this.dataContext.Session.Unique<TEntity>(id, options);
+            AssertNotDisposed();
+            return dataContext.Session.Unique<TEntity>(id, options);
         }
 
         public virtual IQueryOverContinuation<TEntity> Query<TEntity>() where TEntity : class, IQueryableEntity
         {
-            this.AssertNotDisposed();
-            return new QueryOverContinuation<TEntity>(this.dataContext.Session);
+            AssertNotDisposed();
+            return new QueryOverContinuation<TEntity>(dataContext.Session);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (this.disposed || !disposing)
+            if (disposed || !disposing)
             {
                 return;
             }
@@ -198,12 +196,12 @@ namespace Taijutsu.Data
             {
                 try
                 {
-                    if (!this.completed.HasValue)
+                    if (!completed.HasValue)
                     {
-                        this.completed = false;
+                        completed = false;
                     }
 
-                    this.dataContext.Dispose();
+                    dataContext.Dispose();
                 }
                 finally
                 {
@@ -212,23 +210,23 @@ namespace Taijutsu.Data
             }
             finally
             {
-                this.disposed = true;
+                disposed = true;
             }
         }
 
         protected virtual void AssertNotCompleted()
         {
-            if (this.completed.HasValue)
+            if (completed.HasValue)
             {
-                throw new Exception(string.Format("Unit of work has already been completed(with success - '{0}'), so it is not usable for write anymore.", this.completed));
+                throw new Exception(string.Format("Unit of work has already been completed(with success - '{0}'), so it is not usable for write anymore.", completed));
             }
         }
 
         protected virtual void AssertNotDisposed()
         {
-            if (this.disposed)
+            if (disposed)
             {
-                throw new Exception(string.Format("Unit of work has already been disposed(with success - '{0}'), so it is not usable anymore.", this.completed));
+                throw new Exception(string.Format("Unit of work has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
             }
         }
 
@@ -244,12 +242,12 @@ namespace Taijutsu.Data
 
             public TQuery With<TQuery>(string name = null) where TQuery : class, IQuery<TEntity>
             {
-                return this.session.QueryWith<TEntity, TQuery>(name);
+                return session.QueryWith<TEntity, TQuery>(name);
             }
 
             public TRepository From<TRepository>(string name = null) where TRepository : class, IRepository<TEntity>
             {
-                return this.session.QueryFrom<TEntity, TRepository>(name);
+                return session.QueryFrom<TEntity, TRepository>(name);
             }
         }
     }

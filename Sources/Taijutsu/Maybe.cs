@@ -9,11 +9,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Taijutsu
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-
     [Serializable]
     public sealed class Maybe<T> : IMaybe<T>
     {
@@ -30,18 +31,15 @@ namespace Taijutsu
         {
             get
             {
-                this.AssertNotNullValue();
-                return this.value;
+                AssertNotNullValue();
+                return value;
             }
         }
 
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
         public bool HasValue
         {
-            get
-            {
-                return !Equals(this.value, default(T));
-            }
+            get { return !Equals(value, default(T)); }
         }
 
         public static implicit operator Maybe<T>(T value)
@@ -62,12 +60,12 @@ namespace Taijutsu
 
         public override string ToString()
         {
-            return this.HasValue ? this.value.ToString() : string.Format("Empty Maybe of {0}.", typeof(T));
+            return HasValue ? value.ToString() : string.Format("Empty Maybe of {0}.", typeof(T));
         }
 
         private void AssertNotNullValue()
         {
-            if (!this.HasValue)
+            if (!HasValue)
             {
                 throw new InvalidOperationException(string.Format("Maybe of {0} must have value.", typeof(T)));
             }

@@ -10,22 +10,8 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System.Linq;
+using System.Reflection;
 
-namespace Taijutsu.Domain
-{
-    public static class EntityExtensions
-    {
-        public static T As<T>(this IEntity entity) where T : class
-        {
-            var conversion = EntityConversionRegistry.CustomConversions.FirstOrDefault(ec => ec.IsApplicableFor(entity));
-
-            return conversion != null ? conversion.SafeConvert<T>(entity) : EntityConversionRegistry.NativeConversion.SafeConvert<T>(entity);
-        }
-
-        public static bool Is<T>(this IEntity entity) where T : class
-        {
-            return As<T>(entity) != null;
-        }
-    }
-}
+[assembly: AssemblyVersion("0.0.0.0")]
+[assembly: AssemblyFileVersion("0.0.0.0")]
+[assembly: AssemblyInformationalVersion("0.0.0.0-0000000")]

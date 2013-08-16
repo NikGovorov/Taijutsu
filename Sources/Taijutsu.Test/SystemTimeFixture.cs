@@ -1,37 +1,34 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System;
 using System.Threading;
+
 using NUnit.Framework;
 
 namespace Taijutsu.Test
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class SystemTimeFixture
     {
         [TearDown]
-        protected void OnTearDown()
+        public void OnTearDown()
         {
             SystemTime.Reset();
         }
 
         [SetUp]
-        protected void OnSetUp()
+        public void OnSetUp()
         {
             SystemTime.TimeController.Reset();
         }
@@ -47,6 +44,7 @@ namespace Taijutsu.Test
         [Test]
         public virtual void FrozenSystemTimeShouldBePaused()
         {
+            // ReSharper disable once ImpureMethodCallOnReadonlyValueField
             var frozen = DateTime.MinValue.AddDays(1);
             SystemTime.TimeController.SetFrozenDate(frozen);
             Assert.AreNotEqual(DateTime.UtcNow, SystemTime.Now);
@@ -60,7 +58,7 @@ namespace Taijutsu.Test
             SystemTime.TimeController.SetDate(startPoint);
             Thread.Sleep(50);
             var now = SystemTime.Now;
-            Assert.That(new DateTime(2010, 01, 02, 0 , 0, 0, 45), Is.EqualTo(now).Within(30).Milliseconds);
+            Assert.That(new DateTime(2010, 01, 02, 0, 0, 0, 45), Is.EqualTo(now).Within(30).Milliseconds);
         }
 
         [Test]
@@ -92,7 +90,6 @@ namespace Taijutsu.Test
             var system = SystemTime.Now;
             Assert.That(real, Is.EqualTo(system).Within(3).Milliseconds);
         }
-
 
         internal class LocalTimeController : ITimeController
         {

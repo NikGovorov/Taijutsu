@@ -9,19 +9,21 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Taijutsu.Domain.Event
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-
     [Serializable]
     public abstract class DomainEvent : Entity<Guid?>, IDomainEvent
     {
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed. Can be used in inhertor's constructor.")]
         protected DateTime occurrenceDate;
 
         protected DomainEvent()
         {
-            this.occurrenceDate = SystemTime.Now;
+            occurrenceDate = SystemTime.Now;
         }
 
         protected DomainEvent(Guid? id = null)
@@ -34,15 +36,9 @@ namespace Taijutsu.Domain.Event
 
         public virtual DateTime OccurrenceDate
         {
-            get
-            {
-                return this.occurrenceDate;
-            }
+            get { return occurrenceDate; }
 
-            protected set
-            {
-                this.occurrenceDate = value;
-            }
+            protected set { occurrenceDate = value; }
         }
     }
 
@@ -51,6 +47,7 @@ namespace Taijutsu.Domain.Event
     public abstract class DomainEvent<TInitiator> : DomainEvent, IDomainEvent<TInitiator>
         where TInitiator : IDomainObject
     {
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed. Can be used in inhertor's constructor.")]
         protected TInitiator initiator;
 
         protected DomainEvent()
@@ -76,15 +73,9 @@ namespace Taijutsu.Domain.Event
 
         public virtual TInitiator Initiator
         {
-            get
-            {
-                return this.initiator;
-            }
+            get { return initiator; }
 
-            protected set
-            {
-                this.initiator = value;
-            }
+            protected set { initiator = value; }
         }
     }
 }

@@ -9,14 +9,15 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
+
+using Taijutsu.Domain.Event.Internal;
+
 namespace Taijutsu.Domain.Event
 {
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
-
-    using Taijutsu.Domain.Event.Internal;
-
     public static class EventAggregator
     {
         private const string LocalEventAggregatorName = "Taijutsu.LocalEventAggregator";
@@ -26,10 +27,7 @@ namespace Taijutsu.Domain.Event
         [EditorBrowsable(EditorBrowsableState.Never)]
         public static IEventAggregator Global
         {
-            get
-            {
-                return globalEventAggregator;
-            }
+            get { return globalEventAggregator; }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -51,10 +49,7 @@ namespace Taijutsu.Domain.Event
 
         public static IEventStream OnStream
         {
-            get
-            {
-                return globalEventAggregator.OnStream;
-            }
+            get { return globalEventAggregator.OnStream; }
         }
 
         public static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
@@ -72,7 +67,7 @@ namespace Taijutsu.Domain.Event
             return globalEventAggregator.Subscribe(subscriber, priority);
         }
 
-        public static Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
+        public static Action Subscribe<TEvent>(IEventHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
         {
             if (subscriber == null)
             {

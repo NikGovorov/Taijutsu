@@ -1,19 +1,14 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System;
 using System.Collections.Concurrent;
@@ -21,18 +16,21 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Text;
 using System.Threading.Tasks;
+
 using NUnit.Framework;
+
 using SharpTestsEx;
 
 namespace Taijutsu.Test
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class SeqGuidFixture
     {
         private const int Count = 500;
 
         [TearDown]
-        protected void OnTearDown()
+        public void OnTearDown()
         {
             SystemTime.Reset();
         }
@@ -47,14 +45,16 @@ namespace Taijutsu.Test
             var i = Count;
             while (i-- > 0)
             {
-                tasks.Add(Task.Factory.StartNew(() =>
-                {
-                    for (var j = 0; j < 100; j++)
-                    {
-                        var id = SeqGuid.NewGuid();
-                        generatedIds.Add(id);
-                    }
-                }));
+                tasks.Add(
+                    Task.Factory.StartNew(
+                        () =>
+                        {
+                            for (var j = 0; j < 100; j++)
+                            {
+                                var id = SeqGuid.NewGuid();
+                                generatedIds.Add(id);
+                            }
+                        }));
             }
 
             Task.WaitAll(tasks.ToArray());
@@ -73,8 +73,10 @@ namespace Taijutsu.Test
 
             Assert.That(dt1, Is.EqualTo(SeqGuid.ToDateTime(id1)).Within(1).Milliseconds);
         }
-
-        [Test, Explicit]
+        
+        [Test]
+        [Explicit]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed. Acceptable for tests.")]
         public void ShouldBeSequental()
         {
             var connectionString = DatabaseManager.PrepareDatabase("SeqGuidTest");

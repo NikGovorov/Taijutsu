@@ -1,33 +1,31 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System.Threading;
+
 using NSubstitute;
+
 using NUnit.Framework;
+
 using SharpTestsEx;
 
 namespace Taijutsu.Test
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class LogicContextFixture
     {
-
         [TearDown]
-        protected void OnTearDown()
+        public void OnTearDown()
         {
             LogicContext.Reset();
         }
@@ -68,12 +66,14 @@ namespace Taijutsu.Test
                 int? threadId = null;
                 int? otherThreadId = null;
                 object data = null;
-                ThreadPool.QueueUserWorkItem(delegate(object ev)
-                {
-                    LogicContext.SetData("Test4", 100);
-                    threadId = Thread.CurrentThread.ManagedThreadId;
-                    ((AutoResetEvent)ev).Set();
-                }, mainEvent);
+                ThreadPool.QueueUserWorkItem(
+                    delegate(object ev)
+                    {
+                        LogicContext.SetData("Test4", 100);
+                        threadId = Thread.CurrentThread.ManagedThreadId;
+                        ((AutoResetEvent)ev).Set();
+                    }, 
+                    mainEvent);
 
                 mainEvent.WaitOne();
 
@@ -81,12 +81,14 @@ namespace Taijutsu.Test
 
                 Assert.IsNotNull(threadId);
 
-                ThreadPool.QueueUserWorkItem(delegate(object ev)
-                {
-                    otherThreadId = Thread.CurrentThread.ManagedThreadId;
-                    data = LogicContext.FindData("Test4");
-                    ((AutoResetEvent)ev).Set();
-                }, mainEvent);
+                ThreadPool.QueueUserWorkItem(
+                    delegate(object ev)
+                    {
+                        otherThreadId = Thread.CurrentThread.ManagedThreadId;
+                        data = LogicContext.FindData("Test4");
+                        ((AutoResetEvent)ev).Set();
+                    }, 
+                    mainEvent);
                 mainEvent.WaitOne();
 
                 Assert.IsNotNull(otherThreadId);
@@ -119,6 +121,5 @@ namespace Taijutsu.Test
 
             Assert.That(() => LogicContext.Customize(context), Throws.Exception);
         }
-
     }
 }

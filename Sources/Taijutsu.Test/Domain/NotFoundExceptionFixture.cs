@@ -1,43 +1,42 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System;
+
 using NUnit.Framework;
+
 using SharpTestsEx;
+
 using Taijutsu.Domain;
 using Taijutsu.Test.Domain.Model;
 
 namespace Taijutsu.Test.Domain
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class NotFoundExceptionFixture
     {
         [Test]
         public virtual void ShouldHaveAppropriateMessage()
         {
-            var ex1 = new NotFoundException(100, typeof (InternetOrder));
+            var ex1 = new NotFoundException(100, typeof(InternetOrder));
             var ex2 = new NotFoundException(100, "Internet Order");
-            var ex3 = new NotFoundException("Gold Orders", typeof (InternetOrder));
+            var ex3 = new NotFoundException("Gold Orders", typeof(InternetOrder));
             var ex4 = new NotFoundException("Gold Orders", "Internet Order");
             var ex5 = new NotFoundException<InternetOrder>(100);
             var ex6 = new NotFoundException<InternetOrder>("Silver Orders");
 
             ex1.Message.Should().Be("Entity with '100' id and 'Taijutsu.Test.Domain.Model.InternetOrder' type has not been found.");
-            
+
             ex2.Message.Should().Be("Entity with '100' id and 'Internet Order' type has not been found.");
 
             ex3.Message.Should().Be("Entity of 'Taijutsu.Test.Domain.Model.InternetOrder' type has not been found. Query requires not empty results. Query description: 'Gold Orders'.");
@@ -72,7 +71,6 @@ namespace Taijutsu.Test.Domain
             ex6.Id.Should().Be("unknown");
             ex6.Type.Should().Be(typeof(InternetOrder));
         }
-
 
         [Test]
         public virtual void ShouldHaveAppropriateInnerException()

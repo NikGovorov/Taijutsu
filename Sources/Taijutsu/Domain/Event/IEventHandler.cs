@@ -9,23 +9,10 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
-
-using System.Linq;
-
-namespace Taijutsu.Domain
+namespace Taijutsu.Domain.Event
 {
-    public static class EntityExtensions
+    public interface IEventHandler<in T>
     {
-        public static T As<T>(this IEntity entity) where T : class
-        {
-            var conversion = EntityConversionRegistry.CustomConversions.FirstOrDefault(ec => ec.IsApplicableFor(entity));
-
-            return conversion != null ? conversion.SafeConvert<T>(entity) : EntityConversionRegistry.NativeConversion.SafeConvert<T>(entity);
-        }
-
-        public static bool Is<T>(this IEntity entity) where T : class
-        {
-            return As<T>(entity) != null;
-        }
+        void Handle(T ev);
     }
 }

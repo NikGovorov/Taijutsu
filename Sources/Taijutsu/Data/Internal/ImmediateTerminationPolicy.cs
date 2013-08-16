@@ -9,15 +9,16 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-
     public class ImmediateTerminationPolicy : ITerminationPolicy
     {
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
         }
 
         public void Terminate(IOrmSession session, bool isSuccessfully)
@@ -33,8 +34,7 @@ namespace Taijutsu.Data.Internal
         // ReSharper disable UnusedParameter.Global
         protected virtual void Dispose(bool disposing)
         {
+            // ReSharper restore UnusedParameter.Global
         }
-
-        // ReSharper restore UnusedParameter.Global
     }
 }

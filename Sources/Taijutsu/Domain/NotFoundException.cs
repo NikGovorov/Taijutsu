@@ -9,19 +9,20 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Taijutsu.Domain
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-
     [Serializable]
     public class NotFoundException : EntityException
     {
         public NotFoundException(object id, object type, Exception innnerException = null)
             : base(string.Format("Entity with '{0}' id and '{1}' type has not been found.", id ?? "unknown", type ?? typeof(IDomainObject)), innnerException)
         {
-            this.entityId = id;
-            this.entityType = type;
+            Id = id;
+            Type = type;
         }
 
         public NotFoundException(object id, Type type, Exception innnerException = null)
@@ -32,11 +33,13 @@ namespace Taijutsu.Domain
         public NotFoundException(string query, object type, Exception innnerException = null)
             : base(
                 string.Format(
-                    "Entity of '{1}' type has not been found. Query requires not empty results. Query description: '{0}'.", query ?? "unknown", type ?? typeof(IDomainObject)), 
+                    "Entity of '{1}' type has not been found. Query requires not empty results. Query description: '{0}'.", 
+                    query ?? "unknown", 
+                    type ?? typeof(IDomainObject)), 
                 innnerException)
         {
-            this.entityId = "unknown";
-            this.entityType = type;
+            Id = "unknown";
+            Type = type;
         }
 
         public NotFoundException(string query, Type type, Exception innnerException = null)

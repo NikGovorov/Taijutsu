@@ -9,62 +9,63 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+
 namespace Taijutsu.Domain.Event.Internal
 {
-    using System;
-    using System.Collections.Generic;
-
     public class MultiThreadAggregator : SingleThreadAggregator
     {
         private readonly object sync = new object();
 
         protected override Action Subscribe(IInternalEventHandler handler)
         {
-            lock (this.sync)
+            lock (sync)
             {
                 IList<IInternalEventHandler> internalEventHandlers;
-                if (!this.Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
+                if (!Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
                 {
-                    var newHandlers = new Dictionary<Type, IList<IInternalEventHandler>>(this.Handlers) { { handler.EventType, new List<IInternalEventHandler> { handler } } };
+                    var newHandlers = new Dictionary<Type, IList<IInternalEventHandler>>(Handlers) { { handler.EventType, new List<IInternalEventHandler> { handler } } };
 
-                    this.Handlers = newHandlers;
+                    Handlers = newHandlers;
                 }
                 else
                 {
                     var newInternalEventHandlers = new List<IInternalEventHandler>(internalEventHandlers) { handler };
-                    this.Handlers[handler.EventType] = newInternalEventHandlers;
+                    Handlers[handler.EventType] = newInternalEventHandlers;
                 }
             }
 
-            return this.UnsubscriptionAction(handler);
+            return UnsubscriptionAction(handler);
         }
 
         protected override Action UnsubscriptionAction(IInternalEventHandler handler)
         {
             return delegate
+            {
+                lock (sync)
                 {
-                    lock (this.sync)
+                    IList<IInternalEventHandler> internalEventHandlers;
+                    if (!Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
                     {
-                        IList<IInternalEventHandler> internalEventHandlers;
-                        if (!this.Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
-                        {
-                            return;
-                        }
-
-                        var newInternalEventHandlers = new List<IInternalEventHandler>(internalEventHandlers);
-                        if (newInternalEventHandlers.Remove(handler))
-                        {
-                            this.Handlers[handler.EventType] = newInternalEventHandlers;
-                        }
+                        return;
                     }
-                };
+
+                    var newInternalEventHandlers = new List<IInternalEventHandler>(internalEventHandlers);
+                    if (newInternalEventHandlers.Remove(handler))
+                    {
+                        Handlers[handler.EventType] = newInternalEventHandlers;
+                    }
+                }
+            };
         }
 
         protected override void Reset()
         {
-            lock (this.sync)
+            lock (sync)
             {
-                this.Handlers = new Dictionary<Type, IList<IInternalEventHandler>>();
+                Handlers = new Dictionary<Type, IList<IInternalEventHandler>>();
             }
         }
     }

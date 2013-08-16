@@ -9,10 +9,11 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System.Data;
+
 namespace Taijutsu.Data
 {
-    using System.Data;
-
     public enum Require
     {
         New, 
@@ -39,26 +40,17 @@ namespace Taijutsu.Data
 
         public Require Require
         {
-            get
-            {
-                return this.require;
-            }
+            get { return require; }
         }
 
         public IsolationLevel IsolationLevel
         {
-            get
-            {
-                return this.isolationLevel;
-            }
+            get { return isolationLevel; }
         }
 
         public string SourceName
         {
-            get
-            {
-                return this.sourceName;
-            }
+            get { return sourceName; }
         }
     }
 }

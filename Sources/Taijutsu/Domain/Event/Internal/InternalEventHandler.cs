@@ -9,11 +9,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.ComponentModel;
+
 namespace Taijutsu.Domain.Event.Internal
 {
-    using System;
-    using System.ComponentModel;
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public interface IInternalEventHandler
     {
@@ -37,7 +38,7 @@ namespace Taijutsu.Domain.Event.Internal
 
         public InternalEventHandler(Action<TEvent> handlerAction, Predicate<TEvent> predicate, int priority)
         {
-            this.eventType = typeof(TEvent);
+            eventType = typeof(TEvent);
             this.handlerAction = handlerAction;
             this.predicate = predicate;
             this.priority = priority;
@@ -45,10 +46,7 @@ namespace Taijutsu.Domain.Event.Internal
 
         int IInternalEventHandler.Priority
         {
-            get
-            {
-                return this.priority;
-            }
+            get { return priority; }
         }
 
         Action<object> IInternalEventHandler.HandlerAction
@@ -56,22 +54,19 @@ namespace Taijutsu.Domain.Event.Internal
             get
             {
                 return e =>
+                {
+                    var ev = e as TEvent;
+                    if (ev != null && predicate(ev))
                     {
-                        var ev = e as TEvent;
-                        if (ev != null && this.predicate(ev))
-                        {
-                            this.handlerAction(ev);
-                        }
-                    };
+                        handlerAction(ev);
+                    }
+                };
             }
         }
 
         Type IInternalEventHandler.EventType
         {
-            get
-            {
-                return this.eventType;
-            }
+            get { return eventType; }
         }
     }
 }

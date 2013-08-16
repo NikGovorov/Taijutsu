@@ -9,13 +9,14 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+
 namespace Taijutsu.Domain.Event.Internal
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Linq;
-
     public static class SubscriptionSyntax
     {
         // ReSharper disable InconsistentNaming
@@ -29,7 +30,7 @@ namespace Taijutsu.Domain.Event.Internal
 
             Action Subscribe(Action<TSource> subscriber, int priority = 0);
 
-            Action Subscribe(IHandler<TSource> subscriber, int priority = 0);
+            Action Subscribe(IEventHandler<TSource> subscriber, int priority = 0);
         }
 
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1302:InterfaceNamesMustBeginWithI", 
@@ -40,7 +41,7 @@ namespace Taijutsu.Domain.Event.Internal
 
             Action Subscribe(Action<TProjection> subscriber, int priority = 0);
 
-            Action Subscribe(IHandler<TProjection> subscriber, int priority = 0);
+            Action Subscribe(IEventHandler<TProjection> subscriber, int priority = 0);
         }
 
         internal class AllImpl<TEvent> : All<TEvent>
@@ -62,24 +63,18 @@ namespace Taijutsu.Domain.Event.Internal
 
             public Func<IInternalEventHandler, Action> AddHadlerAction
             {
-                get
-                {
-                    return this.addHadlerAction;
-                }
+                get { return addHadlerAction; }
             }
 
             public IEnumerable<Func<TEvent, bool>> EventFilters
             {
-                get
-                {
-                    return this.eventFilters;
-                }
+                get { return eventFilters; }
             }
 
             public All<TEvent> Where(Func<TEvent, bool> filter)
             {
-                this.eventFilters.Add(filter);
-                return new AllImpl<TEvent>(this.AddHadlerAction, this.eventFilters);
+                eventFilters.Add(filter);
+                return new AllImpl<TEvent>(AddHadlerAction, eventFilters);
             }
 
             public Projection<TEvent, TProjection> Select<TProjection>(Func<TEvent, TProjection> projection)
@@ -89,12 +84,12 @@ namespace Taijutsu.Domain.Event.Internal
 
             public Action Subscribe(Action<TEvent> subscriber, int priority = 0)
             {
-                return this.AddHadlerAction(new InternalEventHandler<TEvent>(subscriber, e => this.eventFilters.All(f => f(e)), priority));
+                return AddHadlerAction(new InternalEventHandler<TEvent>(subscriber, e => eventFilters.All(f => f(e)), priority));
             }
 
-            public Action Subscribe(IHandler<TEvent> subscriber, int priority = 0)
+            public Action Subscribe(IEventHandler<TEvent> subscriber, int priority = 0)
             {
-                return this.Subscribe(subscriber.Handle, priority);
+                return Subscribe(subscriber.Handle, priority);
             }
         }
 
@@ -121,21 +116,21 @@ namespace Taijutsu.Domain.Event.Internal
 
             public Projection<TEvent, TProjection> Where(Func<TProjection, bool> filter)
             {
-                this.projectionFilters.Add(filter);
-                return new ProjectionImpl<TEvent, TProjection>(this.parent, this.projection, this.projectionFilters);
+                projectionFilters.Add(filter);
+                return new ProjectionImpl<TEvent, TProjection>(parent, projection, projectionFilters);
             }
 
             public Action Subscribe(Action<TProjection> subscriber, int priority = 0)
             {
-                Action<TEvent> action = e => subscriber(this.projection(e));
+                Action<TEvent> action = e => subscriber(projection(e));
                 return
-                    this.parent.AddHadlerAction(
-                        new InternalEventHandler<TEvent>(action, e => this.parent.EventFilters.All(f => f(e)) && this.projectionFilters.All(f => f(this.projection(e))), priority));
+                    parent.AddHadlerAction(
+                        new InternalEventHandler<TEvent>(action, e => parent.EventFilters.All(f => f(e)) && projectionFilters.All(f => f(projection(e))), priority));
             }
 
-            public Action Subscribe(IHandler<TProjection> subscriber, int priority = 0)
+            public Action Subscribe(IEventHandler<TProjection> subscriber, int priority = 0)
             {
-                return this.Subscribe(subscriber.Handle, priority);
+                return Subscribe(subscriber.Handle, priority);
             }
         }
 

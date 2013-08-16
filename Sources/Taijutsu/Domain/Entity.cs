@@ -9,24 +9,22 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
+using Taijutsu.Domain.Event;
+using Taijutsu.Domain.Event.Internal;
+
 namespace Taijutsu.Domain
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-
-    using Taijutsu.Domain.Event;
-    using Taijutsu.Domain.Event.Internal;
-
     [PublicApi]
     [Serializable]
     public abstract class Entity : IdentifiableObject<object>, IEntity
     {
         protected static IEventStream OnStream
         {
-            get
-            {
-                return EventAggregator.OnStream;
-            }
+            get { return EventAggregator.OnStream; }
         }
 
         protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
@@ -49,27 +47,19 @@ namespace Taijutsu.Domain
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppress the warning for generics.")]
     public abstract class Entity<TId> : IdentifiableObject<TId>, IEntity<TId>, IEquatable<Entity<TId>>
     {
+        [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed. Can be used in inhertor's constructor.")]
         protected TId id;
 
         public virtual TId Id
         {
-            get
-            {
-                return this.id;
-            }
+            get { return id; }
 
-            protected set
-            {
-                this.id = value;
-            }
+            protected set { id = value; }
         }
 
         protected static IEventStream OnStream
         {
-            get
-            {
-                return EventAggregator.OnStream;
-            }
+            get { return EventAggregator.OnStream; }
         }
 
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
@@ -88,7 +78,7 @@ namespace Taijutsu.Domain
         {
             var asEntity = other as Entity<TId>;
 
-            return !ReferenceEquals(asEntity, null) && this.InternalGetType() == asEntity.InternalGetType() && this.Equals(asEntity as IdentifiableObject<TId>);
+            return !ReferenceEquals(asEntity, null) && InternalGetType() == asEntity.InternalGetType() && Equals(asEntity as IdentifiableObject<TId>);
         }
 
         public override int GetHashCode()
@@ -98,7 +88,7 @@ namespace Taijutsu.Domain
 
         public override string ToString()
         {
-            return this.id.Equals(default(TId)) ? string.Empty : this.id.ToString();
+            return id.Equals(default(TId)) ? string.Empty : id.ToString();
         }
 
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
@@ -109,7 +99,7 @@ namespace Taijutsu.Domain
                 return false;
             }
 
-            return this.InternalGetType() == other.InternalGetType() && this.Equals(other as IdentifiableObject<TId>);
+            return InternalGetType() == other.InternalGetType() && Equals(other as IdentifiableObject<TId>);
         }
 
         protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
@@ -129,7 +119,7 @@ namespace Taijutsu.Domain
 
         protected override TId BuildIdentity()
         {
-            return this.Id;
+            return Id;
         }
     }
 }

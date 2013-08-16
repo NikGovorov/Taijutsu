@@ -9,10 +9,11 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
 namespace Taijutsu
 {
-    using System;
-
     public static class ActionExtensions
     {
         public static IDisposable AsDisposable(this Action self)
@@ -36,14 +37,14 @@ namespace Taijutsu
 
             public void Dispose()
             {
-                if (this.action == null)
+                if (action == null)
                 {
                     return;
                 }
 
-                var preserved = this.action;
+                var preserved = action;
 
-                this.action = null;
+                action = null;
 
                 preserved();
             }

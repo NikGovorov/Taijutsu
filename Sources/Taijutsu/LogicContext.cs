@@ -9,11 +9,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.ComponentModel;
+
 namespace Taijutsu
 {
-    using System;
-    using System.ComponentModel;
-
     public static class LogicContext
     {
         private static readonly object sync = new object();
@@ -43,6 +44,7 @@ namespace Taijutsu
             }
         }
 
+        [CanBeNull]
         public static object FindData(string name)
         {
             if (name == null)
@@ -88,17 +90,14 @@ namespace Taijutsu
 
         private static void CheckInitialization()
         {
-            if (initialized)
-            {
-                return;
-            }
-
             lock (sync)
             {
-                if (!initialized)
+                if (initialized)
                 {
-                    initialized = true;
+                    return;
                 }
+
+                initialized = true;
             }
         }
     }

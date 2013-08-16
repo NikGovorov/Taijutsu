@@ -9,20 +9,18 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
 namespace Taijutsu
 {
-    using System;
-
     internal class TimeController : ITimeController
     {
         private Func<DateTime> nowFunc = () => DateTime.UtcNow;
 
         public DateTime Now
         {
-            get
-            {
-                return this.nowFunc();
-            }
+            get { return nowFunc(); }
         }
 
         public void Customize(Func<DateTime> func)
@@ -32,24 +30,24 @@ namespace Taijutsu
                 throw new ArgumentNullException("func");
             }
 
-            this.nowFunc = func;
+            nowFunc = func;
         }
 
         public void SetDate(DateTime date)
         {
             var whnStd = DateTime.UtcNow;
             Func<DateTime> func = () => date + (DateTime.UtcNow - whnStd);
-            this.nowFunc = func;
+            nowFunc = func;
         }
 
         public void SetFrozenDate(DateTime date)
         {
-            this.nowFunc = () => date;
+            nowFunc = () => date;
         }
 
         public void Reset()
         {
-            this.nowFunc = () => DateTime.UtcNow;
+            nowFunc = () => DateTime.UtcNow;
         }
     }
 }

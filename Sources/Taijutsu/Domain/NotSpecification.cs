@@ -9,12 +9,13 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Taijutsu.Domain
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     [Serializable]
     public class NotSpecification<TDomainObject> : Specification<TDomainObject>
         where TDomainObject : IDomainObject
@@ -33,7 +34,7 @@ namespace Taijutsu.Domain
 
         public override bool IsSatisfiedBy(object candidate)
         {
-            return (!(candidate is TDomainObject)) || this.SatisfyingElementsFrom(new[] { (TDomainObject)candidate }).Any();
+            return (!(candidate is TDomainObject)) || SatisfyingElementsFrom(new[] { (TDomainObject)candidate }).Any();
         }
 
         public override IEnumerable<TDomainObject> SatisfyingElementsFrom(IEnumerable<TDomainObject> candidates)
@@ -45,7 +46,7 @@ namespace Taijutsu.Domain
 
             candidates = candidates.ToList();
 
-            return candidates.Except(this.original.SatisfyingElementsFrom(candidates));
+            return candidates.Except(original.SatisfyingElementsFrom(candidates));
         }
     }
 }

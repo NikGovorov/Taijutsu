@@ -9,12 +9,13 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
+
 namespace Taijutsu.Domain
 {
-    using System;
-    using System.Runtime.Serialization;
-    using System.Security.Permissions;
-
     [PublicApi]
     public interface IEntityException
     {
@@ -26,9 +27,9 @@ namespace Taijutsu.Domain
     [Serializable]
     public abstract class EntityException : DomainException, IEntityException
     {
-        protected object entityId;
+        private object entityId;
 
-        protected object entityType;
+        private object entityType;
 
         protected EntityException()
         {
@@ -49,37 +50,23 @@ namespace Taijutsu.Domain
         {
         }
 
-        public virtual object Id
+        public object Id
         {
-            get
-            {
-                return this.entityId;
-            }
-
-            protected set
-            {
-                this.entityId = value;
-            }
+            get { return entityId; }
+            protected set { entityId = value; }
         }
 
-        public virtual object Type
+        public object Type
         {
-            get
-            {
-                return this.entityType;
-            }
-
-            protected set
-            {
-                this.entityType = value;
-            }
+            get { return entityType; }
+            protected set { entityType = value; }
         }
 
         [SecurityPermission(SecurityAction.Demand, SerializationFormatter = true)]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("EntityId", this.entityId ?? string.Empty);
-            info.AddValue("EntityType", this.entityType ?? string.Empty);
+            info.AddValue("EntityId", entityId ?? string.Empty);
+            info.AddValue("EntityType", entityType ?? string.Empty);
             base.GetObjectData(info, context);
         }
     }

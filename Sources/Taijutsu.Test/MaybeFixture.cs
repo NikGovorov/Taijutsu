@@ -1,38 +1,37 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System;
+
 using NUnit.Framework;
+
 using SharpTestsEx;
+
 using Taijutsu.Test.Domain.Model;
 
 namespace Taijutsu.Test
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class MaybeFixture
     {
         private readonly Maybe<Customer> emptyMaybe = Maybe<Customer>.Empty;
-        
+
         private readonly Customer customer = new Customer();
 
         private Maybe<Customer> maybe;
 
         [SetUp]
-        protected void OnSetUp()
+        public void OnSetUp()
         {
             maybe = customer;
         }
@@ -55,9 +54,8 @@ namespace Taijutsu.Test
         [ExpectedException(typeof(InvalidOperationException))]
         public virtual void EmptyValueShouldNotBeAccessible()
         {
-            // ReSharper disable UnusedVariable
+            // ReSharper disable once UnusedVariable
             var val = emptyMaybe.Value;
-            // ReSharper restore UnusedVariable
         }
 
         [Test]
@@ -66,6 +64,7 @@ namespace Taijutsu.Test
         {
             // ReSharper disable UnusedVariable
             var val = (Customer)emptyMaybe;
+
             // ReSharper restore UnusedVariable
         }
 

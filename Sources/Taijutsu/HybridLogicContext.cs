@@ -9,12 +9,13 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Taijutsu
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public sealed class HybridLogicContext : ILogicContext
     {
         private readonly IEnumerable<ILogicContext> contexts;
@@ -31,30 +32,27 @@ namespace Taijutsu
 
         public bool Applicable
         {
-            get
-            {
-                return true;
-            }
+            get { return true; }
         }
 
         object ILogicContext.FindData(string name)
         {
-            return this.DetermineContext().FindData(name);
+            return DetermineContext().FindData(name);
         }
 
         void ILogicContext.SetData(string name, object value)
         {
-            this.DetermineContext().SetData(name, value);
+            DetermineContext().SetData(name, value);
         }
 
         void ILogicContext.ReleaseData(string name)
         {
-            this.DetermineContext().ReleaseData(name);
+            DetermineContext().ReleaseData(name);
         }
 
         private ILogicContext DetermineContext()
         {
-            var context = this.contexts.FirstOrDefault(c => c.Applicable);
+            var context = contexts.FirstOrDefault(c => c.Applicable);
 
             if (context == null)
             {

@@ -1,30 +1,30 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System;
 using System.Linq;
+
 using NSubstitute;
+
 using NUnit.Framework;
+
 using SharpTestsEx;
+
 using Taijutsu.Data.Internal;
 
 namespace Taijutsu.Test.Data
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class DelayedTerminationPolicyFixture
     {
         [Test]
@@ -40,11 +40,10 @@ namespace Taijutsu.Test.Data
             policy.Terminate(session2, true);
             session2.Received(0).Dispose();
 
-            ((IDisposable) policy).Dispose();
+            ((IDisposable)policy).Dispose();
             session1.Received(1).Dispose();
             session2.Received(1).Dispose();
         }
-
 
         [Test]
         public virtual void ShouldTerminateSessionImmediatelyIfPolicyDisposed()
@@ -53,12 +52,11 @@ namespace Taijutsu.Test.Data
 
             var policy = new DelayedTerminationPolicy();
 
-            ((IDisposable) policy).Dispose();
+            ((IDisposable)policy).Dispose();
 
             policy.Terminate(session1, true);
             session1.Received(1).Dispose();
         }
-
 
         [Test]
         public virtual void ShouldAggregateExceptionsOnDispose()
@@ -78,7 +76,7 @@ namespace Taijutsu.Test.Data
 
             try
             {
-                ((IDisposable) policy).Dispose();
+                ((IDisposable)policy).Dispose();
             }
             catch (AggregateException aggregateException)
             {

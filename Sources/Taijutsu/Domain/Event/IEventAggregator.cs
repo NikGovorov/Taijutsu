@@ -9,12 +9,13 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
+using Taijutsu.Domain.Event.Internal;
+
 namespace Taijutsu.Domain.Event
 {
-    using System;
-
-    using Taijutsu.Domain.Event.Internal;
-
     public interface IEventAggregator
     {
         IEventStream OnStream { get; }
@@ -23,7 +24,7 @@ namespace Taijutsu.Domain.Event
 
         Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent;
 
-        Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent;
+        Action Subscribe<TEvent>(IEventHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent;
 
         void Publish<TEvent>(TEvent ev) where TEvent : IEvent;
     }

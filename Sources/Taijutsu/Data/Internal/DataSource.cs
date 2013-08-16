@@ -9,11 +9,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Data;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-    using System.Data;
-
     [PublicApi]
     public class DataSource
     {
@@ -52,23 +53,17 @@ namespace Taijutsu.Data.Internal
 
         public virtual string Name
         {
-            get
-            {
-                return this.name;
-            }
+            get { return name; }
         }
 
         public virtual IsolationLevel DefaultIsolationLevel
         {
-            get
-            {
-                return this.defaultIsolationLevel;
-            }
+            get { return defaultIsolationLevel; }
         }
 
         public virtual IOrmSession BuildSession(IsolationLevel isolationLevel)
         {
-            return this.sessionBuilder(isolationLevel);
+            return sessionBuilder(isolationLevel);
         }
     }
 }

@@ -9,10 +9,11 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
 namespace Taijutsu
 {
-    using System;
-
     public static class SeqGuid
     {
         private static readonly DateTime baseDate = new DateTime(1900, 1, 1);
@@ -53,10 +54,9 @@ namespace Taijutsu
             var days = BitConverter.ToInt32(daysArray, 0);
             var msecs = BitConverter.ToInt32(msecsArray, 0);
 
-            // ReSharper disable ImpureMethodCallOnReadonlyValueField
+            // ReSharper disable once ImpureMethodCallOnReadonlyValueField
             var date = baseDate.AddDays(days);
 
-            // ReSharper restore ImpureMethodCallOnReadonlyValueField
             date = date.AddMilliseconds(msecs * 3.333333);
 
             return date;

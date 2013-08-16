@@ -9,10 +9,11 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-
     public class SuppressionScope : IDisposable
     {
         private readonly bool previousValue;
@@ -21,29 +22,29 @@ namespace Taijutsu.Data.Internal
 
         public SuppressionScope()
         {
-            this.previousValue = InternalEnvironment.IsInsideSuppressionScope;
+            previousValue = InternalEnvironment.IsInsideSuppressionScope;
             InternalEnvironment.IsInsideSuppressionScope = true;
         }
 
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
         }
 
         protected virtual void Dispose(bool disposing)
         {
-            if (this.disposed || !disposing)
+            if (disposed || !disposing)
             {
                 return;
             }
 
             try
             {
-                InternalEnvironment.IsInsideSuppressionScope = this.previousValue;
+                InternalEnvironment.IsInsideSuppressionScope = previousValue;
             }
             finally
             {
-                this.disposed = true;
+                disposed = true;
             }
         }
     }

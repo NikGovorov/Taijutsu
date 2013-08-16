@@ -9,16 +9,17 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
 namespace Taijutsu
 {
-    using System;
-
     [PublicApi]
     public class ScopeFinishedEventArgs : EventArgs
     {
         public ScopeFinishedEventArgs(bool completed)
         {
-            this.Completed = completed;
+            Completed = completed;
         }
 
         public bool Completed { get; protected set; }

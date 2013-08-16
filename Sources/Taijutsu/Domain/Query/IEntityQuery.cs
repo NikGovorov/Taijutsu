@@ -12,12 +12,12 @@
 namespace Taijutsu.Domain.Query
 {
     public interface IEntityQuery<out TEntity> : ISingleOrDefaultQuery<TEntity>, 
-                                                 IFirstOrDefaultQuery<TEntity>, 
-                                                 IAnyQuery<TEntity>, 
-                                                 ICountQuery<TEntity>, 
-                                                 IKeyFilter<IEntityQuery<TEntity>>, 
-                                                 INotTypeFilter<IEntityQuery<TEntity>>, 
-                                                 ILockOption<IEntityQuery<TEntity>>
+        IFirstOrDefaultQuery<TEntity>, 
+        IAnyQuery<TEntity>, 
+        ICountQuery<TEntity>, 
+        IKeyFilter<IEntityQuery<TEntity>>, 
+        INotTypeFilter<IEntityQuery<TEntity>>, 
+        ILockOption<IEntityQuery<TEntity>>
         where TEntity : IEntity
     {
     }

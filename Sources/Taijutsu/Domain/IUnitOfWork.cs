@@ -9,12 +9,13 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+
+using Taijutsu.Domain.Query;
+
 namespace Taijutsu.Domain
 {
-    using System;
-
-    using Taijutsu.Domain.Query;
-
     public interface IUnitOfWork
     {
         object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;

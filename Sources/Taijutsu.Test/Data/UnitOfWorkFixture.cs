@@ -1,42 +1,45 @@
-﻿#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+﻿// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
+
 using NSubstitute;
+
 using NUnit.Framework;
+
+using SharpTestsEx;
+
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
-using SharpTestsEx;
-using Taijutsu.Test.Domain.Model;
 using Taijutsu.Domain;
+using Taijutsu.Test.Domain.Model;
 
 namespace Taijutsu.Test.Data
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class UnitOfWorkFixture : TestFixture
     {
         private const string InteractAfterComplete = "Unit of work has already been completed(with success - '{0}'), so it is not usable for write anymore.";
+
         private const string InteractAfterDispose = "Unit of work has already been disposed(with success - '{0}'), so it is not usable anymore.";
 
         private IOrmSession session;
+
         private string source;
 
         [SetUp]
-        protected void OnSetUp()
+        public void OnSetUp()
         {
             source = Guid.NewGuid().ToString();
             session = Substitute.For<IOrmSession>();
@@ -44,14 +47,13 @@ namespace Taijutsu.Test.Data
         }
 
         [TearDown]
-        protected void OnTearDown()
+        public void OnTearDown()
         {
             InternalEnvironment.UnregisterDataSource(source);
             InternalEnvironment.CheckDataContextSupervisorForRelease();
             session.ClearReceivedCalls();
         }
 
-        
         [Test]
         public virtual void ShouldProvideDifferentWaysOfComplete()
         {
@@ -59,27 +61,25 @@ namespace Taijutsu.Test.Data
             {
                 Awaken(uow);
 
-                
-                uow.Complete(() =>
+                uow.Complete(
+                    () =>
                     {
                         session.Received(0).Complete();
                         return "test";
-
                     }).Should().Be("test");
 
-
-                uow.Complete(uow2 =>
+                uow.Complete(
+                    uow2 =>
                     {
                         // ReSharper disable AccessToDisposedClosure
                         uow2.Should().Be.SameInstanceAs(uow);
+
                         // ReSharper restore AccessToDisposedClosure
-                    return "test2";
-
-                }).Should().Be("test2");
-
+                        return "test2";
+                    }).Should().Be("test2");
 
                 uow.Complete(100).Should().Be(100);
-                
+
                 uow.Complete();
             }
 
@@ -87,6 +87,7 @@ namespace Taijutsu.Test.Data
         }
 
         [Test]
+        [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed. Acceptable for tests.")]
         public virtual void ShouldCallRealDisposeOnlyOnce()
         {
             var uow = new UnitOfWork(source);
@@ -94,12 +95,12 @@ namespace Taijutsu.Test.Data
             Awaken(uow);
 
             AssertThatContextCountEqualTo(1);
-            ((IDisposable) uow).Dispose();
-            
+            ((IDisposable)uow).Dispose();
+
             AssertThatSupervisorDestroyed();
             AssertThatContextCountEqualTo(0);
-            
-            ((IDisposable) uow).Dispose();
+
+            ((IDisposable)uow).Dispose();
 
             session.Received(1).Dispose();
         }
@@ -116,6 +117,7 @@ namespace Taijutsu.Test.Data
                 uow.Complete(() => 100);
                 uow.Complete(u => 100);
             }
+
             session.Received(1).Complete();
         }
 
@@ -152,7 +154,7 @@ namespace Taijutsu.Test.Data
             }
 
             session.Received(1).MarkAsCreated(customer, options);
-            
+
             session.ClearReceivedCalls();
 
             using (var uow = new UnitOfWork(source))
@@ -166,8 +168,8 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldDelegateDeleteMethodToOrmSession()
         {
-            var options = new {};
-            
+            var options = new { };
+
             var customer = new Customer(SeqGuid.NewGuid(), new FullName("Nikita", "Govorov"));
 
             using (var uow = new UnitOfWork(source))
@@ -199,15 +201,14 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldDelegateQueryMethodsToOrmSession()
         {
-            var options = new {};
-            
+            var options = new { };
+
             using (var uow = new UnitOfWork(source))
             {
                 uow.All<Customer>(options);
                 uow.Unique<Customer>(1, options);
                 uow.Query<Customer>().With<ICustomerQuery>("query");
                 uow.Query<Customer>().From<ICustomerRepository>("repository");
-
             }
 
             session.Received(1).All<Customer>(options);
@@ -239,192 +240,212 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldThrowExceptionIfQueryCalledAfterDispose()
         {
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                uow.Complete();
-                ((IDisposable)uow).Dispose();
-                uow.All<Customer>();
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    uow.Complete();
+                    ((IDisposable)uow).Dispose();
+                    uow.All<Customer>();
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, true)));
 
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, true)));
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    ((IDisposable)uow).Dispose();
+                    uow.Unique<Customer>(100);
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, false)));
 
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                ((IDisposable)uow).Dispose();
-                uow.Unique<Customer>(100);
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    uow.Complete();
+                    ((IDisposable)uow).Dispose();
+                    uow.Query<Customer>().With<ICustomerQuery>("query");
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, true)));
 
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, false)));
-
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                uow.Complete();
-                ((IDisposable)uow).Dispose();
-                uow.Query<Customer>().With<ICustomerQuery>("query");
-
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, true)));
-
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                ((IDisposable)uow).Dispose();
-                uow.Query<Customer>().From<ICustomerRepository>("repository");
-
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, false)));
-
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    ((IDisposable)uow).Dispose();
+                    uow.Query<Customer>().From<ICustomerRepository>("repository");
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, false)));
         }
 
         [Test]
         public virtual void ShouldThrowExceptionIfCreateCalledAfterComplete()
         {
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                uow.Complete();
-                ((IDisposable)uow).Dispose();
-                uow.MarkAsCreated(new Customer());
-
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
-
-            Assert.That(() =>
-            {
-                using (var uow = new UnitOfWork(source))
+            Assert.That(
+                () =>
                 {
+                    var uow = new UnitOfWork(source);
                     uow.Complete();
-                    uow.MarkAsCreated(() => new Customer());
-                }
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
+                    ((IDisposable)uow).Dispose();
+                    uow.MarkAsCreated(new Customer());
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
 
-            Assert.That(() =>
-            {
-                using (var uow = new UnitOfWork(source))
+            Assert.That(
+                () =>
                 {
-                    uow.Complete();
-                    uow.Mark(new Customer()).AsCreated();
-                }
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
+                    using (var uow = new UnitOfWork(source))
+                    {
+                        uow.Complete();
+                        uow.MarkAsCreated(() => new Customer());
+                    }
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
 
-            Assert.That(() =>
-            {
-                using (var uow = new UnitOfWork(source))
+            Assert.That(
+                () =>
                 {
-                    uow.Complete();
-                    new Customer().AsCreatedIn(uow);
-                }
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
+                    using (var uow = new UnitOfWork(source))
+                    {
+                        uow.Complete();
+                        uow.Mark(new Customer()).AsCreated();
+                    }
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
 
+            Assert.That(
+                () =>
+                {
+                    using (var uow = new UnitOfWork(source))
+                    {
+                        uow.Complete();
+                        new Customer().AsCreatedIn(uow);
+                    }
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
         }
 
         [Test]
         public virtual void ShouldThrowExceptionIfCreateCalledAfterDispose()
         {
-            Assert.That(() =>
+            Assert.That(
+                () =>
                 {
                     var uow = new UnitOfWork(source);
                     ((IDisposable)uow).Dispose();
                     uow.MarkAsCreated(new Customer());
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
-                }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    ((IDisposable)uow).Dispose();
+                    uow.MarkAsCreated(() => new Customer());
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                ((IDisposable)uow).Dispose();
-                uow.MarkAsCreated(() => new Customer());
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    ((IDisposable)uow).Dispose();
+                    uow.Mark(new Customer()).AsCreated();
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
-
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                ((IDisposable)uow).Dispose();
-                uow.Mark(new Customer()).AsCreated();
-
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
-
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                ((IDisposable)uow).Dispose();
-                new Customer().AsCreatedIn(uow);
-
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    ((IDisposable)uow).Dispose();
+                    new Customer().AsCreatedIn(uow);
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
         }
 
         [Test]
         public virtual void ShouldThrowExceptionIfDeleteCalledAfterComplete()
         {
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                uow.Complete();
-                ((IDisposable)uow).Dispose();
-                uow.MarkAsDeleted(new Customer());
-
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
-
-
-            Assert.That(() =>
-            {
-                using (var uow = new UnitOfWork(source))
+            Assert.That(
+                () =>
                 {
+                    var uow = new UnitOfWork(source);
                     uow.Complete();
-                    uow.Mark(new Customer()).AsDeleted();
-                }
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
+                    ((IDisposable)uow).Dispose();
+                    uow.MarkAsDeleted(new Customer());
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
 
-            Assert.That(() =>
-            {
-                using (var uow = new UnitOfWork(source))
+            Assert.That(
+                () =>
                 {
-                    uow.Complete();
-                    new Customer().AsDeletedIn(uow);
-                }
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
+                    using (var uow = new UnitOfWork(source))
+                    {
+                        uow.Complete();
+                        uow.Mark(new Customer()).AsDeleted();
+                    }
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
 
+            Assert.That(
+                () =>
+                {
+                    using (var uow = new UnitOfWork(source))
+                    {
+                        uow.Complete();
+                        new Customer().AsDeletedIn(uow);
+                    }
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
         }
 
         [Test]
         public virtual void ShouldThrowExceptionIfDeleteCalledAfterDispose()
         {
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                ((IDisposable)uow).Dispose();
-                uow.MarkAsDeleted(new Customer());
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    ((IDisposable)uow).Dispose();
+                    uow.MarkAsDeleted(new Customer());
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    ((IDisposable)uow).Dispose();
+                    uow.Mark(new Customer()).AsDeleted();
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                ((IDisposable)uow).Dispose();
-                uow.Mark(new Customer()).AsDeleted();
-
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
-
-            Assert.That(() =>
-            {
-                var uow = new UnitOfWork(source);
-                ((IDisposable)uow).Dispose();
-                new Customer().AsDeletedIn(uow);
-
-            }, Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
+            Assert.That(
+                () =>
+                {
+                    var uow = new UnitOfWork(source);
+                    ((IDisposable)uow).Dispose();
+                    new Customer().AsDeletedIn(uow);
+                }, 
+                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
         }
 
         [Test]
         public virtual void ShouldThrowExceptionIfCompleteCalledAfterDispose()
         {
-            Assert.That(() =>
+            Assert.That(
+                () =>
                 {
                     var uow = new UnitOfWork(source);
                     Awaken(uow);
                     ((IDisposable)uow).Dispose();
                     uow.Complete();
+                }, 
+                Throws.Exception.With.Message.EqualTo("Unit of work has already been disposed(with success - 'False'), so it is not usable anymore."));
 
-                }, Throws.Exception.With.Message.EqualTo("Unit of work has already been disposed(with success - 'False'), so it is not usable anymore."));
-            
             session.Received(1).Dispose();
             session.Received(0).Complete();
         }

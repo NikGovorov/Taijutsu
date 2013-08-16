@@ -9,11 +9,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-    using System.Diagnostics.CodeAnalysis;
-
     public class OrmSessionBuilder
     {
         private readonly Func<object, IOrmSession> factory;
@@ -43,17 +44,14 @@ namespace Taijutsu.Data.Internal
 
         public virtual string Name
         {
-            get
-            {
-                return this.name;
-            }
+            get { return name; }
         }
 
         public virtual IOrmSession BuildSession(object options = null)
         {
             using (new ConstructionScope())
             {
-                return this.factory(options);
+                return factory(options);
             }
         }
     }

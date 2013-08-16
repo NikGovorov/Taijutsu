@@ -9,11 +9,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+
 namespace Taijutsu.Domain
 {
-    using System;
-    using System.Collections.Generic;
-
     public static class EntityConversionRegistry
     {
         private static readonly IEntityConversion nativeConversion = new EntityConversion();
@@ -22,18 +23,12 @@ namespace Taijutsu.Domain
 
         public static IEntityConversion NativeConversion
         {
-            get
-            {
-                return nativeConversion;
-            }
+            get { return nativeConversion; }
         }
 
         public static IEnumerable<IEntityConversion> CustomConversions
         {
-            get
-            {
-                return conversions;
-            }
+            get { return conversions; }
         }
 
         public static void CustomizeWith(IEnumerable<IEntityConversion> newConversions)

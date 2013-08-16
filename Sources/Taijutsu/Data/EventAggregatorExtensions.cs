@@ -9,16 +9,17 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Transactions;
+
+using Taijutsu.Data.Internal;
+using Taijutsu.Domain.Event.Internal;
+
 namespace Taijutsu.Data
 {
-    using System;
-    using System.ComponentModel;
-    using System.Diagnostics;
-    using System.Transactions;
-
-    using Taijutsu.Data.Internal;
-    using Taijutsu.Domain.Event.Internal;
-
     public interface IHandledSafelySyntax<out TSource>
     {
         Action Subscribe(Action<TSource> subscriber, int priority = 0);
@@ -69,7 +70,7 @@ namespace Taijutsu.Data
                     throw new ArgumentNullException("subscriber");
                 }
 
-                return this.target.Subscribe(this.WrapSubscriber(subscriber), priority);
+                return target.Subscribe(WrapSubscriber(subscriber), priority);
             }
         }
 
@@ -94,7 +95,7 @@ namespace Taijutsu.Data
                     throw new ArgumentNullException("subscriber");
                 }
 
-                return this.target.Subscribe(this.WrapSubscriber(subscriber), priority);
+                return target.Subscribe(WrapSubscriber(subscriber), priority);
             }
         }
 
@@ -110,51 +111,51 @@ namespace Taijutsu.Data
                 }
 
                 return source =>
+                {
+                    var transaction = Transaction.Current;
+
+                    if (transaction != null)
                     {
-                        var transaction = Transaction.Current;
+                        TransactionCompletedEventHandler action = null;
 
-                        if (transaction != null)
+                        action = (s, e) =>
                         {
-                            TransactionCompletedEventHandler action = null;
+                            transaction.TransactionCompleted -= action;
 
-                            action = (s, e) =>
+                            if (e.Transaction.TransactionInformation.Status == TransactionStatus.Committed)
+                            {
+                                subscriber(source);
+                            }
+                        };
+
+                        transaction.TransactionCompleted += action;
+                    }
+                    else
+                    {
+                        var context = InternalEnvironment.DataContextSupervisor.CurrentContext;
+
+                        if (context != null)
+                        {
+                            EventHandler<ScopeFinishedEventArgs> action = (sender, e) =>
+                            {
+                                if (e.Completed)
                                 {
-                                    transaction.TransactionCompleted -= action;
+                                    subscriber(source);
+                                }
+                            };
 
-                                    if (e.Transaction.TransactionInformation.Status == TransactionStatus.Committed)
-                                    {
-                                        subscriber(source);
-                                    }
-                                };
-
-                            transaction.TransactionCompleted += action;
+                            context.Finished += (sender, e) =>
+                            {
+                                context.Finished -= action;
+                                action(sender, e);
+                            };
                         }
                         else
                         {
-                            var context = InternalEnvironment.DataContextSupervisor.CurrentContext;
-
-                            if (context != null)
-                            {
-                                EventHandler<ScopeFinishedEventArgs> action = (sender, e) =>
-                                    {
-                                        if (e.Completed)
-                                        {
-                                            subscriber(source);
-                                        }
-                                    };
-
-                                context.Finished += (sender, e) =>
-                                    {
-                                        context.Finished -= action;
-                                        action(sender, e);
-                                    };
-                            }
-                            else
-                            {
-                                Trace.TraceWarning("Event source is not inside of unit of work or transaction scope.");
-                            }
+                            Trace.TraceWarning("Event source is not inside of unit of work or transaction scope.");
                         }
-                    };
+                    }
+                };
             }
         }
     }

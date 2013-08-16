@@ -9,13 +9,14 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+
 namespace Taijutsu.Data.Internal
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.ComponentModel;
-
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class InternalEnvironment
     {
@@ -66,10 +67,7 @@ namespace Taijutsu.Data.Internal
                 return isInSuppressionScope != null && (bool)isInSuppressionScope;
             }
 
-            set
-            {
-                LogicContext.SetData(SuppressionScopeKey, value);
-            }
+            set { LogicContext.SetData(SuppressionScopeKey, value); }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -81,10 +79,7 @@ namespace Taijutsu.Data.Internal
                 return isInConstructionScope != null && (bool)isInConstructionScope;
             }
 
-            set
-            {
-                LogicContext.SetData(ConstructionScopeKey, value);
-            }
+            set { LogicContext.SetData(ConstructionScopeKey, value); }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]

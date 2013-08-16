@@ -1,31 +1,30 @@
-#region License
-
-//  Copyright 2009-2013 Nikita Govorov
-//    
-//  Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
-//  this file except in compliance with the License. You may obtain a copy of the 
-//  License at 
-//   
-//  http://www.apache.org/licenses/LICENSE-2.0 
-//   
-//  Unless required by applicable law or agreed to in writing, software distributed 
-//  under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
-//  CONDITIONS OF ANY KIND, either express or implied. See the License for the 
-//  specific language governing permissions and limitations under the License.
-
-#endregion
+// Copyright 2009-2013 Nikita Govorov
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
+// this file except in compliance with the License. You may obtain a copy of the 
+// License at 
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0 
+// 
+// Unless required by applicable law or agreed to in writing, software distributed 
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the 
+// specific language governing permissions and limitations under the License.
 
 using System;
 using System.Collections.Generic;
+
 using NUnit.Framework;
+
+using SharpTestsEx;
+
 using Taijutsu.Domain;
 using Taijutsu.Domain.Event;
 using Taijutsu.Test.Domain.Model;
-using SharpTestsEx;
 
 namespace Taijutsu.Test.Domain
 {
     [TestFixture]
+    [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class EntityFixture
     {
         [Test]
@@ -43,6 +42,7 @@ namespace Taijutsu.Test.Domain
             Assert.IsTrue(customer != customer2);
             Assert.IsFalse(customer.Equals(customer2));
             Assert.IsFalse(customer.Equals((object)customer2));
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             Assert.IsTrue(customer != null);
             Assert.IsFalse(customer.Equals(null));
 
@@ -52,13 +52,14 @@ namespace Taijutsu.Test.Domain
 
             Assert.IsTrue(customer != order);
             Assert.IsFalse(customer.Equals(order));
-            // ReSharper disable SuspiciousTypeConversion.Global
-            Assert.IsFalse((customer.Equals((object)order)));
-            // ReSharper restore SuspiciousTypeConversion.Global
 
+            // ReSharper disable SuspiciousTypeConversion.Global
+            Assert.IsFalse(customer.Equals((object)order));
+
+            // ReSharper restore SuspiciousTypeConversion.Global
             Assert.IsTrue(order != internetOrder);
             Assert.IsFalse(order.Equals(internetOrder));
-            Assert.IsFalse((order.Equals((object)internetOrder)));
+            Assert.IsFalse(order.Equals((object)internetOrder));
 
             var product1 = new Product();
             var product2 = new Product();
@@ -96,20 +97,19 @@ namespace Taijutsu.Test.Domain
             internetOrder.ToString().Should().Be(sharedkey.ToString());
         }
 
-
         [Test]
         public virtual void ShouldBeAbleToPublishEvents()
         {
             Order expectedOrder = null;
 
             using (EventAggregator.OnStreamOf<OrderCreated>()
-                           .Select(ev => ev.Initiator)
-                           .Subscribe(order => expectedOrder = order).AsDisposable())
+                                  .Select(ev => ev.Initiator)
+                                  .Subscribe(order => expectedOrder = order).AsDisposable())
             {
                 var internetOrder = new InternetOrder(new Customer());
 
                 expectedOrder.Should().Not.Be.Null();
-                expectedOrder.Should().Be.SameInstanceAs(internetOrder);    
+                expectedOrder.Should().Be.SameInstanceAs(internetOrder);
             }
         }
 
@@ -118,14 +118,14 @@ namespace Taijutsu.Test.Domain
         {
             var customer = new Customer();
             customer.NotifiedAboutOrder.Should().Be.False();
-            #pragma warning disable 168
+#pragma warning disable 168
+            // ReSharper disable once UnusedVariable
             var internetOrder = new InternetOrder(customer);
-            #pragma warning restore 168
+#pragma warning restore 168
             customer.NotifiedAboutOrder.Should().Be.True();
         }
 
-
-        class TestEntity : Entity<Guid>
+        private class TestEntity : Entity<Guid>
         {
             public TestEntity()
             {

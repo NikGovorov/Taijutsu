@@ -9,14 +9,15 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace Taijutsu.Domain.Event.Internal
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using System.Linq;
-    using System.Threading.Tasks;
-
     public class SingleThreadAggregator : IEventAggregator, IEventStream, IResettable
     {
         private static readonly object sync = new object();
@@ -27,63 +28,48 @@ namespace Taijutsu.Domain.Event.Internal
 
         public virtual IEventStream OnStream
         {
-            get
-            {
-                return this;
-            }
+            get { return this; }
         }
 
         protected virtual IDictionary<Type, IList<IInternalEventHandler>> Handlers
         {
-            get
-            {
-                return this.handlers;
-            }
+            get { return handlers; }
 
-            set
-            {
-                this.handlers = value;
-            }
+            set { handlers = value; }
         }
 
         protected virtual IDictionary<Type, IEnumerable<Type>> Targets
         {
-            get
-            {
-                return targets;
-            }
+            get { return targets; }
 
-            set
-            {
-                targets = value;
-            }
+            set { targets = value; }
         }
 
         public virtual SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
         {
-            return this.OnStream.Of<TEvent>();
+            return OnStream.Of<TEvent>();
         }
 
         public virtual Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
         {
-            return this.OnStream.Of<TEvent>().Subscribe(subscriber, priority);
+            return OnStream.Of<TEvent>().Subscribe(subscriber, priority);
         }
 
-        public virtual Action Subscribe<TEvent>(IHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
+        public virtual Action Subscribe<TEvent>(IEventHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
         {
-            return this.OnStream.Of<TEvent>().Subscribe(subscriber, priority);
+            return OnStream.Of<TEvent>().Subscribe(subscriber, priority);
         }
 
         public virtual void Publish<TEvent>(TEvent ev) where TEvent : IEvent
         {
             var eventHandlers = new List<IInternalEventHandler>();
 
-            var potentialSubscriberTypes = this.PotentialSubscriberTypes(ev.GetType());
+            var potentialSubscriberTypes = PotentialSubscriberTypes(ev.GetType());
 
             foreach (var targetType in potentialSubscriberTypes)
             {
                 IList<IInternalEventHandler> internalEventHandlers;
-                if (this.Handlers.TryGetValue(targetType, out internalEventHandlers))
+                if (Handlers.TryGetValue(targetType, out internalEventHandlers))
                 {
                     eventHandlers.AddRange(internalEventHandlers);
                 }
@@ -97,28 +83,28 @@ namespace Taijutsu.Domain.Event.Internal
 
         SubscriptionSyntax.All<TEvent> IEventStream.Of<TEvent>()
         {
-            return this.Of<TEvent>();
+            return Of<TEvent>();
         }
 
         void IResettable.Reset()
         {
-            this.Reset();
+            Reset();
         }
 
         protected virtual SubscriptionSyntax.All<TEvent> Of<TEvent>() where TEvent : class, IEvent
         {
-            return new SubscriptionSyntax.AllImpl<TEvent>(this.Subscribe);
+            return new SubscriptionSyntax.AllImpl<TEvent>(Subscribe);
         }
 
         protected virtual IEnumerable<Type> PotentialSubscriberTypes(Type type)
         {
             IEnumerable<Type> targetsForType;
 
-            if (!this.Targets.TryGetValue(type, out targetsForType))
+            if (!Targets.TryGetValue(type, out targetsForType))
             {
-                targetsForType = type.GetInterfaces().Where(i => typeof(IEvent).IsAssignableFrom(i)).Union(this.EventTypeHierarchy(type).Reverse()).ToArray();
+                targetsForType = type.GetInterfaces().Where(i => typeof(IEvent).IsAssignableFrom(i)).Union(EventTypeHierarchy(type).Reverse()).ToArray();
 
-                this.CachePotentialSubscriberTypes(type, targetsForType);
+                CachePotentialSubscriberTypes(type, targetsForType);
             }
 
             // ReSharper disable PossibleMultipleEnumeration
@@ -136,7 +122,7 @@ namespace Taijutsu.Domain.Event.Internal
 
             yield return type;
 
-            foreach (var subtype in this.EventTypeHierarchy(type.BaseType))
+            foreach (var subtype in EventTypeHierarchy(type.BaseType))
             {
                 yield return subtype;
             }
@@ -157,19 +143,19 @@ namespace Taijutsu.Domain.Event.Internal
             // ReSharper disable ImplicitlyCapturedClosure
             Task.Factory.StartNew(
                 () =>
+                {
+                    lock (sync)
                     {
-                        lock (sync)
+                        if (Targets.ContainsKey(type))
                         {
-                            if (this.Targets.ContainsKey(type))
-                            {
-                                return;
-                            }
-
-                            var newTargets = new Dictionary<Type, IEnumerable<Type>>(this.Targets);
-                            newTargets[type] = potentialSubscriberTypes;
-                            this.Targets = newTargets;
+                            return;
                         }
-                    })
+
+                        var newTargets = new Dictionary<Type, IEnumerable<Type>>(Targets);
+                        newTargets[type] = potentialSubscriberTypes;
+                        Targets = newTargets;
+                    }
+                })
                 .ContinueWith(
                     t => Trace.TraceError(t.Exception == null ? string.Format("Error occurred during caching event subscribers for '{0}'.", type) : t.Exception.ToString()), 
                     TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
@@ -181,33 +167,33 @@ namespace Taijutsu.Domain.Event.Internal
         {
             IList<IInternalEventHandler> internalEventHandlers;
 
-            if (!this.Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
+            if (!Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
             {
-                this.Handlers.Add(handler.EventType, new List<IInternalEventHandler> { handler });
+                Handlers.Add(handler.EventType, new List<IInternalEventHandler> { handler });
             }
             else
             {
                 internalEventHandlers.Add(handler);
             }
 
-            return this.UnsubscriptionAction(handler);
+            return UnsubscriptionAction(handler);
         }
 
         protected virtual Action UnsubscriptionAction(IInternalEventHandler handler)
         {
             return delegate
+            {
+                IList<IInternalEventHandler> internalEventHandlers;
+                if (Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
                 {
-                    IList<IInternalEventHandler> internalEventHandlers;
-                    if (this.Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
-                    {
-                        internalEventHandlers.Remove(handler);
-                    }
-                };
+                    internalEventHandlers.Remove(handler);
+                }
+            };
         }
 
         protected virtual void Reset()
         {
-            this.Handlers.Clear();
+            Handlers.Clear();
         }
     }
 }
