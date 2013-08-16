@@ -14,7 +14,8 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 
 using Taijutsu.Domain.Event;
-using Taijutsu.Domain.Event.Internal;
+using Taijutsu.Event;
+using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Domain
 {
@@ -24,7 +25,7 @@ namespace Taijutsu.Domain
     {
         protected static IEventStream OnStream
         {
-            get { return EventAggregator.OnStream; }
+            get { return Events.OnStream; }
         }
 
         protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
@@ -39,7 +40,7 @@ namespace Taijutsu.Domain
 
         protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
         {
-            EventAggregator.Publish(ev);
+            Events.Publish(ev);
         }
     }
 
@@ -59,7 +60,7 @@ namespace Taijutsu.Domain
 
         protected static IEventStream OnStream
         {
-            get { return EventAggregator.OnStream; }
+            get { return Events.OnStream; }
         }
 
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
@@ -114,7 +115,7 @@ namespace Taijutsu.Domain
 
         protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
         {
-            EventAggregator.Publish(ev);
+            Events.Publish(ev);
         }
 
         protected override TId BuildIdentity()

@@ -10,11 +10,9 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using Taijutsu.Domain.Event;
-
 namespace Taijutsu.Test.Domain.Model
 {
-    public class SystemChecked : Event
+    public class SystemChecked : Event.Event
     {
         public SystemChecked(int healthLevel = 0)
         {

@@ -21,7 +21,7 @@ using SharpTestsEx;
 
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
-using Taijutsu.Domain.Event;
+using Taijutsu.Event;
 using Taijutsu.Test.Domain.Model;
 
 namespace Taijutsu.Test.Data
@@ -58,9 +58,9 @@ namespace Taijutsu.Test.Data
             {
                 var callCounter = 0;
 
-                using (EventAggregator.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter++).AsDisposable())
+                using (Events.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter++).AsDisposable())
                 {
-                    EventAggregator.Publish(new OrderCreated(new Order(), new Customer()));
+                    Events.Publish(new OrderCreated(new Order(), new Customer()));
                 }
 
                 callCounter.Should().Be(0);
@@ -71,11 +71,11 @@ namespace Taijutsu.Test.Data
             {
                 int[] callCounter = { 0 };
 
-                using (EventAggregator.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
+                using (Events.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
                 {
                     using (new UnitOfWork(source))
                     {
-                        EventAggregator.Publish(new OrderCreated(new Order(), new Customer()));
+                        Events.Publish(new OrderCreated(new Order(), new Customer()));
                         callCounter[0].Should().Be(0);
                     }
 
@@ -84,11 +84,11 @@ namespace Taijutsu.Test.Data
 
                 callCounter[0] = 0;
 
-                using (EventAggregator.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
+                using (Events.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
                 {
                     using (var uow = new UnitOfWork(source))
                     {
-                        EventAggregator.Publish(new OrderCreated(new Order(), new Customer()));
+                        Events.Publish(new OrderCreated(new Order(), new Customer()));
                         callCounter[0].Should().Be(0);
                         uow.Complete();
                         callCounter[0].Should().Be(0);
@@ -103,11 +103,11 @@ namespace Taijutsu.Test.Data
             {
                 int[] callCounter = { 0 };
 
-                using (EventAggregator.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
+                using (Events.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
                 {
                     using (new TransactionScope())
                     {
-                        EventAggregator.Publish(new OrderCreated(new Order(), new Customer()));
+                        Events.Publish(new OrderCreated(new Order(), new Customer()));
                         callCounter[0].Should().Be(0);
                     }
 
@@ -116,11 +116,11 @@ namespace Taijutsu.Test.Data
 
                 callCounter[0] = 0;
 
-                using (EventAggregator.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
+                using (Events.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
                 {
                     using (var transactionScope = new TransactionScope())
                     {
-                        EventAggregator.Publish(new OrderCreated(new Order(), new Customer()));
+                        Events.Publish(new OrderCreated(new Order(), new Customer()));
                         callCounter[0].Should().Be(0);
                         transactionScope.Complete();
                         callCounter[0].Should().Be(0);
@@ -131,15 +131,15 @@ namespace Taijutsu.Test.Data
 
                 callCounter[0] = 0;
 
-                using (EventAggregator.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
+                using (Events.OnStreamOf<OrderCreated>().HandledSafely().Subscribe(ev => callCounter[0]++).AsDisposable())
                 {
                     using (var transactionScope = new TransactionScope())
                     {
-                        EventAggregator.Publish(new OrderCreated(new Order(), new Customer()));
+                        Events.Publish(new OrderCreated(new Order(), new Customer()));
                         callCounter[0].Should().Be(0);
                         using (var uow = new UnitOfWork(source))
                         {
-                            EventAggregator.Publish(new OrderCreated(new Order(), new Customer()));
+                            Events.Publish(new OrderCreated(new Order(), new Customer()));
                             callCounter[0].Should().Be(0);
                             uow.Complete();
                             callCounter[0].Should().Be(0);

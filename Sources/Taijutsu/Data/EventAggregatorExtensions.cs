@@ -16,7 +16,7 @@ using System.Diagnostics;
 using System.Transactions;
 
 using Taijutsu.Data.Internal;
-using Taijutsu.Domain.Event.Internal;
+using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Data
 {

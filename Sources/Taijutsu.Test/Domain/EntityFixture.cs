@@ -18,7 +18,7 @@ using NUnit.Framework;
 using SharpTestsEx;
 
 using Taijutsu.Domain;
-using Taijutsu.Domain.Event;
+using Taijutsu.Event;
 using Taijutsu.Test.Domain.Model;
 
 namespace Taijutsu.Test.Domain
@@ -102,7 +102,7 @@ namespace Taijutsu.Test.Domain
         {
             Order expectedOrder = null;
 
-            using (EventAggregator.OnStreamOf<OrderCreated>()
+            using (Events.OnStreamOf<OrderCreated>()
                                   .Select(ev => ev.Initiator)
                                   .Subscribe(order => expectedOrder = order).AsDisposable())
             {
