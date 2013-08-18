@@ -10,10 +10,10 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-namespace Taijutsu.Event
+
+namespace Taijutsu.Sample
 {
-    public interface IEventStream
+    public class SystemStarted : Event.Event
     {
-        SubscriptionSyntax.All<TEvent> Of<TEvent>() where TEvent : class, IEvent;
     }
 }

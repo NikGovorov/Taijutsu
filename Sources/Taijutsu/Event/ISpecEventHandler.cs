@@ -12,7 +12,8 @@
 
 namespace Taijutsu.Event
 {
-    public interface IEventHandler<in T> : IHandler<T> where T : IEvent
+    [PublicApi]
+    public interface ISpecEventHandler<in T> : IEventHandler<T>, ISpecHandler<T> where T : IEvent
     {
     }
 }

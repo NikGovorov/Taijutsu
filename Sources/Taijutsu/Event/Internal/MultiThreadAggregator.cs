@@ -19,53 +19,60 @@ namespace Taijutsu.Event.Internal
     {
         private readonly object sync = new object();
 
-        protected override Action Subscribe(IInternalEventHandler handler)
+        public override IDisposable Subscribe(IEventHandlerSettings handlerSettings)
         {
+            if (!typeof(IEvent).IsAssignableFrom(handlerSettings.Type))
+            {
+                throw new Exception(string.Format("'{0}' does not implement '{1}'.", handlerSettings.Type, typeof(IEvent)));
+            }
+
             lock (sync)
             {
-                IList<IInternalEventHandler> internalEventHandlers;
-                if (!Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
+                IList<IEventHandlerSettings> internalEventHandlers;
+                if (!Handlers.TryGetValue(handlerSettings.Type, out internalEventHandlers))
                 {
-                    var newHandlers = new Dictionary<Type, IList<IInternalEventHandler>>(Handlers) { { handler.EventType, new List<IInternalEventHandler> { handler } } };
+                    var newHandlers = new Dictionary<Type, IList<IEventHandlerSettings>>(Handlers) { { handlerSettings.Type, new List<IEventHandlerSettings> { handlerSettings } } };
 
                     Handlers = newHandlers;
                 }
                 else
                 {
-                    var newInternalEventHandlers = new List<IInternalEventHandler>(internalEventHandlers) { handler };
-                    Handlers[handler.EventType] = newInternalEventHandlers;
+                    var newInternalEventHandlers = new List<IEventHandlerSettings>(internalEventHandlers) { handlerSettings };
+                    Handlers[handlerSettings.Type] = newInternalEventHandlers;
                 }
             }
 
-            return UnsubscriptionAction(handler);
+            return UnsubscriptionAction(handlerSettings);
         }
 
-        protected override Action UnsubscriptionAction(IInternalEventHandler handler)
+        protected override IDisposable UnsubscriptionAction(IEventHandlerSettings handlerSettings)
         {
-            return delegate
+            Action action = delegate
             {
                 lock (sync)
                 {
-                    IList<IInternalEventHandler> internalEventHandlers;
-                    if (!Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
+                    IList<IEventHandlerSettings> internalEventHandlers;
+                    if (!Handlers.TryGetValue(handlerSettings.Type, out internalEventHandlers))
                     {
                         return;
                     }
 
-                    var newInternalEventHandlers = new List<IInternalEventHandler>(internalEventHandlers);
-                    if (newInternalEventHandlers.Remove(handler))
+                    var newInternalEventHandlers = new List<IEventHandlerSettings>(internalEventHandlers);
+                    if (newInternalEventHandlers.Remove(handlerSettings))
                     {
-                        Handlers[handler.EventType] = newInternalEventHandlers;
+                        Handlers[handlerSettings.Type] = newInternalEventHandlers;
                     }
                 }
             };
+
+            return action.AsDisposable();
         }
 
         protected override void Reset()
         {
             lock (sync)
             {
-                Handlers = new Dictionary<Type, IList<IInternalEventHandler>>();
+                Handlers = new Dictionary<Type, IList<IEventHandlerSettings>>();
             }
         }
     }

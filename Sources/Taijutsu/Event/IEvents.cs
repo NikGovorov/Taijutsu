@@ -11,19 +11,32 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.ComponentModel;
+
+using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Event
 {
+    [PublicApi]
     public interface IEvents
     {
-        IEventStream OnStream { get; }
+        ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent;
 
-        SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent;
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        IDisposable Subscribe(IEventHandlerSettings handlerSettings);
 
-        Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent;
+        IDisposable Subscribe<TEvent>(Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent;
 
-        Action Subscribe<TEvent>(IEventHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent;
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        void Publish(object ev);
 
-        void Publish<TEvent>(TEvent ev) where TEvent : IEvent;
+        void Publish<TEvent>(TEvent ev) where TEvent : class, IEvent;
+    }
+
+    [PublicApi]
+    // ReSharper disable once UnusedTypeParameter
+    public interface IEvents<TEvent> : IEvents, ISubscriptionSyntax<TEvent> where TEvent : class, IEvent
+    {
+        void Publish(TEvent ev);
     }
 }

@@ -13,34 +13,12 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-using Taijutsu.Domain.Event;
-using Taijutsu.Event;
-
 namespace Taijutsu.Domain
 {
     [PublicApi]
     [Serializable]
     public abstract class Entity : IdentifiableObject<object>, IEntity
     {
-        protected static IEventStream OnStream
-        {
-            get { return Events.OnStream; }
-        }
-
-        protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
-        {
-            return OnStream.Of<TEvent>();
-        }
-
-        protected static void Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
-        {
-            OnStream.Of<TEvent>().Subscribe(subscriber, priority);
-        }
-
-        protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
-        {
-            Events.Publish(ev);
-        }
     }
 
     [Serializable]
@@ -55,11 +33,6 @@ namespace Taijutsu.Domain
             get { return id; }
 
             protected set { id = value; }
-        }
-
-        protected static IEventStream OnStream
-        {
-            get { return Events.OnStream; }
         }
 
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
@@ -100,21 +73,6 @@ namespace Taijutsu.Domain
             }
 
             return InternalGetType() == other.InternalGetType() && Equals(other as IdentifiableObject<TId>);
-        }
-
-        protected static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
-        {
-            return OnStream.Of<TEvent>();
-        }
-
-        protected static void Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
-        {
-            OnStream.Of<TEvent>().Subscribe(subscriber, priority);
-        }
-
-        protected void Publish<TDomainEvent>(TDomainEvent ev) where TDomainEvent : IDomainEvent
-        {
-            Events.Publish(ev);
         }
 
         protected override TId BuildIdentity()

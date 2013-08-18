@@ -18,82 +18,94 @@ using System.Threading.Tasks;
 
 namespace Taijutsu.Event.Internal
 {
-    public class SingleThreadAggregator : IEvents, IEventStream, IResettable
+    public class SingleThreadAggregator : IEvents, IResettable
     {
         private static readonly object sync = new object();
 
         private static IDictionary<Type, IEnumerable<Type>> targets = new Dictionary<Type, IEnumerable<Type>>();
 
-        private IDictionary<Type, IList<IInternalEventHandler>> handlers = new Dictionary<Type, IList<IInternalEventHandler>>();
+        private IDictionary<Type, IList<IEventHandlerSettings>> handlers = new Dictionary<Type, IList<IEventHandlerSettings>>();
 
-        public virtual IEventStream OnStream
-        {
-            get { return this; }
-        }
-
-        protected virtual IDictionary<Type, IList<IInternalEventHandler>> Handlers
+        protected virtual IDictionary<Type, IList<IEventHandlerSettings>> Handlers
         {
             get { return handlers; }
-
             set { handlers = value; }
         }
 
         protected virtual IDictionary<Type, IEnumerable<Type>> Targets
         {
             get { return targets; }
-
             set { targets = value; }
         }
 
-        public virtual SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
+        public ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent
         {
-            return OnStream.Of<TEvent>();
+            return new SubscriptionSyntax<TEvent>(Subscribe, new List<Func<TEvent, bool>> { filter });
         }
 
-        public virtual Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
+        public virtual IDisposable Subscribe(IEventHandlerSettings handlerSettings)
         {
-            return OnStream.Of<TEvent>().Subscribe(subscriber, priority);
-        }
-
-        public virtual Action Subscribe<TEvent>(IEventHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
-        {
-            return OnStream.Of<TEvent>().Subscribe(subscriber, priority);
-        }
-
-        public virtual void Publish<TEvent>(TEvent ev) where TEvent : IEvent
-        {
-            var eventHandlers = new List<IInternalEventHandler>();
-
-            var potentialSubscriberTypes = PotentialSubscriberTypes(ev.GetType());
-
-            foreach (var targetType in potentialSubscriberTypes)
+            if (!typeof(IEvent).IsAssignableFrom(handlerSettings.Type))
             {
-                IList<IInternalEventHandler> internalEventHandlers;
-                if (Handlers.TryGetValue(targetType, out internalEventHandlers))
+                throw new Exception(string.Format("'{0}' does not implement '{1}'.", handlerSettings.Type, typeof(IEvent)));
+            }
+
+            IList<IEventHandlerSettings> internalEventHandlers;
+
+            if (!Handlers.TryGetValue(handlerSettings.Type, out internalEventHandlers))
+            {
+                Handlers.Add(handlerSettings.Type, new List<IEventHandlerSettings> { handlerSettings });
+            }
+            else
+            {
+                internalEventHandlers.Add(handlerSettings);
+            }
+
+            return UnsubscriptionAction(handlerSettings);
+        }
+
+        public IDisposable Subscribe<TEvent>(Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent
+        {
+            return new SubscriptionSyntax<TEvent>(Subscribe).Subscribe(handler, priority);
+        }
+
+        public virtual void Publish(object ev)
+        {
+            if (ev == null)
+            {
+                throw new ArgumentException("ev");
+            }
+
+            if (ev is IEvent)
+            {
+                var eventHandlers = new List<IEventHandlerSettings>();
+
+                var potentialSubscriberTypes = PotentialSubscriberTypes(ev.GetType());
+
+                foreach (var targetType in potentialSubscriberTypes)
                 {
-                    eventHandlers.AddRange(internalEventHandlers);
+                    IList<IEventHandlerSettings> internalEventHandlers;
+                    if (Handlers.TryGetValue(targetType, out internalEventHandlers))
+                    {
+                        eventHandlers.AddRange(internalEventHandlers);
+                    }
+                }
+
+                foreach (var handler in eventHandlers.OrderByDescending(h => h.Priority))
+                {
+                    handler.Action(ev);
                 }
             }
-
-            foreach (var handler in eventHandlers.OrderByDescending(h => h.Priority))
-            {
-                handler.HandlerAction(ev);
-            }
         }
 
-        SubscriptionSyntax.All<TEvent> IEventStream.Of<TEvent>()
+        public void Publish<TEvent>(TEvent ev) where TEvent : class, IEvent
         {
-            return Of<TEvent>();
+            Publish(ev as object);
         }
 
         void IResettable.Reset()
         {
             Reset();
-        }
-
-        protected virtual SubscriptionSyntax.All<TEvent> Of<TEvent>() where TEvent : class, IEvent
-        {
-            return new SubscriptionSyntax.AllImpl<TEvent>(Subscribe);
         }
 
         protected virtual IEnumerable<Type> PotentialSubscriberTypes(Type type)
@@ -163,32 +175,18 @@ namespace Taijutsu.Event.Internal
             // ReSharper restore ImplicitlyCapturedClosure
         }
 
-        protected virtual Action Subscribe(IInternalEventHandler handler)
+        protected virtual IDisposable UnsubscriptionAction(IEventHandlerSettings handlerSettings)
         {
-            IList<IInternalEventHandler> internalEventHandlers;
-
-            if (!Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
+            Action action = delegate
             {
-                Handlers.Add(handler.EventType, new List<IInternalEventHandler> { handler });
-            }
-            else
-            {
-                internalEventHandlers.Add(handler);
-            }
-
-            return UnsubscriptionAction(handler);
-        }
-
-        protected virtual Action UnsubscriptionAction(IInternalEventHandler handler)
-        {
-            return delegate
-            {
-                IList<IInternalEventHandler> internalEventHandlers;
-                if (Handlers.TryGetValue(handler.EventType, out internalEventHandlers))
+                IList<IEventHandlerSettings> internalEventHandlers;
+                if (Handlers.TryGetValue(handlerSettings.Type, out internalEventHandlers))
                 {
-                    internalEventHandlers.Remove(handler);
+                    internalEventHandlers.Remove(handlerSettings);
                 }
             };
+
+            return action.AsDisposable();
         }
 
         protected virtual void Reset()

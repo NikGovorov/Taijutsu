@@ -12,70 +12,53 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Event
 {
-    public static class SubscriptionSyntax
+    public interface ISubscriptionSyntax<out TEvent> : IHiddenObjectMembers where TEvent : IEvent
     {
-        // ReSharper disable InconsistentNaming
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1302:InterfaceNamesMustBeginWithI", 
-            Justification = "Reviewed. Interfaces which participate as part of fluent syntax can violate the rule.")]
-        public interface All<out TSource> : IHiddenObjectMembers
+        ISubscriptionSyntax<TEvent> Where(Func<TEvent, bool> filter);
+
+        IDisposable Subscribe(Action<TEvent> handler, int priority = 0);
+    }
+
+    public class SubscriptionSyntax<TEvent> : ISubscriptionSyntax<TEvent> where TEvent : class, IEvent
+    {
+        private readonly Func<IEventHandlerSettings, IDisposable> subscribeImplementation;
+
+        private readonly List<Func<TEvent, bool>> filters = new List<Func<TEvent, bool>>();
+
+        public SubscriptionSyntax(Func<IEventHandlerSettings, IDisposable> subscribeImplementation, IEnumerable<Func<TEvent, bool>> filters = null)
         {
-            All<TSource> Where(Func<TSource, bool> filter);
+            this.subscribeImplementation = subscribeImplementation;
 
-            Action Subscribe(Action<TSource> subscriber, int priority = 0);
-
-            Action Subscribe(IEventHandler<TSource> subscriber, int priority = 0);
-        }
-
-        internal class AllImpl<TEvent> : All<TEvent> where TEvent : class
-        {
-            private readonly Func<IInternalEventHandler, Action> addHadlerAction;
-
-            private readonly List<Func<TEvent, bool>> eventFilters = new List<Func<TEvent, bool>>();
-
-            internal AllImpl(Func<IInternalEventHandler, Action> addHadlerAction, IEnumerable<Func<TEvent, bool>> eventFilters = null)
+            if (filters != null)
             {
-                this.addHadlerAction = addHadlerAction;
-
-                if (eventFilters != null)
-                {
-                    this.eventFilters.AddRange(eventFilters);
-                }
-            }
-
-            public Func<IInternalEventHandler, Action> AddHadlerAction
-            {
-                get { return addHadlerAction; }
-            }
-
-            public IEnumerable<Func<TEvent, bool>> EventFilters
-            {
-                get { return eventFilters; }
-            }
-
-            public All<TEvent> Where(Func<TEvent, bool> filter)
-            {
-                eventFilters.Add(filter);
-                return new AllImpl<TEvent>(AddHadlerAction, eventFilters);
-            }
-
-            public Action Subscribe(Action<TEvent> subscriber, int priority = 0)
-            {
-                return AddHadlerAction(new InternalEventHandler<TEvent>(subscriber, e => eventFilters.All(f => f(e)), priority));
-            }
-
-            public Action Subscribe(IEventHandler<TEvent> subscriber, int priority = 0)
-            {
-                return Subscribe(subscriber.Handle, priority);
+                this.filters.AddRange(filters);
             }
         }
 
-        // ReSharper restore InconsistentNaming
+        public Func<IEventHandlerSettings, IDisposable> SubscribeImplementation
+        {
+            get { return subscribeImplementation; }
+        }
+
+        public List<Func<TEvent, bool>> Filters
+        {
+            get { return filters; }
+        }
+
+        public ISubscriptionSyntax<TEvent> Where(Func<TEvent, bool> filter)
+        {
+            filters.Add(filter);
+            return new SubscriptionSyntax<TEvent>(subscribeImplementation, filters);
+        }
+
+        public IDisposable Subscribe(Action<TEvent> handler, int priority = 0)
+        {
+            return subscribeImplementation(new TypedHandlerSettings<TEvent>(() => new SpecEventHandler<TEvent>(handler), filters, priority));
+        }
     }
 }

@@ -76,49 +76,20 @@ namespace Taijutsu.Event
             }
         }
 
-        public static IEventStream OnStream
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static IDisposable Subscribe(IEventHandlerSettings handlerSettings)
         {
-            get { return globalEvents.OnStream; }
-        }
-
-        IEventStream IEvents.OnStream
-        {
-            get { return OnStream; }
-        }
-
-        public static SubscriptionSyntax.All<TEvent> OnStreamOf<TEvent>() where TEvent : class, IEvent
-        {
-            return globalEvents.OnStreamOf<TEvent>();
-        }
-
-        public static Action Subscribe<TEvent>(Action<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
-        {
-            if (subscriber == null)
+            if (handlerSettings == null)
             {
-                throw new ArgumentNullException("subscriber");
+                throw new ArgumentNullException("handlerSettings");
             }
 
-            return globalEvents.Subscribe(subscriber, priority);
+            return globalEvents.Subscribe(handlerSettings);
         }
 
-        public static Action Subscribe<TEvent>(IEventHandler<TEvent> subscriber, int priority = 0) where TEvent : class, IEvent
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void Publish(object ev)
         {
-            if (subscriber == null)
-            {
-                throw new ArgumentNullException("subscriber");
-            }
-
-            return globalEvents.Subscribe(subscriber, priority);
-        }
-
-        [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
-        public static void Publish<TEvent>(TEvent ev) where TEvent : IEvent
-        {
-            if (Equals(ev, default(TEvent)))
-            {
-                throw new ArgumentNullException("ev");
-            }
-
             var localEventAggregator = FindLocalEventAggregator();
 
             if (localEventAggregator != null)
@@ -129,29 +100,71 @@ namespace Taijutsu.Event
             globalEvents.Publish(ev);
         }
 
-        SubscriptionSyntax.All<TEvent> IEvents.OnStreamOf<TEvent>()
+        public static ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent
         {
-            return Current.OnStreamOf<TEvent>();
+            return globalEvents.Where(filter);
         }
 
-        Action IEvents.Subscribe<TEvent>(Action<TEvent> subscriber, int priority)
+        public static IDisposable Subscribe<TEvent>(Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent
         {
-            return Current.Subscribe(subscriber, priority);
+            return globalEvents.Subscribe(handler, priority);
         }
 
-        Action IEvents.Subscribe<TEvent>(IEventHandler<TEvent> subscriber, int priority)
+        public static void Publish<TEvent>(TEvent ev) where TEvent : class, IEvent
         {
-            return Current.Subscribe(subscriber, priority);
+            Publish(ev as object);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        IDisposable IEvents.Subscribe(IEventHandlerSettings handlerSettings)
+        {
+            return Subscribe(handlerSettings);
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        void IEvents.Publish(object ev)
+        {
+            Publish(ev);
+        }
+
+        ISubscriptionSyntax<TEvent> IEvents.Where<TEvent>(Func<TEvent, bool> filter)
+        {
+            return Where(filter);
+        }
+
+        IDisposable IEvents.Subscribe<TEvent>(Action<TEvent> handler, int priority)
+        {
+            return Subscribe(handler, priority);
         }
 
         void IEvents.Publish<TEvent>(TEvent ev)
         {
-            Current.Publish(ev);
+            Publish(ev);
         }
 
         private static IEvents FindLocalEventAggregator()
         {
             return LogicContext.FindData(LocalEventAggregatorName) as IEvents;
+        }
+    }
+
+    [PublicApi]
+    [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Acceptable for generic and non-generic classes.")]
+    public sealed class Events<TEvent> where TEvent : class, IEvent
+    {
+        public static ISubscriptionSyntax<TEvent> Where(Func<TEvent, bool> filter)
+        {
+            return Events.Where(filter);
+        }
+
+        public static IDisposable Subscribe(Action<TEvent> handler, int priority = 0)
+        {
+            return Events.Subscribe(handler, priority);
+        }
+
+        public static void Publish(TEvent ev)
+        {
+            Events.Publish(ev);
         }
     }
 }

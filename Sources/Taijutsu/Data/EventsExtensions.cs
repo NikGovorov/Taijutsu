@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿/*// Copyright 2009-2013 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -22,14 +22,14 @@ namespace Taijutsu.Data
 {
     public interface IHandledSafelySyntax<out TSource>
     {
-        Action Subscribe(Action<TSource> subscriber, int priority = 0);
+        IDisposable Subscribe(Action<TSource> subscriber, int priority = 0);
     }
 
     [PublicApi]
     [EditorBrowsable(EditorBrowsableState.Never)]
-    public static class EventAggregatorExtensions
+    public static class EventsExtensions
     {
-        public static IHandledSafelySyntax<TSource> HandledSafely<TSource>(this SubscriptionSyntax.All<TSource> self)
+        public static IHandledSafelySyntax<TSource> HandledSafely<TSource>(this SubscriptionSyntax.All<TSource> self) where TSource : IEvent
         {
             if (self == null)
             {
@@ -39,7 +39,7 @@ namespace Taijutsu.Data
             return new HandledSafelySyntaxAllImpl<TSource>(self);
         }
 
-        private class HandledSafelySyntaxAllImpl<TSource> : HandledSafelySyntaxImpl<TSource>
+        private class HandledSafelySyntaxAllImpl<TSource> : HandledSafelySyntaxImpl<TSource> where TSource : IEvent
         {
             private readonly SubscriptionSyntax.All<TSource> target;
 
@@ -53,7 +53,7 @@ namespace Taijutsu.Data
                 this.target = target;
             }
 
-            public override Action Subscribe(Action<TSource> subscriber, int priority = 0)
+            public override IDisposable Subscribe(Action<TSource> subscriber, int priority = 0)
             {
                 if (subscriber == null)
                 {
@@ -66,7 +66,7 @@ namespace Taijutsu.Data
 
         private abstract class HandledSafelySyntaxImpl<TSource> : IHandledSafelySyntax<TSource>
         {
-            public abstract Action Subscribe(Action<TSource> subscriber, int priority = 0);
+            public abstract IDisposable Subscribe(Action<TSource> subscriber, int priority = 0);
 
             protected virtual Action<TSource> WrapSubscriber(Action<TSource> subscriber)
             {
@@ -124,4 +124,4 @@ namespace Taijutsu.Data
             }
         }
     }
-}
+}*/

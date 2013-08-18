@@ -11,6 +11,8 @@
     <AssemblyName>Taijutsu</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -57,7 +59,7 @@
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActionExtensions.cs" />
-    <Compile Include="Data\EventAggregatorExtensions.cs" />
+    <Compile Include="Data\EventsExtensions.cs" />
     <Compile Include="Data\Internal\ConstructionScope.cs" />
     <Compile Include="Data\Internal\DataContext.cs" />
     <Compile Include="Data\Internal\DataContextSupervisor.cs" />
@@ -80,14 +82,19 @@
     <Compile Include="Event\Events.cs" />
     <Compile Include="Event\ExternalEvent.cs" />
     <Compile Include="Event\IEvent.cs" />
+    <Compile Include="Event\Internal\DynamicHandlerSettings.cs" />
+    <Compile Include="Event\Internal\TypedHandlerSettings.cs" />
+    <Compile Include="Event\SpecEventHandler.cs" />
+    <Compile Include="Event\ISpecEventHandler.cs" />
     <Compile Include="Event\IEvents.cs" />
     <Compile Include="Event\IEventHandler.cs" />
-    <Compile Include="Event\IEventStream.cs" />
     <Compile Include="Event\IExternalEvent.cs" />
-    <Compile Include="Event\Internal\InternalEventHandler.cs" />
+    <Compile Include="Event\Internal\EventHandlerSettings.cs" />
     <Compile Include="Event\Internal\MultiThreadAggregator.cs" />
     <Compile Include="Event\Internal\SingleThreadAggregator.cs" />
     <Compile Include="Event\SubscriptionSyntax.cs" />
+    <Compile Include="ISpecHandler.cs" />
+    <Compile Include="IHandler.cs" />
     <Compile Include="ScopeFinishedEventArgs.cs" />
     <Compile Include="Data\Internal\SuppressionScope.cs" />
     <Compile Include="Data\OperationScope.cs" />
@@ -161,6 +168,7 @@
     <Compile Include="TimeController.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

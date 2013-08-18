@@ -10,9 +10,30 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System;
+
 namespace Taijutsu.Event
 {
-    public interface IEventHandler<in T> : IHandler<T> where T : IEvent
+    public class SpecEventHandler<T> : ISpecEventHandler<T> where T : IEvent
     {
+        private readonly Action<T> handler;
+
+        private readonly Func<T, bool> filter;
+
+        public SpecEventHandler(Action<T> handler, Func<T, bool> filter = null)
+        {
+            this.handler = handler;
+            this.filter = filter;
+        }
+
+        public void Handle(T ev)
+        {
+            handler(ev);
+        }
+
+        public bool IsSatisfiedBy(T ev)
+        {
+            return filter == null || filter(ev);
+        }
     }
 }

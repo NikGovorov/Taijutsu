@@ -10,9 +10,10 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-namespace Taijutsu.Event
+namespace Taijutsu
 {
-    public interface IEventHandler<in T> : IHandler<T> where T : IEvent
+    public interface IHandler<in T>
     {
+        void Handle(T subject);
     }
 }

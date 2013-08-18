@@ -24,7 +24,7 @@ namespace Taijutsu.Test.Domain.Model
 
         static Customer()
         {
-            Subscribe<OrderCreated>(ev => ev.Customer.Handle(ev));
+            //Subscribe<OrderCreated>(ev => ev.Customer.Handle(ev));
         }
 
         public Customer(Guid id, FullName name)
