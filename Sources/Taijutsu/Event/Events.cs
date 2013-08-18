@@ -110,6 +110,11 @@ namespace Taijutsu.Event
             return globalEvents.Subscribe(handler, priority);
         }
 
+        public static IDisposable Subscribe<TEvent>(Action<IEventBatch<TEvent>> handler, int priority = 0) where TEvent : class, IEvent
+        {
+            return null;
+        }
+
         public static void Publish<TEvent>(TEvent ev) where TEvent : class, IEvent
         {
             Publish(ev as object);

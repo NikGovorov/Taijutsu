@@ -20,7 +20,7 @@ namespace Taijutsu.Test.Domain.Model
     {
         public Order(Customer customer)
         {
-           //Publish(new OrderCreated(this, customer));
+           // Publish(new OrderCreated(this, customer));
         }
 
         public Order(Guid id)

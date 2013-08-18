@@ -9,9 +9,16 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
-namespace Taijutsu.Event
+
+using Taijutsu.Event;
+
+namespace Taijutsu.Sample
 {
-    public interface IEventHandler<in T> : IHandler<T> where T : IEvent
+    public class BatchFixture
     {
+        public virtual void Run()
+        {
+            //Events<SystemStopped>.Subscribe(batch)
+        }
     }
 }

@@ -22,10 +22,10 @@ namespace Taijutsu.Test.Domain.Model
 
         private FullName name;
 
-        static Customer()
-        {
-            //Subscribe<OrderCreated>(ev => ev.Customer.Handle(ev));
-        }
+        // static Customer()
+        // {
+            // Subscribe<OrderCreated>(ev => ev.Customer.Handle(ev));
+        // }
 
         public Customer(Guid id, FullName name)
         {

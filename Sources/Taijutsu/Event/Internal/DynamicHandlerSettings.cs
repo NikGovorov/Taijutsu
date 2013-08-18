@@ -51,17 +51,17 @@ namespace Taijutsu.Event.Internal
             this.priority = priority;
         }
 
-        int IEventHandlerSettings.Priority
+        public int Priority
         {
             get { return priority; }
         }
 
-        Type IEventHandlerSettings.Type
+        public Type Type
         {
             get { return type; }
         }
 
-        Action<object> IEventHandlerSettings.Action
+        public Action<object> Action
         {
             get
             {
@@ -161,7 +161,6 @@ namespace Taijutsu.Event.Internal
 
             // ReSharper restore PossiblyMistakenUseOfParamsMethod
             // ReSharper restore AssignNullToNotNullAttribute
-
             return new Tuple<Handle, IsSatisfiedBy>(handleCaller, isSatisfiedByCaller);
         }
     }
