@@ -14,16 +14,13 @@ using System;
 
 namespace Taijutsu.Data.Internal
 {
-    public interface IDataContext : ICompletableScope
+    public class FinishedEventArgs : EventArgs
     {
-        event EventHandler<FinishedEventArgs> BeforeCompleted;
+        public FinishedEventArgs(bool completed)
+        {
+            Completed = completed;
+        }
 
-        event EventHandler<FinishedEventArgs> AfterCompleted;
-
-        event EventHandler<FinishedEventArgs> Finished;
-        
-        IOrmSession Session { get; }
-
-        dynamic Extra { get; }
+        public bool Completed { get; private set; }
     }
 }

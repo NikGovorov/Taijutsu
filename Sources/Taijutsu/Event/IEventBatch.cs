@@ -12,7 +12,7 @@
 
 namespace Taijutsu.Event
 {
-    public interface IEventBatch<out TEvent> where TEvent : IEvent
+    public interface IEventBatch<out TEvent> : IEvent
     {
         TEvent[] Events { get; }
     }

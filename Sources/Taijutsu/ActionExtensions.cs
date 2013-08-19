@@ -11,9 +11,11 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.ComponentModel;
 
 namespace Taijutsu
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class ActionExtensions
     {
         public static IDisposable AsDisposable(this Action self)

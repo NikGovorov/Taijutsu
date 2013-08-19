@@ -75,13 +75,17 @@
     <Compile Include="Data\Internal\MarkingStep.cs" />
     <Compile Include="Data\Internal\OrmSessionBuilder.cs" />
     <Compile Include="Data\Internal\OrmSpecificSession.cs" />
+    <Compile Include="Data\Internal\FinishedEventArgs.cs" />
     <Compile Include="Domain\Event\DomainEvent.cs" />
     <Compile Include="Domain\Event\IDomainEvent.cs" />
     <Compile Include="Domain\ICompositeSpecification.cs" />
     <Compile Include="Event\Event.cs" />
+    <Compile Include="Event\EventBatch.cs" />
     <Compile Include="Event\Events.cs" />
     <Compile Include="Event\ExternalEvent.cs" />
     <Compile Include="Event\IEvent.cs" />
+    <Compile Include="Event\IEventBatch.cs" />
+    <Compile Include="Event\Internal\AbstractHandlerSettings.cs" />
     <Compile Include="Event\Internal\DynamicHandlerSettings.cs" />
     <Compile Include="Event\Internal\TypedHandlerSettings.cs" />
     <Compile Include="Event\SpecEventHandler.cs" />
@@ -95,7 +99,6 @@
     <Compile Include="Event\SubscriptionSyntax.cs" />
     <Compile Include="ISpecHandler.cs" />
     <Compile Include="IHandler.cs" />
-    <Compile Include="ScopeFinishedEventArgs.cs" />
     <Compile Include="Data\Internal\SuppressionScope.cs" />
     <Compile Include="Data\OperationScope.cs" />
     <Compile Include="Data\UnitOfWork.cs" />

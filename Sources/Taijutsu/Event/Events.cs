@@ -23,34 +23,10 @@ namespace Taijutsu.Event
     {
         private const string LocalEventAggregatorName = "Taijutsu.LocalEventAggregator";
 
-        private static readonly object sync = new object();
-
         private static readonly IEvents globalEvents = new MultiThreadAggregator();
-
-        private static IEvents current;
 
         private Events()
         {
-        }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEvents Current
-        {
-            get
-            {
-                if (current == null)
-                {
-                    lock (sync)
-                    {
-                        if (current == null)
-                        {
-                            current = new Events();
-                        }
-                    }
-                }
-
-                return current;
-            }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -77,14 +53,14 @@ namespace Taijutsu.Event
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IDisposable Subscribe(IEventHandlerSettings handlerSettings)
+        public static IDisposable Subscribe(IEventHandlingSettings handlingSettings)
         {
-            if (handlerSettings == null)
+            if (handlingSettings == null)
             {
-                throw new ArgumentNullException("handlerSettings");
+                throw new ArgumentNullException("handlingSettings");
             }
 
-            return globalEvents.Subscribe(handlerSettings);
+            return globalEvents.Subscribe(handlingSettings);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -100,6 +76,16 @@ namespace Taijutsu.Event
             globalEvents.Publish(ev);
         }
 
+        public static IEvents OfAnyType()
+        {
+            return new Events();
+        }
+
+        public static IEvents<TEvent> OfType<TEvent>() where TEvent : class, IEvent
+        {
+            return new Events<TEvent>();
+        }
+
         public static ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent
         {
             return globalEvents.Where(filter);
@@ -110,20 +96,15 @@ namespace Taijutsu.Event
             return globalEvents.Subscribe(handler, priority);
         }
 
-        public static IDisposable Subscribe<TEvent>(Action<IEventBatch<TEvent>> handler, int priority = 0) where TEvent : class, IEvent
-        {
-            return null;
-        }
-
         public static void Publish<TEvent>(TEvent ev) where TEvent : class, IEvent
         {
             Publish(ev as object);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        IDisposable IEvents.Subscribe(IEventHandlerSettings handlerSettings)
+        IDisposable IEvents.Subscribe(IEventHandlingSettings handlingSettings)
         {
-            return Subscribe(handlerSettings);
+            return Subscribe(handlingSettings);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -155,8 +136,12 @@ namespace Taijutsu.Event
 
     [PublicApi]
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Acceptable for generic and non-generic classes.")]
-    public sealed class Events<TEvent> where TEvent : class, IEvent
+    public sealed class Events<TEvent> : IEvents<TEvent> where TEvent : class, IEvent
     {
+        internal Events()
+        {
+        }
+
         public static ISubscriptionSyntax<TEvent> Where(Func<TEvent, bool> filter)
         {
             return Events.Where(filter);
@@ -170,6 +155,21 @@ namespace Taijutsu.Event
         public static void Publish(TEvent ev)
         {
             Events.Publish(ev);
+        }
+
+        IDisposable ISubscriptionSyntax<TEvent>.Subscribe(Action<TEvent> handler, int priority)
+        {
+            return Subscribe(handler, priority);
+        }
+
+        ISubscriptionSyntax<TEvent> ISubscriptionSyntax<TEvent>.Where(Func<TEvent, bool> filter)
+        {
+            return Where(filter);
+        }
+
+        void IEvents<TEvent>.Publish(TEvent ev)
+        {
+            Publish(ev);
         }
     }
 }

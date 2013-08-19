@@ -198,7 +198,7 @@ namespace Taijutsu.Test.Data
 
             Awaken(contextDecorator);
 
-            EventHandler<ScopeFinishedEventArgs> eventHandler = (sender, e) => { throw new InstanceNotFoundException(); };
+            EventHandler<FinishedEventArgs> eventHandler = (sender, e) => { throw new InstanceNotFoundException(); };
             ((IDataContext)contextDecorator).Finished += eventHandler;
 
             try
@@ -256,7 +256,7 @@ namespace Taijutsu.Test.Data
 
             Awaken(subordinate);
 
-            EventHandler<ScopeFinishedEventArgs> eventHandler = (sender, e) => { called = true; };
+            EventHandler<FinishedEventArgs> eventHandler = (sender, e) => { called = true; };
             ((IDataContext)subordinate).Finished += eventHandler;
             ((IDataContext)subordinate).Finished -= eventHandler;
             context.Dispose();

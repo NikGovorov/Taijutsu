@@ -56,6 +56,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Taijutsu.Test\Taijutsu.Test.csproj">
+      <Project>{552657C5-9B97-4AD0-A001-AF071E734644}</Project>
+      <Name>Taijutsu.Test</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Taijutsu\Taijutsu.csproj">
       <Project>{1353B9D0-A422-4149-B916-65F855ABACB5}</Project>
       <Name>Taijutsu</Name>

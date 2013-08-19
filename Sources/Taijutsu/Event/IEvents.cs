@@ -23,7 +23,7 @@ namespace Taijutsu.Event
         ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        IDisposable Subscribe(IEventHandlerSettings handlerSettings);
+        IDisposable Subscribe(IEventHandlingSettings handlingSettings);
 
         IDisposable Subscribe<TEvent>(Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent;
 
@@ -35,7 +35,7 @@ namespace Taijutsu.Event
 
     [PublicApi]
     // ReSharper disable once UnusedTypeParameter
-    public interface IEvents<TEvent> : IEvents, ISubscriptionSyntax<TEvent> where TEvent : class, IEvent
+    public interface IEvents<TEvent> : ISubscriptionSyntax<TEvent> where TEvent : class, IEvent
     {
         void Publish(TEvent ev);
     }

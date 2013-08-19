@@ -1,4 +1,4 @@
-// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2013 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -12,18 +12,20 @@
 
 using System;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.Event.Internal
 {
-    public interface IDataContext : ICompletableScope
+    public abstract class AbstractHandlingSettings : IEventHandlingSettings
     {
-        event EventHandler<FinishedEventArgs> BeforeCompleted;
+        protected AbstractHandlingSettings(Type type, int priority)
+        {
+            Type = type;
+            Priority = priority;
+        }
 
-        event EventHandler<FinishedEventArgs> AfterCompleted;
+        public abstract Action<object> Action { get; }
 
-        event EventHandler<FinishedEventArgs> Finished;
-        
-        IOrmSession Session { get; }
+        public Type Type { get; private set; }
 
-        dynamic Extra { get; }
+        public int Priority { get; private set; }
     }
 }

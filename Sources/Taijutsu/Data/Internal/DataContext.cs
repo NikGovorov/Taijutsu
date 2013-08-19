@@ -11,6 +11,8 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Dynamic;
 
 namespace Taijutsu.Data.Internal
 {
@@ -21,6 +23,8 @@ namespace Taijutsu.Data.Internal
         private readonly Lazy<IOrmSession> session;
 
         private readonly ITerminationPolicy terminationPolicy;
+
+        private ExpandoObject extra;
 
         private int subordinatesCount;
 
@@ -48,9 +52,16 @@ namespace Taijutsu.Data.Internal
             this.configuration = configuration;
             this.session = session;
             this.terminationPolicy = terminationPolicy;
+            extra = new ExpandoObject();
+
+            ((dynamic)extra).Extensions = new Dictionary<string, object>();
         }
 
-        public event EventHandler<ScopeFinishedEventArgs> Finished;
+        public event EventHandler<FinishedEventArgs> BeforeCompleted;
+
+        public event EventHandler<FinishedEventArgs> AfterCompleted;
+
+        public event EventHandler<FinishedEventArgs> Finished;
 
         public IOrmSession Session
         {
@@ -60,6 +71,11 @@ namespace Taijutsu.Data.Internal
 
                 return session.Value;
             }
+        }
+
+        public dynamic Extra
+        {
+            get { return extra; }
         }
 
         public virtual UnitOfWorkConfig Configuration
@@ -97,6 +113,18 @@ namespace Taijutsu.Data.Internal
                     throw new Exception("Unit of work can not be successfully completed, because not all subordinates are completed.");
                 }
 
+                if (BeforeCompleted != null)
+                {
+                    try
+                    {
+                        BeforeCompleted(this, new FinishedEventArgs(true));
+                    }
+                    finally
+                    {
+                        BeforeCompleted = null;
+                    }
+                }
+
                 if (session.IsValueCreated)
                 {
                     session.Value.Complete();
@@ -108,6 +136,18 @@ namespace Taijutsu.Data.Internal
             {
                 completed = false;
                 throw;
+            }
+
+            if (AfterCompleted != null)
+            {
+                try
+                {
+                    AfterCompleted(this, new FinishedEventArgs(true));
+                }
+                finally
+                {
+                    AfterCompleted = null;
+                }
             }
         }
 
@@ -133,7 +173,7 @@ namespace Taijutsu.Data.Internal
                     {
                         if (Finished != null)
                         {
-                            Finished(this, new ScopeFinishedEventArgs(completed.HasValue && completed.Value));
+                            Finished(this, new FinishedEventArgs(completed.HasValue && completed.Value));
                         }
                     }
                     finally
@@ -147,6 +187,9 @@ namespace Taijutsu.Data.Internal
             }
             finally
             {
+                extra = null;
+                BeforeCompleted = null;
+                AfterCompleted = null;
                 Finished = null;
                 disposed = true;
             }
@@ -193,7 +236,37 @@ namespace Taijutsu.Data.Internal
                 master.RegisterUncompletedSubordinate();
             }
 
-            event EventHandler<ScopeFinishedEventArgs> IDataContext.Finished
+            event EventHandler<FinishedEventArgs> IDataContext.BeforeCompleted
+            {
+                add
+                {
+                    AssertNotDisposed();
+                    master.BeforeCompleted += value;
+                }
+
+                remove
+                {
+                    AssertNotDisposed();
+                    master.BeforeCompleted -= value;
+                }
+            }
+
+            event EventHandler<FinishedEventArgs> IDataContext.AfterCompleted
+            {
+                add
+                {
+                    AssertNotDisposed();
+                    master.AfterCompleted += value;
+                }
+
+                remove
+                {
+                    AssertNotDisposed();
+                    master.AfterCompleted -= value;
+                }
+            }
+
+            event EventHandler<FinishedEventArgs> IDataContext.Finished
             {
                 add
                 {
@@ -211,6 +284,11 @@ namespace Taijutsu.Data.Internal
             public virtual IOrmSession Session
             {
                 get { return master.Session; }
+            }
+
+            public dynamic Extra
+            {
+                get { return master.Extra; }
             }
 
             public virtual void Dispose()

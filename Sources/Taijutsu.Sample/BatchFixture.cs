@@ -10,7 +10,13 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System.Diagnostics;
+
+using Taijutsu.Data;
+using Taijutsu.Data.Internal;
 using Taijutsu.Event;
+using Taijutsu.Event.Internal;
+using Taijutsu.Test.Data;
 
 namespace Taijutsu.Sample
 {
@@ -18,7 +24,31 @@ namespace Taijutsu.Sample
     {
         public virtual void Run()
         {
-            //Events<SystemStopped>.Subscribe(batch)
+            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullOrmSession()));
+
+            //Events.Subscribe(new BatchedHandlingSettings(typeof(SystemStarted), 1));
+
+            //Events.Subscribe(new PostponedHandlerSettings(new TypedHandlerSettings<SystemStarted>(()=>new SpecEventHandler<SystemStarted>((ev) => Trace.WriteLine("Handled")))));
+
+            Events<IEventBatch<SystemStarted>>.Subscribe(
+                batch =>
+                {
+                    int count = batch.Events.Length;
+                    var stop = true;
+                    Trace.WriteLine("Handled");
+                });
+
+            using (var uow = new UnitOfWork())
+            {
+
+                Events.Publish(new SystemStarted());
+                Trace.WriteLine("Raised");
+                Events.Publish(new SystemStarted());
+                Trace.WriteLine("Raised");
+                Events.Publish(new SystemStarted());
+                Trace.WriteLine("Raised");
+                uow.Complete();
+            }
         }
     }
 }

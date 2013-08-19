@@ -11,10 +11,12 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.ComponentModel;
 
 namespace Taijutsu.Domain
 {
     [PublicApi]
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class DomainObjectExtensions
     {
         public static bool Satisfies(this IDomainObject domainObject, ISpecification specification)

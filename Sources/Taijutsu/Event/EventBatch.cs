@@ -1,4 +1,4 @@
-// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2013 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -10,20 +10,23 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System;
+using System.Collections;
+using System.Linq;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.Event
 {
-    public interface IDataContext : ICompletableScope
+    public class EventBatch<TEvent> : Event, IEventBatch<TEvent>
     {
-        event EventHandler<FinishedEventArgs> BeforeCompleted;
+        public EventBatch(TEvent[] events)
+        {
+            Events = events;
+        }
 
-        event EventHandler<FinishedEventArgs> AfterCompleted;
+        public EventBatch(IEnumerable events)
+        {
+            Events = events.Cast<TEvent>().ToArray();
+        }
 
-        event EventHandler<FinishedEventArgs> Finished;
-        
-        IOrmSession Session { get; }
-
-        dynamic Extra { get; }
+        public TEvent[] Events { get; private set; }
     }
 }

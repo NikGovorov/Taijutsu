@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
+using System.Dynamic;
 using System.Linq;
 
 namespace Taijutsu.Data.Internal
@@ -119,7 +120,21 @@ namespace Taijutsu.Data.Internal
                 contexts.Add(this);
             }
 
-            event EventHandler<ScopeFinishedEventArgs> IDataContext.Finished
+            event EventHandler<FinishedEventArgs> IDataContext.BeforeCompleted
+            {
+                add { wrappedContext.BeforeCompleted += value; }
+
+                remove { wrappedContext.BeforeCompleted -= value; }
+            }
+
+            event EventHandler<FinishedEventArgs> IDataContext.AfterCompleted
+            {
+                add { wrappedContext.AfterCompleted += value; }
+
+                remove { wrappedContext.AfterCompleted -= value; }
+            }
+
+            event EventHandler<FinishedEventArgs> IDataContext.Finished
             {
                 add { wrappedContext.Finished += value; }
 
@@ -129,6 +144,11 @@ namespace Taijutsu.Data.Internal
             public IOrmSession Session
             {
                 get { return wrappedContext.Session; }
+            }
+
+            public dynamic Extra
+            {
+                get { return wrappedContext.Extra; }
             }
 
             public virtual DataContext WrappedContext

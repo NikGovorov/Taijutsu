@@ -26,11 +26,11 @@ namespace Taijutsu.Event
 
     public class SubscriptionSyntax<TEvent> : ISubscriptionSyntax<TEvent> where TEvent : class, IEvent
     {
-        private readonly Func<IEventHandlerSettings, IDisposable> subscribeImplementation;
+        private readonly Func<IEventHandlingSettings, IDisposable> subscribeImplementation;
 
         private readonly List<Func<TEvent, bool>> filters = new List<Func<TEvent, bool>>();
 
-        public SubscriptionSyntax(Func<IEventHandlerSettings, IDisposable> subscribeImplementation, IEnumerable<Func<TEvent, bool>> filters = null)
+        public SubscriptionSyntax(Func<IEventHandlingSettings, IDisposable> subscribeImplementation, IEnumerable<Func<TEvent, bool>> filters = null)
         {
             this.subscribeImplementation = subscribeImplementation;
 
@@ -40,7 +40,7 @@ namespace Taijutsu.Event
             }
         }
 
-        public Func<IEventHandlerSettings, IDisposable> SubscribeImplementation
+        public Func<IEventHandlingSettings, IDisposable> SubscribeImplementation
         {
             get { return subscribeImplementation; }
         }
@@ -58,7 +58,7 @@ namespace Taijutsu.Event
 
         public IDisposable Subscribe(Action<TEvent> handler, int priority = 0)
         {
-            return subscribeImplementation(new TypedHandlerSettings<TEvent>(() => new SpecEventHandler<TEvent>(handler), filters, priority));
+            return subscribeImplementation(new TypedHandlingSettings<TEvent>(() => new SpecEventHandler<TEvent>(handler), filters, priority));
         }
     }
 }

@@ -24,9 +24,9 @@ namespace Taijutsu.Event.Internal
 
         private static IDictionary<Type, IEnumerable<Type>> targets = new Dictionary<Type, IEnumerable<Type>>();
 
-        private IDictionary<Type, IList<IEventHandlerSettings>> handlers = new Dictionary<Type, IList<IEventHandlerSettings>>();
+        private IDictionary<Type, IList<IEventHandlingSettings>> handlers = new Dictionary<Type, IList<IEventHandlingSettings>>();
 
-        protected virtual IDictionary<Type, IList<IEventHandlerSettings>> Handlers
+        protected virtual IDictionary<Type, IList<IEventHandlingSettings>> Handlers
         {
             get { return handlers; }
             set { handlers = value; }
@@ -43,25 +43,25 @@ namespace Taijutsu.Event.Internal
             return new SubscriptionSyntax<TEvent>(Subscribe, new List<Func<TEvent, bool>> { filter });
         }
 
-        public virtual IDisposable Subscribe(IEventHandlerSettings handlerSettings)
+        public virtual IDisposable Subscribe(IEventHandlingSettings handlingSettings)
         {
-            if (!typeof(IEvent).IsAssignableFrom(handlerSettings.Type))
+            if (!typeof(IEvent).IsAssignableFrom(handlingSettings.Type))
             {
-                throw new Exception(string.Format("'{0}' does not implement '{1}'.", handlerSettings.Type, typeof(IEvent)));
+                throw new Exception(string.Format("'{0}' does not implement '{1}'.", handlingSettings.Type, typeof(IEvent)));
             }
 
-            IList<IEventHandlerSettings> internalEventHandlers;
+            IList<IEventHandlingSettings> internalEventHandlers;
 
-            if (!Handlers.TryGetValue(handlerSettings.Type, out internalEventHandlers))
+            if (!Handlers.TryGetValue(handlingSettings.Type, out internalEventHandlers))
             {
-                Handlers.Add(handlerSettings.Type, new List<IEventHandlerSettings> { handlerSettings });
+                Handlers.Add(handlingSettings.Type, new List<IEventHandlingSettings> { handlingSettings });
             }
             else
             {
-                internalEventHandlers.Add(handlerSettings);
+                internalEventHandlers.Add(handlingSettings);
             }
 
-            return UnsubscriptionAction(handlerSettings);
+            return UnsubscriptionAction(handlingSettings);
         }
 
         public IDisposable Subscribe<TEvent>(Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent
@@ -78,13 +78,13 @@ namespace Taijutsu.Event.Internal
 
             if (ev is IEvent)
             {
-                var eventHandlers = new List<IEventHandlerSettings>();
+                var eventHandlers = new List<IEventHandlingSettings>();
 
                 var potentialSubscriberTypes = PotentialSubscriberTypes(ev.GetType());
 
                 foreach (var targetType in potentialSubscriberTypes)
                 {
-                    IList<IEventHandlerSettings> internalEventHandlers;
+                    IList<IEventHandlingSettings> internalEventHandlers;
                     if (Handlers.TryGetValue(targetType, out internalEventHandlers))
                     {
                         eventHandlers.AddRange(internalEventHandlers);
@@ -169,20 +169,20 @@ namespace Taijutsu.Event.Internal
                     }
                 })
                 .ContinueWith(
-                    t => Trace.TraceError(t.Exception == null ? string.Format("Error occurred during caching event subscribers for '{0}'.", type) : t.Exception.ToString()), 
+                    t => Trace.TraceError(t.Exception == null ? string.Format("Taijutsu: Error occurred during caching event subscribers for '{0}'.", type) : t.Exception.ToString()), 
                     TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
 
             // ReSharper restore ImplicitlyCapturedClosure
         }
 
-        protected virtual IDisposable UnsubscriptionAction(IEventHandlerSettings handlerSettings)
+        protected virtual IDisposable UnsubscriptionAction(IEventHandlingSettings handlingSettings)
         {
             Action action = delegate
             {
-                IList<IEventHandlerSettings> internalEventHandlers;
-                if (Handlers.TryGetValue(handlerSettings.Type, out internalEventHandlers))
+                IList<IEventHandlingSettings> internalEventHandlers;
+                if (Handlers.TryGetValue(handlingSettings.Type, out internalEventHandlers))
                 {
-                    internalEventHandlers.Remove(handlerSettings);
+                    internalEventHandlers.Remove(handlingSettings);
                 }
             };
 

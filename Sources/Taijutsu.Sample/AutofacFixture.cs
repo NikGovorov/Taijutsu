@@ -47,8 +47,8 @@ namespace Taijutsu.Sample
 
             var container = builder.Build();
 
-            Events.Subscribe(new DynamicHandlerSettings(typeof(SystemStarted), () => container.Resolve<EventHandlersResolver>()(typeof(SystemStarted)), 0));
-            Events.Subscribe(new DynamicHandlerSettings(typeof(SubsystemStarted), () => container.Resolve<EventHandlersResolver>()(typeof(SubsystemStarted)), 0));
+            Events.Subscribe(new DynamicHandlingSettings(typeof(SystemStarted), () => container.Resolve<EventHandlersResolver>()(typeof(SystemStarted)), 0));
+            Events.Subscribe(new DynamicHandlingSettings(typeof(SubsystemStarted), () => container.Resolve<EventHandlersResolver>()(typeof(SubsystemStarted)), 0));
 
             Events.Publish(new SubsystemStarted());
         }

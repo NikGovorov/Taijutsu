@@ -19,48 +19,48 @@ namespace Taijutsu.Event.Internal
     {
         private readonly object sync = new object();
 
-        public override IDisposable Subscribe(IEventHandlerSettings handlerSettings)
+        public override IDisposable Subscribe(IEventHandlingSettings handlingSettings)
         {
-            if (!typeof(IEvent).IsAssignableFrom(handlerSettings.Type))
+            if (!typeof(IEvent).IsAssignableFrom(handlingSettings.Type))
             {
-                throw new Exception(string.Format("'{0}' does not implement '{1}'.", handlerSettings.Type, typeof(IEvent)));
+                throw new Exception(string.Format("'{0}' does not implement '{1}'.", handlingSettings.Type, typeof(IEvent)));
             }
 
             lock (sync)
             {
-                IList<IEventHandlerSettings> internalEventHandlers;
-                if (!Handlers.TryGetValue(handlerSettings.Type, out internalEventHandlers))
+                IList<IEventHandlingSettings> internalEventHandlers;
+                if (!Handlers.TryGetValue(handlingSettings.Type, out internalEventHandlers))
                 {
-                    var newHandlers = new Dictionary<Type, IList<IEventHandlerSettings>>(Handlers) { { handlerSettings.Type, new List<IEventHandlerSettings> { handlerSettings } } };
+                    var newHandlers = new Dictionary<Type, IList<IEventHandlingSettings>>(Handlers) { { handlingSettings.Type, new List<IEventHandlingSettings> { handlingSettings } } };
 
                     Handlers = newHandlers;
                 }
                 else
                 {
-                    var newInternalEventHandlers = new List<IEventHandlerSettings>(internalEventHandlers) { handlerSettings };
-                    Handlers[handlerSettings.Type] = newInternalEventHandlers;
+                    var newInternalEventHandlers = new List<IEventHandlingSettings>(internalEventHandlers) { handlingSettings };
+                    Handlers[handlingSettings.Type] = newInternalEventHandlers;
                 }
             }
 
-            return UnsubscriptionAction(handlerSettings);
+            return UnsubscriptionAction(handlingSettings);
         }
 
-        protected override IDisposable UnsubscriptionAction(IEventHandlerSettings handlerSettings)
+        protected override IDisposable UnsubscriptionAction(IEventHandlingSettings handlingSettings)
         {
             Action action = delegate
             {
                 lock (sync)
                 {
-                    IList<IEventHandlerSettings> internalEventHandlers;
-                    if (!Handlers.TryGetValue(handlerSettings.Type, out internalEventHandlers))
+                    IList<IEventHandlingSettings> internalEventHandlers;
+                    if (!Handlers.TryGetValue(handlingSettings.Type, out internalEventHandlers))
                     {
                         return;
                     }
 
-                    var newInternalEventHandlers = new List<IEventHandlerSettings>(internalEventHandlers);
-                    if (newInternalEventHandlers.Remove(handlerSettings))
+                    var newInternalEventHandlers = new List<IEventHandlingSettings>(internalEventHandlers);
+                    if (newInternalEventHandlers.Remove(handlingSettings))
                     {
-                        Handlers[handlerSettings.Type] = newInternalEventHandlers;
+                        Handlers[handlingSettings.Type] = newInternalEventHandlers;
                     }
                 }
             };
@@ -72,7 +72,7 @@ namespace Taijutsu.Event.Internal
         {
             lock (sync)
             {
-                Handlers = new Dictionary<Type, IList<IEventHandlerSettings>>();
+                Handlers = new Dictionary<Type, IList<IEventHandlingSettings>>();
             }
         }
     }

@@ -10,10 +10,12 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System.ComponentModel;
 using System.Linq;
 
 namespace Taijutsu.Domain
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public static class EntityExtensions
     {
         public static T As<T>(this IEntity entity) where T : class
