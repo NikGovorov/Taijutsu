@@ -106,7 +106,7 @@
     <Compile Include="Domain\DeletableEntityExFixture.cs" />
     <Compile Include="Domain\EntityConversionFixture.cs" />
     <Compile Include="Domain\EntityFixture.cs" />
-    <Compile Include="Domain\EventAggregatorFixture.cs" />
+    <Compile Include="Event\EventsFixture.cs" />
     <Compile Include="Domain\Model\Customer.cs" />
     <Compile Include="Domain\Model\ICustomerQuery.cs" />
     <Compile Include="Domain\Model\ICustomerRepository.cs" />

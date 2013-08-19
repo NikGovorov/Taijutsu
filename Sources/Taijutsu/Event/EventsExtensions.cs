@@ -40,6 +40,7 @@ namespace Taijutsu.Event
             self.Batch(priority);
         }
 
+        // ReSharper disable once UnusedParameter.Global
         public static ISubscriptionSyntax<TEvent> Deferred<TEvent>(this IEvents<TEvent> self, DelayUntil until = DelayUntil.Finished) where TEvent : class, IEvent
         {
             return new SubscriptionSyntax<TEvent>(origin => Events.Subscribe(new DeferredHandlingSettings(origin, until)));
