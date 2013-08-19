@@ -16,14 +16,12 @@ using Taijutsu.Domain;
 
 namespace Taijutsu.Event
 {
-    [PublicApi]
     public interface IExternalEvent : IEvent
     {
         DateTime NoticeDate { get; }
     }
 
-    public interface IExternalEvent<out TRecipient> : IExternalEvent
-        where TRecipient : IEntity
+    public interface IExternalEvent<out TRecipient> : IExternalEvent where TRecipient : IEntity
     {
         TRecipient Recipient { get; }
     }

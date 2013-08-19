@@ -15,7 +15,6 @@ using System.Data;
 
 namespace Taijutsu.Data.Internal
 {
-    [PublicApi]
     public class DataSource
     {
         private readonly string name = string.Empty;

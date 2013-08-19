@@ -14,14 +14,13 @@ using Taijutsu.Event;
 
 namespace Taijutsu.Test.Domain.Model
 {
-    // ReSharper disable once UnusedMember.Global
     public class SystemCheckedHandler : IEventHandler<SystemChecked>
     {
-        // public int CallCounter { get; private set; }
+        public int CallCounter { get; private set; }
 
         public void Handle(SystemChecked ev)
         {
-            // CallCounter++;
+            CallCounter++;
         }
     }
 }

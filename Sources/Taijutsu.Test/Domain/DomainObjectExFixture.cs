@@ -14,6 +14,8 @@ using NSubstitute;
 
 using NUnit.Framework;
 
+using SharpTestsEx;
+
 using Taijutsu.Domain;
 using Taijutsu.Test.Domain.Model;
 
@@ -27,8 +29,10 @@ namespace Taijutsu.Test.Domain
         public virtual void ShouldCallAppropriateSpecificationMethod()
         {
             var spec = Substitute.For<ISpecification>();
+            
             var customer = new Customer(SeqGuid.NewGuid(), new FullName("Test", "Test"));
-            customer.Satisfies(spec);
+            spec.IsSatisfiedBy(customer).Returns(true);
+            customer.Satisfy(spec).Should().Be(true);
             spec.Received(1).IsSatisfiedBy(customer);
         }
     }

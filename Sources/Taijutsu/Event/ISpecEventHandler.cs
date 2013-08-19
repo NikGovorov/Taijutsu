@@ -11,7 +11,6 @@
 // specific language governing permissions and limitations under the License.
 namespace Taijutsu.Event
 {
-    [PublicApi]
     public interface ISpecEventHandler<in T> : IEventHandler<T>, ISpecHandler<T> where T : IEvent
     {
     }

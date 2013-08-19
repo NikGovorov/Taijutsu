@@ -15,7 +15,6 @@ using System.ComponentModel;
 
 namespace Taijutsu.Domain
 {
-    [PublicApi]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class AggregateRootExtensions
     {

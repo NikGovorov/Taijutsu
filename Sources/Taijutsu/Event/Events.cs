@@ -18,7 +18,6 @@ using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Event
 {
-    [PublicApi]
     public sealed class Events : IEvents
     {
         private const string LocalEventAggregatorName = "Taijutsu.LocalEventAggregator";
@@ -134,7 +133,6 @@ namespace Taijutsu.Event
         }
     }
 
-    [PublicApi]
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Acceptable for generic and non-generic classes.")]
     public sealed class Events<TEvent> : IEvents<TEvent> where TEvent : class, IEvent
     {

@@ -17,7 +17,6 @@ using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data.Internal
 {
-    [PublicApi]
     public abstract class OrmSpecificSession<TNative> : IOrmSession
     {
         private readonly TNative nativeSession;

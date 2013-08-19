@@ -19,8 +19,6 @@ using System.Linq.Expressions;
 
 using Taijutsu.Data.Internal;
 
-using Stage = Taijutsu.Event.Internal.DeferredHandlingSettings.Stage;
-
 namespace Taijutsu.Event.Internal
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -33,7 +31,7 @@ namespace Taijutsu.Event.Internal
 
         private List<object> events;
 
-        public BatchedHandlingSettings(Type type, Stage stage, int priority)
+        public BatchedHandlingSettings(Type type, DelayUntil delayUntil, int priority)
             : base(type, priority)
         {
             events = new List<object>();
@@ -56,21 +54,20 @@ namespace Taijutsu.Event.Internal
                             try
                             {
                                 // ReSharper disable AccessToModifiedClosure
-                                switch (stage)
+                                switch (delayUntil)
                                 {
-                                    case Stage.BeforeCompleted:
+                                    case DelayUntil.PreCompleted:
                                         context.BeforeCompleted -= action;
                                         break;
-                                    case Stage.AfterCompleted:
+                                    case DelayUntil.Completed:
                                         context.AfterCompleted -= action;
                                         break;
-                                    case Stage.Finished:
+                                    case DelayUntil.Finished:
                                         context.Finished -= action;
                                         break;
                                 }
 
                                 // ReSharper restore AccessToModifiedClosure
-
                                 if (events.Count > 0)
                                 {
                                     Events.Publish(ResolveConstructor()(events));
@@ -85,15 +82,15 @@ namespace Taijutsu.Event.Internal
                             }
                         };
 
-                        switch (stage)
+                        switch (delayUntil)
                         {
-                            case Stage.BeforeCompleted:
+                            case DelayUntil.PreCompleted:
                                 context.BeforeCompleted += action;
                                 break;
-                            case Stage.AfterCompleted:
+                            case DelayUntil.Completed:
                                 context.AfterCompleted += action;
                                 break;
-                            case Stage.Finished:
+                            case DelayUntil.Finished:
                                 context.Finished += action;
                                 break;
                         }

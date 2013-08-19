@@ -13,6 +13,7 @@
 using System;
 
 using Taijutsu.Domain;
+using Taijutsu.Event;
 
 namespace Taijutsu.Test.Domain.Model
 {
@@ -22,10 +23,10 @@ namespace Taijutsu.Test.Domain.Model
 
         private FullName name;
 
-        // static Customer()
-        // {
-            // Subscribe<OrderCreated>(ev => ev.Customer.Handle(ev));
-        // }
+        static Customer()
+        {
+            Events.Subscribe<OrderCreated>(ev => ev.Customer.Handle(ev));
+        }
 
         public Customer(Guid id, FullName name)
         {

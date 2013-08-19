@@ -23,7 +23,7 @@ namespace Taijutsu.Event.Internal
     {
         private readonly Action<object> deferredAction;
 
-        public DeferredHandlingSettings(IEventHandlingSettings original, Stage stage) : base(original.Type, original.Priority)
+        public DeferredHandlingSettings(IEventHandlingSettings original, DelayUntil delayUntil) : base(original.Type, original.Priority)
         {
             deferredAction = ev =>
             {
@@ -38,21 +38,20 @@ namespace Taijutsu.Event.Internal
                         try
                         {
                             // ReSharper disable AccessToModifiedClosure
-                            switch (stage)
+                            switch (delayUntil)
                             {
-                                case Stage.BeforeCompleted:
+                                case DelayUntil.PreCompleted:
                                     context.BeforeCompleted -= action;
                                     break;
-                                case Stage.AfterCompleted:
+                                case DelayUntil.Completed:
                                     context.AfterCompleted -= action;
                                     break;
-                                case Stage.Finished:
+                                case DelayUntil.Finished:
                                     context.Finished -= action;
                                     break;
                             }
 
                             // ReSharper restore AccessToModifiedClosure
-
                             original.Action(ev);
                         }
                         finally
@@ -62,15 +61,15 @@ namespace Taijutsu.Event.Internal
                         }
                     };
 
-                    switch (stage)
+                    switch (delayUntil)
                     {
-                        case Stage.BeforeCompleted:
+                        case DelayUntil.PreCompleted:
                             context.BeforeCompleted += action;
                             break;
-                        case Stage.AfterCompleted:
+                        case DelayUntil.Completed:
                             context.AfterCompleted += action;
                             break;
-                        case Stage.Finished:
+                        case DelayUntil.Finished:
                             context.Finished += action;
                             break;
                     }
@@ -80,15 +79,6 @@ namespace Taijutsu.Event.Internal
                     Trace.TraceWarning("Taijutsu: Source of event is not inside of unit of work, event is skipped.");
                 }
             };
-        }
-
-        public enum Stage
-        {
-            BeforeCompleted, 
-
-            AfterCompleted, 
-
-            Finished
         }
 
         public override Action<object> Action

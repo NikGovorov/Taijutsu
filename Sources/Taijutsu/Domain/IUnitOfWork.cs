@@ -28,12 +28,4 @@ namespace Taijutsu.Domain
 
         IUniqueEntityQuery<TEntity> Unique<TEntity>(object id, object options = null) where TEntity : class, IQueryableEntity;
     }
-
-    [PublicApi]
-    public interface IMarkingStep
-    {
-        object AsCreated();
-
-        void AsDeleted();
-    }
 }

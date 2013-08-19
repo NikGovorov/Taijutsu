@@ -15,7 +15,6 @@ using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data.Internal
 {
-    [PublicApi]
     public interface IOrmSession : ICompletableScope, IWrapper, IUnitOfWork
     {
         T As<T>(object options = null) where T : class;

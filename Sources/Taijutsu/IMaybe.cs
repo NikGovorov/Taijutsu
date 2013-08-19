@@ -11,7 +11,6 @@
 // specific language governing permissions and limitations under the License.
 namespace Taijutsu
 {
-    [PublicApi]
     public interface IMaybe<out T> : IHiddenObjectMembers
     {
         T Value { get; }

@@ -15,9 +15,7 @@ using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data.Internal
 {
-    [PublicApi]
-    public interface IQueryOverContinuation<TEntity> : IHiddenObjectMembers
-        where TEntity : class, IEntity
+    public interface IQueryOverContinuation<TEntity> : IHiddenObjectMembers where TEntity : class, IEntity
     {
         TQuery With<TQuery>(string name = null) where TQuery : class, IQuery<TEntity>;
 

@@ -150,15 +150,6 @@ namespace Taijutsu.Test.Data
 
             using (var uow = new UnitOfWork(source))
             {
-                uow.Mark(customer, options).AsCreated();
-            }
-
-            session.Received(1).MarkAsCreated(customer, options);
-
-            session.ClearReceivedCalls();
-
-            using (var uow = new UnitOfWork(source))
-            {
                 customer.AsCreatedIn(uow);
             }
 
@@ -175,15 +166,6 @@ namespace Taijutsu.Test.Data
             using (var uow = new UnitOfWork(source))
             {
                 uow.MarkAsDeleted(customer, options);
-            }
-
-            session.Received(1).MarkAsDeleted(customer, options);
-
-            session.ClearReceivedCalls();
-
-            using (var uow = new UnitOfWork(source))
-            {
-                uow.Mark(customer, options).AsDeleted();
             }
 
             session.Received(1).MarkAsDeleted(customer, options);
@@ -309,7 +291,7 @@ namespace Taijutsu.Test.Data
                     using (var uow = new UnitOfWork(source))
                     {
                         uow.Complete();
-                        uow.Mark(new Customer()).AsCreated();
+                        uow.MarkAsCreated(new Customer());
                     }
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
@@ -352,7 +334,7 @@ namespace Taijutsu.Test.Data
                 {
                     var uow = new UnitOfWork(source);
                     ((IDisposable)uow).Dispose();
-                    uow.Mark(new Customer()).AsCreated();
+                    uow.MarkAsCreated(new Customer());
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
@@ -385,7 +367,7 @@ namespace Taijutsu.Test.Data
                     using (var uow = new UnitOfWork(source))
                     {
                         uow.Complete();
-                        uow.Mark(new Customer()).AsDeleted();
+                        uow.MarkAsDeleted(new Customer());
                     }
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
@@ -419,7 +401,7 @@ namespace Taijutsu.Test.Data
                 {
                     var uow = new UnitOfWork(source);
                     ((IDisposable)uow).Dispose();
-                    uow.Mark(new Customer()).AsDeleted();
+                    uow.MarkAsDeleted(new Customer());
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 

@@ -13,6 +13,7 @@
 using System;
 
 using Taijutsu.Domain;
+using Taijutsu.Event;
 
 namespace Taijutsu.Test.Domain.Model
 {
@@ -20,7 +21,7 @@ namespace Taijutsu.Test.Domain.Model
     {
         public Order(Customer customer)
         {
-           // Publish(new OrderCreated(this, customer));
+           Events.Publish(new OrderCreated(this, customer));
         }
 
         public Order(Guid id)

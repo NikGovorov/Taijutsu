@@ -14,7 +14,6 @@ using System;
 
 namespace Taijutsu.Domain
 {
-    [PublicApi]
     public interface ISoftDeletable : IDomainObject
     {
         DateTime? DateOfDelete { get; }

@@ -15,7 +15,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Taijutsu.Domain
 {
-    [PublicApi]
     [Serializable]
     public abstract class Entity : IdentifiableObject<object>, IEntity
     {

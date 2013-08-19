@@ -10,6 +10,8 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System.Data;
+
 using NUnit.Framework;
 
 using Taijutsu.Data;
@@ -40,7 +42,7 @@ namespace Taijutsu.Test.Data
                     Awaken(uow);
                 }
 
-                InternalEnvironment.RegisterDataSource(new DataSource("test", il => new NullOrmSession()));
+                InternalEnvironment.RegisterDataSource(new DataSource("test", IsolationLevel.RepeatableRead, il => new NullOrmSession()));
                 InternalEnvironment.RegisterDataSource(new DataSource("test", il => new NullOrmSession()));
 
                 using (var uow = new UnitOfWork("test"))

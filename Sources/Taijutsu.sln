@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taijutsu", "Taijutsu\Taijut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taijutsu.Test", "Taijutsu.Test\Taijutsu.Test.csproj", "{552657C5-9B97-4AD0-A001-AF071E734644}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Taijutsu.Sample", "Taijutsu.Sample\Taijutsu.Sample.csproj", "{CEB42F6F-CD91-4332-80F7-2D7F0B0333AA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,10 +19,6 @@ Global
 		{552657C5-9B97-4AD0-A001-AF071E734644}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{552657C5-9B97-4AD0-A001-AF071E734644}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{552657C5-9B97-4AD0-A001-AF071E734644}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CEB42F6F-CD91-4332-80F7-2D7F0B0333AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CEB42F6F-CD91-4332-80F7-2D7F0B0333AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CEB42F6F-CD91-4332-80F7-2D7F0B0333AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CEB42F6F-CD91-4332-80F7-2D7F0B0333AA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

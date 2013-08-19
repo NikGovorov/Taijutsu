@@ -15,7 +15,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
-using System.Dynamic;
 using System.Linq;
 
 namespace Taijutsu.Data.Internal

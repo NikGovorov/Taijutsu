@@ -14,7 +14,6 @@ using System;
 
 namespace Taijutsu.Domain
 {
-    [PublicApi]
     [Serializable]
     public abstract class CompositeSpecification<TDomainObject> : Specification<TDomainObject>, ICompositeSpecification<TDomainObject> where TDomainObject : IDomainObject
     {

@@ -34,7 +34,8 @@ namespace Taijutsu.Data.Internal
         // ReSharper disable UnusedParameter.Global
         protected virtual void Dispose(bool disposing)
         {
-            // ReSharper restore UnusedParameter.Global
         }
+
+        // ReSharper restore UnusedParameter.Global
     }
 }

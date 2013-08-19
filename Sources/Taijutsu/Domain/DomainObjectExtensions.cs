@@ -15,11 +15,10 @@ using System.ComponentModel;
 
 namespace Taijutsu.Domain
 {
-    [PublicApi]
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class DomainObjectExtensions
     {
-        public static bool Satisfies(this IDomainObject domainObject, ISpecification specification)
+        public static bool Satisfy(this IDomainObject domainObject, ISpecification specification)
         {
             if (specification == null)
             {

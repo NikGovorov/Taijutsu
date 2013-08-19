@@ -14,9 +14,7 @@ using System.ComponentModel;
 
 namespace Taijutsu.Domain
 {
-    [PublicApi]
-    public interface IVersionedEntity<out TVersion> : IEntity
-        where TVersion : struct
+    public interface IVersionedEntity<out TVersion> : IEntity where TVersion : struct
     {
         TVersion Version { get; }
 

@@ -59,7 +59,6 @@
       <Link>Properties\VersionAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ActionExtensions.cs" />
-    <Compile Include="Data\EventsExtensions.cs" />
     <Compile Include="Data\Internal\ConstructionScope.cs" />
     <Compile Include="Data\Internal\DataContext.cs" />
     <Compile Include="Data\Internal\DataContextSupervisor.cs" />
@@ -72,7 +71,6 @@
     <Compile Include="Data\Internal\IQueryOverContinuation.cs" />
     <Compile Include="Data\Internal\ITerminationPolicy.cs" />
     <Compile Include="Data\Internal\IsolationLevelEx.cs" />
-    <Compile Include="Data\Internal\MarkingStep.cs" />
     <Compile Include="Data\Internal\OrmSessionBuilder.cs" />
     <Compile Include="Data\Internal\OrmSpecificSession.cs" />
     <Compile Include="Data\Internal\FinishedEventArgs.cs" />
@@ -82,18 +80,22 @@
     <Compile Include="Event\Event.cs" />
     <Compile Include="Event\EventBatch.cs" />
     <Compile Include="Event\Events.cs" />
+    <Compile Include="Event\EventsExtensions.cs" />
     <Compile Include="Event\ExternalEvent.cs" />
     <Compile Include="Event\IEvent.cs" />
     <Compile Include="Event\IEventBatch.cs" />
-    <Compile Include="Event\Internal\AbstractHandlerSettings.cs" />
-    <Compile Include="Event\Internal\DynamicHandlerSettings.cs" />
-    <Compile Include="Event\Internal\TypedHandlerSettings.cs" />
+    <Compile Include="Event\Internal\AbstractHandlingSettings.cs" />
+    <Compile Include="Event\Internal\BatchedHandlingSettings.cs" />
+    <Compile Include="Event\Internal\DeferredHandlingSettings.cs" />
+    <Compile Include="Event\Internal\DynamicHandlingSettings.cs" />
+    <Compile Include="Event\Internal\IEventHandlingSettings.cs" />
+    <Compile Include="Event\Internal\DelayUntil.cs" />
+    <Compile Include="Event\Internal\TypedHandlingSettings.cs" />
     <Compile Include="Event\SpecEventHandler.cs" />
     <Compile Include="Event\ISpecEventHandler.cs" />
     <Compile Include="Event\IEvents.cs" />
     <Compile Include="Event\IEventHandler.cs" />
     <Compile Include="Event\IExternalEvent.cs" />
-    <Compile Include="Event\Internal\EventHandlerSettings.cs" />
     <Compile Include="Event\Internal\MultiThreadAggregator.cs" />
     <Compile Include="Event\Internal\SingleThreadAggregator.cs" />
     <Compile Include="Event\SubscriptionSyntax.cs" />

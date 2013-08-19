@@ -162,11 +162,6 @@ namespace Taijutsu.Data
             dataContext.Session.MarkAsDeleted(entity, options);
         }
 
-        public virtual IMarkingStep Mark<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity, IAggregateRoot
-        {
-            return new MarkingStep<TEntity>(() => MarkAsCreated(entity, options), () => MarkAsDeleted(entity, options));
-        }
-
         public virtual IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity
         {
             AssertNotDisposed();

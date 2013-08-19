@@ -14,6 +14,8 @@ using NSubstitute;
 
 using NUnit.Framework;
 
+using SharpTestsEx;
+
 using Taijutsu.Domain;
 using Taijutsu.Test.Domain.Model;
 
@@ -28,7 +30,8 @@ namespace Taijutsu.Test.Domain
         {
             var uow = Substitute.For<IUnitOfWork>();
             var customer = new Customer(SeqGuid.NewGuid(), new FullName("Test", "Test"));
-            customer.AsCreatedIn(uow);
+            uow.MarkAsCreated(customer as IAggregateRoot).Returns(customer);
+            customer.AsCreatedIn(uow).Should().Be(customer);
             uow.Received(1).MarkAsCreated(customer as IAggregateRoot);
         }
     }

@@ -21,7 +21,7 @@ namespace Taijutsu.Data.Internal
         event EventHandler<FinishedEventArgs> AfterCompleted;
 
         event EventHandler<FinishedEventArgs> Finished;
-        
+
         IOrmSession Session { get; }
 
         dynamic Extra { get; }

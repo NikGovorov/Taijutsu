@@ -9,12 +9,12 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
 namespace Taijutsu.Test.Domain.Model
 {
     public class ModuleChecked : SystemChecked
     {
-        public ModuleChecked(int healthLevel = 0)
-            : base(healthLevel)
+        public ModuleChecked(int healthLevel = 0) : base(healthLevel)
         {
         }
     }
