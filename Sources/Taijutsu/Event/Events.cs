@@ -112,6 +112,11 @@ namespace Taijutsu.Event
             Publish(ev);
         }
 
+        IEvents<TEvent> IEvents.OfType<TEvent>()
+        {
+            return OfType<TEvent>();
+        }
+
         ISubscriptionSyntax<TEvent> IEvents.Where<TEvent>(Func<TEvent, bool> filter)
         {
             return Where(filter);

@@ -17,8 +17,11 @@ using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Event
 {
+    [PublicApi]
     public interface IEvents
     {
+        IEvents<TEvent> OfType<TEvent>() where TEvent : class, IEvent;
+
         ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent;
 
         [EditorBrowsable(EditorBrowsableState.Never)]

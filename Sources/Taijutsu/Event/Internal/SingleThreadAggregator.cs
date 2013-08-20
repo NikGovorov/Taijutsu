@@ -38,6 +38,11 @@ namespace Taijutsu.Event.Internal
             set { targets = value; }
         }
 
+        public IEvents<TEvent> OfType<TEvent>() where TEvent : class, IEvent
+        {
+            return new Events<TEvent>(this);
+        }
+
         public ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent
         {
             return new SubscriptionSyntax<TEvent>(Subscribe, new List<Func<TEvent, bool>> { filter });
@@ -192,6 +197,31 @@ namespace Taijutsu.Event.Internal
         protected virtual void Reset()
         {
             Handlers.Clear();
+        }
+
+        private class Events<TEvent> : IEvents<TEvent> where TEvent : class, IEvent
+        {
+            private readonly IEvents implementation;
+
+            public Events(IEvents implementation)
+            {
+                this.implementation = implementation;
+            }
+
+            public ISubscriptionSyntax<TEvent> Where(Func<TEvent, bool> filter)
+            {
+                return implementation.Where(filter);
+            }
+
+            public IDisposable Subscribe(Action<TEvent> handler, int priority = 0)
+            {
+                return implementation.Subscribe(handler, priority);
+            }
+
+            public void Publish(TEvent ev)
+            {
+                implementation.Publish(ev);
+            }
         }
     }
 }

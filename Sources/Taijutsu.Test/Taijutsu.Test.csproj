@@ -109,6 +109,7 @@
     <Compile Include="Event\BatchedHandlingSettingsFixture.cs" />
     <Compile Include="Event\DeferredHandlingSettingsFixture.cs" />
     <Compile Include="Event\DynamicHandlingSettingsFixture.cs" />
+    <Compile Include="Event\EventsExFixture.cs" />
     <Compile Include="Event\EventsFixture.cs" />
     <Compile Include="Domain\Model\Customer.cs" />
     <Compile Include="Domain\Model\ICustomerQuery.cs" />
