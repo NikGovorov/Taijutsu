@@ -21,7 +21,6 @@ namespace Taijutsu.Test
     {
         // ReSharper disable ConvertToConstant.Global
         // ReSharper disable MemberCanBePrivate.Global
-
         public static readonly string SlqServer = @"(localdb)\v11.0";
 
         public static readonly string EmptyDatabase = "EmptyDatabase";
@@ -30,7 +29,6 @@ namespace Taijutsu.Test
 
         // ReSharper restore MemberCanBePrivate.Global
         // ReSharper restore ConvertToConstant.Global
-
         public static string PrepareDatabase(string database = "", string connectionString = "", string file = "", bool dynamicFile = true, bool dynamicDatabase = true)
         {
             var newDataFilePath = string.Empty;

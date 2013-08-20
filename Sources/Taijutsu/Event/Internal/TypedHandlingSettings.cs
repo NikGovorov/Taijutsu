@@ -35,6 +35,11 @@ namespace Taijutsu.Event.Internal
             this.filters = filters ?? new List<Func<TEvent, bool>>();
         }
 
+        public IEnumerable<Func<TEvent, bool>> Filters
+        {
+            get { return filters; }
+        }
+
         public override Action<object> Action
         {
             get
@@ -47,7 +52,7 @@ namespace Taijutsu.Event.Internal
                     }
 
                     var ev = e as TEvent;
-                    if (ev != null && filters.All(filter => filter(ev)))
+                    if (ev != null && Filters.All(filter => filter(ev)))
                     {
                         var handler = handlerResolver();
                         if (handler != null && handler.IsSatisfiedBy(ev))

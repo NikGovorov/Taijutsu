@@ -65,13 +65,19 @@ namespace Taijutsu.Event.Internal
                         {
                             foreach (var handlerResolver in handlerResolvers)
                             {
-                                var handler = handlerResolver();
-
-                                var delegates = ResolveMethods(handler.GetType());
-
-                                if (delegates.Item2 == null || delegates.Item2(handler, ev))
+                                if (handlerResolver != null)
                                 {
-                                    delegates.Item1(handler, ev);
+                                    var handler = handlerResolver();
+
+                                    if (handler != null)
+                                    {
+                                        var delegates = ResolveMethods(handler.GetType());
+
+                                        if (delegates.Item2 == null || delegates.Item2(handler, ev))
+                                        {
+                                            delegates.Item1(handler, ev);
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -113,7 +119,7 @@ namespace Taijutsu.Event.Internal
             var specHandlerType = typeof(ISpecHandler<>).MakeGenericType(Type);
 
             var handle = handlerType.GetMethods().Single();
-            var isSatisfiedBy = specHandlerType.IsAssignableFrom(handlerImplType) ? specHandlerType.GetMethods().Single() : null;
+            var isSatisfiedBy = handlerImplType.GetInterfaces().Contains(specHandlerType) ? specHandlerType.GetMethods().Single() : null;
 
             var instanceParameter = Expression.Parameter(typeof(object), "handler");
             var argumentParameter = Expression.Parameter(typeof(object), "ev");

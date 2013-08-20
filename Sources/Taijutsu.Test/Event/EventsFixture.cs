@@ -227,24 +227,22 @@ namespace Taijutsu.Test.Event
             handler.CallCounter.Should().Be(2);
         }
 
-        [Test, Explicit]
-        public virtual void DisposeShouldRemoveAllSubscriptions()
+        [Test]
+        public virtual void ResetShouldRemoveAllSubscriptions()
         {
             var callCounter = 0;
 
             Events.Subscribe<SystemChecked>(ev => callCounter++);
             Events.Subscribe<SystemChecked>(ev => callCounter++);
 
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            ((IDisposable)Events.Global).Dispose();
+            ((IResettable)Events.Global).Reset();
             Events.Publish(new SystemChecked());
             callCounter.Should().Be(0);
 
             Events.Local.Subscribe<SystemChecked>(ev => callCounter++);
             Events.Local.Subscribe<SystemChecked>(ev => callCounter++);
 
-            // ReSharper disable once SuspiciousTypeConversion.Global
-            ((IDisposable)Events.Local).Dispose();
+            ((IResettable)Events.Local).Reset();
             Events.Publish(new SystemChecked());
             Events.Local.Publish(new SystemChecked());
             callCounter.Should().Be(0);
@@ -272,12 +270,12 @@ namespace Taijutsu.Test.Event
             callCounter = 0;
 
             using (Events<SystemChecked>.Where(ev => ev.HealthLevel > 98)
-                         .Where(ev => ev.HealthLevel == 100).Subscribe(
-                             ev =>
-                             {
-                                 callCounter++;
-                                 ev.HealthLevel.Should().Be(100);
-                             }))
+                                        .Where(ev => ev.HealthLevel == 100).Subscribe(
+                                            ev =>
+                                            {
+                                                callCounter++;
+                                                ev.HealthLevel.Should().Be(100);
+                                            }))
             {
                 Events.Publish(new SystemChecked(98));
                 Events.Publish(new SystemChecked(99));
@@ -290,7 +288,7 @@ namespace Taijutsu.Test.Event
             var handler = new SystemCheckedHandler();
 
             using (Events<SystemChecked>.Where(ev => ev.HealthLevel > 98)
-                         .Where(ev => ev.HealthLevel == 100).Subscribe(handler.Handle))
+                                        .Where(ev => ev.HealthLevel == 100).Subscribe(handler.Handle))
             {
                 Events.Publish(new SystemChecked(98));
                 Events.Publish(new SystemChecked(99));

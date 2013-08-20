@@ -52,13 +52,13 @@ namespace Taijutsu.Event
 
         public ISubscriptionSyntax<TEvent> Where(Func<TEvent, bool> filter)
         {
-            filters.Add(filter);
-            return new SubscriptionSyntax<TEvent>(subscribeImplementation, filters);
+            Filters.Add(filter);
+            return new SubscriptionSyntax<TEvent>(SubscribeImplementation, filters);
         }
 
         public IDisposable Subscribe(Action<TEvent> handler, int priority = 0)
         {
-            return subscribeImplementation(new TypedHandlingSettings<TEvent>(() => new SpecEventHandler<TEvent>(handler), filters, priority));
+            return SubscribeImplementation(new TypedHandlingSettings<TEvent>(() => new SpecEventHandler<TEvent>(handler), Filters, priority));
         }
     }
 }

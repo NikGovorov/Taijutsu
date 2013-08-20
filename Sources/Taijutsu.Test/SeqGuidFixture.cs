@@ -14,6 +14,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -73,10 +74,10 @@ namespace Taijutsu.Test
 
             Assert.That(dt1, Is.EqualTo(SeqGuid.ToDateTime(id1)).Within(1).Milliseconds);
         }
-        
+
         [Test]
         [Explicit]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed. Acceptable for tests.")]
+        [SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities", Justification = "Reviewed. Acceptable for tests.")]
         public void ShouldBeSequental()
         {
             var connectionString = DatabaseManager.PrepareDatabase("SeqGuidTest");

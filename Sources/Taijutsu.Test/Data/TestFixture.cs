@@ -22,6 +22,7 @@ namespace Taijutsu.Test.Data
         protected virtual void Awaken(UnitOfWork uow)
         {
 #pragma warning disable 168
+
             // ReSharper disable once UnusedVariable
             var nativeSession = ((IWrapper)uow).Origin; // initialize lazy session
 #pragma warning restore 168
@@ -30,6 +31,7 @@ namespace Taijutsu.Test.Data
         protected virtual void Awaken(IDataContext context)
         {
 #pragma warning disable 168
+
             // ReSharper disable once UnusedVariable
             var nativeSession = context.Session; // initialize lazy session
 #pragma warning restore 168

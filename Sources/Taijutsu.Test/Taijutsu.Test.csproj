@@ -106,6 +106,7 @@
     <Compile Include="Domain\DeletableEntityExFixture.cs" />
     <Compile Include="Domain\EntityConversionFixture.cs" />
     <Compile Include="Domain\EntityFixture.cs" />
+    <Compile Include="Event\DynamicHandlingSettingsFixture.cs" />
     <Compile Include="Event\EventsFixture.cs" />
     <Compile Include="Domain\Model\Customer.cs" />
     <Compile Include="Domain\Model\ICustomerQuery.cs" />
@@ -123,6 +124,7 @@
     <Compile Include="Domain\NotUniqueExceptionFixture.cs" />
     <Compile Include="Domain\SpecificationFixture.cs" />
     <Compile Include="Domain\ValueObjectFixture.cs" />
+    <Compile Include="Event\TypedHandlingSettingsFixture.cs" />
     <Compile Include="HybridLogicContextFixture.cs" />
     <Compile Include="LogicContextFixture.cs" />
     <Compile Include="MaybeFixture.cs" />

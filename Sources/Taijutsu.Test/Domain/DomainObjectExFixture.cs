@@ -29,7 +29,7 @@ namespace Taijutsu.Test.Domain
         public virtual void ShouldCallAppropriateSpecificationMethod()
         {
             var spec = Substitute.For<ISpecification>();
-            
+
             var customer = new Customer(SeqGuid.NewGuid(), new FullName("Test", "Test"));
             spec.IsSatisfiedBy(customer).Returns(true);
             customer.Satisfy(spec).Should().Be(true);

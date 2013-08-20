@@ -32,6 +32,7 @@ namespace Taijutsu.Test.Data
             var ormSpecificSession = new OrmSpecificSessionStub(actualNativeSession);
             ormSpecificSession.As<NativeSession>(new { }).Should().Be.SameInstanceAs(actualNativeSession);
             ((IWrapper)ormSpecificSession).Origin.Should().Be.SameInstanceAs(actualNativeSession);
+
             // ReSharper disable once ConvertToConstant.Local
             var message = "Unable to cast native session of 'Taijutsu.Test.Data.OrmSpecificSessionFixture+NativeSession' to " +
                           "'Taijutsu.Test.Data.OrmSpecificSessionFixture+OtherNativeSession'.";

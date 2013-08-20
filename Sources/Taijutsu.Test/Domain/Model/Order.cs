@@ -21,7 +21,7 @@ namespace Taijutsu.Test.Domain.Model
     {
         public Order(Customer customer)
         {
-           Events.Publish(new OrderCreated(this, customer));
+            Events.Publish(new OrderCreated(this, customer));
         }
 
         public Order(Guid id)

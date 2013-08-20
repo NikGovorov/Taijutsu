@@ -11,6 +11,7 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 using Taijutsu.Data.Internal;
 using Taijutsu.Domain;
@@ -18,7 +19,7 @@ using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Test.Data
 {
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Reviewed. Acceptable for tests.")]
+    [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Reviewed. Acceptable for tests.")]
     public class NullOrmSession : IOrmSession
     {
         object IWrapper.Origin
@@ -31,7 +32,7 @@ namespace Taijutsu.Test.Data
             get { return this; }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Reviewed. Acceptable for tests.")]
+        [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Reviewed. Acceptable for tests.")]
         public void Dispose()
         {
         }

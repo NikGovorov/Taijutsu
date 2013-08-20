@@ -39,6 +39,7 @@ namespace Taijutsu.Test.Domain
             Assert.IsTrue(name1.GetHashCode() != name3.GetHashCode());
 
             Assert.IsFalse(name1.Equals(null));
+
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             Assert.IsTrue(null != name3);
             Assert.IsTrue(name4 != name3);
