@@ -12,6 +12,8 @@
 
 using System.Data;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Data
 {
     public enum Require
@@ -31,9 +33,9 @@ namespace Taijutsu.Data
 
         private readonly Require require = Require.None;
 
-        public UnitOfWorkConfig(string sourceName, IsolationLevel isolationLevel, Require require)
+        public UnitOfWorkConfig([NotNull] string sourceName, IsolationLevel isolationLevel, Require require)
         {
-            this.sourceName = sourceName ?? string.Empty;
+            this.sourceName = sourceName;
             this.isolationLevel = isolationLevel;
             this.require = require;
         }

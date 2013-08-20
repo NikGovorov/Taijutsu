@@ -12,6 +12,7 @@
 
 using System;
 
+using Taijutsu.Annotation;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
@@ -21,7 +22,7 @@ namespace Taijutsu.Data.Internal
     {
         private readonly TNative nativeSession;
 
-        protected OrmSpecificSession(TNative nativeSession)
+        protected OrmSpecificSession([NotNull] TNative nativeSession)
         {
             this.nativeSession = nativeSession;
         }

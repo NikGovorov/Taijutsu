@@ -14,6 +14,7 @@ using System;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
+using Taijutsu.Annotation;
 using Taijutsu.Data.Internal;
 using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
@@ -29,7 +30,7 @@ namespace Taijutsu.Data
 
         private bool? completed;
 
-        public UnitOfWork(string source = "", IsolationLevel? isolation = null, Require require = Require.None)
+        public UnitOfWork([NotNull] string source = "", IsolationLevel? isolation = null, Require require = Require.None)
             : this(new UnitOfWorkConfig(source, isolation ?? IsolationLevel.Unspecified, require))
         {
         }
@@ -44,17 +45,17 @@ namespace Taijutsu.Data
         {
         }
 
-        public UnitOfWork(string source)
+        public UnitOfWork([NotNull] string source)
             : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, Require.None))
         {
         }
 
-        public UnitOfWork(string source = "", Require require = Require.None)
+        public UnitOfWork([NotNull] string source = "", Require require = Require.None)
             : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, require))
         {
         }
 
-        public UnitOfWork(string source = "", IsolationLevel? isolation = null)
+        public UnitOfWork([NotNull] string source = "", IsolationLevel? isolation = null)
             : this(new UnitOfWorkConfig(source, isolation ?? IsolationLevel.Unspecified, Require.None))
         {
         }
@@ -64,7 +65,7 @@ namespace Taijutsu.Data
         {
         }
 
-        public UnitOfWork(UnitOfWorkConfig unitOfWorkConfig)
+        public UnitOfWork([NotNull] UnitOfWorkConfig unitOfWorkConfig)
         {
             if (unitOfWorkConfig == null)
             {
@@ -121,7 +122,7 @@ namespace Taijutsu.Data
             }
         }
 
-        public virtual T Complete<T>(Func<IUnitOfWork, T> toReturn)
+        public virtual T Complete<T>([NotNull] Func<IUnitOfWork, T> toReturn)
         {
             AssertNotDisposed();
             var result = toReturn(this);
@@ -129,7 +130,7 @@ namespace Taijutsu.Data
             return result;
         }
 
-        public virtual T Complete<T>(Func<T> toReturn)
+        public virtual T Complete<T>([NotNull] Func<T> toReturn)
         {
             AssertNotDisposed();
             var result = toReturn();

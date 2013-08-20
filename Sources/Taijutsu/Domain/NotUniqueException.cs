@@ -25,8 +25,7 @@ namespace Taijutsu.Domain
             Type = type;
         }
 
-        public NotUniqueException(object id, Type type, Exception innnerException = null)
-            : this(id, (object)type, innnerException)
+        public NotUniqueException(object id, Type type, Exception innnerException = null) : this(id, (object)type, innnerException)
         {
         }
 

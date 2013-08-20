@@ -14,13 +14,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     [Serializable]
     public class AndSpecification<TDomainObject> : CompositeSpecification<TDomainObject>
         where TDomainObject : IDomainObject
     {
-        public AndSpecification(ISpecification<TDomainObject> one, ISpecification<TDomainObject> other)
+        public AndSpecification([NotNull] ISpecification<TDomainObject> one, [NotNull] ISpecification<TDomainObject> other)
             : base(one, other)
         {
         }

@@ -13,6 +13,8 @@
 using System;
 using System.ComponentModel;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu
 {
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]

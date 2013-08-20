@@ -45,11 +45,31 @@ namespace Taijutsu.Event.Internal
 
         public ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent
         {
+            if (filter == null)
+            {
+                throw new ArgumentNullException("filter");
+            }
+
             return new SubscriptionSyntax<TEvent>(Subscribe, new List<Func<TEvent, bool>> { filter });
+        }
+
+        public IDisposable Subscribe<TEvent>(Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent
+        {
+            if (handler == null)
+            {
+                throw new ArgumentNullException("handler");
+            }
+
+            return new SubscriptionSyntax<TEvent>(Subscribe).Subscribe(handler, priority);
         }
 
         public virtual IDisposable Subscribe(IEventHandlingSettings handlingSettings)
         {
+            if (handlingSettings == null)
+            {
+                throw new ArgumentNullException("handlingSettings");
+            }
+
             if (!typeof(IEvent).IsAssignableFrom(handlingSettings.Type))
             {
                 throw new Exception(string.Format("'{0}' does not implement '{1}'.", handlingSettings.Type, typeof(IEvent)));
@@ -67,11 +87,6 @@ namespace Taijutsu.Event.Internal
             }
 
             return UnsubscriptionAction(handlingSettings);
-        }
-
-        public IDisposable Subscribe<TEvent>(Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent
-        {
-            return new SubscriptionSyntax<TEvent>(Subscribe).Subscribe(handler, priority);
         }
 
         public virtual void Publish(object ev)

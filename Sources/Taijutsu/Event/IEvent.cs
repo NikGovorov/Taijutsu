@@ -12,6 +12,8 @@
 
 using System;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Event
 {
     [PublicApi]

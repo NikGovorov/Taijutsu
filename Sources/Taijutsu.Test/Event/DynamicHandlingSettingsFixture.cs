@@ -17,6 +17,7 @@ using NUnit.Framework;
 
 using SharpTestsEx;
 
+using Taijutsu.Annotation;
 using Taijutsu.Event;
 using Taijutsu.Event.Internal;
 using Taijutsu.Test.Domain.Model;
@@ -120,6 +121,7 @@ namespace Taijutsu.Test.Event
                                                                  (Func<object>)(() =>
                                                                  {
                                                                      fourthResolved = true;
+
                                                                      // ReSharper disable once AccessToModifiedClosure
                                                                      return allInOneHandler;
                                                                  })

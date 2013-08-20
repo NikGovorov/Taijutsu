@@ -9,6 +9,9 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
+using Taijutsu.Annotation;
+
 namespace Taijutsu
 {
     public interface ILogicContext : IHiddenObjectMembers
@@ -16,10 +19,10 @@ namespace Taijutsu
         bool Applicable { get; }
 
         [CanBeNull]
-        object FindData(string name);
+        object FindData([NotNull] string name);
 
-        void SetData(string name, object value);
+        void SetData([NotNull] string name, [NotNull] object value);
 
-        void ReleaseData(string name);
+        void ReleaseData([NotNull] string name);
     }
 }

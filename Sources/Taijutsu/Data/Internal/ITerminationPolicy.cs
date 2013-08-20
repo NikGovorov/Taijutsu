@@ -12,10 +12,12 @@
 
 using System;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Data.Internal
 {
     public interface ITerminationPolicy : IDisposable
     {
-        void Terminate(IOrmSession session, [UsedImplicitly] bool isSuccessfully);
+        void Terminate([NotNull] IOrmSession session, [UsedImplicitly] bool isSuccessfully);
     }
 }

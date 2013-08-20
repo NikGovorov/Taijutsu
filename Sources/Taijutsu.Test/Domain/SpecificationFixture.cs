@@ -15,6 +15,7 @@ using System.Linq;
 
 using NUnit.Framework;
 
+using Taijutsu.Annotation;
 using Taijutsu.Domain;
 
 namespace Taijutsu.Test.Domain

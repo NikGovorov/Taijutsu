@@ -14,6 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     [Serializable]
@@ -22,7 +24,7 @@ namespace Taijutsu.Domain
     {
         private readonly ISpecification<TDomainObject> original;
 
-        public NotSpecification(ISpecification<TDomainObject> original)
+        public NotSpecification([NotNull] ISpecification<TDomainObject> original)
         {
             if (original == null)
             {

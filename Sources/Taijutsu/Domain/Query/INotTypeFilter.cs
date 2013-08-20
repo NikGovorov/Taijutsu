@@ -12,12 +12,14 @@
 
 using System;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain.Query
 {
     [PublicApi]
     public interface INotTypeFilter<out TQuery> : IQueryContinuation
     {
-        TQuery IsNotOf(params Type[] derivedTypes);
+        TQuery IsNotOf([NotNull] params Type[] derivedTypes);
     }
 
     [PublicApi]

@@ -14,6 +14,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 
+using Taijutsu.Annotation;
 using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Event
@@ -39,20 +40,20 @@ namespace Taijutsu.Event
         {
             get
             {
-                var localEventAggregator = FindLocalEventAggregator();
+                var localEvents = FindLocalEventAggregator();
 
-                if (localEventAggregator == null)
+                if (localEvents == null)
                 {
-                    localEventAggregator = new SingleThreadAggregator();
-                    LogicContext.SetData(LocalEventAggregatorName, localEventAggregator);
+                    localEvents = new SingleThreadAggregator();
+                    LogicContext.SetData(LocalEventAggregatorName, localEvents);
                 }
 
-                return localEventAggregator;
+                return localEvents;
             }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IDisposable Subscribe(IEventHandlingSettings handlingSettings)
+        public static IDisposable Subscribe([NotNull] IEventHandlingSettings handlingSettings)
         {
             if (handlingSettings == null)
             {
@@ -63,7 +64,7 @@ namespace Taijutsu.Event
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static void Publish(object ev)
+        public static void Publish([NotNull] object ev)
         {
             var localEventAggregator = FindLocalEventAggregator();
 
@@ -85,17 +86,17 @@ namespace Taijutsu.Event
             return new Events<TEvent>();
         }
 
-        public static ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent
+        public static ISubscriptionSyntax<TEvent> Where<TEvent>([NotNull] Func<TEvent, bool> filter) where TEvent : class, IEvent
         {
             return globalEvents.Where(filter);
         }
 
-        public static IDisposable Subscribe<TEvent>(Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent
+        public static IDisposable Subscribe<TEvent>([NotNull] Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent
         {
             return globalEvents.Subscribe(handler, priority);
         }
 
-        public static void Publish<TEvent>(TEvent ev) where TEvent : class, IEvent
+        public static void Publish<TEvent>([NotNull] TEvent ev) where TEvent : class, IEvent
         {
             Publish(ev as object);
         }
@@ -145,17 +146,17 @@ namespace Taijutsu.Event
         {
         }
 
-        public static ISubscriptionSyntax<TEvent> Where(Func<TEvent, bool> filter)
+        public static ISubscriptionSyntax<TEvent> Where([NotNull] Func<TEvent, bool> filter)
         {
             return Events.Where(filter);
         }
 
-        public static IDisposable Subscribe(Action<TEvent> handler, int priority = 0)
+        public static IDisposable Subscribe([NotNull] Action<TEvent> handler, int priority = 0)
         {
             return Events.Subscribe(handler, priority);
         }
 
-        public static void Publish(TEvent ev)
+        public static void Publish([NotNull] TEvent ev)
         {
             Events.Publish(ev);
         }

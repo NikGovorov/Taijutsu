@@ -12,6 +12,8 @@
 
 using System.Collections.Generic;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     public interface ISpecification : IHiddenObjectMembers
@@ -24,11 +26,11 @@ namespace Taijutsu.Domain
     {
         bool IsSatisfiedBy(TDomainObject candidate);
 
-        IEnumerable<TDomainObject> SatisfyingElementsFrom(IEnumerable<TDomainObject> candidates);
+        IEnumerable<TDomainObject> SatisfyingElementsFrom([NotNull] IEnumerable<TDomainObject> candidates);
 
-        ISpecification<TDomainObject> And(ISpecification<TDomainObject> and);
+        ISpecification<TDomainObject> And([NotNull] ISpecification<TDomainObject> and);
 
-        ISpecification<TDomainObject> Or(ISpecification<TDomainObject> or);
+        ISpecification<TDomainObject> Or([NotNull] ISpecification<TDomainObject> or);
 
         ISpecification<TDomainObject> Not();
     }

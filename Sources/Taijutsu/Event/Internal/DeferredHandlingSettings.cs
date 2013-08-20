@@ -14,6 +14,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 
+using Taijutsu.Annotation;
 using Taijutsu.Data.Internal;
 
 namespace Taijutsu.Event.Internal
@@ -23,7 +24,8 @@ namespace Taijutsu.Event.Internal
     {
         private readonly Action<object> deferredAction;
 
-        public DeferredHandlingSettings(IEventHandlingSettings original, DelayUntil delayUntil) : base(original.Type, original.Priority)
+        public DeferredHandlingSettings([NotNull] IEventHandlingSettings original, DelayUntil delayUntil)
+            : base(original.Type, original.Priority)
         {
             deferredAction = ev =>
             {

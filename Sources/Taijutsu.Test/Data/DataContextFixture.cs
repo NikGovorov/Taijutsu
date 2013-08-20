@@ -22,6 +22,7 @@ using NUnit.Framework;
 
 using SharpTestsEx;
 
+using Taijutsu.Annotation;
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
 
@@ -54,7 +55,7 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldCallRealCompleteOnlyOnce()
         {
-            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -72,7 +73,7 @@ namespace Taijutsu.Test.Data
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed. Acceptable for tests.")]
         public virtual void ShouldCallRealDisposeOnlyOnce()
         {
-            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -89,7 +90,7 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldNotCallRealCompleteIfSessionHasNotBeenUsed()
         {
-            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -105,7 +106,7 @@ namespace Taijutsu.Test.Data
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed. Acceptable for tests.")]
         public virtual void ShouldNotCallRealDisposeIfSessionHasNotBeenUsed()
         {
-            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -123,7 +124,7 @@ namespace Taijutsu.Test.Data
             Assert.That(
                 () =>
                 {
-                    var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+                    var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
                     var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
                     var policy = new ImmediateTerminationPolicy();
 
@@ -141,7 +142,7 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldRaiseFinishedEventDuringDispose()
         {
-            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -189,7 +190,7 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldRaiseFinishedEventDuringDecoratorDispose()
         {
-            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -228,7 +229,7 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldReplaceFinishedEventInSubordinate()
         {
-            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -287,7 +288,7 @@ namespace Taijutsu.Test.Data
         [ExpectedException(ExpectedMessage = "Data context has already been disposed(with success - 'False'), so it is not usable anymore.")]
         public virtual void ShouldThrowExceptionOnSessionCallIfDisposeHasAlreadyBeenCalled()
         {
-            var config = new UnitOfWorkConfig(null, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IOrmSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 

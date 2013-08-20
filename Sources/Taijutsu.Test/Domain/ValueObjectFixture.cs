@@ -12,6 +12,7 @@
 
 using NUnit.Framework;
 
+using Taijutsu.Annotation;
 using Taijutsu.Test.Domain.Model;
 
 namespace Taijutsu.Test.Domain

@@ -14,6 +14,8 @@ using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Data.Internal
 {
     public class DataContext : IDataContext
@@ -32,7 +34,7 @@ namespace Taijutsu.Data.Internal
 
         private bool disposed;
 
-        public DataContext(UnitOfWorkConfig configuration, Lazy<IOrmSession> session, ITerminationPolicy terminationPolicy)
+        public DataContext([NotNull] UnitOfWorkConfig configuration, [NotNull] Lazy<IOrmSession> session, [NotNull] ITerminationPolicy terminationPolicy)
         {
             if (configuration == null)
             {

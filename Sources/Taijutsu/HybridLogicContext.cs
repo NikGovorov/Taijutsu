@@ -14,13 +14,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu
 {
     public sealed class HybridLogicContext : ILogicContext
     {
         private readonly IEnumerable<ILogicContext> contexts;
 
-        public HybridLogicContext(IEnumerable<ILogicContext> contexts)
+        public HybridLogicContext([NotNull] IEnumerable<ILogicContext> contexts)
         {
             if (contexts == null)
             {

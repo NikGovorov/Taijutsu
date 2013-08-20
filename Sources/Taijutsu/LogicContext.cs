@@ -13,6 +13,8 @@
 using System;
 using System.ComponentModel;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu
 {
     public static class LogicContext
@@ -23,7 +25,7 @@ namespace Taijutsu
 
         private static bool initialized;
 
-        public static void Customize(ILogicContext initialContext)
+        public static void Customize([NotNull] ILogicContext initialContext)
         {
             if (initialContext == null)
             {
@@ -45,7 +47,7 @@ namespace Taijutsu
         }
 
         [CanBeNull]
-        public static object FindData(string name)
+        public static object FindData([NotNull] string name)
         {
             if (name == null)
             {
@@ -57,7 +59,7 @@ namespace Taijutsu
             return context.FindData(name);
         }
 
-        public static void SetData(string name, object value)
+        public static void SetData([NotNull] string name, object value)
         {
             if (name == null)
             {
@@ -69,7 +71,7 @@ namespace Taijutsu
             context.SetData(name, value);
         }
 
-        public static void ReleaseData(string name)
+        public static void ReleaseData([NotNull] string name)
         {
             if (name == null)
             {

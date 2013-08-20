@@ -13,6 +13,7 @@
 using System;
 using System.ComponentModel;
 
+using Taijutsu.Annotation;
 using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Event
@@ -22,22 +23,22 @@ namespace Taijutsu.Event
     {
         IEvents<TEvent> OfType<TEvent>() where TEvent : class, IEvent;
 
-        ISubscriptionSyntax<TEvent> Where<TEvent>(Func<TEvent, bool> filter) where TEvent : class, IEvent;
+        ISubscriptionSyntax<TEvent> Where<TEvent>([NotNull] Func<TEvent, bool> filter) where TEvent : class, IEvent;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        IDisposable Subscribe(IEventHandlingSettings handlingSettings);
+        IDisposable Subscribe([NotNull] IEventHandlingSettings handlingSettings);
 
-        IDisposable Subscribe<TEvent>(Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent;
+        IDisposable Subscribe<TEvent>([NotNull] Action<TEvent> handler, int priority = 0) where TEvent : class, IEvent;
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        void Publish(object ev);
+        void Publish([NotNull] object ev);
 
-        void Publish<TEvent>(TEvent ev) where TEvent : class, IEvent;
+        void Publish<TEvent>([NotNull] TEvent ev) where TEvent : class, IEvent;
     }
 
     // ReSharper disable once UnusedTypeParameter
     public interface IEvents<TEvent> : ISubscriptionSyntax<TEvent> where TEvent : class, IEvent
     {
-        void Publish(TEvent ev);
+        void Publish([NotNull] TEvent ev);
     }
 }

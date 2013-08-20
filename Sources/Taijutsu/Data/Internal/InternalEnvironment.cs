@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Data.Internal
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -83,7 +85,7 @@ namespace Taijutsu.Data.Internal
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static void RegisterDataSource(DataSource dataSource, bool throwIfExists = false)
+        public static void RegisterDataSource([NotNull] DataSource dataSource, bool throwIfExists = false)
         {
             if (dataSource == null)
             {
@@ -105,7 +107,7 @@ namespace Taijutsu.Data.Internal
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static void UnregisterDataSource(string name = "")
+        public static void UnregisterDataSource([NotNull] string name = "")
         {
             if (name == null)
             {

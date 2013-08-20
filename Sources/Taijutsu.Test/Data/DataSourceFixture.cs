@@ -14,6 +14,7 @@ using System.Data;
 
 using NUnit.Framework;
 
+using Taijutsu.Annotation;
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
 

@@ -16,6 +16,7 @@ using NUnit.Framework;
 
 using SharpTestsEx;
 
+using Taijutsu.Annotation;
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
 using Taijutsu.Event.Internal;
@@ -64,7 +65,7 @@ namespace Taijutsu.Test.Event
                 {
                     resolved++;
                     return new SpecEventHandler<SystemChecked>(ev => { called++; });
-                },
+                }, 
                 priority: 99);
 
             var settigs = new DeferredHandlingSettings(originalSettigs, DelayUntil.PreCompleted);

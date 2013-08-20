@@ -13,12 +13,14 @@
 using System;
 using System.ComponentModel;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class AggregateRootExtensions
     {
-        public static object AsCreatedIn(this IAggregateRoot self, IUnitOfWork uow)
+        public static object AsCreatedIn(this IAggregateRoot self, [NotNull] IUnitOfWork uow)
         {
             if (self == null)
             {

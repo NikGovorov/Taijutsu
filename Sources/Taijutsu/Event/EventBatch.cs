@@ -14,18 +14,22 @@ using System;
 using System.Collections;
 using System.Linq;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Event
 {
     public class EventBatch<TEvent> : Event, IEventBatch<TEvent>
     {
         private TEvent[] events;
 
-        public EventBatch(TEvent[] events) : this()
+        public EventBatch([NotNull] TEvent[] events)
+            : this()
         {
             this.events = events;
         }
 
-        public EventBatch(IEnumerable events) : this()
+        public EventBatch([NotNull] IEnumerable events)
+            : this()
         {
             this.events = events.Cast<TEvent>().ToArray();
         }

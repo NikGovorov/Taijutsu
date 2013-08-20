@@ -12,13 +12,15 @@
 
 using System;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu
 {
     public interface ITimeController
     {
         DateTime Now { get; }
 
-        void Customize(Func<DateTime> dateFunc);
+        void Customize([NotNull] Func<DateTime> dateFunc);
 
         void SetDate(DateTime date);
 

@@ -12,11 +12,13 @@
 
 using System;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     public static class DeletableEntityEx
     {
-        public static void AsDeletedIn(this IDeletableEntity self, IUnitOfWork uow)
+        public static void AsDeletedIn(this IDeletableEntity self, [NotNull] IUnitOfWork uow)
         {
             if (self == null)
             {

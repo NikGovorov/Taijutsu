@@ -13,6 +13,8 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Data.Internal
 {
     public class OrmSessionBuilder
@@ -21,12 +23,12 @@ namespace Taijutsu.Data.Internal
 
         private readonly string name;
 
-        public OrmSessionBuilder(Func<IOrmSession> factory, string name)
+        public OrmSessionBuilder([NotNull] Func<IOrmSession> factory, [NotNull] string name)
             : this(options => factory(), name)
         {
         }
 
-        public OrmSessionBuilder(Func<object, IOrmSession> factory, string name)
+        public OrmSessionBuilder([NotNull] Func<object, IOrmSession> factory, [NotNull] string name)
         {
             if (factory == null)
             {
@@ -59,12 +61,12 @@ namespace Taijutsu.Data.Internal
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppress the warning for generics.")]
     public class OrmSessionBuilder<T> : OrmSessionBuilder
     {
-        public OrmSessionBuilder(Func<IOrmSession> factory, string name = null)
+        public OrmSessionBuilder([NotNull] Func<IOrmSession> factory, string name = null)
             : this(options => factory(), name)
         {
         }
 
-        public OrmSessionBuilder(Func<object, IOrmSession> factory, string name = null)
+        public OrmSessionBuilder([NotNull] Func<object, IOrmSession> factory, string name = null)
             : base(factory, name ?? typeof(T).FullName)
         {
         }

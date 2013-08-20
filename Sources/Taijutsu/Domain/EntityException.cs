@@ -14,6 +14,8 @@ using System;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     [PublicApi]

@@ -12,6 +12,8 @@
 
 using System.Collections.Generic;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain.Query
 {
     [PublicApi]

@@ -14,6 +14,7 @@ using NSubstitute;
 
 using NUnit.Framework;
 
+using Taijutsu.Annotation;
 using Taijutsu.Domain;
 using Taijutsu.Test.Domain.Model;
 

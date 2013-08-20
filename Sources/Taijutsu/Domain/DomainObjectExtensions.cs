@@ -13,12 +13,14 @@
 using System;
 using System.ComponentModel;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class DomainObjectExtensions
     {
-        public static bool Satisfy(this IDomainObject domainObject, ISpecification specification)
+        public static bool Satisfy(this IDomainObject domainObject, [NotNull] ISpecification specification)
         {
             if (specification == null)
             {

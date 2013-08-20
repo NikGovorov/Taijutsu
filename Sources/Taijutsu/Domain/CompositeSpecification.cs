@@ -12,6 +12,8 @@
 
 using System;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     [Serializable]
@@ -21,7 +23,7 @@ namespace Taijutsu.Domain
 
         private ISpecification<TDomainObject> otherSpec;
 
-        protected CompositeSpecification(ISpecification<TDomainObject> one, ISpecification<TDomainObject> other)
+        protected CompositeSpecification([NotNull] ISpecification<TDomainObject> one, [NotNull] ISpecification<TDomainObject> other)
         {
             if (one == null)
             {

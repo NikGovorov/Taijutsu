@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq.Expressions;
 
+using Taijutsu.Annotation;
 using Taijutsu.Data.Internal;
 
 namespace Taijutsu.Event.Internal
@@ -29,7 +30,8 @@ namespace Taijutsu.Event.Internal
 
         private readonly Action<object> batchedAction;
 
-        public BatchedHandlingSettings(Type type, DelayUntil delayUntil, int priority) : base(type, priority)
+        public BatchedHandlingSettings([NotNull] Type type, DelayUntil delayUntil, int priority)
+            : base(type, priority)
         {
             batchedAction = ev =>
             {
@@ -83,6 +85,7 @@ namespace Taijutsu.Event.Internal
                                 {
                                     context = null;
                                     action = null;
+                                    extension = null;
                                 }
                             };
 

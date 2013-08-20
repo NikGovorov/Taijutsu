@@ -13,6 +13,8 @@
 using System;
 using System.Data;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Data.Internal
 {
     public class DataSource
@@ -23,17 +25,17 @@ namespace Taijutsu.Data.Internal
 
         private readonly Func<IsolationLevel, IOrmSession> sessionBuilder;
 
-        public DataSource(Func<IsolationLevel, IOrmSession> sessionBuilder)
+        public DataSource([NotNull] Func<IsolationLevel, IOrmSession> sessionBuilder)
             : this(string.Empty, IsolationLevel.RepeatableRead, sessionBuilder)
         {
         }
 
-        public DataSource(string name, Func<IsolationLevel, IOrmSession> sessionBuilder)
+        public DataSource([NotNull] string name, [NotNull] Func<IsolationLevel, IOrmSession> sessionBuilder)
             : this(name, IsolationLevel.RepeatableRead, sessionBuilder)
         {
         }
 
-        public DataSource(string name, IsolationLevel defaultIsolationLevel, Func<IsolationLevel, IOrmSession> sessionBuilder)
+        public DataSource([NotNull] string name, IsolationLevel defaultIsolationLevel, [NotNull] Func<IsolationLevel, IOrmSession> sessionBuilder)
         {
             if (name == null)
             {

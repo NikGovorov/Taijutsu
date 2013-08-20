@@ -16,6 +16,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Event.Internal
 {
     internal delegate void Handle(object handler, object ev);
@@ -30,7 +32,8 @@ namespace Taijutsu.Event.Internal
 
         private readonly Func<IEnumerable<Func<object>>> resolver;
 
-        public DynamicHandlingSettings(Type type, Func<IEnumerable<Func<object>>> resolver, int priority) : base(type, priority)
+        public DynamicHandlingSettings([NotNull] Type type, [NotNull] Func<IEnumerable<Func<object>>> resolver, int priority)
+            : base(type, priority)
         {
             if (type == null)
             {
@@ -56,12 +59,12 @@ namespace Taijutsu.Event.Internal
                         throw new ArgumentNullException("e");
                     }
 
-                    var handlerResolvers = resolver().ToArray();
-
-                    if (handlerResolvers.Length > 0)
+                    var ev = Type.IsInstanceOfType(e) ? e : null;
+                    if (ev != null)
                     {
-                        var ev = Type.IsInstanceOfType(e) ? e : null;
-                        if (ev != null)
+                        var handlerResolvers = resolver().ToArray();
+
+                        if (handlerResolvers.Length > 0)
                         {
                             foreach (var handlerResolver in handlerResolvers)
                             {

@@ -12,11 +12,13 @@
 
 using System;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Event.Internal
 {
     public abstract class AbstractHandlingSettings : IEventHandlingSettings
     {
-        protected AbstractHandlingSettings(Type type, int priority)
+        protected AbstractHandlingSettings([NotNull] Type type, int priority)
         {
             Type = type;
             Priority = priority;

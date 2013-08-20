@@ -20,6 +20,7 @@ using NUnit.Framework;
 
 using SharpTestsEx;
 
+using Taijutsu.Annotation;
 using Taijutsu.Event;
 using Taijutsu.Test.Domain.Model;
 
@@ -167,7 +168,7 @@ namespace Taijutsu.Test.Event
         {
             var callCounter = 0;
 
-            using (Events.Subscribe<SystemChecked>(ev => callCounter++))
+            using (Events.OfType<SystemChecked>().Subscribe(ev => callCounter++))
             {
                 Events.Publish(new SystemChecked()); // +1
                 Events.Publish(new SystemChecked()); // +1
@@ -182,7 +183,7 @@ namespace Taijutsu.Test.Event
 
             callCounter = 0;
 
-            using (Events.Local.Subscribe<SystemChecked>(ev => callCounter++))
+            using (Events.Local.OfType<SystemChecked>().Subscribe(ev => callCounter++))
             {
                 Events.Publish(new SystemChecked()); // +1
                 Events.Publish(new SystemChecked()); // +1
@@ -199,7 +200,7 @@ namespace Taijutsu.Test.Event
             callCounter = 0;
 
             var handler = new SystemCheckedHandler();
-            using (Events.Subscribe<SystemChecked>(handler.Handle))
+            using (Events.OfAnyType().Subscribe<SystemChecked>(handler.Handle))
             {
                 Events.Publish(new SystemChecked()); // +1
                 Events.Publish(new SystemChecked()); // +1

@@ -13,15 +13,16 @@
 using System;
 using System.Collections.Generic;
 
+using Taijutsu.Annotation;
 using Taijutsu.Event.Internal;
 
 namespace Taijutsu.Event
 {
     public interface ISubscriptionSyntax<out TEvent> : IHiddenObjectMembers where TEvent : IEvent
     {
-        ISubscriptionSyntax<TEvent> Where(Func<TEvent, bool> filter);
+        ISubscriptionSyntax<TEvent> Where([NotNull] Func<TEvent, bool> filter);
 
-        IDisposable Subscribe(Action<TEvent> handler, int priority = 0);
+        IDisposable Subscribe([NotNull] Action<TEvent> handler, int priority = 0);
     }
 
     public class SubscriptionSyntax<TEvent> : ISubscriptionSyntax<TEvent> where TEvent : class, IEvent
@@ -52,12 +53,22 @@ namespace Taijutsu.Event
 
         public ISubscriptionSyntax<TEvent> Where(Func<TEvent, bool> filter)
         {
+            if (filter == null)
+            {
+                throw new ArgumentNullException("filter");
+            }
+
             Filters.Add(filter);
             return new SubscriptionSyntax<TEvent>(SubscribeImplementation, filters);
         }
 
         public IDisposable Subscribe(Action<TEvent> handler, int priority = 0)
         {
+            if (handler == null)
+            {
+                throw new ArgumentNullException("handler");
+            }
+
             return SubscribeImplementation(new TypedHandlingSettings<TEvent>(() => new SpecEventHandler<TEvent>(handler), Filters, priority));
         }
 

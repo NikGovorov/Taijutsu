@@ -12,20 +12,21 @@
 
 using System;
 
+using Taijutsu.Annotation;
 using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Domain
 {
     public interface IUnitOfWork
     {
-        object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
+        object MarkAsCreated<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IAggregateRoot;
 
-        object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
+        object MarkAsCreated<TEntity>([NotNull] Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
 
-        void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
+        void MarkAsDeleted<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IDeletableEntity;
 
         IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
 
-        IUniqueEntityQuery<TEntity> Unique<TEntity>(object id, object options = null) where TEntity : class, IQueryableEntity;
+        IUniqueEntityQuery<TEntity> Unique<TEntity>([NotNull] object id, object options = null) where TEntity : class, IQueryableEntity;
     }
 }

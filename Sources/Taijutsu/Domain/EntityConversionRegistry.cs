@@ -13,6 +13,8 @@
 using System;
 using System.Collections.Generic;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     public static class EntityConversionRegistry
@@ -31,7 +33,7 @@ namespace Taijutsu.Domain
             get { return conversions; }
         }
 
-        public static void CustomizeWith(IEnumerable<IEntityConversion> newConversions)
+        public static void CustomizeWith([NotNull] IEnumerable<IEntityConversion> newConversions)
         {
             if (newConversions == null)
             {

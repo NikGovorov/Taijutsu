@@ -21,6 +21,11 @@ namespace Taijutsu.Event.Internal
 
         public override IDisposable Subscribe(IEventHandlingSettings handlingSettings)
         {
+            if (handlingSettings == null)
+            {
+                throw new ArgumentNullException("handlingSettings");
+            }
+
             if (!typeof(IEvent).IsAssignableFrom(handlingSettings.Type))
             {
                 throw new Exception(string.Format("'{0}' does not implement '{1}'.", handlingSettings.Type, typeof(IEvent)));

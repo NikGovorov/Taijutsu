@@ -16,6 +16,7 @@ using NUnit.Framework;
 
 using SharpTestsEx;
 
+using Taijutsu.Annotation;
 using Taijutsu.Domain;
 using Taijutsu.Test.Domain.Model;
 

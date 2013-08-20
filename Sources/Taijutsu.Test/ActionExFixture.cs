@@ -17,6 +17,8 @@ using NUnit.Framework;
 
 using SharpTestsEx;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Test
 {
     [UsedImplicitly]

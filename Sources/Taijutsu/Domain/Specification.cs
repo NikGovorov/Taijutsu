@@ -14,13 +14,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Domain
 {
     [Serializable]
     public abstract class Specification<TDomainObject> : ISpecification<TDomainObject>
         where TDomainObject : IDomainObject
     {
-        public static Specification<TDomainObject> operator &(Specification<TDomainObject> one, Specification<TDomainObject> other)
+        public static Specification<TDomainObject> operator &([NotNull] Specification<TDomainObject> one, [NotNull] Specification<TDomainObject> other)
         {
             if (one == null)
             {
@@ -35,7 +37,7 @@ namespace Taijutsu.Domain
             return one.And(other);
         }
 
-        public static Specification<TDomainObject> operator |(Specification<TDomainObject> one, Specification<TDomainObject> other)
+        public static Specification<TDomainObject> operator |([NotNull] Specification<TDomainObject> one, [NotNull] Specification<TDomainObject> other)
         {
             if (one == null)
             {
@@ -50,7 +52,7 @@ namespace Taijutsu.Domain
             return one.Or(other);
         }
 
-        public static Specification<TDomainObject> operator !(Specification<TDomainObject> specification)
+        public static Specification<TDomainObject> operator !([NotNull] Specification<TDomainObject> specification)
         {
             if (specification == null)
             {
@@ -87,12 +89,12 @@ namespace Taijutsu.Domain
             return Not();
         }
 
-        public virtual Specification<TDomainObject> And(ISpecification<TDomainObject> other)
+        public virtual Specification<TDomainObject> And([NotNull] ISpecification<TDomainObject> other)
         {
             return new AndSpecification<TDomainObject>(this, other);
         }
 
-        public virtual Specification<TDomainObject> Or(ISpecification<TDomainObject> other)
+        public virtual Specification<TDomainObject> Or([NotNull] ISpecification<TDomainObject> other)
         {
             return new OrSpecification<TDomainObject>(this, other);
         }

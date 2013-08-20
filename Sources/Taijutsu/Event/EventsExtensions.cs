@@ -19,12 +19,13 @@ namespace Taijutsu.Event
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class EventsExtensions
     {
-        // ReSharper disable once UnusedParameter.Global
+        // ReSharper disable UnusedParameter.Global
         public static void Batch<TEvent>(this IEvents<TEvent> self, int priority = 0, DelayUntil until = DelayUntil.Finished) where TEvent : class, IEvent
         {
             Events.Subscribe(new BatchedHandlingSettings(typeof(TEvent), until, priority));
         }
 
+        // ReSharper restore UnusedParameter.Global
         public static void BatchUntilPreCompleted<TEvent>(this IEvents<TEvent> self, int priority = 0) where TEvent : class, IEvent
         {
             self.Batch(priority, DelayUntil.PreCompleted);
@@ -40,12 +41,13 @@ namespace Taijutsu.Event
             self.Batch(priority);
         }
 
-        // ReSharper disable once UnusedParameter.Global
+        // ReSharper disable UnusedParameter.Global
         public static ISubscriptionSyntax<TEvent> Deferred<TEvent>(this IEvents<TEvent> self, DelayUntil until = DelayUntil.Finished) where TEvent : class, IEvent
         {
             return new SubscriptionSyntax<TEvent>(origin => Events.Subscribe(new DeferredHandlingSettings(origin, until)));
         }
 
+        // ReSharper restore UnusedParameter.Global
         public static ISubscriptionSyntax<TEvent> DeferredUntilPreCompleted<TEvent>(this IEvents<TEvent> self) where TEvent : class, IEvent
         {
             return self.Deferred(DelayUntil.PreCompleted);

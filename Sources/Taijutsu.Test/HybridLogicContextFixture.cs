@@ -14,6 +14,8 @@ using NSubstitute;
 
 using NUnit.Framework;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Test
 {
     [TestFixture]

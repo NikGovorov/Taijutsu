@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Event.Internal
 {
     [EditorBrowsable(EditorBrowsableState.Never)]
@@ -24,7 +26,8 @@ namespace Taijutsu.Event.Internal
 
         private readonly IEnumerable<Func<TEvent, bool>> filters;
 
-        public TypedHandlingSettings(Func<ISpecEventHandler<TEvent>> handlerResolver, IEnumerable<Func<TEvent, bool>> filters = null, int priority = 0) : base(typeof(TEvent), priority)
+        public TypedHandlingSettings([NotNull] Func<ISpecEventHandler<TEvent>> handlerResolver, IEnumerable<Func<TEvent, bool>> filters = null, int priority = 0)
+            : base(typeof(TEvent), priority)
         {
             if (handlerResolver == null)
             {

@@ -17,6 +17,8 @@ using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
+using Taijutsu.Annotation;
+
 namespace Taijutsu.Data.Internal
 {
     [SuppressMessage("Microsoft.Design", "CA1001:TypesThatOwnDisposableFieldsShouldBeDisposable", Justification = "Reviewed. TerminationPolicy lifetime must be managed outside.")]
@@ -28,7 +30,7 @@ namespace Taijutsu.Data.Internal
 
         private readonly ITerminationPolicy terminationPolicy;
 
-        public DataContextSupervisor(Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider, ITerminationPolicy terminationPolicy = null)
+        public DataContextSupervisor([NotNull] Func<ReadOnlyDictionary<string, DataSource>> dataSourcesProvider, ITerminationPolicy terminationPolicy = null)
         {
             if (dataSourcesProvider == null)
             {
@@ -39,6 +41,7 @@ namespace Taijutsu.Data.Internal
             this.terminationPolicy = terminationPolicy ?? new ImmediateTerminationPolicy();
         }
 
+        [CanBeNull]
         public virtual IDataContext CurrentContext
         {
             get { return contexts.LastOrDefault(); }
@@ -54,7 +57,7 @@ namespace Taijutsu.Data.Internal
             get { return contexts.Count != 0; }
         }
 
-        public virtual IDataContext Register(UnitOfWorkConfig config)
+        public virtual IDataContext Register([NotNull] UnitOfWorkConfig config)
         {
             DataSource dataSource;
 
