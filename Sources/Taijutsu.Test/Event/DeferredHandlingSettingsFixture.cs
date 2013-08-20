@@ -55,6 +55,51 @@ namespace Taijutsu.Test.Event
         }
 
         [Test]
+        public void ActionShouldBeFilteredByType()
+        {
+            var resolved = 0;
+            var called = 0;
+
+            var originalSettigs = new TypedHandlingSettings<SystemChecked>(
+                () =>
+                {
+                    resolved++;
+                    return new SpecEventHandler<SystemChecked>(ev => { called++; });
+                },
+                priority: 99);
+
+            var settigs = new DeferredHandlingSettings(originalSettigs, DelayUntil.PreCompleted);
+
+            using (var uow = new UnitOfWork())
+            {
+                settigs.Action(new object());
+                settigs.Action(new object());
+                resolved.Should().Be(0);
+                called.Should().Be(0);
+                uow.Complete();
+                resolved.Should().Be(0);
+                called.Should().Be(0);
+            }
+
+            resolved.Should().Be(0);
+            called.Should().Be(0);
+
+            using (var uow = new UnitOfWork())
+            {
+                settigs.Action(new SystemChecked());
+                settigs.Action(new SystemChecked());
+                resolved.Should().Be(0);
+                called.Should().Be(0);
+                uow.Complete();
+                resolved.Should().Be(2);
+                called.Should().Be(2);
+            }
+
+            resolved.Should().Be(2);
+            called.Should().Be(2);
+        }
+
+        [Test]
         public void SubscriberShouldBeIgnoredIfIsUsedOutsideOfUnitOfWork()
         {
             var resolved = false;
@@ -76,12 +121,10 @@ namespace Taijutsu.Test.Event
         }
 
         [Test]
-        public void OriginalActionShouldBeCallBeforeUnitOfWorkCompletionIfAppropriateStageIsSpecified()
+        public void OriginalActionShouldBeCalledBeforeUnitOfWorkCompletionIfAppropriateStageIsSpecified()
         {
             var resolved = 0;
             var called = 0;
-
-            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullOrmSession()));
 
             var originalSettigs = new TypedHandlingSettings<SystemChecked>(
                 () =>
@@ -109,7 +152,7 @@ namespace Taijutsu.Test.Event
         }
 
         [Test]
-        public void OriginalActionShouldBeCallAfterUnitOfWorkCompletionIfAppropriateStageIsSpecified()
+        public void OriginalActionShouldBeCalledAfterUnitOfWorkCompletionIfAppropriateStageIsSpecified()
         {
             var resolved = 0;
             var called = 0;
@@ -169,12 +212,10 @@ namespace Taijutsu.Test.Event
         }
 
         [Test]
-        public void OriginalActionShouldBeCallWhenUnitOfWorkScopeFinishIfAppropriateStageIsSpecified()
+        public void OriginalActionShouldBeCalledWhenUnitOfWorkScopeFinishedSuccessfullyIfAppropriateStageIsSpecified()
         {
             var resolved = 0;
             var called = 0;
-
-            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullOrmSession()));
 
             var originalSettigs = new TypedHandlingSettings<SystemChecked>(
                 () =>

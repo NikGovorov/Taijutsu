@@ -106,6 +106,7 @@
     <Compile Include="Domain\DeletableEntityExFixture.cs" />
     <Compile Include="Domain\EntityConversionFixture.cs" />
     <Compile Include="Domain\EntityFixture.cs" />
+    <Compile Include="Event\BatchedHandlingSettingsFixture.cs" />
     <Compile Include="Event\DeferredHandlingSettingsFixture.cs" />
     <Compile Include="Event\DynamicHandlingSettingsFixture.cs" />
     <Compile Include="Event\EventsFixture.cs" />

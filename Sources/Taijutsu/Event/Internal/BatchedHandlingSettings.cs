@@ -27,80 +27,85 @@ namespace Taijutsu.Event.Internal
         [ThreadStatic]
         private static IDictionary<Type, Func<IEnumerable, object>> constructors;
 
-        private Action<object> batchedAction;
+        private readonly Action<object> batchedAction;
 
-        private List<object> events;
-
-        public BatchedHandlingSettings(Type type, DelayUntil delayUntil, int priority)
-            : base(type, priority)
+        public BatchedHandlingSettings(Type type, DelayUntil delayUntil, int priority) : base(type, priority)
         {
-            events = new List<object>();
-
             batchedAction = ev =>
             {
-                var context = InternalEnvironment.DataContextSupervisor.CurrentContext;
-
-                if (context != null)
+                if (ev == null)
                 {
-                    var extension = InitializeExtension(context);
-
-                    if (!extension.ContainsKey(this))
-                    {
-                        extension[this] = this;
-                        EventHandler<FinishedEventArgs> action = null;
-
-                        action = (sender, e) =>
-                        {
-                            try
-                            {
-                                // ReSharper disable AccessToModifiedClosure
-                                switch (delayUntil)
-                                {
-                                    case DelayUntil.PreCompleted:
-                                        context.BeforeCompleted -= action;
-                                        break;
-                                    case DelayUntil.Completed:
-                                        context.AfterCompleted -= action;
-                                        break;
-                                    case DelayUntil.Finished:
-                                        context.Finished -= action;
-                                        break;
-                                }
-
-                                // ReSharper restore AccessToModifiedClosure
-                                if (events.Count > 0)
-                                {
-                                    Events.Publish(ResolveConstructor()(events));
-                                }
-                            }
-                            finally
-                            {
-                                context = null;
-                                events = null;
-                                batchedAction = null;
-                                action = null;
-                            }
-                        };
-
-                        switch (delayUntil)
-                        {
-                            case DelayUntil.PreCompleted:
-                                context.BeforeCompleted += action;
-                                break;
-                            case DelayUntil.Completed:
-                                context.AfterCompleted += action;
-                                break;
-                            case DelayUntil.Finished:
-                                context.Finished += action;
-                                break;
-                        }
-                    }
-
-                    events.Add(ev);
+                    throw new ArgumentNullException("ev");
                 }
-                else
+
+                if (Type.IsInstanceOfType(ev))
                 {
-                    Trace.TraceWarning("Taijutsu: Source of event is outside of unit of work, event is skipped.");
+                    var context = InternalEnvironment.DataContextSupervisor.CurrentContext;
+
+                    if (context != null)
+                    {
+                        var extension = InitializeExtension(context);
+
+                        if (!extension.ContainsKey(this))
+                        {
+                            extension[this] = new List<object>();
+                            EventHandler<FinishedEventArgs> action = null;
+
+                            action = (sender, e) =>
+                            {
+                                try
+                                {
+                                    // ReSharper disable AccessToModifiedClosure
+                                    switch (delayUntil)
+                                    {
+                                        case DelayUntil.PreCompleted:
+                                            context.BeforeCompleted -= action;
+                                            break;
+                                        case DelayUntil.Completed:
+                                            context.AfterCompleted -= action;
+                                            break;
+                                        case DelayUntil.Finished:
+                                            context.Finished -= action;
+                                            break;
+                                    }
+
+                                    var events = (List<object>)extension[this];
+
+                                    extension.Remove(this);
+
+                                    // ReSharper restore AccessToModifiedClosure
+                                    if (events.Count > 0 && e.Completed)
+                                    {
+                                        Events.Publish(ResolveConstructor()(events));
+                                    }
+                                }
+                                finally
+                                {
+                                    context = null;
+                                    action = null;
+                                }
+                            };
+
+                            switch (delayUntil)
+                            {
+                                case DelayUntil.PreCompleted:
+                                    context.BeforeCompleted += action;
+                                    break;
+                                case DelayUntil.Completed:
+                                    context.AfterCompleted += action;
+                                    break;
+                                case DelayUntil.Finished:
+                                    context.Finished += action;
+                                    break;
+                            }
+                        }
+
+                        ((List<object>)extension[this]).Add(ev);
+                    }
+                    else
+                    {
+                        Trace.TraceWarning("Taijutsu: Source of event is outside of unit of work, event is skipped.");
+                    }
                 }
             };
         }
@@ -115,18 +120,20 @@ namespace Taijutsu.Event.Internal
             get { return constructors ?? (constructors = new Dictionary<Type, Func<IEnumerable, object>>()); }
         }
 
-        private static IDictionary<object, BatchedHandlingSettings> InitializeExtension(IDataContext context)
+        private static IDictionary<object, object> InitializeExtension(IDataContext context)
         {
             var extensions = (Dictionary<string, object>)context.Extra.Extensions;
 
+            const string name = "Taijutsu.BatchedHandlerSettings";
+
             object extension;
-            if (!extensions.TryGetValue("Taijutsu.BatchedHandlerSettings", out extension))
+            if (!extensions.TryGetValue(name, out extension))
             {
-                extension = new Dictionary<object, BatchedHandlingSettings>();
-                extensions["Taijutsu.BatchedHandlerSettings"] = extension;
+                extension = new Dictionary<object, object>();
+                extensions[name] = extension;
             }
 
-            return (Dictionary<object, BatchedHandlingSettings>)extension;
+            return (Dictionary<object, object>)extension;
         }
 
         private Func<IEnumerable, object> ResolveConstructor()

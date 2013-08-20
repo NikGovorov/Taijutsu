@@ -75,7 +75,7 @@ namespace Taijutsu.Test.Event
         }
 
         [Test]
-        public virtual void GlobalInstanceShouldBeMultiThreadSafe()
+        public virtual void GlobalInstanceShouldBeThreadSafe()
         {
             var unsubscribeActions = new ConcurrentBag<Action>();
 

@@ -27,59 +27,67 @@ namespace Taijutsu.Event.Internal
         {
             deferredAction = ev =>
             {
-                var context = InternalEnvironment.DataContextSupervisor.CurrentContext;
-
-                if (context != null)
+                if (ev == null)
                 {
-                    EventHandler<FinishedEventArgs> action = null;
-
-                    action = (sender, e) =>
-                    {
-                        try
-                        {
-                            // ReSharper disable AccessToModifiedClosure
-                            switch (delayUntil)
-                            {
-                                case DelayUntil.PreCompleted:
-                                    context.BeforeCompleted -= action;
-                                    break;
-                                case DelayUntil.Completed:
-                                    context.AfterCompleted -= action;
-                                    break;
-                                case DelayUntil.Finished:
-                                    context.Finished -= action;
-                                    break;
-                            }
-
-                            if (e.Completed)
-                            {
-                                // ReSharper restore AccessToModifiedClosure
-                                original.Action(ev);
-                            }
-                        }
-                        finally
-                        {
-                            context = null;
-                            action = null;
-                        }
-                    };
-
-                    switch (delayUntil)
-                    {
-                        case DelayUntil.PreCompleted:
-                            context.BeforeCompleted += action;
-                            break;
-                        case DelayUntil.Completed:
-                            context.AfterCompleted += action;
-                            break;
-                        case DelayUntil.Finished:
-                            context.Finished += action;
-                            break;
-                    }
+                    throw new ArgumentNullException("ev");
                 }
-                else
+
+                if (Type.IsInstanceOfType(ev))
                 {
-                    Trace.TraceWarning("Taijutsu: Source of event is outside of unit of work, event is skipped.");
+                    var context = InternalEnvironment.DataContextSupervisor.CurrentContext;
+
+                    if (context != null)
+                    {
+                        EventHandler<FinishedEventArgs> action = null;
+
+                        action = (sender, e) =>
+                        {
+                            try
+                            {
+                                // ReSharper disable AccessToModifiedClosure
+                                switch (delayUntil)
+                                {
+                                    case DelayUntil.PreCompleted:
+                                        context.BeforeCompleted -= action;
+                                        break;
+                                    case DelayUntil.Completed:
+                                        context.AfterCompleted -= action;
+                                        break;
+                                    case DelayUntil.Finished:
+                                        context.Finished -= action;
+                                        break;
+                                }
+
+                                if (e.Completed)
+                                {
+                                    // ReSharper restore AccessToModifiedClosure
+                                    original.Action(ev);
+                                }
+                            }
+                            finally
+                            {
+                                context = null;
+                                action = null;
+                            }
+                        };
+
+                        switch (delayUntil)
+                        {
+                            case DelayUntil.PreCompleted:
+                                context.BeforeCompleted += action;
+                                break;
+                            case DelayUntil.Completed:
+                                context.AfterCompleted += action;
+                                break;
+                            case DelayUntil.Finished:
+                                context.Finished += action;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Trace.TraceWarning("Taijutsu: Source of event is outside of unit of work, event is skipped.");
+                    }
                 }
             };
         }
