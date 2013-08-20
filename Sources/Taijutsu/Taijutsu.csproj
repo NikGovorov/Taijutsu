@@ -70,7 +70,7 @@
     <Compile Include="Data\Internal\IOrmSession.cs" />
     <Compile Include="Data\Internal\IQueryOverContinuation.cs" />
     <Compile Include="Data\Internal\ITerminationPolicy.cs" />
-    <Compile Include="Data\Internal\IsolationLevelEx.cs" />
+    <Compile Include="Data\Internal\IsolationLevelExtensions.cs" />
     <Compile Include="Data\Internal\OrmSessionBuilder.cs" />
     <Compile Include="Data\Internal\OrmSpecificSession.cs" />
     <Compile Include="Data\Internal\FinishedEventArgs.cs" />

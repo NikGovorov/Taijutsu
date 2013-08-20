@@ -14,7 +14,7 @@ using System.Data;
 
 namespace Taijutsu.Data.Internal
 {
-    public static class IsolationLevelEx
+    public static class IsolationLevelExtensions
     {
         public static bool IsCompatible(this IsolationLevel self, IsolationLevel comparing)
         {
