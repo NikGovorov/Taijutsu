@@ -19,6 +19,8 @@ namespace Taijutsu.Event
     public interface IExternalEvent : IEvent
     {
         DateTime NoticeDate { get; }
+
+        object Initiator { get; }
     }
 
     public interface IExternalEvent<out TRecipient> : IExternalEvent where TRecipient : IEntity

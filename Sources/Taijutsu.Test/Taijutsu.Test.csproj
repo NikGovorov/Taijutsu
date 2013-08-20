@@ -127,6 +127,7 @@
     <Compile Include="Domain\NotUniqueExceptionFixture.cs" />
     <Compile Include="Domain\SpecificationFixture.cs" />
     <Compile Include="Domain\ValueObjectFixture.cs" />
+    <Compile Include="Event\SpecEventHandler.cs" />
     <Compile Include="Event\TypedHandlingSettingsFixture.cs" />
     <Compile Include="HybridLogicContextFixture.cs" />
     <Compile Include="LogicContextFixture.cs" />

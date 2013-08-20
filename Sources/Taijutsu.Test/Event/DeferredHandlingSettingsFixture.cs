@@ -18,7 +18,6 @@ using SharpTestsEx;
 
 using Taijutsu.Data;
 using Taijutsu.Data.Internal;
-using Taijutsu.Event;
 using Taijutsu.Event.Internal;
 using Taijutsu.Test.Data;
 using Taijutsu.Test.Domain.Model;

@@ -74,14 +74,11 @@
     <Compile Include="Data\Internal\OrmSessionBuilder.cs" />
     <Compile Include="Data\Internal\OrmSpecificSession.cs" />
     <Compile Include="Data\Internal\FinishedEventArgs.cs" />
-    <Compile Include="Domain\Event\DomainEvent.cs" />
-    <Compile Include="Domain\Event\IDomainEvent.cs" />
     <Compile Include="Domain\ICompositeSpecification.cs" />
     <Compile Include="Event\Event.cs" />
     <Compile Include="Event\EventBatch.cs" />
     <Compile Include="Event\Events.cs" />
     <Compile Include="Event\EventsExtensions.cs" />
-    <Compile Include="Event\ExternalEvent.cs" />
     <Compile Include="Event\IEvent.cs" />
     <Compile Include="Event\IEventBatch.cs" />
     <Compile Include="Event\Internal\AbstractHandlingSettings.cs" />
@@ -91,7 +88,6 @@
     <Compile Include="Event\Internal\IEventHandlingSettings.cs" />
     <Compile Include="Event\Internal\DelayUntil.cs" />
     <Compile Include="Event\Internal\TypedHandlingSettings.cs" />
-    <Compile Include="Event\SpecEventHandler.cs" />
     <Compile Include="Event\ISpecEventHandler.cs" />
     <Compile Include="Event\IEvents.cs" />
     <Compile Include="Event\IEventHandler.cs" />

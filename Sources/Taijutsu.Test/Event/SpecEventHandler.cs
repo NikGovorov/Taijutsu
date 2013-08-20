@@ -14,25 +14,28 @@ using System;
 
 using Taijutsu.Event;
 
-namespace Taijutsu.Test.Domain.Model
+namespace Taijutsu.Test.Event
 {
-    public class OrderCreated : IEvent
+    public class SpecEventHandler<T> : ISpecEventHandler<T> where T : IEvent
     {
-        public OrderCreated(Order initiator, Customer customer)
+        private readonly Action<T> handler;
+
+        private readonly Func<T, bool> filter;
+
+        public SpecEventHandler(Action<T> handler, Func<T, bool> filter = null)
         {
-            Customer = customer;
-            Initiator = initiator;
-            OccurrenceDate = SystemTime.Now;
+            this.handler = handler;
+            this.filter = filter;
         }
 
-        protected OrderCreated()
+        public void Handle(T ev)
         {
+            handler(ev);
         }
 
-        public Customer Customer { get; set; }
-
-        public DateTime OccurrenceDate { get; private set; }
-
-        public Order Initiator { get; private set; }
+        public bool IsSatisfiedBy(T ev)
+        {
+            return filter == null || filter(ev);
+        }
     }
 }

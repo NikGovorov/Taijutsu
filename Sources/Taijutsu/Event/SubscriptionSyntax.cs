@@ -60,5 +60,28 @@ namespace Taijutsu.Event
         {
             return SubscribeImplementation(new TypedHandlingSettings<TEvent>(() => new SpecEventHandler<TEvent>(handler), Filters, priority));
         }
+
+        private class SpecEventHandler<T> : ISpecEventHandler<T> where T : IEvent
+        {
+            private readonly Action<T> handler;
+
+            private readonly Func<T, bool> filter;
+
+            public SpecEventHandler(Action<T> handler, Func<T, bool> filter = null)
+            {
+                this.handler = handler;
+                this.filter = filter;
+            }
+
+            public void Handle(T ev)
+            {
+                handler(ev);
+            }
+
+            public bool IsSatisfiedBy(T ev)
+            {
+                return filter == null || filter(ev);
+            }
+        }
     }
 }

@@ -17,7 +17,6 @@ using NUnit.Framework;
 
 using SharpTestsEx;
 
-using Taijutsu.Event;
 using Taijutsu.Event.Internal;
 using Taijutsu.Test.Domain.Model;
 

@@ -10,6 +10,7 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System;
 using System.Collections;
 using System.Linq;
 
@@ -17,16 +18,32 @@ namespace Taijutsu.Event
 {
     public class EventBatch<TEvent> : Event, IEventBatch<TEvent>
     {
-        public EventBatch(TEvent[] events)
+        private TEvent[] events;
+
+        public EventBatch(TEvent[] events) : this()
         {
-            Events = events;
+            this.events = events;
         }
 
-        public EventBatch(IEnumerable events)
+        public EventBatch(IEnumerable events) : this()
         {
-            Events = events.Cast<TEvent>().ToArray();
+            this.events = events.Cast<TEvent>().ToArray();
         }
 
-        public TEvent[] Events { get; private set; }
+        protected EventBatch()
+        {
+            events = new TEvent[] { };
+        }
+
+        protected EventBatch(DateTime occurrenceDate) : base(occurrenceDate)
+        {
+            events = new TEvent[] { };
+        }
+
+        public virtual TEvent[] Events
+        {
+            get { return events; }
+            protected set { events = value; }
+        }
     }
 }
