@@ -33,11 +33,11 @@ namespace Taijutsu.Test.Data
         }
 
         [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Reviewed. Acceptable for tests.")]
-        public void Dispose()
+        public virtual void Dispose()
         {
         }
 
-        public void Complete()
+        public virtual void Complete()
         {
         }
 

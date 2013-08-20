@@ -100,7 +100,7 @@ namespace Taijutsu.Event.Internal
                 }
                 else
                 {
-                    Trace.TraceWarning("Taijutsu: Source of event is not inside of unit of work, event is skipped.");
+                    Trace.TraceWarning("Taijutsu: Source of event is outside of unit of work, event is skipped.");
                 }
             };
         }

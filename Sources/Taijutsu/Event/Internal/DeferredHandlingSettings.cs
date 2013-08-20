@@ -51,8 +51,11 @@ namespace Taijutsu.Event.Internal
                                     break;
                             }
 
-                            // ReSharper restore AccessToModifiedClosure
-                            original.Action(ev);
+                            if (e.Completed)
+                            {
+                                // ReSharper restore AccessToModifiedClosure
+                                original.Action(ev);
+                            }
                         }
                         finally
                         {
@@ -76,7 +79,7 @@ namespace Taijutsu.Event.Internal
                 }
                 else
                 {
-                    Trace.TraceWarning("Taijutsu: Source of event is not inside of unit of work, event is skipped.");
+                    Trace.TraceWarning("Taijutsu: Source of event is outside of unit of work, event is skipped.");
                 }
             };
         }
