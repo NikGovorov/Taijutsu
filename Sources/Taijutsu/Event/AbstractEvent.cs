@@ -15,24 +15,18 @@ using System;
 namespace Taijutsu.Event
 {
     [Serializable]
-    public abstract class Event : IEvent
+    public abstract class AbstractEvent : IEvent
     {
-        private DateTime occurrenceDate;
-
-        protected Event()
+        protected AbstractEvent()
         {
-            occurrenceDate = SystemTime.Now;
+            OccurrenceDate = SystemTime.Now;
         }
 
-        protected Event(DateTime occurrenceDate)
+        protected AbstractEvent(DateTime occurrenceDate)
         {
-            this.occurrenceDate = occurrenceDate;
+            OccurrenceDate = occurrenceDate;
         }
 
-        public virtual DateTime OccurrenceDate
-        {
-            get { return occurrenceDate; }
-            protected set { occurrenceDate = value; }
-        }
+        public DateTime OccurrenceDate { get; protected set; }
     }
 }

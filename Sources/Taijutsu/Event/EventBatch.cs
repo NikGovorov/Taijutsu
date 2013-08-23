@@ -18,7 +18,7 @@ using Taijutsu.Annotation;
 
 namespace Taijutsu.Event
 {
-    public class EventBatch<TEvent> : Event, IEventBatch<TEvent>
+    public class EventBatch<TEvent> : AbstractEvent, IEventBatch<TEvent>
     {
         private TEvent[] events;
 

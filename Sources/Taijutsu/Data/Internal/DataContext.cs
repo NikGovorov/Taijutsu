@@ -189,11 +189,11 @@ namespace Taijutsu.Data.Internal
             }
             finally
             {
+                disposed = true;
                 extra = null;
                 BeforeCompleted = null;
                 AfterCompleted = null;
                 Finished = null;
-                disposed = true;
             }
         }
 
