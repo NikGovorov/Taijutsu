@@ -33,6 +33,8 @@ namespace Taijutsu.Event.Internal
         public BatchedHandlingSettings([NotNull] Type type, DelayUntil delayUntil, int priority)
             : base(type, priority)
         {
+            Unique = true;
+
             batchedAction = ev =>
             {
                 if (ev == null)
@@ -123,6 +125,32 @@ namespace Taijutsu.Event.Internal
             get { return constructors ?? (constructors = new Dictionary<Type, Func<IEnumerable, object>>()); }
         }
 
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Type.GetHashCode();
+                hashCode = (hashCode * 397) ^ Priority.GetHashCode();
+                hashCode = (hashCode * 397) ^ Unique.GetHashCode();
+                return hashCode;
+            }
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            return obj.GetType() == GetType() && Equals((BatchedHandlingSettings)obj);
+        }
+
         private static IDictionary<object, object> InitializeExtension(IDataContext context)
         {
             var extensions = (Dictionary<string, object>)context.Extra.Extensions;
@@ -155,6 +183,11 @@ namespace Taijutsu.Event.Internal
             }
 
             return ctor;
+        }
+
+        private bool Equals(BatchedHandlingSettings other)
+        {
+            return Type == other.Type && Priority == other.Priority && Unique == other.Unique;
         }
     }
 }

@@ -26,7 +26,6 @@ namespace Taijutsu.Test.Event
         [Test]
         public virtual void BatchMethodsShouldBeAccessible()
         {
-            Events.OfType<SystemChecked>().Batch();
             Events.OfType<SystemChecked>().BatchUntilFinished();
             Events.OfType<SystemChecked>().BatchUntilCompleted();
             Events.OfType<SystemChecked>().BatchUntilPreCompleted();
@@ -35,7 +34,6 @@ namespace Taijutsu.Test.Event
         [Test]
         public virtual void DeferMethodsShouldWork()
         {
-            Events.OfType<SystemChecked>().Deferred().Subscribe(ev => { });
             Events.OfType<SystemChecked>().DeferredUntilFinished().Subscribe(ev => { });
             Events.OfType<SystemChecked>().DeferredUntilCompleted().Subscribe(ev => { });
             Events.OfType<SystemChecked>().DeferredUntilPreCompleted().Subscribe(ev => { });

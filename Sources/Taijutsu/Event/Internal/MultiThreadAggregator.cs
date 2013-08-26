@@ -42,6 +42,11 @@ namespace Taijutsu.Event.Internal
                 }
                 else
                 {
+                    if (handlingSettings.Unique && internalEventHandlers.Count > 0 && internalEventHandlers.Contains(handlingSettings))
+                    {
+                        return new Action(() => { }).AsDisposable();
+                    }
+
                     var newInternalEventHandlers = new List<IEventHandlingSettings>(internalEventHandlers) { handlingSettings };
                     Handlers[handlingSettings.Type] = newInternalEventHandlers;
                 }

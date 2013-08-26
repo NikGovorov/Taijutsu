@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Taijutsu.Event.Internal
 {
-    public class SingleThreadAggregator : IEvents, IResettable
+    public class SingleThreadAggregator : IResettableEvents
     {
         private static readonly object sync = new object();
 
@@ -83,6 +83,11 @@ namespace Taijutsu.Event.Internal
             }
             else
             {
+                if (handlingSettings.Unique && internalEventHandlers.Count > 0 && internalEventHandlers.Contains(handlingSettings))
+                {
+                    return new Action(() => { }).AsDisposable();
+                }
+
                 internalEventHandlers.Add(handlingSettings);
             }
 
@@ -236,6 +241,11 @@ namespace Taijutsu.Event.Internal
             public void Publish(TEvent ev)
             {
                 implementation.Publish(ev);
+            }
+
+            public IDisposable Subscribe(IEventHandlingSettings handlingSettings)
+            {
+                return implementation.Subscribe(handlingSettings);
             }
         }
     }

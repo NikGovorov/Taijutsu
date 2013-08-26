@@ -158,7 +158,7 @@ namespace Taijutsu.Test.Event
                     action();
                 }
 
-                ((IResettable)Events.Global).Reset();
+                Events.Global.Reset();
             }
         }
 
@@ -236,14 +236,14 @@ namespace Taijutsu.Test.Event
             Events.Subscribe<SystemChecked>(ev => callCounter++);
             Events.Subscribe<SystemChecked>(ev => callCounter++);
 
-            ((IResettable)Events.Global).Reset();
+            Events.Global.Reset();
             Events.Publish(new SystemChecked());
             callCounter.Should().Be(0);
 
             Events.Local.Subscribe<SystemChecked>(ev => callCounter++);
             Events.Local.Subscribe<SystemChecked>(ev => callCounter++);
 
-            ((IResettable)Events.Local).Reset();
+            Events.Local.Reset();
             Events.Publish(new SystemChecked());
             Events.Local.Publish(new SystemChecked());
             callCounter.Should().Be(0);

@@ -20,6 +20,11 @@ namespace Taijutsu.Event.Internal
     {
         protected AbstractHandlingSettings([NotNull] Type type, int priority)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
             Type = type;
             Priority = priority;
         }
@@ -29,5 +34,7 @@ namespace Taijutsu.Event.Internal
         public Type Type { get; private set; }
 
         public int Priority { get; private set; }
+
+        public bool Unique { get; protected set; }
     }
 }

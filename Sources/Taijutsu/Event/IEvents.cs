@@ -40,5 +40,8 @@ namespace Taijutsu.Event
     public interface IEvents<TEvent> : ISubscriptionSyntax<TEvent> where TEvent : class, IEvent
     {
         void Publish([NotNull] TEvent ev);
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        IDisposable Subscribe([NotNull] IEventHandlingSettings handlingSettings);
     }
 }

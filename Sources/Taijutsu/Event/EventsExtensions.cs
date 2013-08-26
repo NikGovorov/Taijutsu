@@ -19,48 +19,34 @@ namespace Taijutsu.Event
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class EventsExtensions
     {
-        // ReSharper disable UnusedParameter.Global
-        public static void Batch<TEvent>(this IEvents<TEvent> self, int priority = 0, DelayUntil until = DelayUntil.Finished) where TEvent : class, IEvent
-        {
-            Events.Subscribe(new BatchedHandlingSettings(typeof(TEvent), until, priority));
-        }
-
-        // ReSharper restore UnusedParameter.Global
         public static void BatchUntilPreCompleted<TEvent>(this IEvents<TEvent> self, int priority = 0) where TEvent : class, IEvent
         {
-            self.Batch(priority, DelayUntil.PreCompleted);
+            self.Subscribe(new BatchedHandlingSettings(typeof(TEvent), DelayUntil.PreCompleted, priority));
         }
 
         public static void BatchUntilCompleted<TEvent>(this IEvents<TEvent> self, int priority = 0) where TEvent : class, IEvent
         {
-            self.Batch(priority, DelayUntil.Completed);
+            self.Subscribe(new BatchedHandlingSettings(typeof(TEvent), DelayUntil.Completed, priority));
         }
 
         public static void BatchUntilFinished<TEvent>(this IEvents<TEvent> self, int priority = 0) where TEvent : class, IEvent
         {
-            self.Batch(priority);
+            self.Subscribe(new BatchedHandlingSettings(typeof(TEvent), DelayUntil.Finished, priority));
         }
 
-        // ReSharper disable UnusedParameter.Global
-        public static ISubscriptionSyntax<TEvent> Deferred<TEvent>(this IEvents<TEvent> self, DelayUntil until = DelayUntil.Finished) where TEvent : class, IEvent
-        {
-            return new SubscriptionSyntax<TEvent>(origin => Events.Subscribe(new DeferredHandlingSettings(origin, until)));
-        }
-
-        // ReSharper restore UnusedParameter.Global
         public static ISubscriptionSyntax<TEvent> DeferredUntilPreCompleted<TEvent>(this IEvents<TEvent> self) where TEvent : class, IEvent
         {
-            return self.Deferred(DelayUntil.PreCompleted);
+            return new SubscriptionSyntax<TEvent>(origin => self.Subscribe(new DeferredHandlingSettings(origin, DelayUntil.PreCompleted)));
         }
 
         public static ISubscriptionSyntax<TEvent> DeferredUntilCompleted<TEvent>(this IEvents<TEvent> self) where TEvent : class, IEvent
         {
-            return self.Deferred(DelayUntil.Completed);
+            return new SubscriptionSyntax<TEvent>(origin => self.Subscribe(new DeferredHandlingSettings(origin, DelayUntil.Completed)));
         }
 
         public static ISubscriptionSyntax<TEvent> DeferredUntilFinished<TEvent>(this IEvents<TEvent> self) where TEvent : class, IEvent
         {
-            return self.Deferred();
+            return new SubscriptionSyntax<TEvent>(origin => self.Subscribe(new DeferredHandlingSettings(origin, DelayUntil.Finished)));
         }
     }
 }

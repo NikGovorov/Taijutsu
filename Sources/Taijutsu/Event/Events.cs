@@ -23,20 +23,20 @@ namespace Taijutsu.Event
     {
         private const string LocalEventAggregatorName = "Taijutsu.LocalEventAggregator";
 
-        private static readonly IEvents globalEvents = new MultiThreadAggregator();
+        private static readonly IResettableEvents globalEvents = new MultiThreadAggregator();
 
         private Events()
         {
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEvents Global
+        public static IResettableEvents Global
         {
             get { return globalEvents; }
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IEvents Local
+        public static IResettableEvents Local
         {
             get
             {
@@ -50,17 +50,6 @@ namespace Taijutsu.Event
 
                 return localEvents;
             }
-        }
-
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public static IDisposable Subscribe([NotNull] IEventHandlingSettings handlingSettings)
-        {
-            if (handlingSettings == null)
-            {
-                throw new ArgumentNullException("handlingSettings");
-            }
-
-            return globalEvents.Subscribe(handlingSettings);
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
@@ -133,9 +122,19 @@ namespace Taijutsu.Event
             Publish(ev);
         }
 
-        private static IEvents FindLocalEventAggregator()
+        internal static IDisposable Subscribe([NotNull] IEventHandlingSettings handlingSettings)
         {
-            return LogicContext.FindData(LocalEventAggregatorName) as IEvents;
+            if (handlingSettings == null)
+            {
+                throw new ArgumentNullException("handlingSettings");
+            }
+
+            return globalEvents.Subscribe(handlingSettings);
+        }
+
+        private static IResettableEvents FindLocalEventAggregator()
+        {
+            return LogicContext.FindData(LocalEventAggregatorName) as IResettableEvents;
         }
     }
 
@@ -161,6 +160,11 @@ namespace Taijutsu.Event
             Events.Publish(ev);
         }
 
+        IDisposable IEvents<TEvent>.Subscribe(IEventHandlingSettings handlingSettings)
+        {
+            return Subscribe(handlingSettings);
+        }
+
         IDisposable ISubscriptionSyntax<TEvent>.Subscribe(Action<TEvent> handler, int priority)
         {
             return Subscribe(handler, priority);
@@ -174,6 +178,11 @@ namespace Taijutsu.Event
         void IEvents<TEvent>.Publish(TEvent ev)
         {
             Publish(ev);
+        }
+
+        private static IDisposable Subscribe(IEventHandlingSettings handlingSettings)
+        {
+            return Events.Subscribe(handlingSettings);
         }
     }
 }

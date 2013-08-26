@@ -42,6 +42,7 @@ namespace Taijutsu.Test.Event
         {
             InternalEnvironment.UnregisterDataSource();
             InternalEnvironment.UnregisterDataSource("test");
+            Events.Global.Reset();
         }
 
         [Test]
@@ -273,6 +274,40 @@ namespace Taijutsu.Test.Event
 
                 called.Should().Be(0);
                 batch.Should().Be.Null();
+            }
+        }
+
+        [Test]
+        public void BatchedEventsHandlersShouldBeUnique()
+        {
+            Events.OfType<SystemChecked>().BatchUntilFinished();
+            Events.OfType<SystemChecked>().BatchUntilFinished();
+            Events.OfType<SystemChecked>().BatchUntilFinished();
+            Events.OfType<SystemChecked>().BatchUntilFinished();
+            var called = 0;
+            IEventBatch<SystemChecked> batch = null;
+            using (Events.Subscribe<IEventBatch<SystemChecked>>(
+                ev =>
+                {
+                    // ReSharper disable once AccessToModifiedClosure
+                    called++;
+                    batch = ev;
+                }))
+            {
+                using (var uow = new UnitOfWork())
+                {
+                    Events.Publish(new SystemChecked());
+                    Events.Publish(new SystemChecked());
+                    Events.Publish(new SystemChecked());
+                    called.Should().Be(0);
+                    batch.Should().Be.Null();
+                    uow.Complete();
+                    called.Should().Be(0);
+                    batch.Should().Be.Null();
+                }
+
+                called.Should().Be(1);
+                batch.Should().Not.Be.Null();
             }
         }
 
