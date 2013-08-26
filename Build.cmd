@@ -6,4 +6,4 @@ if "%key%" == "" (
 mkdir Output
 mkdir Packages
 .\Sources\.nuget\nuget.exe restore .\Sources\Taijutsu.sln
-%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Build\Taijutsu.proj /p:NugetKey=%key% /v:M /fl /flp:LogFile=Output\msbuild.log;Verbosity=Normal /nr:false
+%WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Build\Taijutsu.proj /p:NugetKey=%key% /p:RunCodeAnalysis=true /v:M /fl /flp:LogFile=Output\msbuild.log;Verbosity=Normal /nr:false
