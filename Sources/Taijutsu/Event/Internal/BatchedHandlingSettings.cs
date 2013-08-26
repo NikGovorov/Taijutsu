@@ -28,11 +28,14 @@ namespace Taijutsu.Event.Internal
         [ThreadStatic]
         private static IDictionary<Type, Func<IEnumerable, object>> constructors;
 
+        private readonly DelayUntil delayUntil;
+
         private readonly Action<object> batchedAction;
 
         public BatchedHandlingSettings([NotNull] Type type, DelayUntil delayUntil, int priority)
             : base(type, priority)
         {
+            this.delayUntil = delayUntil;
             Unique = true;
 
             batchedAction = ev =>
@@ -132,6 +135,7 @@ namespace Taijutsu.Event.Internal
                 var hashCode = Type.GetHashCode();
                 hashCode = (hashCode * 397) ^ Priority.GetHashCode();
                 hashCode = (hashCode * 397) ^ Unique.GetHashCode();
+                hashCode = (hashCode * 397) ^ delayUntil.GetHashCode();
                 return hashCode;
             }
         }
@@ -187,7 +191,7 @@ namespace Taijutsu.Event.Internal
 
         private bool Equals(BatchedHandlingSettings other)
         {
-            return Type == other.Type && Priority == other.Priority && Unique == other.Unique;
+            return Type == other.Type && delayUntil == other.delayUntil && Priority == other.Priority && Unique == other.Unique;
         }
     }
 }

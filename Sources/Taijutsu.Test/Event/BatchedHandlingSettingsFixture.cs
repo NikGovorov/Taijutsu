@@ -280,18 +280,21 @@ namespace Taijutsu.Test.Event
         [Test]
         public void BatchedEventsHandlersShouldBeUnique()
         {
-            Events.OfType<SystemChecked>().BatchUntilFinished();
+            Events.OfType<SystemChecked>().BatchUntilCompleted();
+            Events.OfType<SystemChecked>().BatchUntilCompleted();
+            Events.OfType<SystemChecked>().BatchUntilCompleted();
+            Events.OfType<SystemChecked>().BatchUntilPreCompleted();
+            Events.OfType<SystemChecked>().BatchUntilPreCompleted();
+            Events.OfType<SystemChecked>().BatchUntilPreCompleted();
             Events.OfType<SystemChecked>().BatchUntilFinished();
             Events.OfType<SystemChecked>().BatchUntilFinished();
             Events.OfType<SystemChecked>().BatchUntilFinished();
             var called = 0;
-            IEventBatch<SystemChecked> batch = null;
             using (Events.Subscribe<IEventBatch<SystemChecked>>(
                 ev =>
                 {
                     // ReSharper disable once AccessToModifiedClosure
                     called++;
-                    batch = ev;
                 }))
             {
                 using (var uow = new UnitOfWork())
@@ -300,14 +303,11 @@ namespace Taijutsu.Test.Event
                     Events.Publish(new SystemChecked());
                     Events.Publish(new SystemChecked());
                     called.Should().Be(0);
-                    batch.Should().Be.Null();
                     uow.Complete();
-                    called.Should().Be(0);
-                    batch.Should().Be.Null();
+                    called.Should().Be(2);
                 }
 
-                called.Should().Be(1);
-                batch.Should().Not.Be.Null();
+                called.Should().Be(3);
             }
         }
 
