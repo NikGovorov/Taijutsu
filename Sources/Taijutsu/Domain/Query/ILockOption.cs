@@ -15,9 +15,8 @@ using Taijutsu.Annotation;
 namespace Taijutsu.Domain.Query
 {
     [PublicApi]
-    public interface ILockOption<out TQuery> : IQueryContinuation
-        where TQuery : IQueryContinuation
+    public interface ILockOption<out TQuery> : IQueryContinuation where TQuery : IQueryContinuation
     {
-        TQuery Lock(bool pessimistically = true);
+        TQuery Lock(object options = null);
     }
 }
