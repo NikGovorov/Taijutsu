@@ -30,13 +30,13 @@ namespace Taijutsu.Test.Data
     {
         private string source;
 
-        private IOrmSession session;
+        private IDataSession session;
 
         [SetUp]
         public void OnSetUp()
         {
             source = Guid.NewGuid().ToString();
-            session = Substitute.For<IOrmSession>();
+            session = Substitute.For<IDataSession>();
             InternalEnvironment.RegisterDataSource(new DataSource(source, il => session));
         }
 

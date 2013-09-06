@@ -18,6 +18,6 @@ namespace Taijutsu
     public interface IWrapper
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
-        object Origin { get; }
+        object WrappedObject { get; }
     }
 }

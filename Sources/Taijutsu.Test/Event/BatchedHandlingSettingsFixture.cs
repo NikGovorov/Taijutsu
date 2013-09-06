@@ -33,7 +33,7 @@ namespace Taijutsu.Test.Event
         [SetUp]
         public void SetUp()
         {
-            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullOrmSession()));
+            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
             InternalEnvironment.RegisterDataSource(new DataSource("test", il => new SessionWithExceptionInComplete()));
         }
 
@@ -203,7 +203,7 @@ namespace Taijutsu.Test.Event
                     using (var uow = new UnitOfWork("test"))
                     {
                         // ReSharper disable once UnusedVariable
-                        var session = ((IWrapper)uow).Origin;
+                        var session = ((IWrapper)uow).WrappedObject;
 
                         settigs.Action(new SystemChecked());
                         settigs.Action(new SystemChecked());
@@ -259,7 +259,7 @@ namespace Taijutsu.Test.Event
                     using (var uow = new UnitOfWork("test"))
                     {
                         // ReSharper disable once UnusedVariable
-                        var session = ((IWrapper)uow).Origin;
+                        var session = ((IWrapper)uow).WrappedObject;
 
                         settigs.Action(new SystemChecked());
                         settigs.Action(new SystemChecked());
@@ -311,7 +311,7 @@ namespace Taijutsu.Test.Event
             }
         }
 
-        private class SessionWithExceptionInComplete : NullOrmSession
+        private class SessionWithExceptionInComplete : NullDataSession
         {
             public override void Complete()
             {

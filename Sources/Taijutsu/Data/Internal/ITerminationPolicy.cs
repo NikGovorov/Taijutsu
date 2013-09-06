@@ -18,6 +18,6 @@ namespace Taijutsu.Data.Internal
 {
     public interface ITerminationPolicy : IDisposable
     {
-        void Terminate([NotNull] IOrmSession session, [UsedImplicitly] bool isSuccessfully);
+        void Terminate([NotNull] IDataSession session, [UsedImplicitly] bool isSuccessfully);
     }
 }

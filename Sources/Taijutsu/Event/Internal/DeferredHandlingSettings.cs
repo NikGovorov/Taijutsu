@@ -24,8 +24,8 @@ namespace Taijutsu.Event.Internal
     {
         private readonly Action<object> deferredAction;
 
-        public DeferredHandlingSettings([NotNull] IEventHandlingSettings original, DelayUntil delayUntil)
-            : base(original.Type, original.Priority)
+        public DeferredHandlingSettings([NotNull] IEventHandlingSettings origin, DelayUntil delayUntil)
+            : base(origin.Type, origin.Priority)
         {
             deferredAction = ev =>
             {
@@ -63,7 +63,7 @@ namespace Taijutsu.Event.Internal
                                 if (e.Completed)
                                 {
                                     // ReSharper restore AccessToModifiedClosure
-                                    original.Action(ev);
+                                    origin.Action(ev);
                                 }
                             }
                             finally

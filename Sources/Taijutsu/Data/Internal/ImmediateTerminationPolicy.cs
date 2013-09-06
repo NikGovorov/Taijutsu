@@ -21,7 +21,7 @@ namespace Taijutsu.Data.Internal
             Dispose(true);
         }
 
-        public void Terminate(IOrmSession session, bool isSuccessfully)
+        public void Terminate(IDataSession session, bool isSuccessfully)
         {
             if (session == null)
             {

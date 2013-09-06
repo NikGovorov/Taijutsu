@@ -35,7 +35,7 @@ namespace Taijutsu.Test.Data
 
         private const string InteractAfterDispose = "Unit of work has already been disposed(with success - '{0}'), so it is not usable anymore.";
 
-        private IOrmSession session;
+        private IDataSession session;
 
         private string source;
 
@@ -43,7 +43,7 @@ namespace Taijutsu.Test.Data
         public void OnSetUp()
         {
             source = Guid.NewGuid().ToString();
-            session = Substitute.For<IOrmSession>();
+            session = Substitute.For<IDataSession>();
             InternalEnvironment.RegisterDataSource(new DataSource(source, il => session));
         }
 
@@ -123,7 +123,7 @@ namespace Taijutsu.Test.Data
         }
 
         [Test]
-        public virtual void ShouldDelegateCreateMethodToOrmSession()
+        public virtual void ShouldDelegateCreateMethodToDataSession()
         {
             var options = new { };
 
@@ -158,7 +158,7 @@ namespace Taijutsu.Test.Data
         }
 
         [Test]
-        public virtual void ShouldDelegateDeleteMethodToOrmSession()
+        public virtual void ShouldDelegateDeleteMethodToDataSession()
         {
             var options = new { };
 
@@ -179,87 +179,6 @@ namespace Taijutsu.Test.Data
             }
 
             session.Received(1).MarkAsDeleted(customer as IDeletableEntity);
-        }
-
-        [Test]
-        public virtual void ShouldDelegateQueryMethodsToOrmSession()
-        {
-            var options = new { };
-
-            using (var uow = new UnitOfWork(source))
-            {
-                uow.All<Customer>(options);
-                uow.Unique<Customer>(1, options);
-                uow.Query<Customer>().With<ICustomerQuery>("query");
-                uow.Query<Customer>().From<ICustomerRepository>("repository");
-            }
-
-            session.Received(1).All<Customer>(options);
-            session.Received(1).Unique<Customer>(1, options);
-            session.Received(1).QueryWith<Customer, ICustomerQuery>("query");
-            session.Received(1).QueryFrom<Customer, ICustomerRepository>("repository");
-        }
-
-        [Test]
-        public virtual void ShouldNotThrowExceptionIfQueryCalledAfterComplete()
-        {
-            var options = new { };
-
-            using (var uow = new UnitOfWork(source))
-            {
-                uow.Complete();
-                uow.All<Customer>(options);
-                uow.Unique<Customer>(1, options);
-                uow.Query<Customer>().With<ICustomerQuery>("query");
-                uow.Query<Customer>().From<ICustomerRepository>("repository");
-            }
-
-            session.Received(1).All<Customer>(options);
-            session.Received(1).Unique<Customer>(1, options);
-            session.Received(1).QueryWith<Customer, ICustomerQuery>("query");
-            session.Received(1).QueryFrom<Customer, ICustomerRepository>("repository");
-        }
-
-        [Test]
-        public virtual void ShouldThrowExceptionIfQueryCalledAfterDispose()
-        {
-            Assert.That(
-                () =>
-                {
-                    var uow = new UnitOfWork(source);
-                    uow.Complete();
-                    ((IDisposable)uow).Dispose();
-                    uow.All<Customer>();
-                }, 
-                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, true)));
-
-            Assert.That(
-                () =>
-                {
-                    var uow = new UnitOfWork(source);
-                    ((IDisposable)uow).Dispose();
-                    uow.Unique<Customer>(100);
-                }, 
-                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, false)));
-
-            Assert.That(
-                () =>
-                {
-                    var uow = new UnitOfWork(source);
-                    uow.Complete();
-                    ((IDisposable)uow).Dispose();
-                    uow.Query<Customer>().With<ICustomerQuery>("query");
-                }, 
-                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, true)));
-
-            Assert.That(
-                () =>
-                {
-                    var uow = new UnitOfWork(source);
-                    ((IDisposable)uow).Dispose();
-                    uow.Query<Customer>().From<ICustomerRepository>("repository");
-                }, 
-                Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterDispose, false)));
         }
 
         [Test]

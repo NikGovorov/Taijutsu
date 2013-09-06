@@ -91,10 +91,10 @@
     <Compile Include="Data\DataSourceFixture.cs" />
     <Compile Include="Data\DelayedTerminationPolicyFixture.cs" />
     <Compile Include="Data\EventAggregatorExFixture.cs" />
-    <Compile Include="Data\NullOrmSession.cs" />
+    <Compile Include="Data\NullDataSession.cs" />
     <Compile Include="Data\OperationScopeFixture.cs" />
-    <Compile Include="Data\OrmSessionBuilderFixture.cs" />
-    <Compile Include="Data\OrmSpecificSessionFixture.cs" />
+    <Compile Include="Data\DataSessionBuilderFixture.cs" />
+    <Compile Include="Data\DataSessionFixture.cs" />
     <Compile Include="Data\SuppressionScopeFixture.cs" />
     <Compile Include="Data\TestFixture.cs" />
     <Compile Include="Data\DataContextFixture.cs" />
@@ -113,7 +113,7 @@
     <Compile Include="Event\EventsFixture.cs" />
     <Compile Include="Domain\Model\Customer.cs" />
     <Compile Include="Domain\Model\ICustomerQuery.cs" />
-    <Compile Include="Domain\Model\ICustomerRepository.cs" />
+    <Compile Include="Domain\Model\ICustomerQueryRepository.cs" />
     <Compile Include="Domain\Model\ModuleChecked.cs" />
     <Compile Include="Domain\Model\OrderCreated.cs" />
     <Compile Include="Domain\Model\SystemChecked.cs" />

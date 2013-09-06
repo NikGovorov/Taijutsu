@@ -35,16 +35,16 @@ namespace Taijutsu.Test.Data
         {
             try
             {
-                InternalEnvironment.RegisterDataSource(new DataSource(il => new NullOrmSession()));
-                InternalEnvironment.RegisterDataSource(new DataSource(il => new NullOrmSession()));
+                InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
+                InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
 
                 using (var uow = new UnitOfWork())
                 {
                     Awaken(uow);
                 }
 
-                InternalEnvironment.RegisterDataSource(new DataSource("test", IsolationLevel.RepeatableRead, il => new NullOrmSession()));
-                InternalEnvironment.RegisterDataSource(new DataSource("test", il => new NullOrmSession()));
+                InternalEnvironment.RegisterDataSource(new DataSource("test", IsolationLevel.RepeatableRead, il => new NullDataSession()));
+                InternalEnvironment.RegisterDataSource(new DataSource("test", il => new NullDataSession()));
 
                 using (var uow = new UnitOfWork("test"))
                 {
@@ -52,11 +52,11 @@ namespace Taijutsu.Test.Data
                 }
 
                 Assert.That(
-                    () => InternalEnvironment.RegisterDataSource(new DataSource(il => new NullOrmSession()), true), 
+                    () => InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()), true), 
                     Throws.Exception.With.Message.EqualTo("Data source with name: '' has already been registered."));
 
                 Assert.That(
-                    () => InternalEnvironment.RegisterDataSource(new DataSource("test", il => new NullOrmSession()), true), 
+                    () => InternalEnvironment.RegisterDataSource(new DataSource("test", il => new NullDataSession()), true), 
                     Throws.Exception.With.Message.EqualTo("Data source with name: 'test' has already been registered."));
             }
             finally
@@ -70,7 +70,7 @@ namespace Taijutsu.Test.Data
         [ExpectedException(ExpectedMessage = "Default data source is not registered.")]
         public virtual void ShouldRemoveDataSourceAfterUnregister()
         {
-            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullOrmSession()));
+            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
             InternalEnvironment.UnregisterDataSource();
             using (new UnitOfWork())
             {

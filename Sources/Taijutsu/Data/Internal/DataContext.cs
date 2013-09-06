@@ -22,7 +22,7 @@ namespace Taijutsu.Data.Internal
     {
         private readonly UnitOfWorkConfig configuration;
 
-        private readonly Lazy<IOrmSession> session;
+        private readonly Lazy<IDataSession> session;
 
         private readonly ITerminationPolicy terminationPolicy;
 
@@ -34,7 +34,7 @@ namespace Taijutsu.Data.Internal
 
         private bool disposed;
 
-        public DataContext([NotNull] UnitOfWorkConfig configuration, [NotNull] Lazy<IOrmSession> session, [NotNull] ITerminationPolicy terminationPolicy)
+        public DataContext([NotNull] UnitOfWorkConfig configuration, [NotNull] Lazy<IDataSession> session, [NotNull] ITerminationPolicy terminationPolicy)
         {
             if (configuration == null)
             {
@@ -65,7 +65,7 @@ namespace Taijutsu.Data.Internal
 
         public event EventHandler<FinishedEventArgs> Finished;
 
-        public IOrmSession Session
+        public IDataSession Session
         {
             get
             {
@@ -283,7 +283,7 @@ namespace Taijutsu.Data.Internal
                 }
             }
 
-            public virtual IOrmSession Session
+            public virtual IDataSession Session
             {
                 get { return master.Session; }
             }

@@ -79,7 +79,7 @@ namespace Taijutsu.Data.Internal
             if (config.Require == Require.New)
             {
                 return new DataContextDecorator(
-                    new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), 
+                    new DataContext(config, new Lazy<IDataSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), 
                     contexts);
             }
 
@@ -103,7 +103,7 @@ namespace Taijutsu.Data.Internal
             }
 
             context = new DataContextDecorator(
-                new DataContext(config, new Lazy<IOrmSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), 
+                new DataContext(config, new Lazy<IDataSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), 
                 contexts);
 
             return context;
@@ -143,7 +143,7 @@ namespace Taijutsu.Data.Internal
                 remove { wrappedContext.Finished -= value; }
             }
 
-            public IOrmSession Session
+            public IDataSession Session
             {
                 get { return wrappedContext.Session; }
             }

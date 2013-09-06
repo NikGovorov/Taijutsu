@@ -31,10 +31,10 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldPostponeSessionTermination()
         {
-            var session1 = Substitute.For<IOrmSession>();
-            var session2 = Substitute.For<IOrmSession>();
+            var session1 = Substitute.For<IDataSession>();
+            var session2 = Substitute.For<IDataSession>();
 
-            var policy = new DelayedTerminationPolicy();
+            var policy = new DeferredTerminationPolicy();
 
             policy.Terminate(session1, true);
             session1.Received(0).Dispose();
@@ -49,9 +49,9 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldTerminateSessionImmediatelyIfPolicyDisposed()
         {
-            var session1 = Substitute.For<IOrmSession>();
+            var session1 = Substitute.For<IDataSession>();
 
-            var policy = new DelayedTerminationPolicy();
+            var policy = new DeferredTerminationPolicy();
 
             ((IDisposable)policy).Dispose();
 
@@ -62,14 +62,14 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldAggregateExceptionsOnDispose()
         {
-            var session1 = Substitute.For<IOrmSession>();
-            var session2 = Substitute.For<IOrmSession>();
-            var session3 = Substitute.For<IOrmSession>();
+            var session1 = Substitute.For<IDataSession>();
+            var session2 = Substitute.For<IDataSession>();
+            var session3 = Substitute.For<IDataSession>();
 
             session1.When(s => s.Dispose()).Do(s => { throw new Exception("session1"); });
             session3.When(s => s.Dispose()).Do(s => { throw new Exception("session3"); });
 
-            var policy = new DelayedTerminationPolicy();
+            var policy = new DeferredTerminationPolicy();
 
             policy.Terminate(session1, true);
             policy.Terminate(session2, true);

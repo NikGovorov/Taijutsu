@@ -24,7 +24,7 @@ namespace Taijutsu.Data
 
         public OperationScope(ITerminationPolicy terminationPolicy = null)
         {
-            this.terminationPolicy = terminationPolicy ?? new DelayedTerminationPolicy();
+            this.terminationPolicy = terminationPolicy ?? new DeferredTerminationPolicy();
             InternalEnvironment.RegisterOperationScope(this.terminationPolicy);
         }
 

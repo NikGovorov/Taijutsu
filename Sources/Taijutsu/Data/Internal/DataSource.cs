@@ -23,19 +23,19 @@ namespace Taijutsu.Data.Internal
 
         private readonly IsolationLevel defaultIsolationLevel;
 
-        private readonly Func<IsolationLevel, IOrmSession> sessionBuilder;
+        private readonly Func<IsolationLevel, IDataSession> sessionBuilder;
 
-        public DataSource([NotNull] Func<IsolationLevel, IOrmSession> sessionBuilder)
+        public DataSource([NotNull] Func<IsolationLevel, IDataSession> sessionBuilder)
             : this(string.Empty, IsolationLevel.RepeatableRead, sessionBuilder)
         {
         }
 
-        public DataSource([NotNull] string name, [NotNull] Func<IsolationLevel, IOrmSession> sessionBuilder)
+        public DataSource([NotNull] string name, [NotNull] Func<IsolationLevel, IDataSession> sessionBuilder)
             : this(name, IsolationLevel.RepeatableRead, sessionBuilder)
         {
         }
 
-        public DataSource([NotNull] string name, IsolationLevel defaultIsolationLevel, [NotNull] Func<IsolationLevel, IOrmSession> sessionBuilder)
+        public DataSource([NotNull] string name, IsolationLevel defaultIsolationLevel, [NotNull] Func<IsolationLevel, IDataSession> sessionBuilder)
         {
             if (name == null)
             {
@@ -62,7 +62,7 @@ namespace Taijutsu.Data.Internal
             get { return defaultIsolationLevel; }
         }
 
-        public virtual IOrmSession BuildSession(IsolationLevel isolationLevel)
+        public virtual IDataSession BuildSession(IsolationLevel isolationLevel)
         {
             return sessionBuilder(isolationLevel);
         }

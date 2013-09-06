@@ -22,16 +22,16 @@ namespace Taijutsu.Domain
     public class NotSpecification<TDomainObject> : Specification<TDomainObject>
         where TDomainObject : IDomainObject
     {
-        private readonly ISpecification<TDomainObject> original;
+        private readonly ISpecification<TDomainObject> origin;
 
-        public NotSpecification([NotNull] ISpecification<TDomainObject> original)
+        public NotSpecification([NotNull] ISpecification<TDomainObject> origin)
         {
-            if (original == null)
+            if (origin == null)
             {
-                throw new ArgumentNullException("original");
+                throw new ArgumentNullException("origin");
             }
 
-            this.original = original;
+            this.origin = origin;
         }
 
         public override bool IsSatisfiedBy(object candidate)
@@ -48,7 +48,7 @@ namespace Taijutsu.Domain
 
             candidates = candidates.ToList();
 
-            return candidates.Except(original.SatisfyingElementsFrom(candidates));
+            return candidates.Except(origin.SatisfyingElementsFrom(candidates));
         }
     }
 }

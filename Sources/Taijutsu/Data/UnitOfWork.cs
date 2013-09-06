@@ -75,18 +75,18 @@ namespace Taijutsu.Data
             dataContext = InternalEnvironment.DataContextSupervisor.Register(unitOfWorkConfig);
         }
 
-        object IWrapper.Origin
+        object IWrapper.WrappedObject
         {
-            get { return Origin; }
+            get { return WrappedObject; }
         }
 
-        protected virtual object Origin
+        protected virtual object WrappedObject
         {
             get
             {
                 AssertNotDisposed();
 
-                return dataContext.Session.Origin;
+                return dataContext.Session.WrappedObject;
             }
         }
 
@@ -175,12 +175,6 @@ namespace Taijutsu.Data
             return dataContext.Session.Unique<TEntity>(id, options);
         }
 
-        public virtual IQueryOverContinuation<TEntity> Query<TEntity>() where TEntity : class, IQueryableEntity
-        {
-            AssertNotDisposed();
-            return new QueryOverContinuation<TEntity>(dataContext.Session);
-        }
-
         protected virtual void Dispose(bool disposing)
         {
             if (disposed || !disposing)
@@ -223,27 +217,6 @@ namespace Taijutsu.Data
             if (disposed)
             {
                 throw new Exception(string.Format("Unit of work has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
-            }
-        }
-
-        private class QueryOverContinuation<TEntity> : IQueryOverContinuation<TEntity>
-            where TEntity : class, IQueryableEntity
-        {
-            private readonly IOrmSession session;
-
-            public QueryOverContinuation(IOrmSession session)
-            {
-                this.session = session;
-            }
-
-            public TQuery With<TQuery>(string name = null) where TQuery : class, IQuery<TEntity>
-            {
-                return session.QueryWith<TEntity, TQuery>(name);
-            }
-
-            public TRepository From<TRepository>(string name = null) where TRepository : class, IRepository<TEntity>
-            {
-                return session.QueryFrom<TEntity, TRepository>(name);
             }
         }
     }
