@@ -10,6 +10,7 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -20,3 +21,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("Nikita Govorov")]
 [assembly: AssemblyCopyright("Copyright 2009-2013 Nikita Govorov - All rights reserved.")]
 [assembly: ComVisible(false)]
+[assembly: CLSCompliant(true)]

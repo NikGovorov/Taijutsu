@@ -31,7 +31,7 @@ namespace Taijutsu.Test.Domain.Model
         public Customer(Guid id, FullName name)
         {
             creationDate = SystemTime.Now;
-            this.id = id;
+            internalId = id;
             this.name = name;
         }
 

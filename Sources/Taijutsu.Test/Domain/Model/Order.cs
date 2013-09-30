@@ -26,12 +26,12 @@ namespace Taijutsu.Test.Domain.Model
 
         public Order(Guid id)
         {
-            this.id = id;
+            internalId = id;
         }
 
         protected internal Order()
         {
-            id = Guid.NewGuid();
+            internalId = Guid.NewGuid();
         }
 
         public int Total { get; set; }

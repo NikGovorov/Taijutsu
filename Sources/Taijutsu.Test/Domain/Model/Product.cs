@@ -18,7 +18,7 @@ namespace Taijutsu.Test.Domain.Model
     {
         public Product(int id)
         {
-            this.id = id;
+            internalId = id;
         }
 
         protected internal Product()

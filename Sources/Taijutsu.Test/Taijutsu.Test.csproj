@@ -113,7 +113,6 @@
     <Compile Include="Event\EventsFixture.cs" />
     <Compile Include="Domain\Model\Customer.cs" />
     <Compile Include="Domain\Model\ICustomerQuery.cs" />
-    <Compile Include="Domain\Model\ICustomerQueryRepository.cs" />
     <Compile Include="Domain\Model\ModuleChecked.cs" />
     <Compile Include="Domain\Model\OrderCreated.cs" />
     <Compile Include="Domain\Model\SystemChecked.cs" />

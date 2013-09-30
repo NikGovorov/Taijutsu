@@ -25,13 +25,13 @@ namespace Taijutsu.Domain
     public abstract class Entity<TId> : IdentifiableObject<TId>, IEntity<TId>, IEquatable<Entity<TId>>
     {
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed. Can be used in inhertor's constructor.")]
-        protected TId id;
+        protected TId internalId;
 
         public virtual TId Id
         {
-            get { return id; }
+            get { return internalId; }
 
-            protected set { id = value; }
+            protected set { internalId = value; }
         }
 
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]
@@ -60,7 +60,7 @@ namespace Taijutsu.Domain
 
         public override string ToString()
         {
-            return id.Equals(default(TId)) ? string.Empty : id.ToString();
+            return Id.Equals(default(TId)) ? string.Empty : Id.ToString();
         }
 
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]

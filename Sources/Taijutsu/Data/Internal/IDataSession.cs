@@ -11,7 +11,6 @@
 // specific language governing permissions and limitations under the License.
 
 using Taijutsu.Domain;
-using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data.Internal
 {
