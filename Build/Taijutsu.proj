@@ -17,6 +17,8 @@
     <TestProjectPath Condition=" '$(TestProjectPath)' == '' ">$(SourcesPath)$(TestProjectName)\</TestProjectPath>
     <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<RunCodeAnalysis Condition=" '$(RunCodeAnalysis)' == '' ">true</RunCodeAnalysis>
+	<CodeAnalysisRuleSet Condition=" '$(CodeAnalysisRuleSet)' == '' ">MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   
   <Import Project="$(MSBuildCommunityTasksPath)MSBuild.Community.Tasks.Targets" />
@@ -63,10 +65,10 @@
   </Target>
 
   <Target Name="Compile" DependsOnTargets="Version">
-    <MSBuild Projects="$(ProjectPath)$(ProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" Targets="Rebuild">
+    <MSBuild Projects="$(ProjectPath)$(ProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform);RunCodeAnalysis=$(RunCodeAnalysis);CodeAnalysisRuleSet=$(CodeAnalysisRuleSet)" Targets="Rebuild">
       <Output TaskParameter="TargetOutputs" ItemName="ProjectAssembly" />
     </MSBuild>
-    <MSBuild Projects="$(TestProjectPath)$(TestProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform)" Targets="Rebuild">
+    <MSBuild Projects="$(TestProjectPath)$(TestProjectName).csproj" Properties="Configuration=$(Configuration);Platform=$(Platform);RunCodeAnalysis=$(RunCodeAnalysis);CodeAnalysisRuleSet=$(CodeAnalysisRuleSet)" Targets="Rebuild">
       <Output TaskParameter="TargetOutputs" ItemName="TestProjectAssembly" />
     </MSBuild>
   </Target>
