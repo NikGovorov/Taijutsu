@@ -56,21 +56,6 @@ namespace Taijutsu.Test.Data
             {
             }
 
-            public override object MarkAsCreated<TEntity>(TEntity entity, object options = null)
-            {
-                throw new NotSupportedException();
-            }
-
-            public override object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null)
-            {
-                throw new NotSupportedException();
-            }
-
-            public override void MarkAsDeleted<TEntity>(TEntity entity, object options = null)
-            {
-                throw new NotSupportedException();
-            }
-
             public override IEntitiesQuery<TEntity> All<TEntity>(object options = null)
             {
                 throw new NotSupportedException();
@@ -82,6 +67,21 @@ namespace Taijutsu.Test.Data
             }
 
             public override void Complete()
+            {
+                throw new NotSupportedException();
+            }
+
+            protected override object InternalMarkAsCreated<TEntity>(TEntity entity, object options = null)
+            {
+                throw new NotSupportedException();
+            }
+
+            protected override object InternalMarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null)
+            {
+                throw new NotSupportedException();
+            }
+
+            protected override void InternalMarkAsDeleted<TEntity>(TEntity entity, object options = null)
             {
                 throw new NotSupportedException();
             }

@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+// Copyright 2009-2013 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -10,15 +10,11 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using Taijutsu.Annotation;
+using System.Collections.Generic;
 
-namespace Taijutsu.Domain
+namespace Taijutsu.Domain.Query
 {
-    [PublicApi]
-    public interface IRemovingRepository<in TEntity> where TEntity : class, IDeletableEntity
+    public interface IRepository<TEntity> : IReadOnlyDictionary<object, TEntity> where TEntity : class, IEntity
     {
-        void Remove(object id);
-
-        void Remove(TEntity entity);
     }
 }

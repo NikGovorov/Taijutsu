@@ -75,7 +75,7 @@ namespace Taijutsu.Test.Data
             throw new NotSupportedException();
         }
 
-        public TRepository QueryFrom<TEntity, TRepository>(string name = null) where TEntity : class, IEntity where TRepository : IReadOnlyRepository<TEntity>
+        public TRepository QueryFrom<TEntity, TRepository>(string name = null) where TEntity : class, IEntity where TRepository : IRepository<TEntity>
         {
             throw new NotSupportedException();
         }

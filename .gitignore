@@ -16,3 +16,4 @@ _NCrunch_*
 *.orig
 *.ncrunchsolution
 *.ncrunchproject
+.localhistory

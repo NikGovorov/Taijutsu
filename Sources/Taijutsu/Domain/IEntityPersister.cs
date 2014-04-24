@@ -10,13 +10,14 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using Taijutsu.Annotation;
+using System;
 
 namespace Taijutsu.Domain
 {
-    [PublicApi]
-    public interface IAddingRepository<TEntity> where TEntity : class, IAggregateRoot
+    public interface IEntityPersister<in T> where T : IAggregateRoot
     {
-        TEntity Add(TEntity entity);
+        object Save(T entity, EntitySaveMode mode = EntitySaveMode.Auto, object options = null);
+
+        object Save(Func<T> entityFactory, EntitySaveMode mode = EntitySaveMode.Auto, object options = null);
     }
 }

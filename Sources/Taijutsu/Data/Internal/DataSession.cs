@@ -22,9 +22,12 @@ namespace Taijutsu.Data.Internal
     {
         private readonly T session;
 
-        protected DataSession([NotNull] T session)
+        private readonly IOverridersResolver overridersResolver;
+
+        protected DataSession([NotNull] T session, IOverridersResolver overridersResolver = null)
         {
             this.session = session;
+            this.overridersResolver = overridersResolver;
         }
 
         object IWrapper.WrappedObject
@@ -54,11 +57,50 @@ namespace Taijutsu.Data.Internal
             return service;
         }
 
-        public abstract object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
+        public virtual object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
+        {
+            if (overridersResolver != null)
+            {
+                var resolver = overridersResolver.ResolveEntityPersister<TEntity>();
 
-        public abstract object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
+                if (resolver != null)
+                {
+                    return resolver().Save(entity, EntitySaveMode.Create, options);
+                }
+            }
 
-        public abstract void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
+            return InternalMarkAsCreated(entity, options);
+        }
+
+        public object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
+        {
+            if (overridersResolver != null)
+            {
+                var resolver = overridersResolver.ResolveEntityPersister<TEntity>();
+
+                if (resolver != null)
+                {
+                    return resolver().Save(entityFactory, EntitySaveMode.Create, options);
+                }
+            }
+
+            return InternalMarkAsCreated(entityFactory, options);
+        }
+
+        public void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
+        {
+            if (overridersResolver != null)
+            {
+                var resolver = overridersResolver.ResolveEntityEraser<TEntity>();
+
+                if (resolver != null)
+                {
+                    resolver().Delete(entity, options);
+                }
+            }
+
+            InternalMarkAsDeleted(entity, options);
+        }
 
         public abstract IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
 
@@ -70,6 +112,12 @@ namespace Taijutsu.Data.Internal
         }
 
         public abstract void Complete();
+
+        protected abstract object InternalMarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
+
+        protected abstract object InternalMarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
+
+        protected abstract void InternalMarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
 
         protected abstract void Dispose(bool disposing);
     }

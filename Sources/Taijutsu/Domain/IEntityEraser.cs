@@ -15,8 +15,14 @@ using Taijutsu.Annotation;
 namespace Taijutsu.Domain
 {
     [PublicApi]
-    public interface IUpdatingRepository<TEntity> where TEntity : class, IAggregateRoot
+    public interface IEntityEraser<in T> where T : IDeletableEntity
     {
-        TEntity Update(TEntity entity);
+        void Delete(T entity, object options = null);
+
+        void Delete(T[] entities, object options = null);
+
+        void Delete(object id, object options = null);
+
+        void Delete(object[] ids, object options = null);
     }
 }
