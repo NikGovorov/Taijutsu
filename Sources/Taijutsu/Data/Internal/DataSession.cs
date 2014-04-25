@@ -22,12 +22,12 @@ namespace Taijutsu.Data.Internal
     {
         private readonly T session;
 
-        private readonly IOverridersResolver overridersResolver;
+        private readonly IOperationCustomizerResolver operationCustomizerResolver;
 
-        protected DataSession([NotNull] T session, IOverridersResolver overridersResolver = null)
+        protected DataSession([NotNull] T session, IOperationCustomizerResolver operationCustomizerResolver = null)
         {
             this.session = session;
-            this.overridersResolver = overridersResolver;
+            this.operationCustomizerResolver = operationCustomizerResolver;
         }
 
         object IWrapper.WrappedObject
@@ -59,9 +59,9 @@ namespace Taijutsu.Data.Internal
 
         public virtual object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
-            if (overridersResolver != null)
+            if (operationCustomizerResolver != null)
             {
-                var resolver = overridersResolver.ResolveEntityPersister<TEntity>();
+                var resolver = operationCustomizerResolver.ResolveEntityPersister<TEntity>();
 
                 if (resolver != null)
                 {
@@ -74,9 +74,9 @@ namespace Taijutsu.Data.Internal
 
         public object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
-            if (overridersResolver != null)
+            if (operationCustomizerResolver != null)
             {
-                var resolver = overridersResolver.ResolveEntityPersister<TEntity>();
+                var resolver = operationCustomizerResolver.ResolveEntityPersister<TEntity>();
 
                 if (resolver != null)
                 {
@@ -89,9 +89,9 @@ namespace Taijutsu.Data.Internal
 
         public void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
-            if (overridersResolver != null)
+            if (operationCustomizerResolver != null)
             {
-                var resolver = overridersResolver.ResolveEntityEraser<TEntity>();
+                var resolver = operationCustomizerResolver.ResolveEntityEraser<TEntity>();
 
                 if (resolver != null)
                 {

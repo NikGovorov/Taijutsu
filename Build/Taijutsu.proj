@@ -40,7 +40,7 @@
   </Target>
 
   <Target Name="Push" DependsOnTargets="Pack">
-	<NuGetPush Source="@(NugetUrl)" File="@(ProjectPackage)" APIKey="$(NugetKey)"  Condition=" '$(NugetKey)' != 'Empty' "/>
+	<NuGetPush ToolPath="$(NugetPath)" Source="$(NugetUrl)" File="@(ProjectPackage)" APIKey="$(NugetKey)"  Condition=" '$(NugetKey)' != 'Empty' "/>
   </Target>
   
   <Target Name="Reset">

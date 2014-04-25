@@ -16,7 +16,7 @@ using Taijutsu.Domain;
 
 namespace Taijutsu.Data.Internal
 {
-    public interface IOverridersResolver
+    public interface IOperationCustomizerResolver
     {
         Func<IEntityPersister<T>> ResolveEntityPersister<T>() where T : IAggregateRoot;
 
