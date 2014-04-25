@@ -69,7 +69,7 @@
     <Compile Include="Data\Internal\ImmediateTerminationPolicy.cs" />
     <Compile Include="Data\Internal\InternalEnvironment.cs" />
     <Compile Include="Data\Internal\IDataSession.cs" />
-    <Compile Include="Data\Internal\IOverridersResolver.cs" />
+    <Compile Include="Data\Internal\IOperationCustomizerResolver.cs" />
     <Compile Include="Data\Internal\ITerminationPolicy.cs" />
     <Compile Include="Data\Internal\IsolationLevelExtensions.cs" />
     <Compile Include="Data\Internal\DataSessionBuilder.cs" />
