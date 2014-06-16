@@ -19,8 +19,9 @@ namespace Taijutsu.Domain.Query
         IAsQueryableQuery<TEntity>, 
         IAnyQuery<TEntity>, 
         ICountQuery<TEntity>, 
-        IKeyFilter<IEntitiesQuery<TEntity>>, 
-        ILimitFilter<IEntitiesQuery<TEntity>>, 
+        IIdFilter<IEntitiesQuery<TEntity>>, 
+        ILimitFilter<IEntitiesQuery<TEntity>>,
+        ITypeFilter<IEntitiesQuery<TEntity>>, 
         INotTypeFilter<IEntitiesQuery<TEntity>>, 
         ILockOption<IEntitiesQuery<TEntity>>
         where TEntity : IEntity

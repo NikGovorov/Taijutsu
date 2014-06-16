@@ -19,19 +19,19 @@ namespace Taijutsu.Domain.Query
     [PublicApi]
     public interface INotTypeFilter<out TQuery> : IQueryContinuation
     {
-        TQuery IsNotOf([NotNull] params Type[] derivedTypes);
+        TQuery IsNot([NotNull] params Type[] derivedTypes);
     }
 
     [PublicApi]
     public interface INotTypeFilter<in TBase, out TQuery> : IQueryContinuation
     {
-        TQuery IsNotOf<TDerived>() where TDerived : TBase;
+        TQuery IsNot<TDerived>() where TDerived : TBase;
 
-        TQuery IsNotOf<TDerivedFirst, TDerivedSecond>() where TDerivedFirst : TBase where TDerivedSecond : TBase;
+        TQuery IsNot<TDerivedFirst, TDerivedSecond>() where TDerivedFirst : TBase where TDerivedSecond : TBase;
 
-        TQuery IsNotOf<TDerivedFirst, TDerivedSecond, TDerivedThird>() where TDerivedFirst : TBase where TDerivedSecond : TBase where TDerivedThird : TBase;
+        TQuery IsNot<TDerivedFirst, TDerivedSecond, TDerivedThird>() where TDerivedFirst : TBase where TDerivedSecond : TBase where TDerivedThird : TBase;
 
-        TQuery IsNotOf<TDerivedFirst, TDerivedSecond, TDerivedThird, TDerivedFourth>() where TDerivedFirst : TBase where TDerivedSecond : TBase where TDerivedThird : TBase
+        TQuery IsNot<TDerivedFirst, TDerivedSecond, TDerivedThird, TDerivedFourth>() where TDerivedFirst : TBase where TDerivedSecond : TBase where TDerivedThird : TBase
             where TDerivedFourth : TBase;
     }
 }

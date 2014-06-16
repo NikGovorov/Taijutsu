@@ -79,6 +79,7 @@
     <Compile Include="Domain\ICompositeSpecification.cs" />
     <Compile Include="Domain\IEntityEraser.cs" />
     <Compile Include="Domain\IEntityPersister.cs" />
+    <Compile Include="Domain\Query\ITypeFilter.cs" />
     <Compile Include="Event\AbstractEvent.cs" />
     <Compile Include="Event\EventBatch.cs" />
     <Compile Include="Event\Events.cs" />
@@ -117,7 +118,7 @@
     <Compile Include="Domain\Query\ICountQuery.cs" />
     <Compile Include="Domain\Query\IDictionaryQuery.cs" />
     <Compile Include="Domain\Query\IFirstQuery.cs" />
-    <Compile Include="Domain\Query\IKeyFilter.cs" />
+    <Compile Include="Domain\Query\IIdFilter.cs" />
     <Compile Include="Domain\Query\ILastQuery.cs" />
     <Compile Include="Domain\Query\ILimitFilter.cs" />
     <Compile Include="Domain\Query\IListQuery.cs" />
