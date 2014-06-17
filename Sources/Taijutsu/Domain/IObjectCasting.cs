@@ -10,16 +10,20 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System;
+using Taijutsu.Annotation;
 
-using Taijutsu.Domain;
-
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.Domain
 {
-    public interface IOperationCustomizerResolver
+    [PublicApi]
+    public interface IObjectCasting
     {
-        Func<IEntityPersister<T>> ResolveEntityPersister<T>() where T : IAggregateRoot;
+        bool IsApplicableFor(object source);
 
-        Func<IEntityRemover<T>> ResolveEntityEraser<T>() where T : IDeletableEntity;
+        [CanBeNull]
+        T As<T>(object source) where T : class;
+
+        bool Is<T>(object source) where T : class;
+
+        T Cast<T>(object source);
     }
 }

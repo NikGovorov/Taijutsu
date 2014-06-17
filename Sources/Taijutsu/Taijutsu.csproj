@@ -77,7 +77,8 @@
     <Compile Include="Data\Internal\FinishedEventArgs.cs" />
     <Compile Include="Domain\EntitySaveMode.cs" />
     <Compile Include="Domain\ICompositeSpecification.cs" />
-    <Compile Include="Domain\IEntityEraser.cs" />
+    <Compile Include="Domain\IEntityManager.cs" />
+    <Compile Include="Domain\IEntityRemover.cs" />
     <Compile Include="Domain\IEntityPersister.cs" />
     <Compile Include="Domain\Query\ITypeFilter.cs" />
     <Compile Include="Event\AbstractEvent.cs" />
@@ -134,16 +135,16 @@
     <Compile Include="Domain\DomainException.cs" />
     <Compile Include="Domain\DomainObjectExtensions.cs" />
     <Compile Include="Domain\Entity.cs" />
-    <Compile Include="Domain\EntityConversionRegistry.cs" />
+    <Compile Include="Domain\ObjectCastingRegistry.cs" />
     <Compile Include="Domain\EntityExtensions.cs" />
     <Compile Include="Domain\EntityException.cs" />
     <Compile Include="Domain\NotFoundException.cs" />
     <Compile Include="Domain\NotUniqueException.cs" />
     <Compile Include="Domain\IAggregateRoot.cs" />
-    <Compile Include="Domain\IdentifiableObject.cs" />
+    <Compile Include="Domain\IdentifiedObject.cs" />
     <Compile Include="Domain\IDomainObject.cs" />
     <Compile Include="Domain\IEntity.cs" />
-    <Compile Include="Domain\IEntityConversion.cs" />
+    <Compile Include="Domain\IObjectCasting.cs" />
     <Compile Include="Domain\IQueryableEntity.cs" />
     <Compile Include="Domain\IDeletableEntity.cs" />
     <Compile Include="Domain\ISoftDeletable.cs" />
@@ -151,7 +152,6 @@
     <Compile Include="Domain\IUnitOfWork.cs" />
     <Compile Include="Domain\IValueObject.cs" />
     <Compile Include="Domain\IVersionedEntity.cs" />
-    <Compile Include="Domain\EntityConversion.cs" />
     <Compile Include="Domain\NotSpecification.cs" />
     <Compile Include="Domain\OrSpecification.cs" />
     <Compile Include="Domain\Query\IQueryContinuation.cs" />

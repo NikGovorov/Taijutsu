@@ -18,16 +18,23 @@ namespace Taijutsu.Domain
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class EntityExtensions
     {
-        public static T As<T>(this IEntity entity) where T : class
+        public static T As<T>(this IEntity self) where T : class
         {
-            var conversion = EntityConversionRegistry.CustomConversions.FirstOrDefault(ec => ec.IsApplicableFor(entity));
+            var casting = ResolveCasting(self);
 
-            return conversion != null ? conversion.SafeConvert<T>(entity) : EntityConversionRegistry.NativeConversion.SafeConvert<T>(entity);
+            return casting != null ? casting.As<T>(self) : ObjectCastingRegistry.Default.As<T>(self);
         }
 
-        public static bool Is<T>(this IEntity entity) where T : class
+        public static bool Is<T>(this IEntity self) where T : class
         {
-            return As<T>(entity) != null;
+            var casting = ResolveCasting(self);
+
+            return casting != null ? casting.Is<T>(self) : ObjectCastingRegistry.Default.Is<T>(self);
+        }
+
+        private static IObjectCasting ResolveCasting(object self)
+        {
+            return ObjectCastingRegistry.Plugins.FirstOrDefault(ec => ec.IsApplicableFor(self));
         }
     }
 }

@@ -16,13 +16,13 @@ using System.Diagnostics.CodeAnalysis;
 namespace Taijutsu.Domain
 {
     [Serializable]
-    public abstract class Entity : IdentifiableObject<object>, IEntity
+    public abstract class Entity : IdentifiedObject<object>, IEntity
     {
     }
 
     [Serializable]
     [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1402:FileMayOnlyContainASingleClass", Justification = "Reviewed. Suppress the warning for generics.")]
-    public abstract class Entity<TId> : IdentifiableObject<TId>, IEntity<TId>, IEquatable<Entity<TId>>
+    public abstract class Entity<TId> : IdentifiedObject<TId>, IEntity<TId>, IEquatable<Entity<TId>>
     {
         [SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Reviewed. Can be used in inhertor's constructor.")]
         protected TId internalId;
@@ -50,7 +50,7 @@ namespace Taijutsu.Domain
         {
             var asEntity = other as Entity<TId>;
 
-            return !ReferenceEquals(asEntity, null) && InternalGetType() == asEntity.InternalGetType() && Equals(asEntity as IdentifiableObject<TId>);
+            return !ReferenceEquals(asEntity, null) && InternalGetType() == asEntity.InternalGetType() && Equals(asEntity as IdentifiedObject<TId>);
         }
 
         public override int GetHashCode()
@@ -71,7 +71,7 @@ namespace Taijutsu.Domain
                 return false;
             }
 
-            return InternalGetType() == other.InternalGetType() && Equals(other as IdentifiableObject<TId>);
+            return InternalGetType() == other.InternalGetType() && Equals(other as IdentifiedObject<TId>);
         }
 
         protected override TId BuildIdentity()

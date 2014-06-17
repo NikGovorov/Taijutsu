@@ -16,7 +16,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Taijutsu.Domain
 {
     [Serializable]
-    public abstract class ValueObject<TValueObject> : IdentifiableObject<object>, IValueObject, IEquatable<TValueObject>
+    public abstract class ValueObject<TValueObject> : IdentifiedObject<object>, IValueObject, IEquatable<TValueObject>
         where TValueObject : ValueObject<TValueObject>
     {
         [SuppressMessage("StyleCop.CSharp.ReadabilityRules", "SA1126:PrefixCallsCorrectly", Justification = "Reviewed. Object.Equals is optimized with resharper code clenup.")]

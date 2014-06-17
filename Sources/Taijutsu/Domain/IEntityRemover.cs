@@ -15,7 +15,7 @@ using Taijutsu.Annotation;
 namespace Taijutsu.Domain
 {
     [PublicApi]
-    public interface IEntityEraser<in T> where T : IDeletableEntity
+    public interface IEntityRemover<in T> where T : IDeletableEntity
     {
         void Delete(T entity, object options = null);
 

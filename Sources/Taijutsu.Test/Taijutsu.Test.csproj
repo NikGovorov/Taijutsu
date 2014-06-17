@@ -105,7 +105,7 @@
     <Compile Include="Domain\AggregateRootExFixture.cs" />
     <Compile Include="Domain\DomainObjectExFixture.cs" />
     <Compile Include="Domain\DeletableEntityExFixture.cs" />
-    <Compile Include="Domain\EntityConversionFixture.cs" />
+    <Compile Include="Domain\ObjectCastingFixture.cs" />
     <Compile Include="Domain\EntityFixture.cs" />
     <Compile Include="Event\BatchedHandlingSettingsFixture.cs" />
     <Compile Include="Event\DeferredHandlingSettingsFixture.cs" />
