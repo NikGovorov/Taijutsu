@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -36,7 +36,7 @@ namespace Taijutsu.Event.Internal
 
                 if (Type.IsInstanceOfType(ev))
                 {
-                    var context = InternalEnvironment.DataContextSupervisor.CurrentContext;
+                    var context = DataEnvironment.DataContextSupervisor.CurrentContext;
 
                     if (context != null)
                     {

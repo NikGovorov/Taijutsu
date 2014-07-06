@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -20,7 +20,7 @@ namespace Taijutsu.Data.Internal
 {
     public class DataContext : IDataContext
     {
-        private readonly UnitOfWorkConfig configuration;
+        private readonly UnitOfWorkOptions configuration;
 
         private readonly Lazy<IDataSession> session;
 
@@ -34,7 +34,7 @@ namespace Taijutsu.Data.Internal
 
         private bool disposed;
 
-        public DataContext([NotNull] UnitOfWorkConfig configuration, [NotNull] Lazy<IDataSession> session, [NotNull] ITerminationPolicy terminationPolicy)
+        public DataContext([NotNull] UnitOfWorkOptions configuration, [NotNull] Lazy<IDataSession> session, [NotNull] ITerminationPolicy terminationPolicy)
         {
             if (configuration == null)
             {
@@ -80,7 +80,7 @@ namespace Taijutsu.Data.Internal
             get { return extra; }
         }
 
-        public virtual UnitOfWorkConfig Configuration
+        public virtual UnitOfWorkOptions Configuration
         {
             get
             {

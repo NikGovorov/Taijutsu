@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -33,15 +33,15 @@ namespace Taijutsu.Test.Event
         [SetUp]
         public void SetUp()
         {
-            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
-            InternalEnvironment.RegisterDataSource(new DataSource("test", il => new SessionWithExceptionInComplete()));
+            DataEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
+            DataEnvironment.RegisterDataSource(new DataSource("test", il => new SessionWithExceptionInComplete()));
         }
 
         [TearDown]
         public void TearDown()
         {
-            InternalEnvironment.UnregisterDataSource();
-            InternalEnvironment.UnregisterDataSource("test");
+            DataEnvironment.UnregisterDataSource();
+            DataEnvironment.UnregisterDataSource("test");
             Events.Global.Reset();
         }
 

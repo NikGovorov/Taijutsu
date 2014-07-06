@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -22,8 +22,8 @@ namespace Taijutsu.Data.Internal
 
         public ConstructionScope()
         {
-            previousValue = InternalEnvironment.IsInsideConstructionScope;
-            InternalEnvironment.IsInsideConstructionScope = true;
+            previousValue = DataEnvironment.IsInsideConstructionScope;
+            DataEnvironment.IsInsideConstructionScope = true;
         }
 
         public void Dispose()
@@ -40,7 +40,7 @@ namespace Taijutsu.Data.Internal
 
             try
             {
-                InternalEnvironment.IsInsideConstructionScope = previousValue;
+                DataEnvironment.IsInsideConstructionScope = previousValue;
             }
             finally
             {

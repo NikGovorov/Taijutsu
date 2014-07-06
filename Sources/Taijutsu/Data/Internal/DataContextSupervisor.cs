@@ -1,4 +1,4 @@
-// Copyright 2009-2013 Nikita Govorov
+// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -57,53 +57,53 @@ namespace Taijutsu.Data.Internal
             get { return contexts.Count != 0; }
         }
 
-        public virtual IDataContext Register([NotNull] UnitOfWorkConfig config)
+        public virtual IDataContext Register([NotNull] UnitOfWorkOptions options)
         {
             DataSource dataSource;
 
-            if (!dataSourcesProvider().TryGetValue(config.SourceName, out dataSource))
+            if (!dataSourcesProvider().TryGetValue(options.Source, out dataSource))
             {
-                if (config.SourceName == string.Empty)
+                if (options.Source == string.Empty)
                 {
                     throw new Exception("Default data source is not registered.");
                 }
 
-                throw new Exception(string.Format("Data source with name '{0}' is not registered.", config.SourceName));
+                throw new Exception(string.Format("Data source with name '{0}' is not registered.", options.Source));
             }
 
-            config = new UnitOfWorkConfig(
-                config.SourceName, 
-                config.IsolationLevel == IsolationLevel.Unspecified ? dataSource.DefaultIsolationLevel : config.IsolationLevel, 
-                config.Require);
+            options = new UnitOfWorkOptions(
+                options.Source, 
+                options.IsolationLevel == IsolationLevel.Unspecified ? dataSource.DefaultIsolationLevel : options.IsolationLevel, 
+                options.Require);
 
-            if (config.Require == Require.New)
+            if (options.Require == Require.New)
             {
                 return new DataContextDecorator(
-                    new DataContext(config, new Lazy<IDataSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), 
+                    new DataContext(options, new Lazy<IDataSession>(() => dataSource.BuildSession(options.IsolationLevel), false), terminationPolicy), 
                     contexts);
             }
 
             // ReSharper disable once ImplicitlyCapturedClosure
-            var context = (from ctx in contexts where ctx.WrappedContext.Configuration.SourceName == config.SourceName select ctx).LastOrDefault();
+            var context = (from ctx in contexts where ctx.WrappedContext.Configuration.Source == options.Source select ctx).LastOrDefault();
 
             if (context != null)
             {
-                if (!context.WrappedContext.Configuration.IsolationLevel.IsCompatible(config.IsolationLevel))
+                if (!context.WrappedContext.Configuration.IsolationLevel.IsCompatible(options.IsolationLevel))
                 {
                     throw new Exception(
-                        string.Format("Isolation level '{0}' is not compatible with '{1}'.", context.WrappedContext.Configuration.IsolationLevel, config.IsolationLevel));
+                        string.Format("Isolation level '{0}' is not compatible with '{1}'.", context.WrappedContext.Configuration.IsolationLevel, options.IsolationLevel));
                 }
 
                 return new DataContext.Subordinate(context.WrappedContext);
             }
 
-            if (config.Require == Require.Existing)
+            if (options.Require == Require.Existing)
             {
                 throw new Exception("Unit of work requires existing unit of work at the top level, but nothing has been found.");
             }
 
             context = new DataContextDecorator(
-                new DataContext(config, new Lazy<IDataSession>(() => dataSource.BuildSession(config.IsolationLevel), false), terminationPolicy), 
+                new DataContext(options, new Lazy<IDataSession>(() => dataSource.BuildSession(options.IsolationLevel), false), terminationPolicy), 
                 contexts);
 
             return context;

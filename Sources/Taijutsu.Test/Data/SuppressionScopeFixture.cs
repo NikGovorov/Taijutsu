@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -26,19 +26,19 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldSupportNesting()
         {
-            InternalEnvironment.IsInsideSuppressionScope.Should().Be.False();
+            DataEnvironment.IsInsideSuppressionScope.Should().Be.False();
             using (new SuppressionScope())
             {
-                InternalEnvironment.IsInsideSuppressionScope.Should().Be.True();
+                DataEnvironment.IsInsideSuppressionScope.Should().Be.True();
                 using (new SuppressionScope())
                 {
-                    InternalEnvironment.IsInsideSuppressionScope.Should().Be.True();
+                    DataEnvironment.IsInsideSuppressionScope.Should().Be.True();
                 }
 
-                InternalEnvironment.IsInsideSuppressionScope.Should().Be.True();
+                DataEnvironment.IsInsideSuppressionScope.Should().Be.True();
             }
 
-            InternalEnvironment.IsInsideSuppressionScope.Should().Be.False();
+            DataEnvironment.IsInsideSuppressionScope.Should().Be.False();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -25,7 +25,7 @@ namespace Taijutsu.Data
         public OperationScope(ITerminationPolicy terminationPolicy = null)
         {
             this.terminationPolicy = terminationPolicy ?? new DeferredTerminationPolicy();
-            InternalEnvironment.RegisterOperationScope(this.terminationPolicy);
+            DataEnvironment.RegisterOperationScope(this.terminationPolicy);
         }
 
         public void Dispose()
@@ -48,7 +48,7 @@ namespace Taijutsu.Data
             {
                 try
                 {
-                    InternalEnvironment.UnregisterOperationScope();
+                    DataEnvironment.UnregisterOperationScope();
                 }
                 finally
                 {

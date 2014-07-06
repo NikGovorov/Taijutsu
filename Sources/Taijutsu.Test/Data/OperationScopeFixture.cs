@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -37,14 +37,14 @@ namespace Taijutsu.Test.Data
         {
             source = Guid.NewGuid().ToString();
             session = Substitute.For<IDataSession>();
-            InternalEnvironment.RegisterDataSource(new DataSource(source, il => session));
+            DataEnvironment.RegisterDataSource(new DataSource(source, il => session));
         }
 
         [TearDown]
         public void OnTearDown()
         {
-            InternalEnvironment.UnregisterDataSource(source);
-            InternalEnvironment.UnregisterOperationScope();
+            DataEnvironment.UnregisterDataSource(source);
+            DataEnvironment.UnregisterOperationScope();
             session.ClearReceivedCalls();
         }
 
@@ -81,12 +81,12 @@ namespace Taijutsu.Test.Data
                 {
                     using (new UnitOfWork(source))
                     {
-                        InternalEnvironment.IsInsideOperationScope.Should().Be.True();
+                        DataEnvironment.IsInsideOperationScope.Should().Be.True();
                     }
                 }
             }
 
-            InternalEnvironment.IsInsideOperationScope.Should().Be.False();
+            DataEnvironment.IsInsideOperationScope.Should().Be.False();
 
             using (new OperationScope())
             {
@@ -94,7 +94,7 @@ namespace Taijutsu.Test.Data
                 {
                     using (new UnitOfWork(source))
                     {
-                        InternalEnvironment.IsInsideOperationScope.Should().Be.True();
+                        DataEnvironment.IsInsideOperationScope.Should().Be.True();
                     }
                 }
             }

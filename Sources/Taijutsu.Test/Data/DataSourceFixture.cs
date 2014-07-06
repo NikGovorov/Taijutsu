@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -27,7 +27,7 @@ namespace Taijutsu.Test.Data
         [TearDown]
         public void OnTearDown()
         {
-            InternalEnvironment.CheckDataContextSupervisorForRelease();
+            DataEnvironment.CheckDataContextSupervisorForRelease();
         }
 
         [Test]
@@ -35,16 +35,16 @@ namespace Taijutsu.Test.Data
         {
             try
             {
-                InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
-                InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
+                DataEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
+                DataEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
 
                 using (var uow = new UnitOfWork())
                 {
                     Awaken(uow);
                 }
 
-                InternalEnvironment.RegisterDataSource(new DataSource("test", IsolationLevel.RepeatableRead, il => new NullDataSession()));
-                InternalEnvironment.RegisterDataSource(new DataSource("test", il => new NullDataSession()));
+                DataEnvironment.RegisterDataSource(new DataSource("test", IsolationLevel.RepeatableRead, il => new NullDataSession()));
+                DataEnvironment.RegisterDataSource(new DataSource("test", il => new NullDataSession()));
 
                 using (var uow = new UnitOfWork("test"))
                 {
@@ -52,17 +52,17 @@ namespace Taijutsu.Test.Data
                 }
 
                 Assert.That(
-                    () => InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()), true), 
+                    () => DataEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()), true), 
                     Throws.Exception.With.Message.EqualTo("Data source with name: '' has already been registered."));
 
                 Assert.That(
-                    () => InternalEnvironment.RegisterDataSource(new DataSource("test", il => new NullDataSession()), true), 
+                    () => DataEnvironment.RegisterDataSource(new DataSource("test", il => new NullDataSession()), true), 
                     Throws.Exception.With.Message.EqualTo("Data source with name: 'test' has already been registered."));
             }
             finally
             {
-                InternalEnvironment.UnregisterDataSource();
-                InternalEnvironment.UnregisterDataSource("test");
+                DataEnvironment.UnregisterDataSource();
+                DataEnvironment.UnregisterDataSource("test");
             }
         }
 
@@ -70,8 +70,8 @@ namespace Taijutsu.Test.Data
         [ExpectedException(ExpectedMessage = "Default data source is not registered.")]
         public virtual void ShouldRemoveDataSourceAfterUnregister()
         {
-            InternalEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
-            InternalEnvironment.UnregisterDataSource();
+            DataEnvironment.RegisterDataSource(new DataSource(il => new NullDataSession()));
+            DataEnvironment.UnregisterDataSource();
             using (new UnitOfWork())
             {
             }

@@ -67,7 +67,7 @@
     <Compile Include="Data\Internal\DeferredTerminationPolicy.cs" />
     <Compile Include="Data\Internal\IDataContext.cs" />
     <Compile Include="Data\Internal\ImmediateTerminationPolicy.cs" />
-    <Compile Include="Data\Internal\InternalEnvironment.cs" />
+    <Compile Include="Data\Internal\DataEnvironment.cs" />
     <Compile Include="Data\Internal\IDataSession.cs" />
     <Compile Include="Data\Internal\IOperationCustomizerResolver.cs" />
     <Compile Include="Data\Internal\ITerminationPolicy.cs" />
@@ -75,6 +75,8 @@
     <Compile Include="Data\Internal\DataSessionBuilder.cs" />
     <Compile Include="Data\Internal\DataSession.cs" />
     <Compile Include="Data\Internal\FinishedEventArgs.cs" />
+    <Compile Include="Data\IUnitOfWorkFactory.cs" />
+    <Compile Include="Data\UnitOfWorkFactory.cs" />
     <Compile Include="Domain\EntitySaveMode.cs" />
     <Compile Include="Domain\ICompositeSpecification.cs" />
     <Compile Include="Domain\IEntityManager.cs" />
@@ -107,7 +109,7 @@
     <Compile Include="Data\Internal\SuppressionScope.cs" />
     <Compile Include="Data\OperationScope.cs" />
     <Compile Include="Data\UnitOfWork.cs" />
-    <Compile Include="Data\UnitOfWorkConfig.cs" />
+    <Compile Include="Data\UnitOfWorkOptions.cs" />
     <Compile Include="DefaultLogicContext.cs" />
     <Compile Include="Domain\AggregateRootExtensions.cs" />
     <Compile Include="Domain\DeletableEntityEx.cs" />

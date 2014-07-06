@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -37,16 +37,16 @@ namespace Taijutsu.Test.Data
         {
             source1 = Guid.NewGuid().ToString();
             source2 = Guid.NewGuid().ToString();
-            InternalEnvironment.RegisterDataSource(new DataSource(source1, il => new NullDataSession()));
-            InternalEnvironment.RegisterDataSource(new DataSource(source2, il => new NullDataSession()));
+            DataEnvironment.RegisterDataSource(new DataSource(source1, il => new NullDataSession()));
+            DataEnvironment.RegisterDataSource(new DataSource(source2, il => new NullDataSession()));
         }
 
         [TearDown]
         public void OnTearDown()
         {
-            InternalEnvironment.UnregisterDataSource(source1);
-            InternalEnvironment.UnregisterDataSource(source2);
-            InternalEnvironment.CheckDataContextSupervisorForRelease();
+            DataEnvironment.UnregisterDataSource(source1);
+            DataEnvironment.UnregisterDataSource(source2);
+            DataEnvironment.CheckDataContextSupervisorForRelease();
         }
 
         [Test]
@@ -340,35 +340,35 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldExposeCurrentContext()
         {
-            InternalEnvironment.DataContextSupervisor.Active.Should().Be.False();
+            DataEnvironment.DataContextSupervisor.Active.Should().Be.False();
 
             using (new UnitOfWork(source1))
             {
-                InternalEnvironment.DataContextSupervisor.Active.Should().Be.True();
+                DataEnvironment.DataContextSupervisor.Active.Should().Be.True();
 
-                var ctx1 = InternalEnvironment.DataContextSupervisor.Contexts.Single();
-                ctx1.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
+                var ctx1 = DataEnvironment.DataContextSupervisor.Contexts.Single();
+                ctx1.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
 
                 using (new UnitOfWork(source1, Require.New))
                 {
-                    var ctx2 = InternalEnvironment.DataContextSupervisor.Contexts.Last();
-                    ctx2.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
+                    var ctx2 = DataEnvironment.DataContextSupervisor.Contexts.Last();
+                    ctx2.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
 
                     using (new UnitOfWork(source2))
                     {
-                        var ctx3 = InternalEnvironment.DataContextSupervisor.Contexts.Last();
-                        ctx3.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
-                        InternalEnvironment.DataContextSupervisor.Active.Should().Be.True();
+                        var ctx3 = DataEnvironment.DataContextSupervisor.Contexts.Last();
+                        ctx3.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
+                        DataEnvironment.DataContextSupervisor.Active.Should().Be.True();
                     }
 
-                    ctx2.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
+                    ctx2.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
                 }
 
-                ctx1.Should().Be.SameInstanceAs(InternalEnvironment.DataContextSupervisor.CurrentContext);
+                ctx1.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
             }
 
-            InternalEnvironment.DataContextSupervisor.CurrentContext.Should().Be.Null();
-            InternalEnvironment.DataContextSupervisor.Active.Should().Be.False();
+            DataEnvironment.DataContextSupervisor.CurrentContext.Should().Be.Null();
+            DataEnvironment.DataContextSupervisor.Active.Should().Be.False();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright 2009-2013 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -41,21 +41,21 @@ namespace Taijutsu.Test.Data
         {
             source = Guid.NewGuid().ToString();
             session = Substitute.For<IDataSession>();
-            InternalEnvironment.RegisterDataSource(new DataSource(source, il => session));
+            DataEnvironment.RegisterDataSource(new DataSource(source, il => session));
         }
 
         [TearDown]
         public void OnTearDown()
         {
             session.ClearReceivedCalls();
-            InternalEnvironment.UnregisterDataSource(source);
-            InternalEnvironment.CheckDataContextSupervisorForRelease();
+            DataEnvironment.UnregisterDataSource(source);
+            DataEnvironment.CheckDataContextSupervisorForRelease();
         }
 
         [Test]
         public virtual void ShouldCallRealCompleteOnlyOnce()
         {
-            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IDataSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -73,7 +73,7 @@ namespace Taijutsu.Test.Data
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed. Acceptable for tests.")]
         public virtual void ShouldCallRealDisposeOnlyOnce()
         {
-            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IDataSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -90,7 +90,7 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldNotCallRealCompleteIfSessionHasNotBeenUsed()
         {
-            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IDataSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -106,7 +106,7 @@ namespace Taijutsu.Test.Data
         [SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times", Justification = "Reviewed. Acceptable for tests.")]
         public virtual void ShouldNotCallRealDisposeIfSessionHasNotBeenUsed()
         {
-            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IDataSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -124,7 +124,7 @@ namespace Taijutsu.Test.Data
             Assert.That(
                 () =>
                 {
-                    var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
+                    var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);
                     var sessionBuilder = new Lazy<IDataSession>(() => session, false);
                     var policy = new ImmediateTerminationPolicy();
 
@@ -142,7 +142,7 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldRaiseFinishedEventDuringDispose()
         {
-            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IDataSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -190,7 +190,7 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldRaiseFinishedEventDuringDecoratorDispose()
         {
-            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IDataSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -229,7 +229,7 @@ namespace Taijutsu.Test.Data
         [Test]
         public virtual void ShouldReplaceFinishedEventInSubordinate()
         {
-            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IDataSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 
@@ -288,7 +288,7 @@ namespace Taijutsu.Test.Data
         [ExpectedException(ExpectedMessage = "Data context has already been disposed(with success - 'False'), so it is not usable anymore.")]
         public virtual void ShouldThrowExceptionOnSessionCallIfDisposeHasAlreadyBeenCalled()
         {
-            var config = new UnitOfWorkConfig(string.Empty, IsolationLevel.ReadCommitted, Require.New);
+            var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);
             var sessionBuilder = new Lazy<IDataSession>(() => session, false);
             var policy = new ImmediateTerminationPolicy();
 

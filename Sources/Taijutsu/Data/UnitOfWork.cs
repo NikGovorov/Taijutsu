@@ -1,4 +1,4 @@
-// Copyright 2009-2013 Nikita Govorov
+// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -22,7 +22,7 @@ using Taijutsu.Domain.Query;
 namespace Taijutsu.Data
 {
     [PublicApi]
-    public class UnitOfWork : IUnitOfWork, IDisposable, IWrapper
+    public class UnitOfWork : IUnitOfWork, IWrapper
     {
         private readonly IDataContext dataContext;
 
@@ -31,48 +31,48 @@ namespace Taijutsu.Data
         private bool? completed;
 
         public UnitOfWork([NotNull] string source = "", IsolationLevel? isolation = null, Require require = Require.None)
-            : this(new UnitOfWorkConfig(source, isolation ?? IsolationLevel.Unspecified, require))
+            : this(new UnitOfWorkOptions(source, isolation ?? IsolationLevel.Unspecified, require))
         {
         }
 
         public UnitOfWork(IsolationLevel? isolation = null)
-            : this(new UnitOfWorkConfig(string.Empty, isolation ?? IsolationLevel.Unspecified, Require.None))
+            : this(new UnitOfWorkOptions(string.Empty, isolation ?? IsolationLevel.Unspecified, Require.None))
         {
         }
 
         public UnitOfWork(Require require)
-            : this(new UnitOfWorkConfig(string.Empty, IsolationLevel.Unspecified, require))
+            : this(new UnitOfWorkOptions(string.Empty, IsolationLevel.Unspecified, require))
         {
         }
 
         public UnitOfWork([NotNull] string source)
-            : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, Require.None))
+            : this(new UnitOfWorkOptions(source, IsolationLevel.Unspecified, Require.None))
         {
         }
 
         public UnitOfWork([NotNull] string source = "", Require require = Require.None)
-            : this(new UnitOfWorkConfig(source, IsolationLevel.Unspecified, require))
+            : this(new UnitOfWorkOptions(source, IsolationLevel.Unspecified, require))
         {
         }
 
         public UnitOfWork([NotNull] string source = "", IsolationLevel? isolation = null)
-            : this(new UnitOfWorkConfig(source, isolation ?? IsolationLevel.Unspecified, Require.None))
+            : this(new UnitOfWorkOptions(source, isolation ?? IsolationLevel.Unspecified, Require.None))
         {
         }
 
         public UnitOfWork()
-            : this(new UnitOfWorkConfig(string.Empty, IsolationLevel.Unspecified, Require.None))
+            : this(new UnitOfWorkOptions(string.Empty, IsolationLevel.Unspecified, Require.None))
         {
         }
 
-        public UnitOfWork([NotNull] UnitOfWorkConfig unitOfWorkConfig)
+        public UnitOfWork([NotNull] UnitOfWorkOptions unitOfWorkOptions)
         {
-            if (unitOfWorkConfig == null)
+            if (unitOfWorkOptions == null)
             {
-                throw new ArgumentNullException("unitOfWorkConfig");
+                throw new ArgumentNullException("unitOfWorkOptions");
             }
 
-            dataContext = InternalEnvironment.DataContextSupervisor.Register(unitOfWorkConfig);
+            dataContext = DataEnvironment.DataContextSupervisor.Register(unitOfWorkOptions);
         }
 
         object IWrapper.WrappedObject
@@ -195,7 +195,7 @@ namespace Taijutsu.Data
                 }
                 finally
                 {
-                    InternalEnvironment.CheckDataContextSupervisorForRelease();
+                    DataEnvironment.CheckDataContextSupervisorForRelease();
                 }
             }
             finally
