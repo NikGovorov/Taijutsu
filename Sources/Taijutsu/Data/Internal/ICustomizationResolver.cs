@@ -1,4 +1,4 @@
-// Copyright 2009-2014 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -10,14 +10,21 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System;
+
 using Taijutsu.Domain;
+using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Data.Internal
 {
-    public interface IDataSession : ICompletableScope, IWrapper, IExtendedEntityStorage
+    public interface ICustomizationResolver
     {
-        T Resolve<T>(object options = null) where T : class;
+        Func<IEntityPersister<TEntity>> ResolveEntityPersister<TEntity>() where TEntity : IAggregateRoot;
 
-        void Flush();
+        Func<IEntityRemover<TEntity>> ResolveEntityRemover<TEntity>() where TEntity : IDeletableEntity;
+
+        Func<string, object, TRepository> ResolveRepository<TEntity, TRepository>(string name) where TRepository : IRepository<TEntity>;
+
+        Func<string, object, TQuery> ResolveQuery<TEntity, TQuery>(string name) where TQuery : IQuery<TEntity>;
     }
 }

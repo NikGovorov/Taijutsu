@@ -1,4 +1,4 @@
-// Copyright 2009-2014 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -10,14 +10,15 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using Taijutsu.Domain;
+using Taijutsu.Annotation;
+using Taijutsu.Domain.Query;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.Domain
 {
-    public interface IDataSession : ICompletableScope, IWrapper, IExtendedEntityStorage
+    public interface IEntityStorage : IEntityTracker
     {
-        T Resolve<T>(object options = null) where T : class;
+        IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
 
-        void Flush();
+        IUniqueEntityQuery<TEntity> Unique<TEntity>([NotNull] object id, object options = null) where TEntity : class, IQueryableEntity;
     }
 }

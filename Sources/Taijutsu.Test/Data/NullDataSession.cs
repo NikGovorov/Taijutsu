@@ -46,17 +46,26 @@ namespace Taijutsu.Test.Data
             throw new NotSupportedException("NullDataSession does not support internal services.");
         }
 
-        public object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
+        public void Flush()
+        {
+        }
+
+        public object Save<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
             return new object();
         }
 
-        public object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
+        public object Save<TEntity>(TEntity entity, EntitySaveMode mode = EntitySaveMode.Auto, object options = null) where TEntity : IAggregateRoot
         {
             return new object();
         }
 
-        public void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
+        public object Save<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
+        {
+            return new object();
+        }
+
+        public void Delete<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
         }
 
@@ -68,6 +77,16 @@ namespace Taijutsu.Test.Data
         public IUniqueEntityQuery<TEntity> Unique<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity
         {
             throw new NotSupportedException("NullDataSession does not support queries.");
+        }
+
+        public IQuerySourceContinuation<TEntity> Query<TEntity>() where TEntity : IQueryableEntity
+        {
+            throw new NotImplementedException();
+        }
+
+        public IQuerySourceContinuation<TEntity> Query<TEntity>(object options) where TEntity : class, IQueryableEntity
+        {
+            throw new NotImplementedException();
         }
 
         public TQuery QueryWith<TEntity, TQuery>(string name = null) where TEntity : class, IEntity where TQuery : IQuery<TEntity>

@@ -1,4 +1,4 @@
-// Copyright 2009-2014 Nikita Govorov
+﻿// Copyright 2009-2014 Nikita Govorov
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 // this file except in compliance with the License. You may obtain a copy of the 
 // License at 
@@ -10,14 +10,21 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System;
+
+using Taijutsu.Annotation;
 using Taijutsu.Domain;
 
-namespace Taijutsu.Data.Internal
+namespace Taijutsu.Data
 {
-    public interface IDataSession : ICompletableScope, IWrapper, IExtendedEntityStorage
+    public interface IUnitOfWork : ICompletableScope, IExtendedEntityStorage
     {
-        T Resolve<T>(object options = null) where T : class;
-
         void Flush();
+
+        T Complete<T>([NotNull] Func<IUnitOfWork, T> toReturn);
+
+        T Complete<T>([NotNull] Func<T> toReturn);
+
+        T Complete<T>(T toReturn);
     }
 }

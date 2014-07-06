@@ -122,7 +122,12 @@ namespace Taijutsu.Data
             }
         }
 
-        public virtual T Complete<T>([NotNull] Func<IUnitOfWork, T> toReturn)
+        public void Flush()
+        {
+            dataContext.Session.Flush();
+        }
+
+        public virtual T Complete<T>(Func<IUnitOfWork, T> toReturn)
         {
             AssertNotDisposed();
             var result = toReturn(this);
@@ -130,7 +135,7 @@ namespace Taijutsu.Data
             return result;
         }
 
-        public virtual T Complete<T>([NotNull] Func<T> toReturn)
+        public virtual T Complete<T>(Func<T> toReturn)
         {
             AssertNotDisposed();
             var result = toReturn();
@@ -145,22 +150,27 @@ namespace Taijutsu.Data
             return toReturn;
         }
 
-        public virtual object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
+        public virtual object Save<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
-            AssertNotCompleted();
-            return dataContext.Session.MarkAsCreated(entity, options);
+            return Save(entity, EntitySaveMode.Create, options);
         }
 
-        public virtual object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
+        public virtual object Save<TEntity>(TEntity entity, EntitySaveMode mode, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotCompleted();
-            return dataContext.Session.MarkAsCreated(entityFactory, options);
+            return dataContext.Session.Save(entity, mode, options);
         }
 
-        public virtual void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
+        public virtual object Save<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotCompleted();
-            dataContext.Session.MarkAsDeleted(entity, options);
+            return dataContext.Session.Save(entityFactory, options);
+        }
+
+        public virtual void Delete<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
+        {
+            AssertNotCompleted();
+            dataContext.Session.Delete(entity, options);
         }
 
         public virtual IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity
@@ -173,6 +183,11 @@ namespace Taijutsu.Data
         {
             AssertNotDisposed();
             return dataContext.Session.Unique<TEntity>(id, options);
+        }
+
+        public IQuerySourceContinuation<TEntity> Query<TEntity>() where TEntity : IQueryableEntity
+        {
+            return dataContext.Session.Query<TEntity>();
         }
 
         protected virtual void Dispose(bool disposing)

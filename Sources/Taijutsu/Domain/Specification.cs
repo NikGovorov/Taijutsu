@@ -74,6 +74,11 @@ namespace Taijutsu.Domain
 
         public abstract IEnumerable<TDomainObject> SatisfyingElementsFrom(IEnumerable<TDomainObject> candidates);
 
+        public virtual IQueryable<TDomainObject> SatisfyingElementsFrom(IQueryable<TDomainObject> candidates)
+        {
+            return SatisfyingElementsFrom(candidates.ToList()).AsQueryable();
+        }
+
         ISpecification<TDomainObject> ISpecification<TDomainObject>.And(ISpecification<TDomainObject> other)
         {
             return And(other);

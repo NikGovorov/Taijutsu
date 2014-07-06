@@ -29,6 +29,8 @@ namespace Taijutsu.Domain
 
         IEnumerable<TDomainObject> SatisfyingElementsFrom([NotNull] IEnumerable<TDomainObject> candidates);
 
+        IQueryable<TDomainObject> SatisfyingElementsFrom([NotNull] IQueryable<TDomainObject> candidates);
+
         ISpecification<TDomainObject> And([NotNull] ISpecification<TDomainObject> and);
 
         ISpecification<TDomainObject> Or([NotNull] ISpecification<TDomainObject> or);

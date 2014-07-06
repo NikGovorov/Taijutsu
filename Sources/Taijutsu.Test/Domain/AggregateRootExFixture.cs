@@ -17,6 +17,7 @@ using NUnit.Framework;
 using SharpTestsEx;
 
 using Taijutsu.Annotation;
+using Taijutsu.Data;
 using Taijutsu.Domain;
 using Taijutsu.Test.Domain.Model;
 
@@ -31,9 +32,9 @@ namespace Taijutsu.Test.Domain
         {
             var uow = Substitute.For<IUnitOfWork>();
             var customer = new Customer(SeqGuid.NewGuid(), new FullName("Test", "Test"));
-            uow.MarkAsCreated(customer as IAggregateRoot).Returns(customer);
-            customer.AsCreatedIn(uow).Should().Be(customer);
-            uow.Received(1).MarkAsCreated(customer as IAggregateRoot);
+            uow.Save(customer as IAggregateRoot).Returns(customer);
+            customer.SaveIn(uow).Should().Be(customer);
+            uow.Received(1).Save(customer as IAggregateRoot);
         }
     }
 }

@@ -20,19 +20,19 @@ namespace Taijutsu.Domain
     [EditorBrowsable(EditorBrowsableState.Never)]
     public static class AggregateRootExtensions
     {
-        public static object AsCreatedIn(this IAggregateRoot self, [NotNull] IUnitOfWork uow)
+        public static object SaveIn(this IAggregateRoot self, [NotNull] IEntityTracker tracker)
         {
             if (self == null)
             {
                 throw new ArgumentNullException("self");
             }
 
-            if (uow == null)
+            if (tracker == null)
             {
-                throw new ArgumentNullException("uow");
+                throw new ArgumentNullException("tracker");
             }
 
-            return uow.MarkAsCreated(self);
+            return tracker.Save(self);
         }
     }
 }

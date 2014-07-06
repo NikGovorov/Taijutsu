@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace Taijutsu.Domain.Query
 {
-    public interface IRepository<TEntity> : IReadOnlyDictionary<object, TEntity> where TEntity : class, IEntity
+    public interface IRepository<TEntity> : IReadOnlyDictionary<object, TEntity>
     {
     }
 }

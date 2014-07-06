@@ -11,6 +11,7 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.Linq;
 
 using Taijutsu.Annotation;
 using Taijutsu.Domain;
@@ -22,12 +23,12 @@ namespace Taijutsu.Data.Internal
     {
         private readonly T session;
 
-        private readonly IOperationCustomizerResolver operationCustomizerResolver;
+        private readonly ICustomizationResolver customizationResolver;
 
-        protected DataSession([NotNull] T session, IOperationCustomizerResolver operationCustomizerResolver = null)
+        protected DataSession([NotNull] T session, ICustomizationResolver customizationResolver = null)
         {
             this.session = session;
-            this.operationCustomizerResolver = operationCustomizerResolver;
+            this.customizationResolver = customizationResolver;
         }
 
         object IWrapper.WrappedObject
@@ -57,11 +58,11 @@ namespace Taijutsu.Data.Internal
             return service;
         }
 
-        public virtual object MarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
+        public virtual object Save<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
-            if (operationCustomizerResolver != null)
+            if (customizationResolver != null)
             {
-                var resolver = operationCustomizerResolver.ResolveEntityPersister<TEntity>();
+                var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
 
                 if (resolver != null)
                 {
@@ -69,14 +70,29 @@ namespace Taijutsu.Data.Internal
                 }
             }
 
-            return InternalMarkAsCreated(entity, options);
+            return InternalSave(entity, options);
         }
 
-        public object MarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
+        public virtual object Save<TEntity>(TEntity entity, EntitySaveMode mode, object options = null) where TEntity : IAggregateRoot
         {
-            if (operationCustomizerResolver != null)
+            if (customizationResolver != null)
             {
-                var resolver = operationCustomizerResolver.ResolveEntityPersister<TEntity>();
+                var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
+
+                if (resolver != null)
+                {
+                    return resolver().Save(entity, mode, options);
+                }
+            }
+
+            return InternalSave(entity, mode, options);
+        }
+
+        public virtual object Save<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
+        {
+            if (customizationResolver != null)
+            {
+                var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
 
                 if (resolver != null)
                 {
@@ -84,14 +100,14 @@ namespace Taijutsu.Data.Internal
                 }
             }
 
-            return InternalMarkAsCreated(entityFactory, options);
+            return InternalSave(entityFactory, options);
         }
 
-        public void MarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
+        public virtual void Delete<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
-            if (operationCustomizerResolver != null)
+            if (customizationResolver != null)
             {
-                var resolver = operationCustomizerResolver.ResolveEntityEraser<TEntity>();
+                var resolver = customizationResolver.ResolveEntityRemover<TEntity>();
 
                 if (resolver != null)
                 {
@@ -99,26 +115,137 @@ namespace Taijutsu.Data.Internal
                 }
             }
 
-            InternalMarkAsDeleted(entity, options);
+            InternalDelete(entity, options);
         }
 
-        public abstract IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
-
-        public abstract IUniqueEntityQuery<TEntity> Unique<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity;
+        public virtual IQuerySourceContinuation<TEntity> Query<TEntity>() where TEntity : IQueryableEntity
+        {
+            return new QuerySourceContinuation<TEntity>(this);
+        }
 
         public void Dispose()
         {
             Dispose(true);
         }
 
+        public abstract IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
+
+        public abstract IUniqueEntityQuery<TEntity> Unique<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity;
+
+        public abstract void Flush();
+
         public abstract void Complete();
 
-        protected abstract object InternalMarkAsCreated<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
+        protected virtual TQuery LocateQuery<TEntity, TQuery>(string name = null, object options = null) where TQuery : IQuery<TEntity>
+        {
+            if (customizationResolver != null)
+            {
+                var resolver = customizationResolver.ResolveQuery<TEntity, TQuery>(name);
 
-        protected abstract object InternalMarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
+                if (resolver != null)
+                {
+                    return resolver(name, options);
+                }
+            }
 
-        protected abstract void InternalMarkAsDeleted<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
+            return InternalLocateQuery<TEntity, TQuery>(name, options);
+        }
+
+        protected virtual TQuery InternalLocateQuery<TEntity, TQuery>(string name = null, object options = null) where TQuery : IQuery<TEntity>
+        {
+            var type = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => typeof(TQuery).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+
+            if (type == null)
+            {
+                throw new Exception(string.Format("Query that is assignable from '{0}' has not been found.", typeof(TQuery).FullName));
+            }
+
+            try
+            {
+                return (TQuery)Activator.CreateInstance(type, BuildQueryParameters(name, options));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(
+                    string.Format("Exception occurred during activation instance of '{0}', see inner exception. By default ctor({1}) is expected.", type.FullName, typeof(T).FullName),
+                    exception);
+            }
+        }
+
+        protected virtual object[] BuildQueryParameters(string name, object options)
+        {
+            return new object[] { Session };
+        }
+
+        protected TRepository LocateRepository<TEntity, TRepository>(string name = null, object options = null) where TRepository : IRepository<TEntity>
+        {
+            if (customizationResolver != null)
+            {
+                var resolver = customizationResolver.ResolveRepository<TEntity, TRepository>(name);
+
+                if (resolver != null)
+                {
+                    return resolver(name, options);
+                }
+            }
+
+            return InternalLocateRepository<TEntity, TRepository>(name, options);
+        }
+
+        protected virtual TRepository InternalLocateRepository<TEntity, TRepository>(string name = null, object options = null) where TRepository : IRepository<TEntity>
+        {
+            var type = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).FirstOrDefault(t => typeof(TRepository).IsAssignableFrom(t) && t.IsClass && !t.IsAbstract);
+
+            if (type == null)
+            {
+                throw new Exception(string.Format("Repository that is assignable from '{0}' has not been found.", typeof(TRepository).FullName));
+            }
+
+            try
+            {
+                return (TRepository)Activator.CreateInstance(type, BuildRepositoryParameters(name, options));
+            }
+            catch (Exception exception)
+            {
+                throw new Exception(
+                    string.Format("Exception occurred during activation instance of '{0}', see inner exception. By default ctor({1}) is expected.", type.FullName, typeof(T).FullName), 
+                    exception);
+            }
+        }
+
+        protected virtual object[] BuildRepositoryParameters(string name, object options)
+        {
+            return new object[] { Session };
+        }
+
+        protected abstract object InternalSave<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
+
+        protected abstract object InternalSave<TEntity>(TEntity entity, EntitySaveMode mode, object options = null) where TEntity : IAggregateRoot;
+
+        protected abstract object InternalSave<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
+
+        protected abstract void InternalDelete<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
 
         protected abstract void Dispose(bool disposing);
+
+        private class QuerySourceContinuation<TEntity> : IQuerySourceContinuation<TEntity> where TEntity : IQueryableEntity
+        {
+            private readonly DataSession<T> parent;
+
+            public QuerySourceContinuation(DataSession<T> parent)
+            {
+                this.parent = parent;
+            }
+
+            public TQuery With<TQuery>(string name = null, object options = null) where TQuery : IQuery<TEntity>
+            {
+                return parent.LocateQuery<TEntity, TQuery>(name, options);
+            }
+
+            public TRepository Using<TRepository>(string name = null, object options = null) where TRepository : IRepository<TEntity>
+            {
+                return parent.LocateRepository<TEntity, TRepository>(name, options);
+            }
+        }
     }
 }

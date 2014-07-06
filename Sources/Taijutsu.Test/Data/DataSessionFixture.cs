@@ -18,6 +18,7 @@ using SharpTestsEx;
 
 using Taijutsu.Annotation;
 using Taijutsu.Data.Internal;
+using Taijutsu.Domain;
 using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Test.Data
@@ -66,22 +67,31 @@ namespace Taijutsu.Test.Data
                 throw new NotSupportedException();
             }
 
+            public override void Flush()
+            {
+            }
+
             public override void Complete()
             {
                 throw new NotSupportedException();
             }
 
-            protected override object InternalMarkAsCreated<TEntity>(TEntity entity, object options = null)
+            protected override object InternalSave<TEntity>(TEntity entity, object options = null)
             {
                 throw new NotSupportedException();
             }
 
-            protected override object InternalMarkAsCreated<TEntity>(Func<TEntity> entityFactory, object options = null)
+            protected override object InternalSave<TEntity>(TEntity entity, EntitySaveMode mode, object options = null)
             {
                 throw new NotSupportedException();
             }
 
-            protected override void InternalMarkAsDeleted<TEntity>(TEntity entity, object options = null)
+            protected override object InternalSave<TEntity>(Func<TEntity> entityFactory, object options = null)
+            {
+                throw new NotSupportedException();
+            }
+
+            protected override void InternalDelete<TEntity>(TEntity entity, object options = null)
             {
                 throw new NotSupportedException();
             }
