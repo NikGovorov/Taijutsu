@@ -31,23 +31,33 @@ namespace Taijutsu.Data.Internal
             this.customizationResolver = customizationResolver;
         }
 
-        object IWrapper.WrappedObject
+        object IDecorator.Origin
         {
-            get { return WrappedObject; }
+            get { return Origin; }
         }
 
         public virtual T Session
         {
-            get { return session; }
+            get
+            {
+                AssertNotDisposed();
+                return session;
+            }
         }
 
-        protected virtual object WrappedObject
+        protected virtual object Origin
         {
             get { return Session; }
         }
 
+        protected abstract bool? Completed { get; set; }
+
+        protected abstract bool Disposed { get; set; }
+
         public virtual TService Resolve<TService>(object options = null) where TService : class
         {
+            AssertNotDisposed();
+
             var service = Session as TService;
 
             if (service == null)
@@ -60,6 +70,8 @@ namespace Taijutsu.Data.Internal
 
         public virtual object Save<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
+            AssertNotCompleted();
+
             if (customizationResolver != null)
             {
                 var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
@@ -75,6 +87,8 @@ namespace Taijutsu.Data.Internal
 
         public virtual object Save<TEntity>(TEntity entity, EntitySaveMode mode, object options = null) where TEntity : IAggregateRoot
         {
+            AssertNotCompleted();
+
             if (customizationResolver != null)
             {
                 var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
@@ -90,13 +104,15 @@ namespace Taijutsu.Data.Internal
 
         public virtual object Save<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
+            AssertNotCompleted();
+
             if (customizationResolver != null)
             {
                 var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
 
                 if (resolver != null)
                 {
-                    return resolver().Save(entityFactory, EntitySaveMode.Create, options);
+                    return resolver().Save(entityFactory, options);
                 }
             }
 
@@ -105,6 +121,8 @@ namespace Taijutsu.Data.Internal
 
         public virtual void Delete<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
+            AssertNotCompleted();
+
             if (customizationResolver != null)
             {
                 var resolver = customizationResolver.ResolveEntityRemover<TEntity>();
@@ -118,26 +136,23 @@ namespace Taijutsu.Data.Internal
             InternalDelete(entity, options);
         }
 
-        public virtual IQuerySourceContinuation<TEntity> Query<TEntity>() where TEntity : IQueryableEntity
-        {
-            return new QuerySourceContinuation<TEntity>(this);
-        }
+        public abstract IQuerySourceProvider<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
+
+        public abstract TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IQueryableEntity;
+
+        public abstract void Flush();
+
+        public abstract void Complete();
 
         public void Dispose()
         {
             Dispose(true);
         }
 
-        public abstract IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
-
-        public abstract IUniqueEntityQuery<TEntity> Unique<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity;
-
-        public abstract void Flush();
-
-        public abstract void Complete();
-
         protected virtual TQuery LocateQuery<TEntity, TQuery>(string name = null, object options = null) where TQuery : IQuery<TEntity>
         {
+            AssertNotDisposed();
+
             if (customizationResolver != null)
             {
                 var resolver = customizationResolver.ResolveQuery<TEntity, TQuery>(name);
@@ -167,7 +182,7 @@ namespace Taijutsu.Data.Internal
             catch (Exception exception)
             {
                 throw new Exception(
-                    string.Format("Exception occurred during activation instance of '{0}', see inner exception. By default ctor({1}) is expected.", type.FullName, typeof(T).FullName),
+                    string.Format("Exception occurred during activation instance of '{0}', see inner exception. By default ctor({1}) is expected.", type.FullName, typeof(T).FullName), 
                     exception);
             }
         }
@@ -179,6 +194,8 @@ namespace Taijutsu.Data.Internal
 
         protected TRepository LocateRepository<TEntity, TRepository>(string name = null, object options = null) where TRepository : IRepository<TEntity>
         {
+            AssertNotDisposed();
+
             if (customizationResolver != null)
             {
                 var resolver = customizationResolver.ResolveRepository<TEntity, TRepository>(name);
@@ -228,23 +245,21 @@ namespace Taijutsu.Data.Internal
 
         protected abstract void Dispose(bool disposing);
 
-        private class QuerySourceContinuation<TEntity> : IQuerySourceContinuation<TEntity> where TEntity : IQueryableEntity
+        protected virtual void AssertNotCompleted()
         {
-            private readonly DataSession<T> parent;
-
-            public QuerySourceContinuation(DataSession<T> parent)
+            if (Completed.HasValue)
             {
-                this.parent = parent;
+                throw new Exception(string.Format("Data Session has already been completed(with success - '{0}'), so it is not usable for write anymore.", Completed));
             }
 
-            public TQuery With<TQuery>(string name = null, object options = null) where TQuery : IQuery<TEntity>
-            {
-                return parent.LocateQuery<TEntity, TQuery>(name, options);
-            }
+            AssertNotDisposed();
+        }
 
-            public TRepository Using<TRepository>(string name = null, object options = null) where TRepository : IRepository<TEntity>
+        protected virtual void AssertNotDisposed()
+        {
+            if (Disposed)
             {
-                return parent.LocateRepository<TEntity, TRepository>(name, options);
+                throw new Exception(string.Format("Data Session has already been disposed(with success - '{0}'), so it is not usable anymore.", Completed));
             }
         }
     }

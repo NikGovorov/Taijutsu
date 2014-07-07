@@ -347,27 +347,27 @@ namespace Taijutsu.Test.Data
                 DataEnvironment.DataContextSupervisor.Active.Should().Be.True();
 
                 var ctx1 = DataEnvironment.DataContextSupervisor.Contexts.Single();
-                ctx1.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
+                ctx1.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.Current);
 
                 using (new UnitOfWork(source1, Require.New))
                 {
                     var ctx2 = DataEnvironment.DataContextSupervisor.Contexts.Last();
-                    ctx2.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
+                    ctx2.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.Current);
 
                     using (new UnitOfWork(source2))
                     {
                         var ctx3 = DataEnvironment.DataContextSupervisor.Contexts.Last();
-                        ctx3.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
+                        ctx3.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.Current);
                         DataEnvironment.DataContextSupervisor.Active.Should().Be.True();
                     }
 
-                    ctx2.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
+                    ctx2.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.Current);
                 }
 
-                ctx1.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.CurrentContext);
+                ctx1.Should().Be.SameInstanceAs(DataEnvironment.DataContextSupervisor.Current);
             }
 
-            DataEnvironment.DataContextSupervisor.CurrentContext.Should().Be.Null();
+            DataEnvironment.DataContextSupervisor.Current.Should().Be.Null();
             DataEnvironment.DataContextSupervisor.Active.Should().Be.False();
         }
     }

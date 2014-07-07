@@ -15,7 +15,7 @@ using System.Collections.Generic;
 
 using Taijutsu.Annotation;
 
-namespace Taijutsu.Domain
+namespace Taijutsu
 {
     [PublicApi]
     public static class ObjectCastingRegistry

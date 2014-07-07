@@ -18,6 +18,6 @@ namespace Taijutsu.Domain
     {
         object Save(T entity, EntitySaveMode mode = EntitySaveMode.Auto, object options = null);
 
-        object Save(Func<T> entityFactory, EntitySaveMode mode = EntitySaveMode.Auto, object options = null);
+        object Save(Func<T> entityFactory, object options = null);
     }
 }

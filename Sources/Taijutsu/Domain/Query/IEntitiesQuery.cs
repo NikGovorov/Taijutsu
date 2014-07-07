@@ -9,6 +9,7 @@
 // under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR 
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
+
 namespace Taijutsu.Domain.Query
 {
     public interface IEntitiesQuery<TEntity> : ISingleOrDefaultQuery<TEntity>, 
@@ -20,11 +21,11 @@ namespace Taijutsu.Domain.Query
         IAnyQuery<TEntity>, 
         ICountQuery<TEntity>, 
         IIdFilter<IEntitiesQuery<TEntity>>, 
-        ILimitFilter<IEntitiesQuery<TEntity>>,
-        ITypeFilter<IEntitiesQuery<TEntity>>,
-        ITypeFilter<TEntity, IEntitiesQuery<TEntity>>,
-        INotTypeFilter<IEntitiesQuery<TEntity>>,
-        INotTypeFilter<TEntity, IEntitiesQuery<TEntity>>,
+        ILimitFilter<IEntitiesQuery<TEntity>>, 
+        ITypeFilter<IEntitiesQuery<TEntity>>, 
+        ITypeFilter<TEntity, IEntitiesQuery<TEntity>>, 
+        INotTypeFilter<IEntitiesQuery<TEntity>>, 
+        INotTypeFilter<TEntity, IEntitiesQuery<TEntity>>, 
         ILockOption<IEntitiesQuery<TEntity>>
         where TEntity : IEntity
     {

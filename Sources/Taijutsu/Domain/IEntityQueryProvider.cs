@@ -10,9 +10,12 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using Taijutsu.Domain.Query;
+
 namespace Taijutsu.Domain
 {
-    public interface IEntityManager<in T> : IEntityPersister<T>, IEntityRemover<T> where T : IDeletableEntity
+    public interface IEntityQueryProvider : IEntityIdentityMap
     {
+        IQuerySourceProvider<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
     }
 }

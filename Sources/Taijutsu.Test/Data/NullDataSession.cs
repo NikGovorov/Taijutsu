@@ -22,12 +22,12 @@ namespace Taijutsu.Test.Data
     [SuppressMessage("Microsoft.Design", "CA1063:ImplementIDisposableCorrectly", Justification = "Reviewed. Acceptable for tests.")]
     public class NullDataSession : IDataSession
     {
-        object IWrapper.WrappedObject
+        object IDecorator.Origin
         {
-            get { return WrappedObject; }
+            get { return Origin; }
         }
 
-        protected object WrappedObject
+        protected object Origin
         {
             get { return this; }
         }
@@ -69,34 +69,14 @@ namespace Taijutsu.Test.Data
         {
         }
 
-        public IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity
+        public TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IQueryableEntity
         {
-            throw new NotSupportedException("NullDataSession does not support queries.");
+            throw new NotSupportedException("NullDataSession does not support Load method.");
         }
 
-        public IUniqueEntityQuery<TEntity> Unique<TEntity>(object key, object options = null) where TEntity : class, IQueryableEntity
+        public IQuerySourceProvider<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity
         {
-            throw new NotSupportedException("NullDataSession does not support queries.");
-        }
-
-        public IQuerySourceContinuation<TEntity> Query<TEntity>() where TEntity : IQueryableEntity
-        {
-            throw new NotImplementedException();
-        }
-
-        public IQuerySourceContinuation<TEntity> Query<TEntity>(object options) where TEntity : class, IQueryableEntity
-        {
-            throw new NotImplementedException();
-        }
-
-        public TQuery QueryWith<TEntity, TQuery>(string name = null) where TEntity : class, IEntity where TQuery : IQuery<TEntity>
-        {
-            throw new NotSupportedException();
-        }
-
-        public TRepository QueryFrom<TEntity, TRepository>(string name = null) where TEntity : class, IEntity where TRepository : IRepository<TEntity>
-        {
-            throw new NotSupportedException();
+            throw new NotSupportedException("NullDataSession does not support Query method.");
         }
     }
 }

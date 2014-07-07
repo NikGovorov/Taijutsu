@@ -31,9 +31,9 @@ namespace Taijutsu.Test.Data
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class UnitOfWorkFixture : TestFixture
     {
-        private const string InteractAfterComplete = "Unit of work has already been completed(with success - '{0}'), so it is not usable for write anymore.";
+        private const string InteractAfterComplete = "Unit Of Work has already been completed(with success - '{0}'), so it is not usable for write anymore.";
 
-        private const string InteractAfterDispose = "Unit of work has already been disposed(with success - '{0}'), so it is not usable anymore.";
+        private const string InteractAfterDispose = "Unit Of Work has already been disposed(with success - '{0}'), so it is not usable anymore.";
 
         private IDataSession session;
 
@@ -346,7 +346,7 @@ namespace Taijutsu.Test.Data
                     ((IDisposable)uow).Dispose();
                     uow.Complete();
                 }, 
-                Throws.Exception.With.Message.EqualTo("Unit of work has already been disposed(with success - 'False'), so it is not usable anymore."));
+                Throws.Exception.With.Message.EqualTo("Unit Of Work has already been disposed(with success - 'False'), so it is not usable anymore."));
 
             session.Received(1).Dispose();
             session.Received(0).Complete();

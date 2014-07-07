@@ -203,7 +203,7 @@ namespace Taijutsu.Test.Event
                     using (var uow = new UnitOfWork("test"))
                     {
                         // ReSharper disable once UnusedVariable
-                        var session = ((IWrapper)uow).WrappedObject;
+                        var session = ((IDecorator)uow).Origin;
 
                         settigs.Action(new SystemChecked());
                         settigs.Action(new SystemChecked());
@@ -259,7 +259,7 @@ namespace Taijutsu.Test.Event
                     using (var uow = new UnitOfWork("test"))
                     {
                         // ReSharper disable once UnusedVariable
-                        var session = ((IWrapper)uow).WrappedObject;
+                        var session = ((IDecorator)uow).Origin;
 
                         settigs.Action(new SystemChecked());
                         settigs.Action(new SystemChecked());

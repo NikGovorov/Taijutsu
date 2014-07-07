@@ -81,13 +81,13 @@
     <Compile Include="Domain\EntitySaveMode.cs" />
     <Compile Include="Domain\ICompositeSpecification.cs" />
     <Compile Include="Domain\IEntityBuilder.cs" />
-    <Compile Include="Domain\IEntityManager.cs" />
+    <Compile Include="Domain\IEntityIdentityMap.cs" />
+    <Compile Include="Domain\IEntityQueryProvider.cs" />
     <Compile Include="Domain\IEntityRemover.cs" />
     <Compile Include="Domain\IEntityPersister.cs" />
     <Compile Include="Domain\IEntityStorage.cs" />
     <Compile Include="Domain\IEntityTracker.cs" />
-    <Compile Include="Domain\IExtendedEntityStorage.cs" />
-    <Compile Include="Domain\Query\IQuerySourceContinuation.cs" />
+    <Compile Include="Domain\Query\IQuerySourceProvider.cs" />
     <Compile Include="Domain\Query\ITypeFilter.cs" />
     <Compile Include="Event\AbstractEvent.cs" />
     <Compile Include="Event\EventBatch.cs" />
@@ -110,6 +110,7 @@
     <Compile Include="Event\Internal\MultiThreadAggregator.cs" />
     <Compile Include="Event\Internal\SingleThreadAggregator.cs" />
     <Compile Include="Event\SubscriptionSyntax.cs" />
+    <Compile Include="IObjectCasting.cs" />
     <Compile Include="ISpecHandler.cs" />
     <Compile Include="IHandler.cs" />
     <Compile Include="Data\Internal\SuppressionScope.cs" />
@@ -137,13 +138,12 @@
     <Compile Include="Domain\Query\ISingleQuery.cs" />
     <Compile Include="HybridLogicContext.cs" />
     <Compile Include="IResettable.cs" />
-    <Compile Include="IWrapper.cs" />
+    <Compile Include="IDecorator.cs" />
     <Compile Include="Domain\AndSpecification.cs" />
     <Compile Include="Domain\CompositeSpecification.cs" />
     <Compile Include="Domain\DomainException.cs" />
     <Compile Include="Domain\DomainObjectExtensions.cs" />
     <Compile Include="Domain\Entity.cs" />
-    <Compile Include="Domain\ObjectCastingRegistry.cs" />
     <Compile Include="Domain\EntityExtensions.cs" />
     <Compile Include="Domain\EntityException.cs" />
     <Compile Include="Domain\NotFoundException.cs" />
@@ -152,7 +152,6 @@
     <Compile Include="Domain\IdentifiedObject.cs" />
     <Compile Include="Domain\IDomainObject.cs" />
     <Compile Include="Domain\IEntity.cs" />
-    <Compile Include="Domain\IObjectCasting.cs" />
     <Compile Include="Domain\IQueryableEntity.cs" />
     <Compile Include="Domain\IDeletableEntity.cs" />
     <Compile Include="Domain\ISoftDeletable.cs" />
@@ -175,6 +174,7 @@
     <Compile Include="LogicContext.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="MaybeExtensions.cs" />
+    <Compile Include="ObjectCastingRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\ResharperAttributes.cs" />
     <Compile Include="SeqGuid.cs" />

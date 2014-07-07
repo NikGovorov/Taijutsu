@@ -17,7 +17,7 @@ using Taijutsu.Domain;
 
 namespace Taijutsu.Data
 {
-    public interface IUnitOfWork : ICompletableScope, IExtendedEntityStorage
+    public interface IUnitOfWork : ICompletableScope, IEntityStorage
     {
         void Flush();
 

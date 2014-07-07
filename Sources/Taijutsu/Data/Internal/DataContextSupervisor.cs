@@ -42,7 +42,7 @@ namespace Taijutsu.Data.Internal
         }
 
         [CanBeNull]
-        public virtual IDataContext CurrentContext
+        public virtual IDataContext Current
         {
             get { return contexts.LastOrDefault(); }
         }
@@ -71,30 +71,25 @@ namespace Taijutsu.Data.Internal
                 throw new Exception(string.Format("Data source with name '{0}' is not registered.", options.Source));
             }
 
-            options = new UnitOfWorkOptions(
-                options.Source, 
-                options.IsolationLevel == IsolationLevel.Unspecified ? dataSource.DefaultIsolationLevel : options.IsolationLevel, 
-                options.Require);
+            options = new UnitOfWorkOptions(options.Source, options.IsolationLevel == IsolationLevel.Unspecified ? dataSource.DefaultIsolationLevel : options.IsolationLevel, options.Require);
 
             if (options.Require == Require.New)
             {
-                return new DataContextDecorator(
-                    new DataContext(options, new Lazy<IDataSession>(() => dataSource.BuildSession(options.IsolationLevel), false), terminationPolicy), 
-                    contexts);
+                return new DataContextDecorator(new DataContext(options, new Lazy<IDataSession>(() => dataSource.BuildSession(options.IsolationLevel), false), terminationPolicy), contexts);
             }
 
             // ReSharper disable once ImplicitlyCapturedClosure
-            var context = (from ctx in contexts where ctx.WrappedContext.Configuration.Source == options.Source select ctx).LastOrDefault();
+            var context = (from ctx in contexts where ctx.Origin.Options.Source == options.Source select ctx).LastOrDefault();
 
             if (context != null)
             {
-                if (!context.WrappedContext.Configuration.IsolationLevel.IsCompatible(options.IsolationLevel))
+                if (!context.Origin.Options.IsolationLevel.IsCompatible(options.IsolationLevel))
                 {
                     throw new Exception(
-                        string.Format("Isolation level '{0}' is not compatible with '{1}'.", context.WrappedContext.Configuration.IsolationLevel, options.IsolationLevel));
+                        string.Format("Isolation level '{0}' is not compatible with '{1}'.", context.Origin.Options.IsolationLevel, options.IsolationLevel));
                 }
 
-                return new DataContext.Subordinate(context.WrappedContext);
+                return new DataContext.Subordinate(context.Origin);
             }
 
             if (options.Require == Require.Existing)
@@ -102,72 +97,70 @@ namespace Taijutsu.Data.Internal
                 throw new Exception("Unit of work requires existing unit of work at the top level, but nothing has been found.");
             }
 
-            context = new DataContextDecorator(
-                new DataContext(options, new Lazy<IDataSession>(() => dataSource.BuildSession(options.IsolationLevel), false), terminationPolicy), 
-                contexts);
+            context = new DataContextDecorator(new DataContext(options, new Lazy<IDataSession>(() => dataSource.BuildSession(options.IsolationLevel), false), terminationPolicy), contexts);
 
             return context;
         }
 
-        internal class DataContextDecorator : IDataContext
+        internal class DataContextDecorator : IDataContext, IDecorator<DataContext>
         {
-            private readonly DataContext wrappedContext;
+            private readonly DataContext origin;
 
             private List<DataContextDecorator> contexts;
 
-            public DataContextDecorator(DataContext wrappedContext, List<DataContextDecorator> contexts)
+            public DataContextDecorator(DataContext origin, List<DataContextDecorator> contexts)
             {
-                this.wrappedContext = wrappedContext;
+                this.origin = origin;
                 this.contexts = contexts;
                 contexts.Add(this);
             }
 
             event EventHandler<FinishedEventArgs> IDataContext.BeforeCompleted
             {
-                add { wrappedContext.BeforeCompleted += value; }
+                add { origin.BeforeCompleted += value; }
 
-                remove { wrappedContext.BeforeCompleted -= value; }
+                remove { origin.BeforeCompleted -= value; }
             }
 
             event EventHandler<FinishedEventArgs> IDataContext.AfterCompleted
             {
-                add { wrappedContext.AfterCompleted += value; }
+                add { origin.AfterCompleted += value; }
 
-                remove { wrappedContext.AfterCompleted -= value; }
+                remove { origin.AfterCompleted -= value; }
             }
 
             event EventHandler<FinishedEventArgs> IDataContext.Finished
             {
-                add { wrappedContext.Finished += value; }
+                add { origin.Finished += value; }
 
-                remove { wrappedContext.Finished -= value; }
+                remove { origin.Finished -= value; }
             }
 
             public IDataSession Session
             {
-                get { return wrappedContext.Session; }
+                get { return origin.Session; }
             }
 
             public dynamic Extra
             {
-                get { return wrappedContext.Extra; }
+                get { return origin.Extra; }
             }
 
-            public virtual DataContext WrappedContext
+            public virtual DataContext Origin
             {
-                get { return wrappedContext; }
+                get { return origin; }
             }
 
             public virtual void Complete()
             {
-                wrappedContext.Complete();
+                origin.Complete();
             }
 
             public virtual void Dispose()
             {
                 contexts.Remove(this);
                 contexts = new List<DataContextDecorator>();
-                wrappedContext.Dispose();
+                origin.Dispose();
             }
         }
     }

@@ -12,7 +12,7 @@
 
 using Taijutsu.Annotation;
 
-namespace Taijutsu.Domain
+namespace Taijutsu
 {
     [PublicApi]
     public interface IObjectCasting

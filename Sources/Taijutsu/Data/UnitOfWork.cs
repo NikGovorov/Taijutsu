@@ -22,7 +22,7 @@ using Taijutsu.Domain.Query;
 namespace Taijutsu.Data
 {
     [PublicApi]
-    public class UnitOfWork : IUnitOfWork, IWrapper
+    public class UnitOfWork : IUnitOfWork, IDecorator
     {
         private readonly IDataContext dataContext;
 
@@ -35,33 +35,27 @@ namespace Taijutsu.Data
         {
         }
 
-        public UnitOfWork(IsolationLevel? isolation = null)
-            : this(new UnitOfWorkOptions(string.Empty, isolation ?? IsolationLevel.Unspecified, Require.None))
+        public UnitOfWork(IsolationLevel? isolation = null) : this(new UnitOfWorkOptions(string.Empty, isolation ?? IsolationLevel.Unspecified, Require.None))
         {
         }
 
-        public UnitOfWork(Require require)
-            : this(new UnitOfWorkOptions(string.Empty, IsolationLevel.Unspecified, require))
+        public UnitOfWork(Require require) : this(new UnitOfWorkOptions(string.Empty, IsolationLevel.Unspecified, require))
         {
         }
 
-        public UnitOfWork([NotNull] string source)
-            : this(new UnitOfWorkOptions(source, IsolationLevel.Unspecified, Require.None))
+        public UnitOfWork([NotNull] string source) : this(new UnitOfWorkOptions(source, IsolationLevel.Unspecified, Require.None))
         {
         }
 
-        public UnitOfWork([NotNull] string source = "", Require require = Require.None)
-            : this(new UnitOfWorkOptions(source, IsolationLevel.Unspecified, require))
+        public UnitOfWork([NotNull] string source = "", Require require = Require.None) : this(new UnitOfWorkOptions(source, IsolationLevel.Unspecified, require))
         {
         }
 
-        public UnitOfWork([NotNull] string source = "", IsolationLevel? isolation = null)
-            : this(new UnitOfWorkOptions(source, isolation ?? IsolationLevel.Unspecified, Require.None))
+        public UnitOfWork([NotNull] string source = "", IsolationLevel? isolation = null) : this(new UnitOfWorkOptions(source, isolation ?? IsolationLevel.Unspecified, Require.None))
         {
         }
 
-        public UnitOfWork()
-            : this(new UnitOfWorkOptions(string.Empty, IsolationLevel.Unspecified, Require.None))
+        public UnitOfWork() : this(new UnitOfWorkOptions(string.Empty, IsolationLevel.Unspecified, Require.None))
         {
         }
 
@@ -75,18 +69,18 @@ namespace Taijutsu.Data
             dataContext = DataEnvironment.DataContextSupervisor.Register(unitOfWorkOptions);
         }
 
-        object IWrapper.WrappedObject
+        object IDecorator.Origin
         {
-            get { return WrappedObject; }
+            get { return Origin; }
         }
 
-        protected virtual object WrappedObject
+        protected virtual object Origin
         {
             get
             {
                 AssertNotDisposed();
 
-                return dataContext.Session.WrappedObject;
+                return dataContext.Session.Origin;
             }
         }
 
@@ -124,6 +118,7 @@ namespace Taijutsu.Data
 
         public void Flush()
         {
+            AssertNotCompleted();
             dataContext.Session.Flush();
         }
 
@@ -152,6 +147,7 @@ namespace Taijutsu.Data
 
         public virtual object Save<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
+            AssertNotCompleted();
             return Save(entity, EntitySaveMode.Create, options);
         }
 
@@ -173,21 +169,16 @@ namespace Taijutsu.Data
             dataContext.Session.Delete(entity, options);
         }
 
-        public virtual IEntitiesQuery<TEntity> All<TEntity>(object options = null) where TEntity : class, IQueryableEntity
+        public virtual IQuerySourceProvider<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity
         {
             AssertNotDisposed();
-            return dataContext.Session.All<TEntity>(options);
+            return dataContext.Session.Query<TEntity>(options);
         }
 
-        public virtual IUniqueEntityQuery<TEntity> Unique<TEntity>(object id, object options = null) where TEntity : class, IQueryableEntity
+        public virtual TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IQueryableEntity
         {
             AssertNotDisposed();
-            return dataContext.Session.Unique<TEntity>(id, options);
-        }
-
-        public IQuerySourceContinuation<TEntity> Query<TEntity>() where TEntity : IQueryableEntity
-        {
-            return dataContext.Session.Query<TEntity>();
+            return dataContext.Session.Load<TEntity>(id, required, locked, optimized, options);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -223,15 +214,17 @@ namespace Taijutsu.Data
         {
             if (completed.HasValue)
             {
-                throw new Exception(string.Format("Unit of work has already been completed(with success - '{0}'), so it is not usable for write anymore.", completed));
+                throw new Exception(string.Format("Unit Of Work has already been completed(with success - '{0}'), so it is not usable for write anymore.", completed));
             }
+
+            AssertNotDisposed();
         }
 
         protected virtual void AssertNotDisposed()
         {
             if (disposed)
             {
-                throw new Exception(string.Format("Unit of work has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
+                throw new Exception(string.Format("Unit Of Work has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
             }
         }
     }

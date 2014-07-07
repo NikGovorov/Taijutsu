@@ -26,4 +26,8 @@ namespace Taijutsu.Domain
 
         void Delete<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IDeletableEntity;
     }
+
+    public interface IEntityTracker<in T> : IEntityPersister<T>, IEntityRemover<T> where T : IDeletableEntity
+    {
+    }
 }

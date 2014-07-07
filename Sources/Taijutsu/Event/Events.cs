@@ -53,6 +53,13 @@ namespace Taijutsu.Event
         }
 
         [EditorBrowsable(EditorBrowsableState.Never)]
+        public static void Reset()
+        {
+            Local.Reset();
+            Global.Reset();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public static void Publish([NotNull] object ev)
         {
             var localEventAggregator = FindLocalEventAggregator();

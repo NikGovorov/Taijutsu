@@ -24,7 +24,7 @@ namespace Taijutsu.Test.Data
 #pragma warning disable 168
 
             // ReSharper disable once UnusedVariable
-            var nativeSession = ((IWrapper)uow).WrappedObject; // initialize lazy session
+            var nativeSession = ((IDecorator)uow).Origin; // initialize lazy session
 #pragma warning restore 168
         }
 

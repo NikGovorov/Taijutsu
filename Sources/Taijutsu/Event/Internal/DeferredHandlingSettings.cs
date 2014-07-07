@@ -36,7 +36,7 @@ namespace Taijutsu.Event.Internal
 
                 if (Type.IsInstanceOfType(ev))
                 {
-                    var context = DataEnvironment.DataContextSupervisor.CurrentContext;
+                    var context = DataEnvironment.DataContextSupervisor.Current;
 
                     if (context != null)
                     {

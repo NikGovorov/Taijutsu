@@ -33,7 +33,7 @@ namespace Taijutsu.Test.Data
             var nativeSession = new NativeSession();
             var dataSession = new DataSessionStub(nativeSession);
             dataSession.Resolve<NativeSession>(new { }).Should().Be.SameInstanceAs(nativeSession);
-            ((IWrapper)dataSession).WrappedObject.Should().Be.SameInstanceAs(nativeSession);
+            ((IDecorator)dataSession).Origin.Should().Be.SameInstanceAs(nativeSession);
 
             // ReSharper disable once ConvertToConstant.Local
             var message = "Unable to cast native session of 'Taijutsu.Test.Data.DataSessionFixture+NativeSession' to " +
@@ -52,53 +52,57 @@ namespace Taijutsu.Test.Data
 
         private class DataSessionStub : DataSession<NativeSession>
         {
-            public DataSessionStub(NativeSession session)
-                : base(session)
+            public DataSessionStub(NativeSession session) : base(session)
             {
             }
 
-            public override IEntitiesQuery<TEntity> All<TEntity>(object options = null)
+            protected override bool? Completed { get; set; }
+
+            protected override bool Disposed { get; set; }
+
+            public override IQuerySourceProvider<TEntity> Query<TEntity>(object options = null)
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
             }
 
-            public override IUniqueEntityQuery<TEntity> Unique<TEntity>(object key, object options = null)
+            public override TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null)
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
             }
 
             public override void Flush()
             {
+                throw new NotImplementedException();
             }
 
             public override void Complete()
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
             }
 
             protected override object InternalSave<TEntity>(TEntity entity, object options = null)
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
             }
 
             protected override object InternalSave<TEntity>(TEntity entity, EntitySaveMode mode, object options = null)
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
             }
 
             protected override object InternalSave<TEntity>(Func<TEntity> entityFactory, object options = null)
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
             }
 
             protected override void InternalDelete<TEntity>(TEntity entity, object options = null)
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
             }
 
             protected override void Dispose(bool disposing)
             {
-                throw new NotSupportedException();
+                throw new NotImplementedException();
             }
         }
     }

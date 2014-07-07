@@ -20,7 +20,7 @@ namespace Taijutsu.Data.Internal
 {
     public class DataContext : IDataContext
     {
-        private readonly UnitOfWorkOptions configuration;
+        private readonly UnitOfWorkOptions options;
 
         private readonly Lazy<IDataSession> session;
 
@@ -34,11 +34,11 @@ namespace Taijutsu.Data.Internal
 
         private bool disposed;
 
-        public DataContext([NotNull] UnitOfWorkOptions configuration, [NotNull] Lazy<IDataSession> session, [NotNull] ITerminationPolicy terminationPolicy)
+        public DataContext([NotNull] UnitOfWorkOptions options, [NotNull] Lazy<IDataSession> session, [NotNull] ITerminationPolicy terminationPolicy)
         {
-            if (configuration == null)
+            if (options == null)
             {
-                throw new ArgumentNullException("configuration");
+                throw new ArgumentNullException("options");
             }
 
             if (session == null)
@@ -51,7 +51,7 @@ namespace Taijutsu.Data.Internal
                 throw new ArgumentNullException("terminationPolicy");
             }
 
-            this.configuration = configuration;
+            this.options = options;
             this.session = session;
             this.terminationPolicy = terminationPolicy;
             extra = new ExpandoObject();
@@ -80,12 +80,12 @@ namespace Taijutsu.Data.Internal
             get { return extra; }
         }
 
-        public virtual UnitOfWorkOptions Configuration
+        public virtual UnitOfWorkOptions Options
         {
             get
             {
                 AssertNotDisposed();
-                return configuration;
+                return options;
             }
         }
 
