@@ -11,7 +11,9 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 using Taijutsu.Data.Internal;
 using Taijutsu.Domain;
@@ -55,7 +57,7 @@ namespace Taijutsu.Test.Data
             return new object();
         }
 
-        public object Persist<TEntity>(TEntity entity, EntityPersistMode mode = EntityPersistMode.Auto, object options = null) where TEntity : IAggregateRoot
+        public object Persist<TEntity>(TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot
         {
             return new object();
         }
@@ -65,7 +67,26 @@ namespace Taijutsu.Test.Data
             return new object();
         }
 
+        public IEnumerable<object> Persist<T>(IEnumerable<T> entities, object options = null) where T : IAggregateRoot
+        {
+            return entities.Select(e => new object());
+        }
+
+        public IEnumerable<object> Persist<T>(IEnumerable<T> entities, EntityPersistMode mode, object options = null) where T : IAggregateRoot
+        {
+            return entities.Select(e => new object());
+        }
+
+        public IEnumerable<object> Persist<T>(IEnumerable<Func<T>> entityFactories, object options = null) where T : IAggregateRoot
+        {
+            return entityFactories.Select(ef => new object());
+        }
+
         public void Remove<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
+        {
+        }
+
+        public void Remove<T>(IEnumerable<T> entities, object options = null) where T : IDeletableEntity
         {
         }
 

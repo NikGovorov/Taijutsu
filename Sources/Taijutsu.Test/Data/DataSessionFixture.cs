@@ -11,6 +11,7 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.Collections.Generic;
 
 using NUnit.Framework;
 
@@ -80,22 +81,42 @@ namespace Taijutsu.Test.Data
                 throw new NotImplementedException();
             }
 
-            protected override object InternalSave<TEntity>(TEntity entity, object options = null)
+            protected override object InternalPersist<TEntity>(TEntity entity, object options = null)
             {
                 throw new NotImplementedException();
             }
 
-            protected override object InternalSave<TEntity>(TEntity entity, EntityPersistMode mode, object options = null)
+            protected override object InternalPersist<TEntity>(TEntity entity, EntityPersistMode mode, object options = null)
             {
                 throw new NotImplementedException();
             }
 
-            protected override object InternalSave<TEntity>(Func<TEntity> entityFactory, object options = null)
+            protected override object InternalPersist<TEntity>(Func<TEntity> entityFactory, object options = null)
             {
                 throw new NotImplementedException();
             }
 
-            protected override void InternalDelete<TEntity>(TEntity entity, object options = null)
+            protected override IEnumerable<object> InternalPersist<TEntity>(IEnumerable<TEntity> entities, object options = null)
+            {
+                throw new NotImplementedException();
+            }
+
+            protected override IEnumerable<object> InternalPersist<TEntity>(IEnumerable<TEntity> entities, EntityPersistMode mode, object options = null)
+            {
+                throw new NotImplementedException();
+            }
+
+            protected override IEnumerable<object> InternalPersist<TEntity>(IEnumerable<Func<TEntity>> entityFactories, object options = null)
+            {
+                throw new NotImplementedException();
+            }
+
+            protected override void InternalRemove<TEntity>(TEntity entity, object options = null)
+            {
+                throw new NotImplementedException();
+            }
+
+            protected override void InternalRemove<TEntity>(IEnumerable<TEntity> entities, object options = null)
             {
                 throw new NotImplementedException();
             }

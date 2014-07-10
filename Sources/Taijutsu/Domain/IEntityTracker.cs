@@ -10,21 +10,10 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using System;
-
-using Taijutsu.Annotation;
-
 namespace Taijutsu.Domain
 {
-    public interface IEntityTracker
+    public interface IEntityTracker : IEntityPersister, IEntityRemover, IEntityLoader
     {
-        object Persist<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IAggregateRoot;
-
-        object Persist<TEntity>([NotNull] TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot;
-
-        object Persist<TEntity>([NotNull] Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
-
-        void Remove<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IDeletableEntity;
     }
 
     public interface IEntityTracker<TEntity> : IEntityPersister<TEntity>, IEntityRemover<TEntity>, IEntityLoader<TEntity> where TEntity : IDeletableEntity

@@ -11,6 +11,7 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Taijutsu.Annotation;
@@ -70,19 +71,7 @@ namespace Taijutsu.Data.Internal
 
         public virtual object Persist<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
-            AssertNotCompleted();
-
-            if (customizationResolver != null)
-            {
-                var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
-
-                if (resolver != null)
-                {
-                    return resolver().Persist(entity, EntityPersistMode.Create, options);
-                }
-            }
-
-            return InternalSave(entity, options);
+            return Persist(entity, EntityPersistMode.Create, options);
         }
 
         public virtual object Persist<TEntity>(TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot
@@ -99,7 +88,7 @@ namespace Taijutsu.Data.Internal
                 }
             }
 
-            return InternalSave(entity, mode, options);
+            return InternalPersist(entity, mode, options);
         }
 
         public virtual object Persist<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
@@ -116,7 +105,46 @@ namespace Taijutsu.Data.Internal
                 }
             }
 
-            return InternalSave(entityFactory, options);
+            return InternalPersist(entityFactory, options);
+        }
+
+        public IEnumerable<object> Persist<TEntity>(IEnumerable<TEntity> entities, object options = null) where TEntity : IAggregateRoot
+        {
+            return Persist(entities, EntityPersistMode.Create, options);
+        }
+
+        public IEnumerable<object> Persist<TEntity>(IEnumerable<TEntity> entities, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot
+        {
+            AssertNotCompleted();
+
+            if (customizationResolver != null)
+            {
+                var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
+
+                if (resolver != null)
+                {
+                    return resolver().Persist(entities, mode, options);
+                }
+            }
+
+            return InternalPersist(entities, mode, options);
+        }
+
+        public IEnumerable<object> Persist<TEntity>(IEnumerable<Func<TEntity>> entityFactories, object options = null) where TEntity : IAggregateRoot
+        {
+            AssertNotCompleted();
+
+            if (customizationResolver != null)
+            {
+                var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
+
+                if (resolver != null)
+                {
+                    return resolver().Persist(entityFactories, options);
+                }
+            }
+
+            return InternalPersist(entityFactories, options);
         }
 
         public virtual void Remove<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
@@ -130,10 +158,29 @@ namespace Taijutsu.Data.Internal
                 if (resolver != null)
                 {
                     resolver().Remove(entity, options);
+                    return;
                 }
             }
 
-            InternalDelete(entity, options);
+            InternalRemove(entity, options);
+        }
+
+        public void Remove<TEntity>(IEnumerable<TEntity> entities, object options = null) where TEntity : IDeletableEntity
+        {
+            AssertNotCompleted();
+
+            if (customizationResolver != null)
+            {
+                var resolver = customizationResolver.ResolveEntityRemover<TEntity>();
+
+                if (resolver != null)
+                {
+                    resolver().Remove(entities, options);
+                    return;
+                }
+            }
+
+            InternalRemove(entities, options);
         }
 
         public abstract IQuerySource<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
@@ -235,13 +282,21 @@ namespace Taijutsu.Data.Internal
             return new object[] { Session };
         }
 
-        protected abstract object InternalSave<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
+        protected abstract object InternalPersist<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
 
-        protected abstract object InternalSave<TEntity>(TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot;
+        protected abstract object InternalPersist<TEntity>(TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot;
 
-        protected abstract object InternalSave<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
+        protected abstract object InternalPersist<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
 
-        protected abstract void InternalDelete<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
+        protected abstract IEnumerable<object> InternalPersist<TEntity>(IEnumerable<TEntity> entities, object options = null) where TEntity : IAggregateRoot;
+
+        protected abstract IEnumerable<object> InternalPersist<TEntity>(IEnumerable<TEntity> entities, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot;
+
+        protected abstract IEnumerable<object> InternalPersist<TEntity>(IEnumerable<Func<TEntity>> entityFactories, object options = null) where TEntity : IAggregateRoot;
+
+        protected abstract void InternalRemove<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity;
+
+        protected abstract void InternalRemove<TEntity>(IEnumerable<TEntity> entities, object options = null) where TEntity : IDeletableEntity;
 
         protected abstract void Dispose(bool disposing);
 

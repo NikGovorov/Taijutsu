@@ -11,6 +11,7 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 
@@ -163,10 +164,34 @@ namespace Taijutsu.Data
             return dataContext.Session.Persist(entityFactory, options);
         }
 
+        public IEnumerable<object> Persist<T>(IEnumerable<T> entities, object options = null) where T : IAggregateRoot
+        {
+            AssertNotCompleted();
+            return dataContext.Session.Persist(entities, options);
+        }
+
+        public IEnumerable<object> Persist<T>(IEnumerable<T> entities, EntityPersistMode mode, object options = null) where T : IAggregateRoot
+        {
+            AssertNotCompleted();
+            return dataContext.Session.Persist(entities, mode, options);
+        }
+
+        public IEnumerable<object> Persist<T>(IEnumerable<Func<T>> entityFactories, object options = null) where T : IAggregateRoot
+        {
+            AssertNotCompleted();
+            return dataContext.Session.Persist(entityFactories, options);
+        }
+
         public virtual void Remove<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
             AssertNotCompleted();
             dataContext.Session.Remove(entity, options);
+        }
+
+        public void Remove<T>(IEnumerable<T> entities, object options = null) where T : IDeletableEntity
+        {
+            AssertNotCompleted();
+            dataContext.Session.Remove(entities, options);
         }
 
         public virtual IQuerySource<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity

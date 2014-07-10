@@ -17,14 +17,33 @@ using Taijutsu.Annotation;
 
 namespace Taijutsu.Domain
 {
+    public interface IEntityPersister
+    {
+        object Persist<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IAggregateRoot;
+
+        object Persist<T>([NotNull] T entity, EntityPersistMode mode, object options = null) where T : IAggregateRoot;
+
+        object Persist<T>([NotNull] Func<T> entityFactory, object options = null) where T : IAggregateRoot;
+
+        IEnumerable<object> Persist<T>([NotNull] IEnumerable<T> entities, object options = null) where T : IAggregateRoot;
+
+        IEnumerable<object> Persist<T>([NotNull] IEnumerable<T> entities, EntityPersistMode mode, object options = null) where T : IAggregateRoot;
+
+        IEnumerable<object> Persist<T>([NotNull] IEnumerable<Func<T>> entityFactories, object options = null) where T : IAggregateRoot;
+    }
+
     [PublicApi]
     public interface IEntityPersister<in T> where T : IAggregateRoot
     {
-        object Persist([NotNull] T entity, EntityPersistMode mode = EntityPersistMode.Create, object options = null);
+        object Persist([NotNull] T entity, object options = null);
+
+        object Persist([NotNull] T entity, EntityPersistMode mode, object options = null);
 
         object Persist([NotNull] Func<T> entityFactory, object options = null);
 
-        IEnumerable<object> Persist([NotNull] IEnumerable<T> entities, EntityPersistMode mode = EntityPersistMode.Create, object options = null);
+        IEnumerable<object> Persist([NotNull] IEnumerable<T> entities, object options = null);
+
+        IEnumerable<object> Persist([NotNull] IEnumerable<T> entities, EntityPersistMode mode, object options = null);
 
         IEnumerable<object> Persist([NotNull] IEnumerable<Func<T>> entityFactories, object options = null);
     }

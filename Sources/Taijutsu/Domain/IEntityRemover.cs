@@ -10,19 +10,28 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
+using System.Collections.Generic;
+
 using Taijutsu.Annotation;
 
 namespace Taijutsu.Domain
 {
+    public interface IEntityRemover
+    {
+        void Remove<T>([NotNull] T entity, object options = null) where T : IDeletableEntity;
+
+        void Remove<T>([NotNull] IEnumerable<T> entities, object options = null) where T : IDeletableEntity;
+    }
+
     [PublicApi]
     public interface IEntityRemover<in T> where T : IDeletableEntity
     {
         void Remove([NotNull] T entity, object options = null);
 
-        void Remove([NotNull] T[] entities, object options = null);
+        void Remove([NotNull] IEnumerable<T> entities, object options = null);
 
         void Remove([NotNull] object id, object options = null);
 
-        void Remove([NotNull] object[] ids, object options = null);
+        void Remove([NotNull] IEnumerable<object> ids, object options = null);
     }
 }
