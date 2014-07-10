@@ -10,12 +10,15 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using Taijutsu.Domain.Query;
+using Taijutsu.Annotation;
 
-namespace Taijutsu.Domain
+namespace Taijutsu.Domain.Query
 {
-    public interface IEntityQueryProvider : IEntityIdentityMap
+    [PublicApi]
+    public interface IQuerySource<TEntity> : IEntitiesQuery<TEntity> where TEntity : IQueryableEntity
     {
-        IQuerySourceProvider<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
+        TQuery With<TQuery>(string name = null, object options = null) where TQuery : IQuery<TEntity>;
+
+        TRepository From<TRepository>(string name = null, object options = null) where TRepository : IRepository<TEntity>;
     }
 }

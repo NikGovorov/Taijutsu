@@ -201,7 +201,7 @@ namespace Taijutsu.Data.Internal
         {
             if (disposed)
             {
-                throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
+                throw new Exception(string.Format("Data Context has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
             }
         }
 
@@ -325,7 +325,7 @@ namespace Taijutsu.Data.Internal
             {
                 if (disposed)
                 {
-                    throw new Exception(string.Format("Data context has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
+                    throw new Exception(string.Format("Data Context has already been disposed(with success - '{0}'), so it is not usable anymore.", completed));
                 }
             }
         }

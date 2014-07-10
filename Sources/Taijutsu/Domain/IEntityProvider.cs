@@ -10,17 +10,12 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the 
 // specific language governing permissions and limitations under the License.
 
-using Taijutsu.Annotation;
+using Taijutsu.Domain.Query;
 
 namespace Taijutsu.Domain
 {
-    [PublicApi]
-    public enum EntitySaveMode
+    public interface IEntityProvider : IEntityLoader
     {
-        Auto, 
-
-        Create, 
-
-        Update
+        IQuerySource<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
     }
 }

@@ -31,7 +31,7 @@ namespace Taijutsu.Test.Domain
             var uow = Substitute.For<IUnitOfWork>();
             var customer = new Customer(SeqGuid.NewGuid(), new FullName("Test", "Test"));
             customer.DeleteIn(uow);
-            uow.Received(1).Delete(customer as IDeletableEntity);
+            uow.Received(1).Remove(customer as IDeletableEntity);
         }
     }
 }

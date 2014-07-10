@@ -12,7 +12,7 @@
 
 namespace Taijutsu.Domain
 {
-    public interface IEntityStorage : IEntityTracker, IEntityQueryProvider
+    public interface IEntityStorage : IEntityTracker, IEntityProvider
     {
     }
 }

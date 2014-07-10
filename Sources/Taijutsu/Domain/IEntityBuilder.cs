@@ -23,6 +23,6 @@ namespace Taijutsu.Domain
     [PublicApi]
     public interface IEntityBuilder<in TParams, out TEntity> where TEntity : IEntity
     {
-        TEntity Build(TParams parameters);
+        TEntity Build([NotNull] TParams parameters);
     }
 }

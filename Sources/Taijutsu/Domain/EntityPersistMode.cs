@@ -14,8 +14,13 @@ using Taijutsu.Annotation;
 
 namespace Taijutsu.Domain
 {
-    public interface IEntityIdentityMap
+    [PublicApi]
+    public enum EntityPersistMode
     {
-        TEntity Load<TEntity>([NotNull] object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IQueryableEntity;
+        Auto, 
+
+        Create, 
+
+        Update
     }
 }

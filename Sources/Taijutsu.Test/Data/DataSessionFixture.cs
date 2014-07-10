@@ -60,7 +60,7 @@ namespace Taijutsu.Test.Data
 
             protected override bool Disposed { get; set; }
 
-            public override IQuerySourceProvider<TEntity> Query<TEntity>(object options = null)
+            public override IQuerySource<TEntity> Query<TEntity>(object options = null)
             {
                 throw new NotImplementedException();
             }
@@ -85,7 +85,7 @@ namespace Taijutsu.Test.Data
                 throw new NotImplementedException();
             }
 
-            protected override object InternalSave<TEntity>(TEntity entity, EntitySaveMode mode, object options = null)
+            protected override object InternalSave<TEntity>(TEntity entity, EntityPersistMode mode, object options = null)
             {
                 throw new NotImplementedException();
             }

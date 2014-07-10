@@ -18,16 +18,16 @@ namespace Taijutsu.Domain
 {
     public interface IEntityTracker
     {
-        object Save<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IAggregateRoot;
+        object Persist<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IAggregateRoot;
 
-        object Save<TEntity>([NotNull] TEntity entity, EntitySaveMode mode, object options = null) where TEntity : IAggregateRoot;
+        object Persist<TEntity>([NotNull] TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot;
 
-        object Save<TEntity>([NotNull] Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
+        object Persist<TEntity>([NotNull] Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
 
-        void Delete<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IDeletableEntity;
+        void Remove<TEntity>([NotNull] TEntity entity, object options = null) where TEntity : IDeletableEntity;
     }
 
-    public interface IEntityTracker<in T> : IEntityPersister<T>, IEntityRemover<T> where T : IDeletableEntity
+    public interface IEntityTracker<TEntity> : IEntityPersister<TEntity>, IEntityRemover<TEntity>, IEntityLoader<TEntity> where TEntity : IDeletableEntity
     {
     }
 }

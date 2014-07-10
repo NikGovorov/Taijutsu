@@ -131,10 +131,10 @@ namespace Taijutsu.Test.Data
 
             using (var uow = new UnitOfWork(source))
             {
-                uow.Save(customer, options);
+                uow.Persist(customer, options);
             }
 
-            session.Received(1).Save(customer, EntitySaveMode.Create, options);
+            session.Received(1).Persist(customer, EntityPersistMode.Create, options);
 
             session.ClearReceivedCalls();
 
@@ -142,10 +142,10 @@ namespace Taijutsu.Test.Data
 
             using (var uow = new UnitOfWork(source))
             {
-                uow.Save(factory, options);
+                uow.Persist(factory, options);
             }
 
-            session.Received(1).Save(factory, options);
+            session.Received(1).Persist(factory, options);
 
             session.ClearReceivedCalls();
 
@@ -154,7 +154,7 @@ namespace Taijutsu.Test.Data
                 customer.SaveIn(uow);
             }
 
-            session.Received(1).Save(customer as IAggregateRoot, EntitySaveMode.Create);
+            session.Received(1).Persist(customer as IAggregateRoot, EntityPersistMode.Create);
         }
 
         [Test]
@@ -166,10 +166,10 @@ namespace Taijutsu.Test.Data
 
             using (var uow = new UnitOfWork(source))
             {
-                uow.Delete(customer, options);
+                uow.Remove(customer, options);
             }
 
-            session.Received(1).Delete(customer, options);
+            session.Received(1).Remove(customer, options);
 
             session.ClearReceivedCalls();
 
@@ -178,7 +178,7 @@ namespace Taijutsu.Test.Data
                 customer.DeleteIn(uow);
             }
 
-            session.Received(1).Delete(customer as IDeletableEntity);
+            session.Received(1).Remove(customer as IDeletableEntity);
         }
 
         [Test]
@@ -190,7 +190,7 @@ namespace Taijutsu.Test.Data
                     var uow = new UnitOfWork(source);
                     uow.Complete();
                     ((IDisposable)uow).Dispose();
-                    uow.Save(new Customer());
+                    uow.Persist(new Customer());
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
 
@@ -200,7 +200,7 @@ namespace Taijutsu.Test.Data
                     using (var uow = new UnitOfWork(source))
                     {
                         uow.Complete();
-                        uow.Save(() => new Customer());
+                        uow.Persist(() => new Customer());
                     }
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
@@ -211,7 +211,7 @@ namespace Taijutsu.Test.Data
                     using (var uow = new UnitOfWork(source))
                     {
                         uow.Complete();
-                        uow.Save(new Customer());
+                        uow.Persist(new Customer());
                     }
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
@@ -236,7 +236,7 @@ namespace Taijutsu.Test.Data
                 {
                     var uow = new UnitOfWork(source);
                     ((IDisposable)uow).Dispose();
-                    uow.Save(new Customer());
+                    uow.Persist(new Customer());
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
@@ -245,7 +245,7 @@ namespace Taijutsu.Test.Data
                 {
                     var uow = new UnitOfWork(source);
                     ((IDisposable)uow).Dispose();
-                    uow.Save(() => new Customer());
+                    uow.Persist(() => new Customer());
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
@@ -254,7 +254,7 @@ namespace Taijutsu.Test.Data
                 {
                     var uow = new UnitOfWork(source);
                     ((IDisposable)uow).Dispose();
-                    uow.Save(new Customer());
+                    uow.Persist(new Customer());
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
@@ -277,7 +277,7 @@ namespace Taijutsu.Test.Data
                     var uow = new UnitOfWork(source);
                     uow.Complete();
                     ((IDisposable)uow).Dispose();
-                    uow.Delete(new Customer());
+                    uow.Remove(new Customer());
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
 
@@ -287,7 +287,7 @@ namespace Taijutsu.Test.Data
                     using (var uow = new UnitOfWork(source))
                     {
                         uow.Complete();
-                        uow.Delete(new Customer());
+                        uow.Remove(new Customer());
                     }
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, true)));
@@ -312,7 +312,7 @@ namespace Taijutsu.Test.Data
                 {
                     var uow = new UnitOfWork(source);
                     ((IDisposable)uow).Dispose();
-                    uow.Delete(new Customer());
+                    uow.Remove(new Customer());
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 
@@ -321,7 +321,7 @@ namespace Taijutsu.Test.Data
                 {
                     var uow = new UnitOfWork(source);
                     ((IDisposable)uow).Dispose();
-                    uow.Delete(new Customer());
+                    uow.Remove(new Customer());
                 }, 
                 Throws.Exception.With.Message.EqualTo(string.Format(InteractAfterComplete, false)));
 

@@ -50,31 +50,31 @@ namespace Taijutsu.Test.Data
         {
         }
 
-        public object Save<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
+        public object Persist<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
             return new object();
         }
 
-        public object Save<TEntity>(TEntity entity, EntitySaveMode mode = EntitySaveMode.Auto, object options = null) where TEntity : IAggregateRoot
+        public object Persist<TEntity>(TEntity entity, EntityPersistMode mode = EntityPersistMode.Auto, object options = null) where TEntity : IAggregateRoot
         {
             return new object();
         }
 
-        public object Save<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
+        public object Persist<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
             return new object();
         }
 
-        public void Delete<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
+        public void Remove<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
         }
 
-        public TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IQueryableEntity
+        public TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IAggregateRoot
         {
             throw new NotSupportedException("NullDataSession does not support Load method.");
         }
 
-        public IQuerySourceProvider<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity
+        public IQuerySource<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity
         {
             throw new NotSupportedException("NullDataSession does not support Query method.");
         }

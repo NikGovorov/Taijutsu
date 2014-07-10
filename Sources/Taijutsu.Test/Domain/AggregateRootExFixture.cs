@@ -32,9 +32,9 @@ namespace Taijutsu.Test.Domain
         {
             var uow = Substitute.For<IUnitOfWork>();
             var customer = new Customer(SeqGuid.NewGuid(), new FullName("Test", "Test"));
-            uow.Save(customer as IAggregateRoot).Returns(customer);
+            uow.Persist(customer as IAggregateRoot).Returns(customer);
             customer.SaveIn(uow).Should().Be(customer);
-            uow.Received(1).Save(customer as IAggregateRoot);
+            uow.Received(1).Persist(customer as IAggregateRoot);
         }
     }
 }

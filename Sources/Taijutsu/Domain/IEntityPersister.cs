@@ -11,13 +11,21 @@
 // specific language governing permissions and limitations under the License.
 
 using System;
+using System.Collections.Generic;
+
+using Taijutsu.Annotation;
 
 namespace Taijutsu.Domain
 {
+    [PublicApi]
     public interface IEntityPersister<in T> where T : IAggregateRoot
     {
-        object Save(T entity, EntitySaveMode mode = EntitySaveMode.Auto, object options = null);
+        object Persist([NotNull] T entity, EntityPersistMode mode = EntityPersistMode.Create, object options = null);
 
-        object Save(Func<T> entityFactory, object options = null);
+        object Persist([NotNull] Func<T> entityFactory, object options = null);
+
+        IEnumerable<object> Persist([NotNull] IEnumerable<T> entities, EntityPersistMode mode = EntityPersistMode.Create, object options = null);
+
+        IEnumerable<object> Persist([NotNull] IEnumerable<Func<T>> entityFactories, object options = null);
     }
 }

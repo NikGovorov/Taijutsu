@@ -133,7 +133,7 @@ namespace Taijutsu.Test.Data
                     context.Dispose();
                     context.Complete();
                 }, 
-                Throws.Exception.With.Message.EqualTo("Data context has already been disposed(with success - 'False'), so it is not usable anymore."));
+                Throws.Exception.With.Message.EqualTo("Data Context has already been disposed(with success - 'False'), so it is not usable anymore."));
 
             session.Received(1).Dispose();
             session.Received(0).Complete();
@@ -285,7 +285,7 @@ namespace Taijutsu.Test.Data
         }
 
         [Test]
-        [ExpectedException(ExpectedMessage = "Data context has already been disposed(with success - 'False'), so it is not usable anymore.")]
+        [ExpectedException(ExpectedMessage = "Data Context has already been disposed(with success - 'False'), so it is not usable anymore.")]
         public virtual void ShouldThrowExceptionOnSessionCallIfDisposeHasAlreadyBeenCalled()
         {
             var config = new UnitOfWorkOptions(string.Empty, IsolationLevel.ReadCommitted, Require.New);

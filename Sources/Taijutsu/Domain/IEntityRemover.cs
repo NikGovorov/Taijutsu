@@ -17,12 +17,12 @@ namespace Taijutsu.Domain
     [PublicApi]
     public interface IEntityRemover<in T> where T : IDeletableEntity
     {
-        void Delete(T entity, object options = null);
+        void Remove([NotNull] T entity, object options = null);
 
-        void Delete(T[] entities, object options = null);
+        void Remove([NotNull] T[] entities, object options = null);
 
-        void Delete(object id, object options = null);
+        void Remove([NotNull] object id, object options = null);
 
-        void Delete(object[] ids, object options = null);
+        void Remove([NotNull] object[] ids, object options = null);
     }
 }

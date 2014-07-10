@@ -68,7 +68,7 @@ namespace Taijutsu.Data.Internal
             return service;
         }
 
-        public virtual object Save<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
+        public virtual object Persist<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotCompleted();
 
@@ -78,14 +78,14 @@ namespace Taijutsu.Data.Internal
 
                 if (resolver != null)
                 {
-                    return resolver().Save(entity, EntitySaveMode.Create, options);
+                    return resolver().Persist(entity, EntityPersistMode.Create, options);
                 }
             }
 
             return InternalSave(entity, options);
         }
 
-        public virtual object Save<TEntity>(TEntity entity, EntitySaveMode mode, object options = null) where TEntity : IAggregateRoot
+        public virtual object Persist<TEntity>(TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotCompleted();
 
@@ -95,14 +95,14 @@ namespace Taijutsu.Data.Internal
 
                 if (resolver != null)
                 {
-                    return resolver().Save(entity, mode, options);
+                    return resolver().Persist(entity, mode, options);
                 }
             }
 
             return InternalSave(entity, mode, options);
         }
 
-        public virtual object Save<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
+        public virtual object Persist<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotCompleted();
 
@@ -112,14 +112,14 @@ namespace Taijutsu.Data.Internal
 
                 if (resolver != null)
                 {
-                    return resolver().Save(entityFactory, options);
+                    return resolver().Persist(entityFactory, options);
                 }
             }
 
             return InternalSave(entityFactory, options);
         }
 
-        public virtual void Delete<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
+        public virtual void Remove<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
             AssertNotCompleted();
 
@@ -129,16 +129,16 @@ namespace Taijutsu.Data.Internal
 
                 if (resolver != null)
                 {
-                    resolver().Delete(entity, options);
+                    resolver().Remove(entity, options);
                 }
             }
 
             InternalDelete(entity, options);
         }
 
-        public abstract IQuerySourceProvider<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
+        public abstract IQuerySource<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity;
 
-        public abstract TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IQueryableEntity;
+        public abstract TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IAggregateRoot;
 
         public abstract void Flush();
 
@@ -237,7 +237,7 @@ namespace Taijutsu.Data.Internal
 
         protected abstract object InternalSave<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot;
 
-        protected abstract object InternalSave<TEntity>(TEntity entity, EntitySaveMode mode, object options = null) where TEntity : IAggregateRoot;
+        protected abstract object InternalSave<TEntity>(TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot;
 
         protected abstract object InternalSave<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot;
 

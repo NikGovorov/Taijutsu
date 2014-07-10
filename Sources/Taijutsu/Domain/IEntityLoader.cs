@@ -12,13 +12,16 @@
 
 using Taijutsu.Annotation;
 
-namespace Taijutsu.Domain.Query
+namespace Taijutsu.Domain
 {
-    [PublicApi]
-    public interface IQuerySourceProvider<TEntity> : IEntitiesQuery<TEntity> where TEntity : IQueryableEntity
+    public interface IEntityLoader
     {
-        TQuery With<TQuery>(string name = null, object options = null) where TQuery : IQuery<TEntity>;
+        TEntity Load<TEntity>([NotNull] object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IAggregateRoot;
+    }
 
-        TRepository From<TRepository>(string name = null, object options = null) where TRepository : IRepository<TEntity>;
+    [PublicApi]
+    public interface IEntityLoader<out TEntity> where TEntity : IAggregateRoot
+    {
+        TEntity Load([NotNull] object id, bool required = true, bool locked = false, bool optimized = false, object options = null);
     }
 }

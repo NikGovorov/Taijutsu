@@ -145,37 +145,37 @@ namespace Taijutsu.Data
             return toReturn;
         }
 
-        public virtual object Save<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
+        public virtual object Persist<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotCompleted();
-            return Save(entity, EntitySaveMode.Create, options);
+            return Persist(entity, EntityPersistMode.Create, options);
         }
 
-        public virtual object Save<TEntity>(TEntity entity, EntitySaveMode mode, object options = null) where TEntity : IAggregateRoot
+        public virtual object Persist<TEntity>(TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotCompleted();
-            return dataContext.Session.Save(entity, mode, options);
+            return dataContext.Session.Persist(entity, mode, options);
         }
 
-        public virtual object Save<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
+        public virtual object Persist<TEntity>(Func<TEntity> entityFactory, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotCompleted();
-            return dataContext.Session.Save(entityFactory, options);
+            return dataContext.Session.Persist(entityFactory, options);
         }
 
-        public virtual void Delete<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
+        public virtual void Remove<TEntity>(TEntity entity, object options = null) where TEntity : IDeletableEntity
         {
             AssertNotCompleted();
-            dataContext.Session.Delete(entity, options);
+            dataContext.Session.Remove(entity, options);
         }
 
-        public virtual IQuerySourceProvider<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity
+        public virtual IQuerySource<TEntity> Query<TEntity>(object options = null) where TEntity : class, IQueryableEntity
         {
             AssertNotDisposed();
             return dataContext.Session.Query<TEntity>(options);
         }
 
-        public virtual TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IQueryableEntity
+        public virtual TEntity Load<TEntity>(object id, bool required = true, bool locked = false, bool optimized = false, object options = null) where TEntity : IAggregateRoot
         {
             AssertNotDisposed();
             return dataContext.Session.Load<TEntity>(id, required, locked, optimized, options);

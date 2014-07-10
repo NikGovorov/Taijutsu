@@ -32,7 +32,7 @@ namespace Taijutsu.Domain
                 throw new ArgumentNullException("tracker");
             }
 
-            tracker.Delete(self);
+            tracker.Remove(self);
         }
     }
 }
