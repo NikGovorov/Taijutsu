@@ -71,7 +71,19 @@ namespace Taijutsu.Data.Internal
 
         public virtual object Persist<TEntity>(TEntity entity, object options = null) where TEntity : IAggregateRoot
         {
-            return Persist(entity, EntityPersistMode.Create, options);
+            AssertNotCompleted();
+
+            if (customizationResolver != null)
+            {
+                var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
+
+                if (resolver != null)
+                {
+                    return resolver().Persist(entity, options);
+                }
+            }
+
+            return InternalPersist(entity, options);
         }
 
         public virtual object Persist<TEntity>(TEntity entity, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot
@@ -110,7 +122,19 @@ namespace Taijutsu.Data.Internal
 
         public IEnumerable<object> Persist<TEntity>(IEnumerable<TEntity> entities, object options = null) where TEntity : IAggregateRoot
         {
-            return Persist(entities, EntityPersistMode.Create, options);
+            AssertNotCompleted();
+
+            if (customizationResolver != null)
+            {
+                var resolver = customizationResolver.ResolveEntityPersister<TEntity>();
+
+                if (resolver != null)
+                {
+                    return resolver().Persist(entities, options);
+                }
+            }
+
+            return InternalPersist(entities, options);
         }
 
         public IEnumerable<object> Persist<TEntity>(IEnumerable<TEntity> entities, EntityPersistMode mode, object options = null) where TEntity : IAggregateRoot
